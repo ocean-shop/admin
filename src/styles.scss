@@ -1,1 +1,154 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+@source './**/*.{html,ts}';
+
+@theme {
+  --color-primary: #00685f;
+  --color-on-tertiary: #ffffff;
+  --color-inverse-on-surface: #ecf1ff;
+  --color-secondary-container: #d8e5e2;
+  --color-on-secondary-fixed-variant: #3d4947;
+  --color-primary-fixed: #89f5e7;
+  --color-surface-dim: #cfdaf2;
+  --color-surface-variant: #d8e3fb;
+  --color-surface-tint: #006a61;
+  --color-on-primary-container: #f4fffc;
+  --color-surface-container-low: #f0f3ff;
+  --color-on-error-container: #93000a;
+  --color-inverse-primary: #6bd8cb;
+  --color-on-primary-fixed: #00201d;
+  --color-surface-container: #e7eeff;
+  --color-on-tertiary-fixed: #00201c;
+  --color-surface-bright: #f9f9ff;
+  --color-secondary-fixed: #d8e5e2;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-high: #dee8ff;
+  --color-error-container: #ffdad6;
+  --color-on-surface-variant: #3d4947;
+  --color-outline: #6d7a77;
+  --color-on-tertiary-container: #f4fffb;
+  --color-on-secondary: #ffffff;
+  --color-primary-container: #008378;
+  --color-tertiary-fixed: #62fae3;
+  --color-error: #ba1a1a;
+  --color-primary-fixed-dim: #6bd8cb;
+  --color-on-secondary-container: #5b6765;
+  --color-on-primary: #ffffff;
+  --color-surface-container-highest: #d8e3fb;
+  --color-inverse-surface: #263143;
+  --color-secondary: #55615f;
+  --color-secondary-fixed-dim: #bcc9c6;
+  --color-background: #f9f9ff;
+  --color-on-background: #111c2d;
+  --color-on-primary-fixed-variant: #005049;
+  --color-tertiary-fixed-dim: #3cddc7;
+  --color-tertiary: #00685c;
+  --color-on-error: #ffffff;
+  --color-on-surface: #111c2d;
+  --color-on-secondary-fixed: #121e1c;
+  --color-on-tertiary-fixed-variant: #005047;
+  --color-tertiary-container: #008375;
+  --color-surface: #f9f9ff;
+  --color-outline-variant: #bcc9c6;
+
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  --spacing-lg: 24px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-container-max: 1440px;
+  --spacing-margin-mobile: 16px;
+  --spacing-unit: 4px;
+  --spacing-margin-desktop: 32px;
+  --spacing-gutter: 24px;
+  --spacing-xl: 48px;
+  --spacing-md: 16px;
+
+  --font-headline-lg: 'Hanken Grotesk';
+  --font-label-md: 'Hanken Grotesk';
+  --font-body-md: 'Hanken Grotesk';
+  --font-title-md: 'Hanken Grotesk';
+  --font-headline-lg-mobile: 'Hanken Grotesk';
+  --font-display-lg: 'Hanken Grotesk';
+  --font-body-sm: 'Hanken Grotesk';
+
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 40px;
+  --text-headline-lg--letter-spacing: -0.01em;
+  --text-headline-lg--font-weight: 600;
+
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.05em;
+  --text-label-md--font-weight: 500;
+
+  --text-body-md: 16px;
+  --text-body-md--line-height: 24px;
+  --text-body-md--font-weight: 400;
+
+  --text-title-md: 18px;
+  --text-title-md--line-height: 24px;
+  --text-title-md--font-weight: 600;
+
+  --text-headline-lg-mobile: 24px;
+  --text-headline-lg-mobile--line-height: 32px;
+  --text-headline-lg-mobile--font-weight: 600;
+
+  --text-display-lg: 48px;
+  --text-display-lg--line-height: 56px;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 700;
+
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 20px;
+  --text-body-sm--font-weight: 400;
+}
+
+/* Base styles to support dark mode class */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@utility m3-elevation-2 {
+  box-shadow:
+    0 1px 2px rgba(17, 28, 45, 0.08),
+    0 2px 6px rgba(17, 28, 45, 0.1);
+}
+
+@utility m3-elevation-3 {
+  box-shadow:
+    0 2px 6px rgba(17, 28, 45, 0.12),
+    0 8px 24px rgba(17, 28, 45, 0.16);
+}
+
+@utility ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.m3-textfield label {
+  position: absolute;
+  top: 50%;
+  left: 3rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: all 150ms ease;
+  background: var(--color-surface-container-lowest);
+  padding: 0 0.25rem;
+}
+
+.m3-textfield:focus-within label {
+  top: 0;
+  left: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-primary);
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: var(--font-body-md), Roboto, 'Helvetica Neue', sans-serif;
+}

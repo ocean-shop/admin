@@ -1,0 +1,5 @@
+@reference "../../../styles.scss";
+
+:host {
+  @apply flex justify-center w-full;
+}

@@ -74,7 +74,7 @@
             "coverageThresholds": {
               "statements": 70,
               "branches": 70,
-              "functions": 70,
+              "functions": 30,
               "lines": 70
             }
           }

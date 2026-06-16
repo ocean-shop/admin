@@ -1,0 +1,33 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.admin-dropdown-container {
+  @apply relative;
+}
+
+.admin-dropdown-trigger {
+  @apply flex items-center gap-sm px-md py-sm rounded-full hover:bg-primary/10 text-primary transition-colors font-body-sm;
+}
+
+.admin-dropdown-icon-small {
+  @apply text-body-sm;
+}
+
+.admin-dropdown-menu {
+  @apply absolute right-0 mt-xs w-40 bg-surface-container-lowest rounded-lg border border-outline-variant opacity-0 invisible transition-all duration-200;
+}
+
+.admin-dropdown-container:hover .admin-dropdown-menu {
+  @apply opacity-100 visible;
+}
+
+.admin-dropdown-list {
+  @apply py-xs;
+}
+
+.admin-dropdown-item {
+  @apply block px-md py-sm text-body-sm text-on-surface hover:bg-primary/10 transition-colors;
+}

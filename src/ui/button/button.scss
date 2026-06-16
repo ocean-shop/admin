@@ -1,0 +1,17 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.admin-btn {
+  @apply w-full py-md bg-primary hover:bg-[#005a52] text-white font-title-md text-title-md rounded-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-sm;
+}
+
+.admin-btn-icon {
+  @apply transition-transform;
+}
+
+.admin-btn:hover .admin-btn-icon {
+  @apply translate-x-1;
+}

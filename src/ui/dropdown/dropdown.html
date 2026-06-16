@@ -1,0 +1,20 @@
+<div class="admin-dropdown-container">
+  <button class="admin-dropdown-trigger">
+    @if (icon()) {
+    <span class="material-symbols-outlined">{{ icon() }}</span>
+    }
+    <span>{{ label() }}</span>
+    <span class="admin-dropdown-icon-small material-symbols-outlined">expand_more</span>
+  </button>
+  <div class="admin-dropdown-menu m3-elevation-2">
+    <ul class="admin-dropdown-list">
+      @for (option of options(); track option.value) {
+      <li>
+        <a class="admin-dropdown-item" href="#" (click)="selectOption(option, $event)">
+          {{ option.label }}
+        </a>
+      </li>
+      }
+    </ul>
+  </div>
+</div>

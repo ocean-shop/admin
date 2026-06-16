@@ -1,0 +1,10 @@
+<input
+  class="admin-input"
+  [id]="id()"
+  [name]="name()"
+  [placeholder]="placeholder()"
+  [required]="required()"
+  [type]="type()"
+  (focus)="focusEvent.emit($event)"
+  (blur)="blurEvent.emit($event)"
+/>
