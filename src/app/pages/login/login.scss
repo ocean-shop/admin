@@ -3,3 +3,47 @@
 :host {
   @apply flex justify-center w-full;
 }
+
+.language-selector {
+  @apply fixed top-lg right-lg z-50;
+}
+
+.main-container {
+  @apply w-full max-w-[440px] px-margin-mobile md:px-0 flex flex-col items-center pt-32;
+}
+
+.header {
+  @apply mb-xl text-center;
+}
+
+.title {
+  @apply font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-extrabold;
+}
+
+.login-card {
+  @apply w-full bg-surface-container-lowest rounded-xl p-lg md:p-xl border border-secondary-container/10 transition-shadow duration-300;
+}
+
+.welcome-section {
+  @apply mb-lg;
+}
+
+.subtitle {
+  @apply font-title-md text-title-md text-on-surface mb-xs;
+}
+
+.description {
+  @apply font-body-sm text-body-sm text-on-surface-variant;
+}
+
+.form-container {
+  @apply space-y-lg;
+}
+
+.input-icon-container {
+  @apply absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors z-10;
+}
+
+.decorative-bar {
+  @apply fixed bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-primary-fixed to-tertiary-fixed opacity-30;
+}

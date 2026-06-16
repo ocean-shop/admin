@@ -1,12 +1,9 @@
-import { Component, HostListener, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { Dropdown } from '../../../ui/dropdown/dropdown';
-import { Input } from '../../../ui/input/input';
-import { Button } from '../../../ui/button/button';
-
-export interface DropdownOption {
-  label: string;
-  value: string;
-}
+import { Component, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Dropdown } from '@ui/dropdown/dropdown';
+import { Input } from '@ui/input/input';
+import { Button } from '@ui/button/button';
+import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
+import { LANGUAGE_OPTIONS } from './constants/login.constant';
 
 @Component({
   selector: 'app-login',
@@ -18,21 +15,10 @@ export interface DropdownOption {
 export class Login {
   isFocused = signal(false);
 
-  languageOptions: DropdownOption[] = [
-    { label: 'English', value: 'en' },
-    { label: 'Українська', value: 'uk' },
-    { label: 'Русский', value: 'ru' },
-  ];
+  languageOptions = LANGUAGE_OPTIONS;
   selectedLanguage = signal<DropdownOption>(this.languageOptions[0]);
 
   onLanguageSelected(option: any) {
     this.selectedLanguage.set(option.detail || option);
-  }
-
-  @HostListener('window:mousemove', ['$event'])
-  onMouseMove(e: MouseEvent) {
-    const x = e.clientX / window.innerWidth;
-    const y = e.clientY / window.innerHeight;
-    document.body.style.backgroundPosition = `${x * 10}px ${y * 10}px`;
   }
 }
