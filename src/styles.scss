@@ -134,3 +134,7 @@ body {
   margin: 0;
   font-family: var(--font-body-md), Roboto, 'Helvetica Neue', sans-serif;
 }
+
+.material-symbols-outlined {
+  @apply overflow-hidden max-w-[24px] max-h-[24px] whitespace-nowrap inline-block align-middle;
+}

@@ -7,10 +7,28 @@
     icon="lock"
     [required]="true"
   ></app-input>
+  @if (timeLeft() > 0) {
   <div class="resend-container">
     <p class="resend-text">
       Resend code in <span class="resend-timer">{{ formattedTime() }}</span>
     </p>
   </div>
   <app-button label="Verify Code" icon="arrow_forward" type="submit"></app-button>
+  } @else {
+  <div class="flex justify-center text-label-md text-on-surface-variant">
+    <button
+      class="text-primary font-bold hover:bg-primary/10 px-md py-xs rounded transition-colors ripple"
+      type="button"
+      (click)="resendCode()"
+    >
+      Resend Code
+    </button>
+  </div>
+  <app-button
+    label="Back to Login"
+    icon="arrow_back"
+    type="button"
+    (click)="onBackToLogin()"
+  ></app-button>
+  }
 </form>

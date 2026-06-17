@@ -1,4 +1,5 @@
 import { Component, output, signal, computed, OnInit, OnDestroy, inject } from '@angular/core';
+import { interval, Subscription } from 'rxjs';
 import { Input } from '@ui/input/input';
 import { Button } from '@ui/button/button';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
@@ -14,7 +15,7 @@ export class OtpForm implements OnInit, OnDestroy {
   private localStorageService = inject(LocalStorageService);
 
   submitEvent = output<void>();
-  timeoutEvent = output<void>();
+  backToLoginEvent = output<void>();
 
   timeLeft = signal(300);
 
@@ -27,7 +28,7 @@ export class OtpForm implements OnInit, OnDestroy {
     return `${minutes}:${seconds}`;
   });
 
-  private intervalId: ReturnType<typeof setInterval> | undefined;
+  private countdownSub: Subscription | undefined;
 
   ngOnInit() {
     this.startTimer();
@@ -67,27 +68,34 @@ export class OtpForm implements OnInit, OnDestroy {
   }
 
   private startCountdown(expirationTime: number) {
-    this.intervalId = setInterval(() => {
+    this.countdownSub = interval(1000).subscribe(() => {
       const currentLeft = Math.floor((expirationTime - Date.now()) / 1000);
       if (currentLeft > 0) {
         this.timeLeft.set(currentLeft);
       } else {
         this.handleTimeout();
       }
-    }, 1000);
+    });
   }
 
   private handleTimeout() {
     this.timeLeft.set(0);
     this.clearTimer();
     this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
-    this.timeoutEvent.emit();
+  }
+
+  resendCode() {
+    this.startTimer();
+  }
+
+  onBackToLogin() {
+    this.backToLoginEvent.emit();
   }
 
   private clearTimer() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = undefined;
+    if (this.countdownSub) {
+      this.countdownSub.unsubscribe();
+      this.countdownSub = undefined;
     }
   }
 }

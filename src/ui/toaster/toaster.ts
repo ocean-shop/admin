@@ -1,6 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { ToasterService } from './toaster.service';
 import { ToastType } from './models/toaster.type';
+import {
+  DEFAULT_TOAST_ICON,
+  DEFAULT_TOAST_ICON_FILL,
+  TOAST_ICONS,
+  TOAST_ICON_FILLS,
+} from './constants/toaster.constant';
 
 @Component({
   selector: 'app-toaster',
@@ -14,22 +20,11 @@ export class Toaster {
   toasts = this.toasterService.toasts;
 
   getIcon(type: ToastType): string {
-    switch (type) {
-      case 'info':
-        return 'info';
-      case 'success':
-        return 'check_circle';
-      case 'warning':
-        return 'warning';
-      case 'danger':
-        return 'report';
-      default:
-        return 'info';
-    }
+    return TOAST_ICONS[type] ?? DEFAULT_TOAST_ICON;
   }
 
   getIconFill(type: ToastType): string {
-    return type === 'danger' ? "'FILL' 1" : "'FILL' 0";
+    return TOAST_ICON_FILLS[type] ?? DEFAULT_TOAST_ICON_FILL;
   }
 
   close(id: string): void {

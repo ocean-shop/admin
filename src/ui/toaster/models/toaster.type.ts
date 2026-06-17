@@ -9,3 +9,5 @@ export interface Toast {
   onAction?: () => void;
   duration?: number; // Optional duration in ms. If 0, it doesn't auto-dismiss.
 }
+
+export type ToastOptions = Partial<Omit<Toast, 'id' | 'type' | 'title' | 'message'>>;

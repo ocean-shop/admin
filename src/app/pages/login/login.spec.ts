@@ -66,8 +66,8 @@ describe('Login', () => {
     expect(mockLocalStorageService.setItem).toHaveBeenCalledWith(VIEW_STORAGE_KEY, LoginView.Otp);
   });
 
-  it('should handle otp timeout', () => {
-    component.onOtpTimeout();
+  it('should handle back to login', () => {
+    component.onBackToLogin();
     expect(component.currentView()).toBe(LoginView.Login);
     expect(mockLocalStorageService.setItem).toHaveBeenCalledWith(VIEW_STORAGE_KEY, LoginView.Login);
   });

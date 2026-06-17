@@ -22,7 +22,7 @@
     @if (currentView() === LoginView.Login) {
     <app-login-form (submitEvent)="onSubmit()"></app-login-form>
     } @else {
-    <app-otp-form (timeoutEvent)="onOtpTimeout()"></app-otp-form>
+    <app-otp-form (backToLoginEvent)="onBackToLogin()"></app-otp-form>
     }
   </section>
   <div class="decorative-bar"></div>

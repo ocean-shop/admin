@@ -46,7 +46,7 @@ export class Login implements OnInit {
     this.setView(LoginView.Otp);
   }
 
-  onOtpTimeout() {
+  onBackToLogin() {
     this.setView(LoginView.Login);
   }
 

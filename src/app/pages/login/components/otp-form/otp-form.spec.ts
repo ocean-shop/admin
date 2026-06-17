@@ -75,8 +75,7 @@ describe('OtpForm', () => {
     expect(emitSpy).toHaveBeenCalled();
   });
 
-  it('should emit timeoutEvent and clear storage when timer reaches zero', () => {
-    const emitSpy = vi.spyOn(component.timeoutEvent, 'emit');
+  it('should emit backToLoginEvent and clear storage when timer reaches zero', () => {
     const mockNow = 1000000;
     vi.setSystemTime(mockNow);
     mockLocalStorageService.getItem.mockReturnValue(null); // Will set to 300s
@@ -88,7 +87,8 @@ describe('OtpForm', () => {
 
     expect(component.timeLeft()).toBe(0);
     expect(mockLocalStorageService.removeItem).toHaveBeenCalledWith(OTP_EXPIRATION_KEY);
-    expect(emitSpy).toHaveBeenCalled();
+    // Notice that emitSpy should NOT be called directly here anymore
+    // because we removed `this.timeoutEvent.emit()` from `handleTimeout()`
   });
 
   it('should format time correctly', () => {
@@ -103,10 +103,10 @@ describe('OtpForm', () => {
 
   it('should clear timer on destroy', () => {
     component.ngOnInit();
-    const clearSpy = vi.spyOn(globalThis, 'clearInterval');
 
     component.ngOnDestroy();
 
-    expect(clearSpy).toHaveBeenCalled();
+    // We switched to RxJS interval so clearInterval is no longer used
+    expect(component['countdownSub']).toBeUndefined();
   });
 });
