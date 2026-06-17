@@ -2,12 +2,13 @@ import { Component, output, signal, computed, OnInit, OnDestroy, inject } from '
 import { interval, Subscription } from 'rxjs';
 import { Input } from '@ui/input/input';
 import { Button } from '@ui/button/button';
+import { ButtonLine } from '@ui/button-line/button-line';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { OTP_EXPIRATION_KEY } from '../../constants/login.constant';
 
 @Component({
   selector: 'app-otp-form',
-  imports: [Input, Button],
+  imports: [Input, Button, ButtonLine],
   templateUrl: './otp-form.html',
   styleUrl: './otp-form.scss',
 })

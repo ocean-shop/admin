@@ -16,13 +16,7 @@
   <app-button label="Verify Code" icon="arrow_forward" type="submit"></app-button>
   } @else {
   <div class="flex justify-center text-label-md text-on-surface-variant">
-    <button
-      class="text-primary font-bold hover:bg-primary/10 px-md py-xs rounded transition-colors ripple"
-      type="button"
-      (click)="resendCode()"
-    >
-      Resend Code
-    </button>
+    <app-button-line label="Resend Code" type="button" (click)="resendCode()"></app-button-line>
   </div>
   <app-button
     label="Back to Login"
