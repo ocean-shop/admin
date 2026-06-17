@@ -14,6 +14,8 @@ export class Input {
   type = input<InputType>('text');
   placeholder = input<string>('');
   required = input<boolean>(false);
+  label = input<string>('');
+  icon = input<string>('');
 
   focusEvent = output<FocusEvent>();
   blurEvent = output<FocusEvent>();

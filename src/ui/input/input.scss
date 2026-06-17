@@ -5,5 +5,13 @@
 }
 
 .admin-input {
-  @apply w-full pl-[48px] pr-md py-[18px] bg-transparent border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder-transparent;
+  @apply w-full pl-md pr-md py-[18px] bg-transparent border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder-transparent;
+
+  &.has-icon {
+    @apply pl-[48px];
+  }
+}
+
+.input-icon-container {
+  @apply absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors z-10;
 }

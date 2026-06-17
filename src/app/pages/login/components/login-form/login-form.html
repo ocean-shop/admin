@@ -1,0 +1,11 @@
+<form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
+  <app-input
+    id="identity"
+    name="identity"
+    placeholder="Email or Phone Number"
+    label="Email or Phone Number"
+    icon="person"
+    [required]="true"
+  ></app-input>
+  <app-button label="Sign In" icon="arrow_forward" type="submit"></app-button>
+</form>

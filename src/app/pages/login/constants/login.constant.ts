@@ -5,3 +5,6 @@ export const LANGUAGE_OPTIONS: DropdownOption[] = [
   { label: 'Українська', value: 'uk' },
   { label: 'Русский', value: 'ru' },
 ];
+
+export const VIEW_STORAGE_KEY = 'login_current_view';
+export const OTP_EXPIRATION_KEY = 'otp_expiration_time';

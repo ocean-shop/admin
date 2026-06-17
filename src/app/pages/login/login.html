@@ -19,25 +19,11 @@
       <h2 class="subtitle">Welcome back</h2>
       <p class="description">Sign in to manage your inventory and orders.</p>
     </div>
-    <form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
-      <div class="m3-textfield group">
-        <div class="relative">
-          <div class="input-icon-container">
-            <span class="material-symbols-outlined">person</span>
-          </div>
-          <app-input
-            id="identity"
-            name="identity"
-            placeholder="Email or Phone Number"
-            [required]="true"
-            (focusEvent)="isFocused.set(true)"
-            (blurEvent)="isFocused.set(false)"
-          ></app-input>
-          <label class="font-body-md text-outline" for="identity">Email or Phone Number</label>
-        </div>
-      </div>
-      <app-button label="Sign In" icon="arrow_forward" type="submit"></app-button>
-    </form>
+    @if (currentView() === LoginView.Login) {
+    <app-login-form (submitEvent)="onSubmit()"></app-login-form>
+    } @else {
+    <app-otp-form (timeoutEvent)="onOtpTimeout()"></app-otp-form>
+    }
   </section>
   <div class="decorative-bar"></div>
 </main>

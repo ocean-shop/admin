@@ -129,12 +129,16 @@
 .m3-textfield label {
   position: absolute;
   top: 50%;
-  left: 3rem;
+  left: 1rem;
   transform: translateY(-50%);
   pointer-events: none;
   transition: all 150ms ease;
   background: var(--color-surface-container-lowest);
   padding: 0 0.25rem;
+}
+
+.m3-textfield.has-icon label {
+  left: 3rem;
 }
 
 .m3-textfield:focus-within label {

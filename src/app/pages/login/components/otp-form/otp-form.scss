@@ -1,0 +1,17 @@
+@reference "../../../../../styles.scss";
+
+.form-container {
+  @apply space-y-lg;
+}
+
+.resend-container {
+  @apply mt-xs text-center;
+}
+
+.resend-text {
+  @apply font-body-sm text-body-sm text-on-surface-variant;
+}
+
+.resend-timer {
+  @apply text-primary font-extrabold;
+}

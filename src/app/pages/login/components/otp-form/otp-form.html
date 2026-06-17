@@ -1,0 +1,16 @@
+<form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
+  <app-input
+    id="otp"
+    name="otp"
+    placeholder="Enter OTP Code"
+    label="Enter OTP Code"
+    icon="lock"
+    [required]="true"
+  ></app-input>
+  <div class="resend-container">
+    <p class="resend-text">
+      Resend code in <span class="resend-timer">{{ formattedTime() }}</span>
+    </p>
+  </div>
+  <app-button label="Verify Code" icon="arrow_forward" type="submit"></app-button>
+</form>

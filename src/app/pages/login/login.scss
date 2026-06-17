@@ -36,14 +36,6 @@
   @apply font-body-sm text-body-sm text-on-surface-variant;
 }
 
-.form-container {
-  @apply space-y-lg;
-}
-
-.input-icon-container {
-  @apply absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors z-10;
-}
-
 .decorative-bar {
   @apply fixed bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-primary-fixed to-tertiary-fixed opacity-30;
 }
