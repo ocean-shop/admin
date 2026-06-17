@@ -10,7 +10,7 @@
       [class.has-icon]="!!icon()"
       [id]="id()"
       [name]="name()"
-      [placeholder]="placeholder()"
+      [placeholder]="placeholder() || ' '"
       [required]="required()"
       [type]="type()"
       (focus)="focusEvent.emit($event)"
