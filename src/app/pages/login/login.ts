@@ -1,9 +1,10 @@
-import { Component, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, signal, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { Input } from '@ui/input/input';
 import { Button } from '@ui/button/button';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { LANGUAGE_OPTIONS } from './constants/login.constant';
+import { ToasterService } from '@ui/toaster/toaster.service';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,8 @@ import { LANGUAGE_OPTIONS } from './constants/login.constant';
   styleUrl: './login.scss',
 })
 export class Login {
+  private toasterService = inject(ToasterService);
+
   isFocused = signal(false);
 
   languageOptions = LANGUAGE_OPTIONS;
@@ -20,5 +23,9 @@ export class Login {
 
   onLanguageSelected(option: any) {
     this.selectedLanguage.set(option.detail || option);
+  }
+
+  onSubmit() {
+    this.toasterService.success('Login Attempt', 'Sign in process initiated successfully.');
   }
 }
