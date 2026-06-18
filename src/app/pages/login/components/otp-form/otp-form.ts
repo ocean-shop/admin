@@ -1,4 +1,13 @@
-import { Component, output, signal, computed, OnInit, OnDestroy, inject } from '@angular/core';
+import {
+  Component,
+  output,
+  signal,
+  computed,
+  OnInit,
+  OnDestroy,
+  inject,
+  input,
+} from '@angular/core';
 import { form, required, pattern } from '@angular/forms/signals';
 import { interval, Subscription } from 'rxjs';
 import { Input } from '@ui/input/input';
@@ -17,8 +26,9 @@ import { OtpData } from '../../models/login.model';
 export class OtpForm implements OnInit, OnDestroy {
   private localStorageService = inject(LocalStorageService);
 
-  submitEvent = output<void>();
+  submitEvent = output<string>();
   backToLoginEvent = output<void>();
+  isLoading = input<boolean>(false);
 
   timeLeft = signal(300);
 
@@ -55,9 +65,8 @@ export class OtpForm implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    if (this.isFormValid()) {
-      this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
-      this.submitEvent.emit();
+    if (this.isFormValid() && !this.isLoading()) {
+      this.submitEvent.emit(this.otpForm.otp().value()!);
     }
   }
 

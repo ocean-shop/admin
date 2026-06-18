@@ -20,9 +20,13 @@
       <p class="description">Sign in to manage your inventory and orders.</p>
     </div>
     @if (currentView() === LoginView.Login) {
-    <app-login-form (submitEvent)="onSubmit()"></app-login-form>
+    <app-login-form [isLoading]="isLoading()" (submitEvent)="onSubmit($event)"></app-login-form>
     } @else {
-    <app-otp-form (backToLoginEvent)="onBackToLogin()"></app-otp-form>
+    <app-otp-form
+      [isLoading]="isLoading()"
+      (submitEvent)="onOtpSubmit($event)"
+      (backToLoginEvent)="onBackToLogin()"
+    ></app-otp-form>
     }
   </section>
   <div class="decorative-bar"></div>

@@ -16,7 +16,7 @@
     label="Verify Code"
     icon="arrow_forward"
     type="submit"
-    [disabled]="!isFormValid()"
+    [disabled]="!isFormValid() || isLoading()"
   ></app-button>
   } @else {
   <div class="flex justify-center text-label-md text-on-surface-variant">

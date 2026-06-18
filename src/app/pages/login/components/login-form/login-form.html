@@ -10,6 +10,6 @@
     label="Sign In"
     icon="arrow_forward"
     type="submit"
-    [disabled]="!isFormValid()"
+    [disabled]="!isFormValid() || isLoading()"
   ></app-button>
 </form>

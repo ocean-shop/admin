@@ -1,4 +1,4 @@
-import { Component, output, signal, computed } from '@angular/core';
+import { Component, output, signal, computed, input } from '@angular/core';
 import { form, required, pattern } from '@angular/forms/signals';
 import { Input } from '@ui/input/input';
 import { Button } from '@ui/button/button';
@@ -12,7 +12,8 @@ import { IDENTITY_PATTERN } from '../../constants/login.constant';
   styleUrl: './login-form.scss',
 })
 export class LoginForm {
-  submitEvent = output<void>();
+  submitEvent = output<string>();
+  isLoading = input<boolean>(false);
 
   loginModel = signal<LoginData>({
     identity: '',
@@ -30,8 +31,8 @@ export class LoginForm {
   });
 
   onSubmit() {
-    if (this.isFormValid()) {
-      this.submitEvent.emit();
+    if (this.isFormValid() && !this.isLoading()) {
+      this.submitEvent.emit(this.loginForm.identity().value()!);
     }
   }
 }
