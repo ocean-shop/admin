@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
-import { Toast, ToastOptions } from './models/toaster.type';
-import { DEFAULT_TOAST_DURATION } from './constants/toaster.constant';
+import { Toast, ToastOptions } from '@ui/toaster/models/toaster.type';
+import { DEFAULT_TOAST_DURATION } from '@ui/toaster/constants/toaster.constant';
 import { timer, Subscription } from 'rxjs';
 
 @Injectable({

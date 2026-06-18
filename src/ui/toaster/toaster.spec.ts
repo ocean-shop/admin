@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { Toaster } from './toaster';
-import { ToasterService } from './toaster.service';
+import { ToasterService } from '../../app/core/services/toaster/toaster.service';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
 
 describe('Toaster', () => {

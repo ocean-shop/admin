@@ -5,8 +5,8 @@ import { LoginForm } from './components/login-form/login-form';
 import { OtpForm } from './components/otp-form/otp-form';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { LANGUAGE_OPTIONS, VIEW_STORAGE_KEY, OTP_EXPIRATION_KEY } from './constants/login.constant';
-import { ToasterService } from '@ui/toaster/toaster.service';
-import { LocalStorageService } from '../../core/services/local-storage.service';
+import { ToasterService } from '../../core/services/toaster/toaster.service';
+import { LocalStorageService } from '../../core/services/local-storage/local-storage.service';
 import { LoginView } from './models/login.enum';
 import { LoginService } from './services/login.service';
 

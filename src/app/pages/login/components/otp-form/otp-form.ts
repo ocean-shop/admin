@@ -13,7 +13,7 @@ import { interval, Subscription } from 'rxjs';
 import { Input } from '@ui/input/input';
 import { Button } from '@ui/button/button';
 import { ButtonLine } from '@ui/button-line/button-line';
-import { LocalStorageService } from '../../../../core/services/local-storage.service';
+import { LocalStorageService } from '../../../../core/services/local-storage/local-storage.service';
 import { OTP_EXPIRATION_KEY, OTP_PATTERN } from '../../constants/login.constant';
 import { OtpData } from '../../models/login.model';
 
