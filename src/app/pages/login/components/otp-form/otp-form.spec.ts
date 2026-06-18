@@ -66,13 +66,24 @@ describe('OtpForm', () => {
     expect(component.timeLeft()).toBe(150);
   });
 
-  it('should emit submitEvent and remove expiration on submit', () => {
+  it('should emit submitEvent and remove expiration on submit if valid', () => {
     const emitSpy = vi.spyOn(component.submitEvent, 'emit');
 
+    component.otpModel.set({ otp: '1234' });
     component.onSubmit();
 
     expect(mockLocalStorageService.removeItem).toHaveBeenCalledWith(OTP_EXPIRATION_KEY);
     expect(emitSpy).toHaveBeenCalled();
+  });
+
+  it('should not emit submitEvent on submit if invalid', () => {
+    const emitSpy = vi.spyOn(component.submitEvent, 'emit');
+
+    component.otpModel.set({ otp: '12' });
+    component.onSubmit();
+
+    expect(mockLocalStorageService.removeItem).not.toHaveBeenCalled();
+    expect(emitSpy).not.toHaveBeenCalled();
   });
 
   it('should emit backToLoginEvent and clear storage when timer reaches zero', () => {

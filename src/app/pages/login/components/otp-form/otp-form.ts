@@ -1,10 +1,12 @@
 import { Component, output, signal, computed, OnInit, OnDestroy, inject } from '@angular/core';
+import { form, required, pattern } from '@angular/forms/signals';
 import { interval, Subscription } from 'rxjs';
 import { Input } from '@ui/input/input';
 import { Button } from '@ui/button/button';
 import { ButtonLine } from '@ui/button-line/button-line';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
-import { OTP_EXPIRATION_KEY } from '../../constants/login.constant';
+import { OTP_EXPIRATION_KEY, OTP_PATTERN } from '../../constants/login.constant';
+import { OtpData } from '../../models/login.model';
 
 @Component({
   selector: 'app-otp-form',
@@ -20,6 +22,15 @@ export class OtpForm implements OnInit, OnDestroy {
 
   timeLeft = signal(300);
 
+  otpModel = signal<OtpData>({
+    otp: '',
+  });
+
+  otpForm = form(this.otpModel, (schemaPath) => {
+    required(schemaPath.otp, { message: 'OTP is required' });
+    pattern(schemaPath.otp, OTP_PATTERN, { message: 'Please enter a valid 4-digit OTP' });
+  });
+
   formattedTime = computed(() => {
     const time = Math.max(0, this.timeLeft());
     const minutes = Math.floor(time / 60)
@@ -27,6 +38,10 @@ export class OtpForm implements OnInit, OnDestroy {
       .padStart(2, '0');
     const seconds = (time % 60).toString().padStart(2, '0');
     return `${minutes}:${seconds}`;
+  });
+
+  isFormValid = computed(() => {
+    return this.otpForm.otp().valid();
   });
 
   private countdownSub: Subscription | undefined;
@@ -40,8 +55,18 @@ export class OtpForm implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
-    this.submitEvent.emit();
+    if (this.isFormValid()) {
+      this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
+      this.submitEvent.emit();
+    }
+  }
+
+  resendCode() {
+    this.startTimer();
+  }
+
+  onBackToLogin() {
+    this.backToLoginEvent.emit();
   }
 
   private startTimer() {
@@ -83,14 +108,6 @@ export class OtpForm implements OnInit, OnDestroy {
     this.timeLeft.set(0);
     this.clearTimer();
     this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
-  }
-
-  resendCode() {
-    this.startTimer();
-  }
-
-  onBackToLogin() {
-    this.backToLoginEvent.emit();
   }
 
   private clearTimer() {

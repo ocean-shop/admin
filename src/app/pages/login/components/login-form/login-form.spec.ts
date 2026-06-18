@@ -20,9 +20,17 @@ describe('LoginForm', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should emit submitEvent on submit', () => {
+  it('should emit submitEvent on submit if form is valid', () => {
     const emitSpy = vi.spyOn(component.submitEvent, 'emit');
+    component.loginModel.set({ identity: 'test@example.com' });
     component.onSubmit();
     expect(emitSpy).toHaveBeenCalled();
+  });
+
+  it('should not emit submitEvent on submit if form is invalid', () => {
+    const emitSpy = vi.spyOn(component.submitEvent, 'emit');
+    component.loginModel.set({ identity: 'invalid-email' });
+    component.onSubmit();
+    expect(emitSpy).not.toHaveBeenCalled();
   });
 });

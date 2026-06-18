@@ -12,4 +12,5 @@ export class Button {
   label = input.required<string>();
   icon = input<string>();
   type = input<ButtonType>('button');
+  disabled = input<boolean>(false);
 }

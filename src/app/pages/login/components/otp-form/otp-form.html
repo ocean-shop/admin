@@ -1,11 +1,10 @@
 <form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
   <app-input
     id="otp"
-    name="otp"
     placeholder="Enter OTP Code"
     label="Enter OTP Code"
     icon="lock"
-    [required]="true"
+    [control]="otpForm.otp"
   ></app-input>
   @if (timeLeft() > 0) {
   <div class="resend-container">
@@ -13,7 +12,12 @@
       Resend code in <span class="resend-timer">{{ formattedTime() }}</span>
     </p>
   </div>
-  <app-button label="Verify Code" icon="arrow_forward" type="submit"></app-button>
+  <app-button
+    label="Verify Code"
+    icon="arrow_forward"
+    type="submit"
+    [disabled]="!isFormValid()"
+  ></app-button>
   } @else {
   <div class="flex justify-center text-label-md text-on-surface-variant">
     <app-button-line label="Resend Code" type="button" (click)="resendCode()"></app-button-line>

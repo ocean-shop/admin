@@ -10,14 +10,22 @@
   &.has-icon {
     @apply pl-[48px];
   }
+
+  &.has-error {
+    @apply border-error focus:border-error focus:ring-error;
+  }
 }
 
 .input-icon-container {
   @apply absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors z-10;
 }
 
+.m3-textfield.has-error .input-icon-container {
+  @apply text-error group-focus-within:text-error;
+}
+
 .m3-textfield label {
-  @apply absolute top-1/2 left-4 -translate-y-1/2 pointer-events-none transition-all duration-150 ease-in bg-surface-container-lowest px-1 z-10;
+  @apply absolute top-1/2 left-4 -translate-y-1/2 pointer-events-none transition-all duration-150 ease-in bg-surface-container-lowest px-1 z-10 text-outline;
 }
 
 .m3-textfield.has-icon label {
@@ -31,4 +39,9 @@
 
 .m3-textfield:focus-within label {
   @apply text-primary;
+}
+
+.m3-textfield.has-error label,
+.m3-textfield.has-error:focus-within label {
+  @apply text-error;
 }

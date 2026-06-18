@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { signal } from '@angular/core';
+import { form } from '@angular/forms/signals';
 import { Input } from './input';
 
 describe('Input', () => {
@@ -13,8 +15,16 @@ describe('Input', () => {
 
     fixture = TestBed.createComponent(Input);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('id', 'test-id');
-    fixture.componentRef.setInput('name', 'test-name');
+
+    // We need an actual signal form field for testing since [formField] requires the internal API
+    TestBed.runInInjectionContext(() => {
+      const mockModel = signal({ testField: '' });
+      const mockForm = form(mockModel);
+
+      fixture.componentRef.setInput('id', 'test-id');
+      fixture.componentRef.setInput('control', mockForm.testField);
+    });
+
     await fixture.whenStable();
     fixture.detectChanges();
   });

@@ -17,6 +17,10 @@ This skill encodes the Angular conventions used in this Nx workspace. The stack 
 5. **Control Flow.** Use `@if`, `@for` (always with `track`), `@switch`, `@let`, `@defer`. Never `*ngIf`, `*ngFor`.
 6. **DI.** Use `inject()` over constructor DI.
 7. **Nx.** Always use `nx` commands to generate code (e.g. `nx g @nx/angular:component name`).
+8. **Forms.** Always use Angular Signal Forms (`@angular/forms/signals`) with the `[formField]` directive instead of traditional `ReactiveFormsModule` (`FormGroup`, `FormControl`) or template-driven forms.
+9. **Styling.** Use Tailwind CSS exclusively for styling. Write all custom styles in SCSS files using the `@apply` directive rather than writing standard CSS/SCSS properties.
+10. **Code Structure.** Keep methods small and focused. Split large methods into smaller, single-responsibility functions to improve readability and testability. Extract complex logic into helper functions or Angular services to keep components lean.
+11. **File Organization.** Keep interfaces, types, and enums in separate dedicated files within a `models/` folder. Keep constants in separate dedicated files within a `constants/` folder.
 
 ## Example Component
 
