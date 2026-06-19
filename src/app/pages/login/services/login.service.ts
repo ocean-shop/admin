@@ -12,12 +12,16 @@ export class LoginService {
   requestOtp(identity: string): Observable<any> {
     const isEmail = identity.includes('@');
     const payload = isEmail ? { email: identity } : { phone: identity };
-    return this.http.post(`${this.API_URL}/user/auth/request-otp`, payload);
+    return this.http.post(`${this.API_URL}/user/auth/admin/request-otp`, payload, {
+      withCredentials: true,
+    });
   }
 
   verifyOtp(identity: string, code: string): Observable<any> {
     const isEmail = identity.includes('@');
     const payload = isEmail ? { email: identity, code } : { phone: identity, code };
-    return this.http.post(`${this.API_URL}/user/auth/verify-otp`, payload);
+    return this.http.post(`${this.API_URL}/user/auth/verify-otp`, payload, {
+      withCredentials: true,
+    });
   }
 }

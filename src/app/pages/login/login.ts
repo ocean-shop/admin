@@ -4,11 +4,17 @@ import { Dropdown } from '@ui/dropdown/dropdown';
 import { LoginForm } from './components/login-form/login-form';
 import { OtpForm } from './components/otp-form/otp-form';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
-import { LANGUAGE_OPTIONS, VIEW_STORAGE_KEY, OTP_EXPIRATION_KEY } from './constants/login.constant';
+import {
+  LANGUAGE_OPTIONS,
+  VIEW_STORAGE_KEY,
+  OTP_EXPIRATION_KEY,
+  IDENTITY_STORAGE_KEY,
+} from './constants/login.constant';
 import { ToasterService } from '../../core/services/toaster/toaster.service';
 import { LocalStorageService } from '../../core/services/local-storage/local-storage.service';
 import { LoginView } from './models/login.enum';
 import { LoginService } from './services/login.service';
+import { AuthService } from '../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +26,7 @@ export class Login implements OnInit {
   private toasterService = inject(ToasterService);
   private localStorageService = inject(LocalStorageService);
   private loginService = inject(LoginService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   languageOptions = LANGUAGE_OPTIONS;
@@ -40,6 +47,10 @@ export class Login implements OnInit {
     if (savedView && Object.values(LoginView).includes(savedView)) {
       this.currentView.set(savedView);
     }
+    const savedIdentity = this.localStorageService.getItem<string>(IDENTITY_STORAGE_KEY);
+    if (savedIdentity) {
+      this.identity.set(savedIdentity);
+    }
   }
 
   onLanguageSelected(option: any) {
@@ -48,6 +59,7 @@ export class Login implements OnInit {
 
   onSubmit(identity: string) {
     this.identity.set(identity);
+    this.localStorageService.setItem(IDENTITY_STORAGE_KEY, identity);
     this.isLoading.set(true);
     this.loginService.requestOtp(identity).subscribe({
       next: () => {
@@ -65,11 +77,15 @@ export class Login implements OnInit {
   onOtpSubmit(code: string) {
     this.isLoading.set(true);
     this.loginService.verifyOtp(this.identity(), code).subscribe({
-      next: () => {
+      next: (response: any) => {
         this.isLoading.set(false);
+        if (response && response.accessToken) {
+          this.authService.handleAuthSuccess(response.accessToken);
+        }
         this.toasterService.success('Success', 'OTP verified successfully.');
         this.localStorageService.removeItem(VIEW_STORAGE_KEY);
         this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
+        this.localStorageService.removeItem(IDENTITY_STORAGE_KEY);
         this.router.navigate(['/admin']);
       },
       error: () => {
@@ -79,6 +95,7 @@ export class Login implements OnInit {
   }
 
   onBackToLogin() {
+    this.localStorageService.removeItem(IDENTITY_STORAGE_KEY);
     this.setView(LoginView.Login);
   }
 
