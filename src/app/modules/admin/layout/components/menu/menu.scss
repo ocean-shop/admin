@@ -1,15 +1,17 @@
 @reference "../../../../../../styles.scss";
 
 .admin-menu {
-  @apply fixed left-0 top-0 h-full w-[280px] z-40 bg-inverse-surface dark:bg-surface-container-highest flex flex-col pt-20 pb-6 shadow-md transition-transform duration-300 ease-in-out;
+  @apply fixed z-40 bg-inverse-surface dark:bg-surface-container-highest flex flex-col shadow-md transition-transform duration-300 ease-in-out overflow-y-auto;
+  @apply top-16 inset-x-0 w-full max-h-[calc(100dvh-4rem)] pt-4 pb-6;
+  @apply lg:top-0 lg:left-0 lg:inset-x-auto lg:w-[280px] lg:h-full lg:max-h-none lg:pt-20 lg:overflow-visible;
 }
 
 .menu-open {
-  @apply translate-x-0;
+  @apply translate-y-0 lg:translate-x-0;
 }
 
 .menu-closed {
-  @apply -translate-x-[280px];
+  @apply -translate-y-full lg:translate-y-0 lg:-translate-x-[280px];
 }
 
 .store-manager-container {

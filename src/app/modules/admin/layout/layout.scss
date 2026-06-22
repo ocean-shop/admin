@@ -5,7 +5,7 @@
 }
 
 .layout-main-open {
-  @apply pl-[280px];
+  @apply pl-4 md:pl-8 lg:pl-[280px];
 }
 
 .layout-main-closed {

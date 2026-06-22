@@ -4,7 +4,7 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class LayoutService {
-  readonly isSidebarOpen = signal<boolean>(false);
+  readonly isSidebarOpen = signal<boolean>(true);
 
   toggleSidebar(): void {
     this.isSidebarOpen.update((v) => !v);

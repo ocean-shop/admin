@@ -1,0 +1,121 @@
+@reference "../../../../../styles.scss";
+
+.home-container {
+  @apply max-w-7xl mx-auto;
+}
+
+.home-header {
+  @apply mb-10;
+}
+
+.home-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight mb-2;
+}
+
+.home-subtitle {
+  @apply text-on-surface-variant text-lg;
+}
+
+.cards-grid {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-8;
+}
+
+.store-card {
+  @apply bg-surface-container-lowest rounded-xl p-8 border border-outline-variant hover:border-primary transition-all duration-300 shadow-[0_4px_20px_-2px_rgba(13,148,136,0.05)] relative overflow-hidden;
+}
+
+.card-bg-primary {
+  @apply absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110;
+}
+
+.card-bg-secondary {
+  @apply absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110;
+}
+
+.card-header {
+  @apply flex justify-between items-start mb-6;
+}
+
+.card-title-container {
+  @apply flex flex-col gap-1;
+}
+
+.card-title {
+  @apply text-2xl font-bold text-primary;
+}
+
+.card-location {
+  @apply text-on-surface-variant text-sm flex items-center gap-1;
+}
+
+.card-status {
+  @apply px-3 py-1 bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest rounded-full border border-primary/20;
+}
+
+.metrics-grid {
+  @apply grid grid-cols-2 gap-6 mt-8;
+}
+
+.metric-box {
+  @apply p-4 bg-surface-container-low rounded-lg;
+}
+
+.metric-label {
+  @apply text-label-md text-secondary uppercase tracking-widest mb-1;
+}
+
+.metric-value {
+  @apply text-3xl font-bold text-on-surface;
+}
+
+.metric-trend {
+  @apply text-primary text-sm font-medium flex items-center gap-1 mt-1;
+}
+
+.metric-subtext {
+  @apply text-on-surface-variant text-sm font-medium mt-1 block;
+}
+
+.card-actions {
+  @apply mt-8 flex gap-3;
+}
+
+.btn-primary {
+  @apply flex-1 py-3 px-4 bg-primary text-on-primary rounded-lg font-bold hover:bg-primary-container transition-colors active:scale-95 duration-150;
+}
+
+.btn-secondary {
+  @apply p-3 border border-outline-variant text-primary rounded-lg hover:bg-secondary-container transition-colors;
+}
+
+.visual-section {
+  @apply mt-12;
+}
+
+.visual-container {
+  @apply relative h-64 w-full rounded-2xl overflow-hidden shadow-lg;
+}
+
+.visual-image {
+  @apply w-full h-full object-cover;
+}
+
+.visual-overlay {
+  @apply absolute inset-0 bg-gradient-to-r from-primary/60 to-transparent flex items-center px-12;
+}
+
+.visual-content {
+  @apply text-white;
+}
+
+.visual-title {
+  @apply text-2xl font-bold mb-2;
+}
+
+.visual-desc {
+  @apply max-w-md opacity-90;
+}
+
+.btn-light {
+  @apply mt-4 px-6 py-2 bg-white text-primary font-bold rounded-lg hover:bg-surface-container-low transition-colors;
+}

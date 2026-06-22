@@ -8,10 +8,15 @@
     <p class="store-manager-subtitle">Ocean Breeze Retail</p>
   </div>
   <nav class="nav-container">
-    @for (item of menuItems; track item.label) {
+    @if (isAdminHome()) { @for (item of menuFooterItems; track item.label) {
+    <button [class]="item.buttonClass">
+      <span class="material-symbols-outlined">{{ item.icon }}</span>
+      <span class="nav-text-small">{{ item.label }}</span>
+    </button>
+    } } @else { @for (item of menuItems; track item.label) {
     <a
       [routerLink]="item.route"
-      [routerLinkActiveOptions]="{exact: item.route === '/admin'}"
+      [routerLinkActiveOptions]="{exact: item.route === adminHomeRoute}"
       routerLinkActive="nav-item-active"
       #rla="routerLinkActive"
       [class.nav-item-active]="rla.isActive"
@@ -22,16 +27,16 @@
         {{ item.label }}
       </span>
     </a>
-    }
+    } }
   </nav>
+  @if (!isAdminHome()) {
   <div class="menu-footer">
-    <button class="footer-btn">
-      <span class="material-symbols-outlined">support_agent</span>
-      <span class="nav-text-small">Support Center</span>
+    @for (item of menuFooterItems; track item.label) {
+    <button [class]="item.buttonClass">
+      <span class="material-symbols-outlined">{{ item.icon }}</span>
+      <span class="nav-text-small">{{ item.label }}</span>
     </button>
-    <button class="footer-btn-danger">
-      <span class="material-symbols-outlined">logout</span>
-      <span class="nav-text-small">Logout</span>
-    </button>
+    }
   </div>
+  }
 </aside>

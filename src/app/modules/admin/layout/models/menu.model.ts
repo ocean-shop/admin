@@ -3,3 +3,10 @@ export interface MenuItem {
   label: string;
   route: string;
 }
+
+export interface MenuFooterItem {
+  icon: string;
+  label: string;
+  route?: string;
+  buttonClass: 'footer-btn' | 'footer-btn-danger';
+}
