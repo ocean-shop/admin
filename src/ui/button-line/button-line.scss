@@ -1,0 +1,9 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.button-line {
+  @apply text-primary font-bold hover:bg-primary/10 px-md py-xs rounded transition-colors;
+}

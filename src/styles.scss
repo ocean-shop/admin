@@ -126,24 +126,6 @@
   overflow: hidden;
 }
 
-.m3-textfield label {
-  position: absolute;
-  top: 50%;
-  left: 3rem;
-  transform: translateY(-50%);
-  pointer-events: none;
-  transition: all 150ms ease;
-  background: var(--color-surface-container-lowest);
-  padding: 0 0.25rem;
-}
-
-.m3-textfield:focus-within label {
-  top: 0;
-  left: 0.75rem;
-  font-size: 0.75rem;
-  color: var(--color-primary);
-}
-
 html,
 body {
   height: 100%;
@@ -151,4 +133,8 @@ body {
 body {
   margin: 0;
   font-family: var(--font-body-md), Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.material-symbols-outlined {
+  @apply overflow-hidden max-w-[24px] max-h-[24px] whitespace-nowrap inline-block align-middle;
 }

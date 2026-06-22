@@ -1,0 +1,20 @@
+@reference "../../styles.scss";
+
+.loader-container {
+  @apply fixed top-0 left-0 z-50 w-full h-[6px];
+}
+
+.loader-bar {
+  @apply w-full h-full bg-gradient-to-r from-primary via-primary-fixed to-primary;
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

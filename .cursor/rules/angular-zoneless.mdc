@@ -1,0 +1,19 @@
+---
+description: Angular zoneless and modern practices
+globs: client/**/*.ts, client/**/*.html, client/**/*.scss, ui/**/*.ts, ui/**/*.html, ui/**/*.scss
+alwaysApply: true
+---
+
+# Angular Zoneless Rules
+
+- **Zoneless**: This project uses zoneless Angular. Do NOT rely on `zone.js`.
+- **Signals**: Use Angular Signals (`signal`, `computed`, `effect`) for state management and reactivity instead of RxJS `BehaviorSubject` where possible.
+- **Standalone Components**: Always use standalone components, directives, and pipes. Do not use `NgModule`.
+- **Control Flow**: Use the new built-in control flow (`@if`, `@for`, `@switch`) in templates instead of `*ngIf`, `*ngFor`, etc.
+- **Inputs/Outputs**: Use signal-based inputs (`input()`, `input.required()`) and outputs (`output()`) instead of `@Input()` and `@Output()` decorators.
+- **Forms**: Always use Angular Signal Forms (`@angular/forms/signals`) with the `[formField]` directive instead of traditional `ReactiveFormsModule` (`FormGroup`, `FormControl`) or template-driven forms.
+- **Styling**: Use Tailwind CSS exclusively for styling. Write all custom styles in SCSS files using the `@apply` directive rather than writing standard CSS/SCSS properties.
+- **Code Structure**: Keep methods small and focused. Split large methods into smaller, single-responsibility functions to improve readability and testability. Extract complex logic into helper functions or Angular services to keep components lean.
+- **File Organization**: 
+  - Keep interfaces, types, and enums in separate dedicated files within a `models/` folder.
+  - Keep constants in separate dedicated files within a `constants/` folder.

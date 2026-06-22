@@ -5,5 +5,43 @@
 }
 
 .admin-input {
-  @apply w-full pl-[48px] pr-md py-[18px] bg-transparent border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder-transparent;
+  @apply w-full pl-md pr-md py-[18px] bg-transparent border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder-transparent;
+
+  &.has-icon {
+    @apply pl-[48px];
+  }
+
+  &.has-error {
+    @apply border-error focus:border-error focus:ring-error;
+  }
+}
+
+.input-icon-container {
+  @apply absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors z-10;
+}
+
+.m3-textfield.has-error .input-icon-container {
+  @apply text-error group-focus-within:text-error;
+}
+
+.m3-textfield label {
+  @apply absolute top-1/2 left-4 -translate-y-1/2 pointer-events-none transition-all duration-150 ease-in bg-surface-container-lowest px-1 z-10 text-outline;
+}
+
+.m3-textfield.has-icon label {
+  @apply left-12;
+}
+
+.m3-textfield:focus-within label,
+.admin-input:not(:placeholder-shown) ~ label {
+  @apply top-0 left-3 text-xs -translate-y-1/2;
+}
+
+.m3-textfield:focus-within label {
+  @apply text-primary;
+}
+
+.m3-textfield.has-error label,
+.m3-textfield.has-error:focus-within label {
+  @apply text-error;
 }

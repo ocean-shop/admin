@@ -1,12 +1,15 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Toaster } from '@ui/toaster/toaster';
+import { Loader } from '@ui/loader/loader';
+import { LoaderService } from './core/services/loader/loader.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, Toaster, Loader],
   templateUrl: './app.html',
-  styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('admin');
+  private loaderService = inject(LoaderService);
+  isLoading = this.loaderService.isLoading;
 }

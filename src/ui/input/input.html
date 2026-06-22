@@ -1,10 +1,26 @@
-<input
-  class="admin-input"
-  [id]="id()"
-  [name]="name()"
-  [placeholder]="placeholder()"
-  [required]="required()"
-  [type]="type()"
-  (focus)="focusEvent.emit($event)"
-  (blur)="blurEvent.emit($event)"
-/>
+<div class="m3-textfield group" [class.has-icon]="!!icon()" [class.has-error]="!!errorMessage()">
+  <div class="relative">
+    @if (icon()) {
+    <div class="input-icon-container">
+      <span class="material-symbols-outlined">{{ icon() }}</span>
+    </div>
+    }
+    <input
+      class="admin-input"
+      [class.has-icon]="!!icon()"
+      [class.has-error]="!!errorMessage()"
+      [id]="id()"
+      [placeholder]="placeholder() || ' '"
+      [type]="type()"
+      [formField]="control()"
+      (focus)="focusEvent.emit($event)"
+      (blur)="blurEvent.emit($event)"
+    />
+    @if (label()) {
+    <label class="font-body-md" [for]="id()">{{ label() }}</label>
+    }
+  </div>
+  @if (errorMessage()) {
+  <div class="text-error text-xs mt-1 pl-4">{{ errorMessage() }}</div>
+  }
+</div>

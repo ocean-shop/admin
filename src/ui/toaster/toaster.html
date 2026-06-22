@@ -1,0 +1,31 @@
+<div class="toaster-container">
+  @for (toast of toasts(); track toast.id) {
+  <div class="toast toast-{{ toast.type }}">
+    <div class="toast-content-wrapper">
+      <div class="toast-icon-wrapper">
+        <span
+          class="material-symbols-outlined toast-icon"
+          [style.font-variation-settings]="getIconFill(toast.type)"
+        >
+          {{ getIcon(toast.type) }}
+        </span>
+      </div>
+      <div class="toast-text-wrapper">
+        <span class="toast-title">{{ toast.title }}</span>
+        <span class="toast-message">{{ toast.message }}</span>
+      </div>
+    </div>
+
+    <div class="toast-actions">
+      @if (toast.actionText) {
+      <button class="toast-action-btn" (click)="handleAction(toast.id, toast.onAction)">
+        {{ toast.actionText }}
+      </button>
+      }
+      <button class="toast-close-btn" (click)="close(toast.id)">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+  </div>
+  }
+</div>

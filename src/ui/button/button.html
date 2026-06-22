@@ -1,4 +1,4 @@
-<button class="admin-btn ripple m3-elevation-2" [type]="type()">
+<button class="admin-btn ripple m3-elevation-2" [type]="type()" [disabled]="disabled()">
   {{ label() }} @if (icon()) {
   <span class="admin-btn-icon material-symbols-outlined"> {{ icon() }} </span>
   }
