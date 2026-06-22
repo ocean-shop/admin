@@ -1,0 +1,37 @@
+<aside
+  class="admin-menu"
+  [class.menu-open]="layoutService.isSidebarOpen()"
+  [class.menu-closed]="!layoutService.isSidebarOpen()"
+>
+  <div class="store-manager-container">
+    <h2 class="store-manager-title">Store Manager</h2>
+    <p class="store-manager-subtitle">Ocean Breeze Retail</p>
+  </div>
+  <nav class="nav-container">
+    @for (item of menuItems; track item.label) {
+    <a
+      [routerLink]="item.route"
+      [routerLinkActiveOptions]="{exact: item.route === '/admin'}"
+      routerLinkActive="nav-item-active"
+      #rla="routerLinkActive"
+      [class.nav-item-active]="rla.isActive"
+      [class.nav-item]="!rla.isActive"
+    >
+      <span class="material-symbols-outlined">{{ item.icon }}</span>
+      <span [class.nav-text]="rla.isActive" [class.nav-text-small]="!rla.isActive">
+        {{ item.label }}
+      </span>
+    </a>
+    }
+  </nav>
+  <div class="menu-footer">
+    <button class="footer-btn">
+      <span class="material-symbols-outlined">support_agent</span>
+      <span class="nav-text-small">Support Center</span>
+    </button>
+    <button class="footer-btn-danger">
+      <span class="material-symbols-outlined">logout</span>
+      <span class="nav-text-small">Logout</span>
+    </button>
+  </div>
+</aside>

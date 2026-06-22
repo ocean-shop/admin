@@ -1,0 +1,57 @@
+@reference "../../../../../../styles.scss";
+
+.admin-menu {
+  @apply fixed left-0 top-0 h-full w-[280px] z-40 bg-inverse-surface dark:bg-surface-container-highest flex flex-col pt-20 pb-6 shadow-md transition-transform duration-300 ease-in-out;
+}
+
+.menu-open {
+  @apply translate-x-0;
+}
+
+.menu-closed {
+  @apply -translate-x-[280px];
+}
+
+.store-manager-container {
+  @apply px-6 mb-8;
+}
+
+.store-manager-title {
+  @apply text-primary-fixed font-bold text-lg;
+}
+
+.store-manager-subtitle {
+  @apply text-secondary-fixed-dim text-xs uppercase tracking-wider font-medium mt-1;
+}
+
+.nav-container {
+  @apply flex-1 space-y-1;
+}
+
+.nav-item-active {
+  @apply flex items-center gap-3 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 mx-4 transition-all;
+}
+
+.nav-item {
+  @apply flex items-center gap-3 text-secondary-fixed-dim hover:text-secondary-fixed hover:bg-primary/10 px-4 py-3 mx-4 rounded-lg transition-all;
+}
+
+.nav-text {
+  @apply font-medium;
+}
+
+.nav-text-small {
+  @apply font-medium text-sm uppercase tracking-wider;
+}
+
+.menu-footer {
+  @apply mt-auto px-4 pt-4 border-t border-outline/20;
+}
+
+.footer-btn {
+  @apply w-full flex items-center gap-3 text-secondary-fixed-dim hover:text-secondary-fixed hover:bg-primary/10 px-4 py-3 rounded-lg transition-all;
+}
+
+.footer-btn-danger {
+  @apply w-full flex items-center gap-3 text-error-container hover:bg-error/10 px-4 py-3 rounded-lg transition-all mt-1;
+}

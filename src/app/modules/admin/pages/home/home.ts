@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-admin-home',
-  imports: [],
+  selector: 'app-home',
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

@@ -133,8 +133,21 @@ body {
 body {
   margin: 0;
   font-family: var(--font-body-md), Roboto, 'Helvetica Neue', sans-serif;
+  @apply bg-background text-on-background min-h-screen;
 }
 
-.material-symbols-outlined {
+@utility material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  font-size: 24px !important;
   @apply overflow-hidden max-w-[24px] max-h-[24px] whitespace-nowrap inline-block align-middle;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
 }

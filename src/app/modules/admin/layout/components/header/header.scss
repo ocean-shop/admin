@@ -1,0 +1,33 @@
+@reference "../../../../../../styles.scss";
+
+.admin-header {
+  @apply fixed top-0 w-full z-50 bg-surface-bright dark:bg-surface-dim border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center px-4 md:px-8 h-16;
+}
+
+.header-left {
+  @apply flex items-center gap-4;
+}
+
+.header-right {
+  @apply flex items-center gap-2;
+}
+
+.icon-button {
+  @apply p-2 hover:bg-secondary-container transition-colors rounded-full active:scale-95 duration-150 relative;
+}
+
+.icon-primary {
+  @apply material-symbols-outlined text-primary dark:text-primary-fixed;
+}
+
+.icon-default {
+  @apply material-symbols-outlined text-on-surface-variant;
+}
+
+.header-title {
+  @apply text-2xl font-bold text-primary dark:text-primary-fixed tracking-tight;
+}
+
+.notification-dot {
+  @apply absolute top-2 right-2 w-2 h-2 bg-error rounded-full;
+}

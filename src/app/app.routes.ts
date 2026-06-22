@@ -13,6 +13,12 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [authGuard],
-    loadComponent: () => import('./modules/admin/pages/home/home').then((m) => m.Home),
+    loadComponent: () => import('./modules/admin/layout/layout').then((m) => m.Layout),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./modules/admin/pages/home/home').then((m) => m.Home),
+      },
+    ],
   },
 ];
