@@ -110,13 +110,4 @@ describe('OtpForm', () => {
     component.timeLeft.set(45);
     expect(component.formattedTime()).toBe('00:45');
   });
-
-  it('should clear timer on destroy', () => {
-    component.ngOnInit();
-
-    component.ngOnDestroy();
-
-    // We switched to RxJS interval so clearInterval is no longer used
-    expect(component['countdownSub']).toBeUndefined();
-  });
 });

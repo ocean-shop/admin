@@ -4,10 +4,11 @@ import {
   signal,
   computed,
   OnInit,
-  OnDestroy,
   inject,
   input,
+  DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { form, required, pattern } from '@angular/forms/signals';
 import { interval, Subscription } from 'rxjs';
 import { Input } from '@ui/input/input';
@@ -23,8 +24,9 @@ import { OtpData } from '../../models/login.model';
   templateUrl: './otp-form.html',
   styleUrl: './otp-form.scss',
 })
-export class OtpForm implements OnInit, OnDestroy {
+export class OtpForm implements OnInit {
   private localStorageService = inject(LocalStorageService);
+  private destroyRef = inject(DestroyRef);
 
   submitEvent = output<string>();
   backToLoginEvent = output<void>();
@@ -58,10 +60,6 @@ export class OtpForm implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.startTimer();
-  }
-
-  ngOnDestroy() {
-    this.clearTimer();
   }
 
   onSubmit() {
@@ -103,14 +101,16 @@ export class OtpForm implements OnInit, OnDestroy {
   }
 
   private startCountdown(expirationTime: number) {
-    this.countdownSub = interval(1000).subscribe(() => {
-      const currentLeft = Math.floor((expirationTime - Date.now()) / 1000);
-      if (currentLeft > 0) {
-        this.timeLeft.set(currentLeft);
-      } else {
-        this.handleTimeout();
-      }
-    });
+    this.countdownSub = interval(1000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        const currentLeft = Math.floor((expirationTime - Date.now()) / 1000);
+        if (currentLeft > 0) {
+          this.timeLeft.set(currentLeft);
+        } else {
+          this.handleTimeout();
+        }
+      });
   }
 
   private handleTimeout() {

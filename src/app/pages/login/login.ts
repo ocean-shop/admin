@@ -1,4 +1,5 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { LoginForm } from './components/login-form/login-form';
@@ -28,6 +29,7 @@ export class Login implements OnInit {
   private loginService = inject(LoginService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   languageOptions = LANGUAGE_OPTIONS;
   LoginView = LoginView;
@@ -61,37 +63,47 @@ export class Login implements OnInit {
     this.identity.set(identity);
     this.localStorageService.setItem(IDENTITY_STORAGE_KEY, identity);
     this.isLoading.set(true);
-    this.loginService.requestOtp(identity).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.toasterService.success('OTP Sent', 'Please check your email or phone for the OTP.');
-        this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
-        this.setView(LoginView.Otp);
-      },
-      error: () => {
-        this.isLoading.set(false);
-      },
-    });
+    this.loginService
+      .requestOtp(identity)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.handleOtpRequestSuccess(),
+        error: () => {
+          this.isLoading.set(false);
+        },
+      });
   }
 
   onOtpSubmit(code: string) {
     this.isLoading.set(true);
-    this.loginService.verifyOtp(this.identity(), code).subscribe({
-      next: (response: any) => {
-        this.isLoading.set(false);
-        if (response && response.accessToken) {
-          this.authService.handleAuthSuccess(response.accessToken);
-        }
-        this.toasterService.success('Success', 'OTP verified successfully.');
-        this.localStorageService.removeItem(VIEW_STORAGE_KEY);
-        this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
-        this.localStorageService.removeItem(IDENTITY_STORAGE_KEY);
-        this.router.navigate(['/admin']);
-      },
-      error: () => {
-        this.isLoading.set(false);
-      },
-    });
+    this.loginService
+      .verifyOtp(this.identity(), code)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: any) => this.handleOtpVerificationSuccess(response),
+        error: () => {
+          this.isLoading.set(false);
+        },
+      });
+  }
+
+  private handleOtpRequestSuccess(): void {
+    this.isLoading.set(false);
+    this.toasterService.success('OTP Sent', 'Please check your email or phone for the OTP.');
+    this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
+    this.setView(LoginView.Otp);
+  }
+
+  private handleOtpVerificationSuccess(response: any): void {
+    this.isLoading.set(false);
+    if (response && response.accessToken) {
+      this.authService.handleAuthSuccess(response.accessToken);
+    }
+    this.toasterService.success('Success', 'OTP verified successfully.');
+    this.localStorageService.removeItem(VIEW_STORAGE_KEY);
+    this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
+    this.localStorageService.removeItem(IDENTITY_STORAGE_KEY);
+    this.router.navigate(['/admin']);
   }
 
   onBackToLogin() {

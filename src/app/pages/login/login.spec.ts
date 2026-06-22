@@ -6,6 +6,7 @@ import { Login } from './login';
 import { LocalStorageService } from '../../core/services/local-storage/local-storage.service';
 import { ToasterService } from '../../core/services/toaster/toaster.service';
 import { LoginService } from './services/login.service';
+import { AuthService } from '../../core/services/auth/auth.service';
 import { LoginView } from './models/login.enum';
 import { VIEW_STORAGE_KEY, OTP_EXPIRATION_KEY } from './constants/login.constant';
 
@@ -15,6 +16,7 @@ describe('Login', () => {
   let mockLocalStorageService: any;
   let mockToasterService: any;
   let mockLoginService: any;
+  let mockAuthService: any;
   let mockRouter: any;
 
   beforeEach(async () => {
@@ -33,6 +35,10 @@ describe('Login', () => {
       verifyOtp: vi.fn().mockReturnValue(of({})),
     };
 
+    mockAuthService = {
+      handleAuthSuccess: vi.fn(),
+    };
+
     mockRouter = {
       navigate: vi.fn(),
     };
@@ -45,6 +51,7 @@ describe('Login', () => {
         { provide: LocalStorageService, useValue: mockLocalStorageService },
         { provide: ToasterService, useValue: mockToasterService },
         { provide: LoginService, useValue: mockLoginService },
+        { provide: AuthService, useValue: mockAuthService },
       ],
     }).compileComponents();
 
@@ -82,9 +89,14 @@ describe('Login', () => {
   });
 
   it('should handle otp submit', () => {
+    const mockResponse = { accessToken: 'fake-token' };
+    mockLoginService.verifyOtp.mockReturnValue(of(mockResponse));
+
     component.identity.set('test@example.com');
     component.onOtpSubmit('1234');
+
     expect(mockLoginService.verifyOtp).toHaveBeenCalledWith('test@example.com', '1234');
+    expect(mockAuthService.handleAuthSuccess).toHaveBeenCalledWith('fake-token');
     expect(mockToasterService.success).toHaveBeenCalledWith(
       'Success',
       'OTP verified successfully.',

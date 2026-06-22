@@ -13,20 +13,18 @@ import { catchError, of } from 'rxjs';
 
 import { routes } from './app.routes';
 
-export function initializeApp(authService: AuthService) {
-  return () => {
-    if (!authService.hasSessionHint()) {
-      return of(null);
-    }
+export const initializeApp = (authService: AuthService) => () => {
+  if (!authService.hasSessionHint()) {
+    return of(null);
+  }
 
-    return authService.refreshToken().pipe(
-      catchError(() => {
-        authService.clearSession();
-        return of(null);
-      }),
-    );
-  };
-}
+  return authService.refreshToken().pipe(
+    catchError(() => {
+      authService.clearSession();
+      return of(null);
+    }),
+  );
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
