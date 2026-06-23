@@ -1,0 +1,39 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.simple-menu {
+  @apply absolute right-0 mt-2 w-40 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg py-1 z-50;
+}
+
+.simple-menu-item {
+  @apply flex items-center gap-3 px-4 py-1.5 text-sm text-on-surface hover:bg-secondary-container transition-colors;
+}
+
+.simple-menu-item-danger {
+  @apply text-error hover:bg-error/10;
+}
+
+.simple-menu-icon {
+  @apply inline-flex shrink-0 items-center justify-center leading-none;
+  width: 1.125rem;
+  height: 1.125rem;
+  font-size: 1.125rem !important;
+  max-width: 1.125rem !important;
+  max-height: 1.125rem !important;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 20;
+}
+
+.simple-menu-label {
+  @apply font-medium leading-none;
+}
+
+.simple-menu-divider {
+  @apply my-1 border-t border-outline-variant;
+}

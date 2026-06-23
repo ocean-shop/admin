@@ -1,0 +1,10 @@
+<app-header></app-header>
+<app-menu></app-menu>
+
+<main
+  class="layout-main"
+  [class.layout-main-open]="layoutService.isSidebarOpen()"
+  [class.layout-main-closed]="!layoutService.isSidebarOpen()"
+>
+  <router-outlet></router-outlet>
+</main>

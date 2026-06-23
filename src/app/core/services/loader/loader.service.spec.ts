@@ -22,7 +22,7 @@ describe('LoaderService', () => {
     expect(service.isLoading()).toBe(true);
   });
 
-  it('should require same number of hide calls as show calls to set isLoading to false', () => {
+  it('should set isLoading to false when hide matches show calls', () => {
     service.show();
     service.show();
     expect(service.isLoading()).toBe(true);
@@ -35,16 +35,27 @@ describe('LoaderService', () => {
   });
 
   it('should not allow active requests to go below 0', () => {
-    service.hide(); // Shouldn't go to -1
+    service.hide();
     expect(service.isLoading()).toBe(false);
 
-    service.show(); // Should go to 1
+    service.show();
+    service.hide();
+    service.hide();
+
+    service.show();
+    expect(service.isLoading()).toBe(true);
+  });
+
+  it('should hide loading only after all concurrent requests complete', () => {
+    service.show();
+    service.show();
+    service.show();
+
+    service.hide();
+    service.hide();
     expect(service.isLoading()).toBe(true);
 
-    service.hide(); // Should go to 0
-    service.hide(); // Shouldn't go below 0
-
-    service.show(); // Should go to 1, meaning it didn't drop below 0 before
-    expect(service.isLoading()).toBe(true);
+    service.hide();
+    expect(service.isLoading()).toBe(false);
   });
 });

@@ -99,7 +99,6 @@ export class Login implements OnInit {
     if (response && response.accessToken) {
       this.authService.handleAuthSuccess(response.accessToken);
     }
-    this.toasterService.success('Success', 'OTP verified successfully.');
     this.localStorageService.removeItem(VIEW_STORAGE_KEY);
     this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
     this.localStorageService.removeItem(IDENTITY_STORAGE_KEY);

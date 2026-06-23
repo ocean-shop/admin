@@ -1,0 +1,59 @@
+@reference "../../../../../../styles.scss";
+
+.admin-menu {
+  @apply fixed z-40 bg-inverse-surface dark:bg-surface-container-highest flex flex-col shadow-md transition-transform duration-300 ease-in-out overflow-y-auto;
+  @apply top-16 inset-x-0 w-full max-h-[calc(100dvh-4rem)] pt-4 pb-6;
+  @apply lg:top-0 lg:left-0 lg:inset-x-auto lg:w-[280px] lg:h-full lg:max-h-none lg:pt-20 lg:overflow-visible;
+}
+
+.menu-open {
+  @apply translate-y-0 lg:translate-x-0;
+}
+
+.menu-closed {
+  @apply -translate-y-full lg:translate-y-0 lg:-translate-x-[280px];
+}
+
+.store-manager-container {
+  @apply px-6 mb-8;
+}
+
+.store-manager-title {
+  @apply text-primary-fixed font-bold text-lg;
+}
+
+.store-manager-subtitle {
+  @apply text-secondary-fixed-dim text-xs uppercase tracking-wider font-medium mt-1;
+}
+
+.nav-container {
+  @apply flex-1 space-y-1;
+}
+
+.nav-item-active {
+  @apply flex items-center gap-3 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 mx-4 transition-all;
+}
+
+.nav-item {
+  @apply flex items-center gap-3 text-secondary-fixed-dim hover:text-secondary-fixed hover:bg-primary/10 px-4 py-3 mx-4 rounded-lg transition-all;
+}
+
+.nav-text {
+  @apply font-medium;
+}
+
+.nav-text-small {
+  @apply font-medium text-sm uppercase tracking-wider;
+}
+
+.menu-footer {
+  @apply mt-auto px-4 pt-4 border-t border-outline/20;
+}
+
+.footer-btn {
+  @apply w-full flex items-center gap-3 text-secondary-fixed-dim hover:text-secondary-fixed hover:bg-primary/10 px-4 py-3 rounded-lg transition-all;
+}
+
+.footer-btn-danger {
+  @apply w-full flex items-center gap-3 text-error-container hover:bg-error/10 px-4 py-3 rounded-lg transition-all mt-1;
+}

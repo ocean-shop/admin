@@ -4,7 +4,7 @@ import { computed, Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class LoaderService {
-  private activeRequests = signal<number>(0);
+  private activeRequests = signal(0);
 
   public readonly isLoading = computed(() => this.activeRequests() > 0);
 

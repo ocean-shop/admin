@@ -1,0 +1,36 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.content-spinner-overlay {
+  @apply fixed inset-0 z-[60] flex items-center justify-center bg-surface-bright/70 backdrop-blur-[1px];
+}
+
+.content-spinner-wrapper {
+  @apply relative flex items-center justify-center w-20 h-20;
+  animation: content-spinner-pulse 1.6s ease-in-out infinite;
+}
+
+.content-spinner-ring {
+  @apply absolute inset-0 rounded-full border-[5px] border-primary/15 border-t-primary border-r-primary/50;
+  animation: content-spinner-spin 0.9s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+}
+
+@keyframes content-spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes content-spinner-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
