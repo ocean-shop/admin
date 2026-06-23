@@ -1,9 +1,15 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loaderInterceptor } from './core/interceptors/loader.interceptor';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { LoaderService } from './core/services/loader/loader.service';
 
 import { routes } from './app.routes';
 
@@ -12,5 +18,8 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor, loaderInterceptor, errorInterceptor])),
+    provideAppInitializer(() => {
+      inject(LoaderService);
+    }),
   ],
 };

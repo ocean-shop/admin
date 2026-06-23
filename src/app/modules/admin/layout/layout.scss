@@ -1,7 +1,7 @@
 @reference "../../../../styles.scss";
 
 .layout-main {
-  @apply pt-24 pr-4 md:pr-8 pb-12 transition-all duration-300;
+  @apply relative min-h-[calc(100dvh-4rem)] pt-24 pr-4 md:pr-8 pb-12 transition-all duration-300;
 }
 
 .layout-main-open {

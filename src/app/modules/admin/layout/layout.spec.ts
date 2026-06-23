@@ -27,13 +27,11 @@ describe('Layout', () => {
   it('should change sidebar state based on window resize', () => {
     const setSidebarStateSpy = vi.spyOn(layoutService, 'setSidebarState');
 
-    // Simulate window resize smaller than 1024
     Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 800 });
     window.dispatchEvent(new Event('resize'));
 
     expect(setSidebarStateSpy).toHaveBeenCalledWith(false);
 
-    // Simulate window resize greater than or equal to 1024
     Object.defineProperty(window, 'innerWidth', {
       writable: true,
       configurable: true,
