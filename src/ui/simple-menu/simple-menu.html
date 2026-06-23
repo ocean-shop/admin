@@ -1,0 +1,15 @@
+<div class="simple-menu">
+  @for (entry of items(); track $index) { @if (isDivider(entry)) {
+  <div class="simple-menu-divider"></div>
+  } @else {
+  <a
+    class="simple-menu-item"
+    [class.simple-menu-item-danger]="entry.variant === 'danger'"
+    href="#"
+    (click)="selectItem(entry, $event)"
+  >
+    <span class="material-symbols-outlined simple-menu-icon">{{ entry.icon }}</span>
+    <span class="simple-menu-label">{{ entry.label }}</span>
+  </a>
+  } }
+</div>

@@ -10,8 +10,13 @@
       <span class="icon-default">notifications</span>
       <span class="notification-dot"></span>
     </button>
-    <button class="icon-button">
-      <span class="icon-default">account_circle</span>
-    </button>
+    <div class="account-menu-container">
+      <button (click)="toggleAccountMenu($event)" class="icon-button" id="account-toggle">
+        <span class="icon-default">account_circle</span>
+      </button>
+      @if (isAccountMenuOpen()) {
+      <app-simple-menu [items]="accountMenuItems" (itemSelected)="onMenuItemSelected($event)" />
+      }
+    </div>
   </div>
 </header>
