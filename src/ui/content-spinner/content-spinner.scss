@@ -5,7 +5,7 @@
 }
 
 .content-spinner-overlay {
-  @apply fixed inset-0 z-40 flex items-center justify-center bg-surface-bright/70 backdrop-blur-[1px];
+  @apply fixed inset-0 z-[60] flex items-center justify-center bg-surface-bright/70 backdrop-blur-[1px];
 }
 
 .content-spinner-wrapper {

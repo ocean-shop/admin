@@ -11,5 +11,5 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
 export const ADMIN_MENU_FOOTER_ITEMS: MenuFooterItem[] = [
   { icon: 'ShoppingBag', label: 'Shops', route: '/admin/shops', buttonClass: 'footer-btn' },
   { icon: 'person', label: 'Admins', route: '/admin/admins', buttonClass: 'footer-btn' },
-  { icon: 'logout', label: 'Logout', buttonClass: 'footer-btn-danger' },
+  { icon: 'logout', label: 'Logout', value: 'logout', buttonClass: 'footer-btn-danger' },
 ];

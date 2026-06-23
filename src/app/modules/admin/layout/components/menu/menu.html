@@ -9,7 +9,7 @@
   </div>
   <nav class="nav-container">
     @if (isAdminHome()) { @for (item of menuFooterItems; track item.label) {
-    <button [class]="item.buttonClass">
+    <button [class]="item.buttonClass" (click)="onFooterItemClick(item)">
       <span class="material-symbols-outlined">{{ item.icon }}</span>
       <span class="nav-text-small">{{ item.label }}</span>
     </button>
@@ -32,7 +32,7 @@
   @if (!isAdminHome()) {
   <div class="menu-footer">
     @for (item of menuFooterItems; track item.label) {
-    <button [class]="item.buttonClass">
+    <button [class]="item.buttonClass" (click)="onFooterItemClick(item)">
       <span class="material-symbols-outlined">{{ item.icon }}</span>
       <span class="nav-text-small">{{ item.label }}</span>
     </button>

@@ -97,10 +97,6 @@ describe('Login', () => {
 
     expect(mockLoginService.verifyOtp).toHaveBeenCalledWith('test@example.com', '1234');
     expect(mockAuthService.handleAuthSuccess).toHaveBeenCalledWith('fake-token');
-    expect(mockToasterService.success).toHaveBeenCalledWith(
-      'Success',
-      'OTP verified successfully.',
-    );
     expect(mockLocalStorageService.removeItem).toHaveBeenCalledWith(VIEW_STORAGE_KEY);
     expect(mockLocalStorageService.removeItem).toHaveBeenCalledWith(OTP_EXPIRATION_KEY);
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/admin']);

@@ -1,8 +1,8 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, finalize, shareReplay, tap } from 'rxjs';
+import { Observable, catchError, finalize, of, shareReplay, tap } from 'rxjs';
 import { LocalStorageService } from '../local-storage/local-storage.service';
-import { SESSION_HINT_KEY } from '../../constants/auth.constant';
+import { AUTH_STORAGE_KEYS, SESSION_HINT_KEY } from '../../constants/auth.constant';
 
 interface RefreshResponse {
   accessToken: string;
@@ -40,7 +40,9 @@ export class AuthService {
 
   clearSession(): void {
     this.accessTokenSignal.set(null);
-    this.localStorageService.removeItem(SESSION_HINT_KEY);
+    for (const key of AUTH_STORAGE_KEYS) {
+      this.localStorageService.removeItem(key);
+    }
   }
 
   refreshToken(): Observable<RefreshResponse> {
@@ -67,6 +69,9 @@ export class AuthService {
 
   logout(): void {
     this.clearSession();
-    this.http.post(`${this.API_URL}/user/auth/logout`, {}, { withCredentials: true }).subscribe();
+    this.http
+      .post(`${this.API_URL}/user/auth/logout`, {}, { withCredentials: true })
+      .pipe(catchError(() => of(null)))
+      .subscribe();
   }
 }

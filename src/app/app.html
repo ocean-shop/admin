@@ -1,5 +1,6 @@
 @if (isLoading()) {
 <app-loader />
+} @if (showContentSpinner()) {
 <app-content-spinner />
 }
 <router-outlet />
