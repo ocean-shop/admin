@@ -136,6 +136,11 @@ body {
   @apply bg-background text-on-background min-h-screen;
 }
 
+button,
+a {
+  @apply cursor-pointer;
+}
+
 @utility material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;

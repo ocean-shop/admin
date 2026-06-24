@@ -4,7 +4,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@ui/*": ["./src/ui/*"]
+      "@ui/*": ["./src/ui/*"],
+      "@core/*": ["./src/app/core/*"]
     },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

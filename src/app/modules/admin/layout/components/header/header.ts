@@ -1,6 +1,6 @@
 import { Component, HostListener, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../../../core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { SimpleMenu } from '@ui/simple-menu/simple-menu';
 import { SimpleMenuItem } from '@ui/simple-menu/models/simple-menu.type';
 import { ACCOUNT_MENU_ITEMS } from '../../constants/header.constants';
@@ -36,6 +36,8 @@ export class Header {
     if (item.value === 'logout') {
       this.authService.logout();
       this.router.navigate(['/login']);
+    } else if (item.link) {
+      this.router.navigate([item.link]);
     }
   }
 

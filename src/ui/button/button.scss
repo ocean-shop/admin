@@ -5,7 +5,7 @@
 }
 
 .admin-btn {
-  @apply w-full py-md bg-primary hover:bg-[#005a52] text-white font-title-md text-title-md rounded-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-sm;
+  @apply w-full py-md bg-primary hover:bg-[#005a52] hover:cursor-pointer text-white font-title-md text-title-md rounded-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-sm;
 
   &:disabled {
     @apply opacity-50 cursor-not-allowed hover:bg-primary active:scale-100;

@@ -1,0 +1,14 @@
+<form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
+  <div class="field-group">
+    <span class="field-label">Language</span>
+    <app-dropdown
+      triggerMode="click"
+      variant="form"
+      icon="language"
+      [label]="selectedLanguage().label"
+      [options]="languageOptions"
+      (optionSelected)="onLanguageSelected($event)"
+    />
+  </div>
+  <app-button label="Save Changes" icon="save" type="submit" [disabled]="!isFormValid()" />
+</form>

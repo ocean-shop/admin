@@ -1,0 +1,13 @@
+@reference "../../../../../../../styles.scss";
+
+.form-container {
+  @apply space-y-lg;
+}
+
+.field-group {
+  @apply space-y-sm;
+}
+
+.field-label {
+  @apply block font-body-md text-on-surface-variant;
+}

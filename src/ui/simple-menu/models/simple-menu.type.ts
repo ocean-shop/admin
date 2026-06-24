@@ -3,6 +3,7 @@ export type SimpleMenuItem = {
   icon: string;
   value: string;
   variant?: 'default' | 'danger';
+  link?: string;
 };
 
 export type SimpleMenuDivider = {
