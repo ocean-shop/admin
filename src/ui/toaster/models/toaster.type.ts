@@ -4,7 +4,7 @@ export interface Toast {
   id: string;
   type: ToastType;
   title: string;
-  message: string;
+  message?: string;
   actionText?: string;
   onAction?: () => void;
   duration?: number; // Optional duration in ms. If 0, it doesn't auto-dismiss.

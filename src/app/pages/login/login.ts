@@ -11,17 +11,18 @@ import {
   OTP_EXPIRATION_KEY,
   IDENTITY_STORAGE_KEY,
 } from './constants/login.constant';
-import { ToasterService } from '../../core/services/toaster/toaster.service';
-import { LocalStorageService } from '../../core/services/local-storage/local-storage.service';
+import { ToasterService } from '@core/services/toaster/toaster.service';
+import { LocalStorageService } from '@core/services/local-storage/local-storage.service';
 import { LoginView } from './models/login.enum';
 import { LoginService } from './services/login.service';
-import { AuthService } from '../../core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
   imports: [Dropdown, LoginForm, OtpForm],
   templateUrl: './login.html',
   styleUrl: './login.scss',
+  standalone: true,
 })
 export class Login implements OnInit {
   private toasterService = inject(ToasterService);

@@ -1,53 +1,45 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { form, required } from '@angular/forms/signals';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { form, FormField, required } from '@angular/forms/signals';
 import { Dropdown } from '@ui/dropdown/dropdown';
-import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { Button } from '@ui/button/button';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { LocalStorageService } from '@core/services/local-storage/local-storage.service';
-import { SettingsData } from '../../models/settings.model';
-import {
-  DEFAULT_LANGUAGE,
-  LANGUAGE_STORAGE_KEY,
-  SETTINGS_LANGUAGE_OPTIONS,
-} from '../../constants/settings.constants';
+import { AuthService } from '@core/services/auth/auth.service';
+import { SettingsData, SettingsUpdateData } from '../../models/settings.model';
+import { SettingsService } from '../../services/settings.service';
+import { DEFAULT_LANGUAGE, SETTINGS_LANGUAGE_OPTIONS } from '../../constants/settings.constants';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ContentSpinner } from '@ui/content-spinner/content-spinner';
 
 @Component({
   selector: 'app-settings-form',
-  imports: [Dropdown, Button],
+  imports: [Dropdown, Button, FormField, ContentSpinner],
   templateUrl: './settings-form.html',
   styleUrl: './settings-form.scss',
+  standalone: true,
 })
 export class SettingsForm implements OnInit {
   private readonly toasterService = inject(ToasterService);
-  private readonly localStorageService = inject(LocalStorageService);
+  private readonly authService = inject(AuthService);
+  private readonly settingsService = inject(SettingsService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly languageOptions = SETTINGS_LANGUAGE_OPTIONS;
+  protected readonly isLoading = signal(true);
 
   private readonly settingsModel = signal<SettingsData>({
     language: DEFAULT_LANGUAGE,
   });
+  private readonly userId = signal<string | null>('');
 
-  private readonly settingsForm = form(this.settingsModel, (schemaPath) => {
+  protected readonly settingsForm = form(this.settingsModel, (schemaPath) => {
     required(schemaPath.language, { message: 'Language is required' });
-  });
-
-  protected readonly selectedLanguage = computed(() => {
-    const currentValue = this.settingsForm.language().value();
-    return (
-      this.languageOptions.find((option) => option.value === currentValue) ??
-      this.languageOptions[0]
-    );
   });
 
   protected readonly isFormValid = computed(() => this.settingsForm.language().valid());
 
   ngOnInit(): void {
-    this.restoreSavedLanguage();
-  }
-
-  protected onLanguageSelected(option: DropdownOption): void {
-    this.settingsModel.update((model) => ({ ...model, language: option.value }));
+    this.userId.set(this.authService.getUserId());
+    this.loadUserSettings();
   }
 
   protected onSubmit(): void {
@@ -55,17 +47,41 @@ export class SettingsForm implements OnInit {
       return;
     }
 
-    const language = this.settingsForm.language().value()!;
-    this.localStorageService.setItem(LANGUAGE_STORAGE_KEY, language);
-    this.toasterService.success('Settings saved', 'Your language preference has been updated.');
+    const payload: SettingsUpdateData = {
+      language: this.settingsForm.language().value()!,
+      userId: this.userId(),
+    };
+    this.settingsService
+      .setUserSettings(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (settings) => {
+          this.applyLanguage(settings?.language);
+          this.toasterService.success('Language changed');
+        },
+      });
   }
 
-  private restoreSavedLanguage(): void {
-    const savedLanguage = this.localStorageService.getItem<string>(LANGUAGE_STORAGE_KEY);
-    const isValidLanguage = this.languageOptions.some((option) => option.value === savedLanguage);
+  private loadUserSettings(): void {
+    this.settingsService
+      .getUserSettings(this.userId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (settings) => {
+          this.applyLanguage(settings?.language);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.isLoading.set(false);
+        },
+      });
+  }
 
-    if (savedLanguage && isValidLanguage) {
-      this.settingsModel.update((model) => ({ ...model, language: savedLanguage }));
+  private applyLanguage(language: string | null | undefined): void {
+    const isValidLanguage = this.languageOptions.some((option) => option.value === language);
+
+    if (language && isValidLanguage) {
+      this.settingsModel.update((model) => ({ ...model, language }));
     }
   }
 }

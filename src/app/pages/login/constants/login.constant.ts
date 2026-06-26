@@ -7,7 +7,7 @@ export {
 
 export const LANGUAGE_OPTIONS: DropdownOption[] = [
   { label: 'English', value: 'en' },
-  { label: 'Українська', value: 'uk' },
+  { label: 'Українська', value: 'ua' },
   { label: 'Русский', value: 'ru' },
 ];
 
