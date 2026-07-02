@@ -1,0 +1,17 @@
+@reference "../../../../../styles.scss";
+
+.settings-container {
+  @apply max-w-7xl mx-auto;
+}
+
+.settings-header {
+  @apply mb-10;
+}
+
+.settings-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight mb-2;
+}
+
+.settings-card {
+  @apply bg-surface-container-lowest rounded-xl p-8 border border-outline-variant;
+}

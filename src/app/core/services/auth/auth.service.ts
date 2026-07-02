@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, finalize, of, shareReplay, tap } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AUTH_STORAGE_KEYS, SESSION_HINT_KEY } from '../../constants/auth.constant';
 
@@ -27,6 +28,20 @@ export class AuthService {
 
   getAccessToken(): string | null {
     return this.accessTokenSignal();
+  }
+
+  getUserId(): string | null {
+    const token = this.accessTokenSignal();
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const decoded = jwtDecode<{ sub?: string; userId?: string; id?: string }>(token);
+      return decoded.sub ?? decoded.userId ?? decoded.id ?? null;
+    } catch {
+      return null;
+    }
   }
 
   handleAuthSuccess(token: string): void {

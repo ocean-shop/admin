@@ -51,9 +51,9 @@
 }
 
 .footer-btn {
-  @apply w-full flex items-center gap-3 text-secondary-fixed-dim hover:text-secondary-fixed hover:bg-primary/10 px-4 py-3 rounded-lg transition-all;
+  @apply w-full flex items-center gap-3 text-secondary-fixed-dim hover:text-secondary-fixed hover:bg-primary/10 px-4 py-3 rounded-lg transition-all cursor-pointer;
 }
 
 .footer-btn-danger {
-  @apply w-full flex items-center gap-3 text-error-container hover:bg-error/10 px-4 py-3 rounded-lg transition-all mt-1;
+  @apply w-full flex items-center gap-3 text-error-container hover:bg-error/10 px-4 py-3 rounded-lg transition-all mt-1 cursor-pointer;
 }

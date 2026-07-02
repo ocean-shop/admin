@@ -7,6 +7,7 @@ import { ButtonType } from './models/button.type';
   templateUrl: './button.html',
   styleUrl: './button.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class Button {
   label = input.required<string>();

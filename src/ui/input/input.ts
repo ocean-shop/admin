@@ -8,6 +8,7 @@ import { InputType } from './models/input.type';
   templateUrl: './input.html',
   styleUrl: './input.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class Input {
   id = input.required<string>();

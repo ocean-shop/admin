@@ -6,6 +6,7 @@ import { AuthService } from '../../../../../core/services/auth/auth.service';
 import { LayoutService } from '../../services/layout.service';
 import {
   ADMIN_HOME_ROUTE,
+  ADMIN_SETTINGS_ROUTE,
   ADMIN_MENU_FOOTER_ITEMS,
   ADMIN_MENU_ITEMS,
 } from '../../constants/menu.constants';
@@ -35,12 +36,19 @@ export class Menu {
     { initialValue: this.normalizeUrl(this.router.url) },
   );
 
-  protected readonly isAdminHome = computed(() => this.currentUrl() === ADMIN_HOME_ROUTE);
+  protected readonly isAdminHome = computed(
+    () => this.currentUrl() === ADMIN_HOME_ROUTE || this.currentUrl() === ADMIN_SETTINGS_ROUTE,
+  );
 
   protected onFooterItemClick(item: MenuFooterItem): void {
     if (item.value === 'logout') {
       this.authService.logout();
       this.router.navigate(['/login']);
+      return;
+    }
+
+    if (item.route) {
+      this.router.navigate([item.route]);
     }
   }
 

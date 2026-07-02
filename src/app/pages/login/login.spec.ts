@@ -3,10 +3,10 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { Login } from './login';
-import { LocalStorageService } from '../../core/services/local-storage/local-storage.service';
-import { ToasterService } from '../../core/services/toaster/toaster.service';
+import { LocalStorageService } from '@core/services/local-storage/local-storage.service';
+import { ToasterService } from '@core/services/toaster/toaster.service';
 import { LoginService } from './services/login.service';
-import { AuthService } from '../../core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { LoginView } from './models/login.enum';
 import { VIEW_STORAGE_KEY, OTP_EXPIRATION_KEY } from './constants/login.constant';
 
@@ -70,18 +70,12 @@ describe('Login', () => {
     expect(component.currentView()).toBe(LoginView.Otp);
   });
 
-  it('should update selected language', () => {
-    const mockOption = { id: 'fr', label: 'French' };
-    component.onLanguageSelected(mockOption);
-    expect(component.selectedLanguage()).toEqual(mockOption);
-  });
-
   it('should handle submit', () => {
     component.onSubmit('test@example.com');
     expect(mockLoginService.requestOtp).toHaveBeenCalledWith('test@example.com');
     expect(mockToasterService.success).toHaveBeenCalledWith(
       'OTP Sent',
-      'Please check your email or phone for the OTP.',
+      'Будь ласка, перевірте свою електронну пошту або телефон, щоб знайти одноразовий код (OTP).',
     );
     expect(mockLocalStorageService.removeItem).toHaveBeenCalledWith(OTP_EXPIRATION_KEY);
     expect(component.currentView()).toBe(LoginView.Otp);

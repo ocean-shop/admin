@@ -25,7 +25,11 @@
   }
 
   .toast-message {
-    @apply text-sm truncate;
+    @apply text-sm overflow-hidden text-ellipsis break-words;
+    line-clamp: 2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 
   .toast-actions {

@@ -43,7 +43,7 @@ export class ToasterService {
     this.show({ type: 'info', title, message, ...options });
   }
 
-  success(title: string, message: string, options?: ToastOptions): void {
+  success(title: string, message?: string, options?: ToastOptions): void {
     this.show({ type: 'success', title, message, ...options });
   }
 

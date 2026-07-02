@@ -5,7 +5,7 @@ import { filter, map, take } from 'rxjs';
 import { ContentSpinner } from '@ui/content-spinner/content-spinner';
 import { Toaster } from '@ui/toaster/toaster';
 import { Loader } from '@ui/loader/loader';
-import { LoaderService } from './core/services/loader/loader.service';
+import { LoaderService } from '@core/services/loader/loader.service';
 
 @Component({
   selector: 'app-root',
@@ -39,8 +39,10 @@ export class App {
 
   protected readonly isAdminRoute = computed(() => this.isAdminPath(this.currentUrl()));
 
+  protected readonly showGlobalLoader = computed(() => this.isLoading());
+
   protected readonly showContentSpinner = computed(
-    () => this.isAdminRoute() && (this.isLoading() || !this.adminBootstrapComplete()),
+    () => this.isAdminRoute() && this.isLoading() && !this.adminBootstrapComplete(),
   );
 
   private getInitialUrl(): string {

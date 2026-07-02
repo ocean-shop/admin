@@ -10,6 +10,7 @@ import { IDENTITY_PATTERN } from '../../constants/login.constant';
   imports: [Input, Button],
   templateUrl: './login-form.html',
   styleUrl: './login-form.scss',
+  standalone: true,
 })
 export class LoginForm {
   submitEvent = output<string>();

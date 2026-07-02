@@ -1,11 +1,3 @@
-<div class="language-selector">
-  <app-dropdown
-    [label]="selectedLanguage().label"
-    icon="language"
-    [options]="languageOptions"
-    (optionSelected)="onLanguageSelected($event)"
-  ></app-dropdown>
-</div>
 <main class="main-container">
   <header class="header">
     <h1 class="title">Ocean Shop</h1>
@@ -16,8 +8,8 @@
     [class.m3-elevation-2]="!isFocused()"
   >
     <div class="welcome-section">
-      <h2 class="subtitle">Welcome back</h2>
-      <p class="description">Sign in to manage your inventory and orders.</p>
+      <h2 class="subtitle">З поверненням!</h2>
+      <p class="description">Увійдіть, щоб керувати своїми запасами та замовленнями.</p>
     </div>
     @if (currentView() === LoginView.Login) {
     <app-login-form [isLoading]="isLoading()" (submitEvent)="onSubmit($event)"></app-login-form>
