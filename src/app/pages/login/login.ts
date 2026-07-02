@@ -1,12 +1,9 @@
 import { Component, signal, inject, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { Dropdown } from '@ui/dropdown/dropdown';
 import { LoginForm } from './components/login-form/login-form';
 import { OtpForm } from './components/otp-form/otp-form';
-import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import {
-  LANGUAGE_OPTIONS,
   VIEW_STORAGE_KEY,
   OTP_EXPIRATION_KEY,
   IDENTITY_STORAGE_KEY,
@@ -19,7 +16,7 @@ import { AuthService } from '@core/services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [Dropdown, LoginForm, OtpForm],
+  imports: [LoginForm, OtpForm],
   templateUrl: './login.html',
   styleUrl: './login.scss',
   standalone: true,
@@ -32,11 +29,9 @@ export class Login implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
-  languageOptions = LANGUAGE_OPTIONS;
   LoginView = LoginView;
 
   isFocused = signal(false);
-  selectedLanguage = signal<DropdownOption>(this.languageOptions[0]);
   currentView = signal<LoginView>(LoginView.Login);
   isLoading = signal(false);
   identity = signal<string>('');
@@ -54,10 +49,6 @@ export class Login implements OnInit {
     if (savedIdentity) {
       this.identity.set(savedIdentity);
     }
-  }
-
-  onLanguageSelected(option: any) {
-    this.selectedLanguage.set(option.detail || option);
   }
 
   onSubmit(identity: string) {
