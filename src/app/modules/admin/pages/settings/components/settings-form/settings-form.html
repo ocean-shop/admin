@@ -1,9 +1,6 @@
 <form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
   <div class="field-group">
     <span class="field-label">Language</span>
-    @if (isLoading()) {
-    <app-content-spinner />
-    } @else {
     <app-dropdown
       triggerMode="click"
       variant="form"
@@ -11,7 +8,11 @@
       [options]="languageOptions"
       [formField]="settingsForm.language"
     />
-    }
   </div>
-  <app-button label="Save Changes" icon="save" type="submit" [disabled]="!isFormValid()" />
+  <app-button
+    label="Save Changes"
+    icon="save"
+    type="submit"
+    [disabled]="!isFormValid() || isLoading()"
+  />
 </form>

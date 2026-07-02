@@ -44,7 +44,9 @@ describe('App', () => {
 
     it('should show content spinner while admin route is bootstrapping', () => {
       const fixture = TestBed.createComponent(App);
+      const loaderService = TestBed.inject(LoaderService);
 
+      loaderService.show();
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('app-content-spinner')).toBeTruthy();
 
@@ -54,18 +56,32 @@ describe('App', () => {
       expect(fixture.nativeElement.querySelector('app-content-spinner')).toBeNull();
     });
 
-    it('should show content spinner when loader service is active after bootstrap', () => {
+    it('should not show content spinner after bootstrap completes', async () => {
       const fixture = TestBed.createComponent(App);
       const loaderService = TestBed.inject(LoaderService);
 
+      fixture.detectChanges();
+
+      // Simulate bootstrap
       routerEvents.next(new NavigationEnd(1, '/admin', '/admin'));
       fixture.detectChanges();
-      expect(fixture.nativeElement.querySelector('app-content-spinner')).toBeNull();
+      await fixture.whenStable();
+      fixture.detectChanges();
 
+      // Bootstrap is now complete, start loading
       loaderService.show();
       fixture.detectChanges();
 
-      expect(fixture.nativeElement.querySelector('app-content-spinner')).toBeTruthy();
+      // After bootstrap, content spinner should NOT show (global loader takes over)
+      expect(fixture.nativeElement.querySelector('app-content-spinner')).toBeNull();
+
+      // But global loader should be visible
+      expect(fixture.nativeElement.querySelector('app-loader')).toBeTruthy();
+
+      loaderService.hide();
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('app-loader')).toBeNull();
     });
   });
 

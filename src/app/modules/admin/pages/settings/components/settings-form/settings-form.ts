@@ -2,17 +2,16 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { form, FormField, required } from '@angular/forms/signals';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { Button } from '@ui/button/button';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { AuthService } from '@core/services/auth/auth.service';
 import { SettingsData, SettingsUpdateData } from '../../models/settings.model';
 import { SettingsService } from '../../services/settings.service';
 import { DEFAULT_LANGUAGE, SETTINGS_LANGUAGE_OPTIONS } from '../../constants/settings.constants';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ContentSpinner } from '@ui/content-spinner/content-spinner';
 
 @Component({
   selector: 'app-settings-form',
-  imports: [Dropdown, Button, FormField, ContentSpinner],
+  imports: [Dropdown, Button, FormField],
   templateUrl: './settings-form.html',
   styleUrl: './settings-form.scss',
   standalone: true,
@@ -43,6 +42,7 @@ export class SettingsForm implements OnInit {
   }
 
   protected onSubmit(): void {
+    this.isLoading.set(true);
     if (!this.isFormValid()) {
       return;
     }
@@ -56,6 +56,7 @@ export class SettingsForm implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (settings) => {
+          this.isLoading.set(false);
           this.applyLanguage(settings?.language);
           this.toasterService.success('Language changed');
         },

@@ -1,7 +1,7 @@
 @reference "../../styles.scss";
 
 .loader-container {
-  @apply fixed top-0 left-0 z-50 w-full h-[6px];
+  @apply fixed top-0 left-0 z-[70] w-full h-[6px];
 }
 
 .loader-bar {
