@@ -31,7 +31,7 @@ export class SettingsForm implements OnInit {
   private readonly userId = signal<string | null>('');
 
   protected readonly settingsForm = form(this.settingsModel, (schemaPath) => {
-    required(schemaPath.language, { message: 'Language is required' });
+    required(schemaPath.language, { message: "Поле мова є обов'язкове" });
   });
 
   protected readonly isFormValid = computed(() => this.settingsForm.language().valid());
@@ -58,7 +58,7 @@ export class SettingsForm implements OnInit {
         next: (settings) => {
           this.isLoading.set(false);
           this.applyLanguage(settings?.language);
-          this.toasterService.success('Language changed');
+          this.toasterService.success('Налаштування змінено');
         },
       });
   }

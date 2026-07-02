@@ -1,6 +1,6 @@
 <form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
   <div class="field-group">
-    <span class="field-label">Language</span>
+    <span class="field-label">Мова</span>
     <app-dropdown
       triggerMode="click"
       variant="form"
@@ -10,7 +10,7 @@
     />
   </div>
   <app-button
-    label="Save Changes"
+    label="Зберегти"
     icon="save"
     type="submit"
     [disabled]="!isFormValid() || isLoading()"

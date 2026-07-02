@@ -81,7 +81,10 @@ export class Login implements OnInit {
 
   private handleOtpRequestSuccess(): void {
     this.isLoading.set(false);
-    this.toasterService.success('OTP Sent', 'Please check your email or phone for the OTP.');
+    this.toasterService.success(
+      'OTP Sent',
+      'Будь ласка, перевірте свою електронну пошту або телефон, щоб знайти одноразовий код (OTP).',
+    );
     this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
     this.setView(LoginView.Otp);
   }

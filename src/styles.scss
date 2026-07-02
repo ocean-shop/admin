@@ -66,13 +66,13 @@
   --spacing-xl: 48px;
   --spacing-md: 16px;
 
-  --font-headline-lg: 'Hanken Grotesk';
-  --font-label-md: 'Hanken Grotesk';
-  --font-body-md: 'Hanken Grotesk';
-  --font-title-md: 'Hanken Grotesk';
-  --font-headline-lg-mobile: 'Hanken Grotesk';
-  --font-display-lg: 'Hanken Grotesk';
-  --font-body-sm: 'Hanken Grotesk';
+  --font-headline-lg: 'Inter';
+  --font-label-md: 'Inter';
+  --font-body-md: 'Inter';
+  --font-title-md: 'Inter';
+  --font-headline-lg-mobile: 'Inter';
+  --font-display-lg: 'Inter';
+  --font-body-sm: 'Inter';
 
   --text-headline-lg: 32px;
   --text-headline-lg--line-height: 40px;
@@ -132,7 +132,7 @@ body {
 }
 body {
   margin: 0;
-  font-family: var(--font-body-md), Roboto, 'Helvetica Neue', sans-serif;
+  font-family: var(--font-body-md), 'Inter', 'Noto Sans', Roboto, 'Helvetica Neue', sans-serif;
   @apply bg-background text-on-background min-h-screen;
 }
 

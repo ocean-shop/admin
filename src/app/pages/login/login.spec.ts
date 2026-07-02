@@ -75,7 +75,7 @@ describe('Login', () => {
     expect(mockLoginService.requestOtp).toHaveBeenCalledWith('test@example.com');
     expect(mockToasterService.success).toHaveBeenCalledWith(
       'OTP Sent',
-      'Please check your email or phone for the OTP.',
+      'Будь ласка, перевірте свою електронну пошту або телефон, щоб знайти одноразовий код (OTP).',
     );
     expect(mockLocalStorageService.removeItem).toHaveBeenCalledWith(OTP_EXPIRATION_KEY);
     expect(component.currentView()).toBe(LoginView.Otp);
