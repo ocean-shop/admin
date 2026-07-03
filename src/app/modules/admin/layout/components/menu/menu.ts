@@ -6,10 +6,9 @@ import { AuthService } from '../../../../../core/services/auth/auth.service';
 import { LayoutService } from '../../services/layout.service';
 import {
   ADMIN_HOME_ROUTE,
-  ADMIN_SETTINGS_ROUTE,
+  ADMIN_PRIMARY_ROUTES,
   ADMIN_MENU_FOOTER_ITEMS,
   ADMIN_MENU_ITEMS,
-  ADMIN_ADMINS_ROUTE,
 } from '../../constants/menu.constants';
 import { MenuFooterItem } from '../../models/menu.model';
 
@@ -27,6 +26,7 @@ export class Menu {
   protected readonly adminHomeRoute = ADMIN_HOME_ROUTE;
   protected readonly menuItems = ADMIN_MENU_ITEMS;
   protected readonly menuFooterItems = ADMIN_MENU_FOOTER_ITEMS;
+  private readonly primaryRoutes = ADMIN_PRIMARY_ROUTES;
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -37,12 +37,7 @@ export class Menu {
     { initialValue: this.normalizeUrl(this.router.url) },
   );
 
-  protected readonly isAdminHome = computed(
-    () =>
-      this.currentUrl() === ADMIN_HOME_ROUTE ||
-      this.currentUrl() === ADMIN_SETTINGS_ROUTE ||
-      this.currentUrl() === ADMIN_ADMINS_ROUTE,
-  );
+  protected readonly isAdminHome = computed(() => this.primaryRoutes.includes(this.currentUrl()));
 
   protected onFooterItemClick(item: MenuFooterItem): void {
     if (item.value === 'logout') {

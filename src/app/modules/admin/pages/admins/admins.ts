@@ -1,5 +1,6 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
 import { Button } from '@ui/button/button';
 import { UserCard } from '@ui/user-card/user-card';
 import { Admin, AdminApiItem, AdminsApiResponse } from './models/admin.model';
@@ -53,12 +54,21 @@ export class Admins implements OnInit {
   }
 
   private loadAdmins(): void {
+    this.isLoading.set(true);
+    this.hasError.set(false);
+
     this.adminsService
       .getAdmins()
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isLoading.set(false)),
+      )
       .subscribe({
         next: (response) => {
           this.admins.set(this.mapAdminsResponse(response));
+        },
+        error: () => {
+          this.hasError.set(true);
         },
       });
   }

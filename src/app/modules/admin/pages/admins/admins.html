@@ -12,7 +12,7 @@
     />
   </header>
 
-  @if (!hasAdmins()) {
+  @if (!isLoading() && !hasAdmins()) {
   <p class="state-text">{{ emptyState }}</p>
   } @else {
   <div class="admins-list">
