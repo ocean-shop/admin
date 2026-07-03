@@ -1,0 +1,29 @@
+<article class="user-card">
+  <div class="user-meta">
+    <div class="user-icon">
+      <span class="material-symbols-outlined">person</span>
+    </div>
+    <div>
+      <p class="user-name">{{ user().name }}</p>
+      <p class="user-email">{{ user().email }}</p>
+    </div>
+  </div>
+
+  <div class="user-actions-row">
+    <div class="user-phone">
+      <span class="material-symbols-outlined text-sm">call</span>
+      <span class="text-sm">{{ user().phone }}</span>
+    </div>
+
+    <span class="user-role">{{ user().role }}</span>
+
+    <div class="action-buttons">
+      <button class="icon-btn-edit" type="button" (click)="onEdit()">
+        <span class="material-symbols-outlined">edit</span>
+      </button>
+      <button class="icon-btn-delete" type="button" (click)="onDelete()">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </div>
+  </div>
+</article>

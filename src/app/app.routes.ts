@@ -33,7 +33,7 @@ export const routes: Routes = [
       },
       {
         path: 'admins',
-        loadComponent: () => import('./modules/admin/pages/home/home').then((m) => m.Home),
+        loadComponent: () => import('./modules/admin/pages/admins/admins').then((m) => m.Admins),
       },
       {
         path: 'settings',

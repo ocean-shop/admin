@@ -5,11 +5,19 @@
 }
 
 .admin-btn {
-  @apply w-full py-md bg-primary hover:bg-[#005a52] hover:cursor-pointer text-white font-title-md text-title-md rounded-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-sm;
+  @apply py-md bg-primary hover:bg-[#005a52] hover:cursor-pointer text-white font-title-md text-title-md rounded-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-sm;
 
   &:disabled {
     @apply opacity-50 cursor-not-allowed hover:bg-primary active:scale-100;
   }
+}
+
+.admin-btn-full-width {
+  @apply w-full;
+}
+
+.admin-btn-create {
+  @apply px-6 py-3 bg-primary text-on-primary rounded-lg font-bold hover:bg-primary-container transition-all active:scale-95 shadow-md gap-2;
 }
 
 .admin-btn-icon {

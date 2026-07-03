@@ -1,5 +1,14 @@
-<button class="admin-btn ripple m3-elevation-2" [type]="type()" [disabled]="disabled()">
-  {{ label() }} @if (icon()) {
+<button
+  class="ripple m3-elevation-2"
+  [class.admin-btn]="true"
+  [class.admin-btn-full-width]="fullWidth()"
+  [class.admin-btn-create]="variant() === 'create'"
+  [type]="type()"
+  [disabled]="disabled()"
+>
+  @if (icon() && iconLeading()) {
+  <span class="admin-btn-icon material-symbols-outlined"> {{ icon() }} </span>
+  } {{ label() }} @if (icon() && !iconLeading()) {
   <span class="admin-btn-icon material-symbols-outlined"> {{ icon() }} </span>
   }
 </button>

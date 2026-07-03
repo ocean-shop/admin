@@ -1,0 +1,49 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block w-full;
+}
+
+.user-card {
+  @apply flex items-center justify-between bg-surface-container-lowest border border-outline-variant rounded-xl px-6 h-[100px] w-full hover:border-primary transition-colors shadow-sm;
+}
+
+.user-meta {
+  @apply flex items-center gap-4;
+}
+
+.user-icon {
+  @apply w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary;
+}
+
+.user-name {
+  @apply font-bold text-on-surface;
+}
+
+.user-email {
+  @apply text-sm text-on-surface-variant;
+}
+
+.user-actions-row {
+  @apply flex items-center gap-12;
+}
+
+.user-phone {
+  @apply flex items-center gap-2 text-on-surface-variant;
+}
+
+.user-role {
+  @apply px-3 py-1 bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest rounded-full border border-primary/20;
+}
+
+.action-buttons {
+  @apply flex items-center gap-2;
+}
+
+.icon-btn-edit {
+  @apply p-2 text-primary hover:bg-secondary-container rounded-lg transition-colors;
+}
+
+.icon-btn-delete {
+  @apply p-2 text-error hover:bg-error/10 rounded-lg transition-colors;
+}

@@ -1,0 +1,24 @@
+<section class="admins-page">
+  <header class="admins-header">
+    <h3 class="admins-title">{{ title }}</h3>
+    <app-button
+      [label]="createAdminLabel"
+      [icon]="createAdminIcon"
+      [iconLeading]="true"
+      [fullWidth]="false"
+      variant="create"
+      type="button"
+      (click)="onCreateAdmin()"
+    />
+  </header>
+
+  @if (!hasAdmins()) {
+  <p class="state-text">{{ emptyState }}</p>
+  } @else {
+  <div class="admins-list">
+    @for (admin of admins(); track admin.id) {
+    <app-user-card [user]="admin" (edit)="onEditAdmin(admin)" (removed)="onDeleteAdmin(admin)" />
+    }
+  </div>
+  }
+</section>

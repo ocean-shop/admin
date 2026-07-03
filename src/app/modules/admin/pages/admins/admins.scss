@@ -1,0 +1,25 @@
+@reference "../../../../../styles.scss";
+
+.admins-page {
+  @apply max-w-7xl mx-auto;
+}
+
+.admins-header {
+  @apply flex items-center justify-between gap-4 mb-8;
+}
+
+.admins-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight mb-1;
+}
+
+.admins-list {
+  @apply flex flex-col gap-4;
+}
+
+.state-text {
+  @apply text-on-surface-variant text-base;
+}
+
+.state-error {
+  @apply text-error;
+}

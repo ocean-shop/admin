@@ -9,6 +9,7 @@ import {
   ADMIN_SETTINGS_ROUTE,
   ADMIN_MENU_FOOTER_ITEMS,
   ADMIN_MENU_ITEMS,
+  ADMIN_ADMINS_ROUTE,
 } from '../../constants/menu.constants';
 import { MenuFooterItem } from '../../models/menu.model';
 
@@ -37,7 +38,10 @@ export class Menu {
   );
 
   protected readonly isAdminHome = computed(
-    () => this.currentUrl() === ADMIN_HOME_ROUTE || this.currentUrl() === ADMIN_SETTINGS_ROUTE,
+    () =>
+      this.currentUrl() === ADMIN_HOME_ROUTE ||
+      this.currentUrl() === ADMIN_SETTINGS_ROUTE ||
+      this.currentUrl() === ADMIN_ADMINS_ROUTE,
   );
 
   protected onFooterItemClick(item: MenuFooterItem): void {

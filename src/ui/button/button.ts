@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ButtonType } from './models/button.type';
+import { ButtonVariant } from './models/button-variant.type';
 
 @Component({
   selector: 'app-button',
@@ -10,8 +11,11 @@ import { ButtonType } from './models/button.type';
   standalone: true,
 })
 export class Button {
-  label = input.required<string>();
-  icon = input<string>();
-  type = input<ButtonType>('button');
-  disabled = input<boolean>(false);
+  readonly label = input.required<string>();
+  readonly icon = input<string>();
+  readonly type = input<ButtonType>('button');
+  readonly disabled = input<boolean>(false);
+  readonly iconLeading = input<boolean>(false);
+  readonly fullWidth = input<boolean>(true);
+  readonly variant = input<ButtonVariant>('primary');
 }
