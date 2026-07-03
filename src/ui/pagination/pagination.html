@@ -1,0 +1,40 @@
+<div class="pagination-container">
+  <p class="pagination-summary">
+    Showing {{ startItem() }} to {{ endItem() }} of {{ totalItems() }} {{ label() }}
+  </p>
+
+  <div class="pagination-controls">
+    <button
+      class="pagination-arrow-button"
+      type="button"
+      [disabled]="isPrevDisabled()"
+      aria-label="Previous page"
+      (click)="previousPage()"
+    >
+      <span class="material-symbols-outlined">chevron_left</span>
+    </button>
+
+    @for (page of visiblePages(); track page) {
+    <button
+      class="pagination-page-button"
+      [class.pagination-page-button-active]="page === currentPage()"
+      type="button"
+      [attr.aria-current]="page === currentPage() ? 'page' : null"
+      [attr.aria-label]="'Page ' + page"
+      (click)="changePage(page)"
+    >
+      {{ page }}
+    </button>
+    }
+
+    <button
+      class="pagination-arrow-button"
+      type="button"
+      [disabled]="isNextDisabled()"
+      aria-label="Next page"
+      (click)="nextPage()"
+    >
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  </div>
+</div>

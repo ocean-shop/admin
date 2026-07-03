@@ -27,6 +27,18 @@ export interface AdminsApiResponse {
   totalPages?: number;
 }
 
+export interface AdminsQueryParams {
+  page: number;
+  limit: number;
+}
+
+export interface AdminsPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
 export interface Admin {
   id: string;
   name: string;

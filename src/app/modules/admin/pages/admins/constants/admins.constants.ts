@@ -6,3 +6,5 @@ export const ADMINS_DEFAULT_ROLE = 'Admin';
 export const ADMINS_DEFAULT_PHONE = 'No phone';
 export const ADMINS_DEFAULT_EMAIL = 'No email';
 export const ADMINS_DEFAULT_NAME = 'Unknown administrator';
+export const ADMINS_PAGE_SIZE = 10;
+export const ADMINS_PAGINATION_LABEL = 'admins';

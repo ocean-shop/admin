@@ -20,5 +20,16 @@
     <app-user-card [user]="admin" (edit)="onEditAdmin(admin)" (removed)="onDeleteAdmin(admin)" />
     }
   </div>
-  }
+
+  @if (totalItems() > ADMINS_PAGE_SIZE) {
+  <app-pagination
+    class="admins-pagination"
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize()"
+    [totalItems]="totalItems()"
+    [totalPages]="totalPages()"
+    [label]="paginationLabel"
+    (pageChange)="onPageChange($event)"
+  />
+  } }
 </section>

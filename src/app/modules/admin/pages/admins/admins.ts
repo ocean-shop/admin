@@ -2,8 +2,9 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { Button } from '@ui/button/button';
+import { Pagination } from '@ui/pagination/pagination';
 import { UserCard } from '@ui/user-card/user-card';
-import { Admin, AdminApiItem, AdminsApiResponse } from './models/admin.model';
+import { Admin, AdminApiItem, AdminsApiResponse, AdminsPagination } from './models/admin.model';
 import { AdminsService } from './services/admins.service';
 import {
   ADMINS_CREATE_ICON,
@@ -13,12 +14,14 @@ import {
   ADMINS_DEFAULT_PHONE,
   ADMINS_DEFAULT_ROLE,
   ADMINS_EMPTY_STATE,
+  ADMINS_PAGE_SIZE,
   ADMINS_PAGE_TITLE,
+  ADMINS_PAGINATION_LABEL,
 } from './constants/admins.constants';
 
 @Component({
   selector: 'app-admins',
-  imports: [Button, UserCard],
+  imports: [Button, UserCard, Pagination],
   templateUrl: './admins.html',
   styleUrl: './admins.scss',
 })
@@ -34,7 +37,12 @@ export class Admins implements OnInit {
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
   protected readonly admins = signal<Admin[]>([]);
+  protected readonly currentPage = signal(1);
+  protected readonly pageSize = signal(ADMINS_PAGE_SIZE);
+  protected readonly totalItems = signal(0);
+  protected readonly totalPages = signal(1);
   protected readonly lastAction = signal<string | null>(null);
+  protected readonly paginationLabel = ADMINS_PAGINATION_LABEL;
   protected readonly hasAdmins = computed(() => this.admins().length > 0);
 
   ngOnInit(): void {
@@ -53,19 +61,36 @@ export class Admins implements OnInit {
     this.lastAction.set(`delete:${admin.id}`);
   }
 
+  protected onPageChange(page: number): void {
+    if (page === this.currentPage() || page < 1 || page > this.totalPages()) {
+      return;
+    }
+
+    this.currentPage.set(page);
+    this.loadAdmins();
+  }
+
   private loadAdmins(): void {
     this.isLoading.set(true);
     this.hasError.set(false);
 
     this.adminsService
-      .getAdmins()
+      .getAdmins({
+        page: this.currentPage(),
+        limit: this.pageSize(),
+      })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.isLoading.set(false)),
       )
       .subscribe({
         next: (response) => {
-          this.admins.set(this.mapAdminsResponse(response));
+          const mappedResponse = this.mapAdminsResponse(response);
+          this.admins.set(mappedResponse.admins);
+          this.currentPage.set(mappedResponse.pagination.page);
+          this.pageSize.set(mappedResponse.pagination.limit);
+          this.totalItems.set(mappedResponse.pagination.total);
+          this.totalPages.set(mappedResponse.pagination.totalPages);
         },
         error: () => {
           this.hasError.set(true);
@@ -73,11 +98,45 @@ export class Admins implements OnInit {
       });
   }
 
-  private mapAdminsResponse(response: AdminsApiResponse | AdminApiItem[]): Admin[] {
+  private mapAdminsResponse(response: AdminsApiResponse | AdminApiItem[]): {
+    admins: Admin[];
+    pagination: AdminsPagination;
+  } {
     const admins = Array.isArray(response)
       ? response
       : (response.items ?? response.admins ?? response.data ?? []);
-    return admins.map((admin) => this.mapAdmin(admin));
+    const mappedAdmins = admins.map((admin) => this.mapAdmin(admin));
+
+    return {
+      admins: mappedAdmins,
+      pagination: this.mapPagination(response, mappedAdmins.length),
+    };
+  }
+
+  private mapPagination(
+    response: AdminsApiResponse | AdminApiItem[],
+    fallbackTotal: number,
+  ): AdminsPagination {
+    if (Array.isArray(response)) {
+      return {
+        page: this.currentPage(),
+        limit: this.pageSize(),
+        total: response.length,
+        totalPages: Math.max(1, Math.ceil(response.length / this.pageSize())),
+      };
+    }
+
+    const page = Math.max(1, response.page ?? this.currentPage());
+    const limit = Math.max(1, response.limit ?? this.pageSize());
+    const total = Math.max(0, response.total ?? fallbackTotal);
+    const totalPages = Math.max(1, response.totalPages ?? Math.ceil(total / limit));
+
+    return {
+      page,
+      limit,
+      total,
+      totalPages,
+    };
   }
 
   private mapAdmin(admin: AdminApiItem): Admin {
@@ -94,4 +153,6 @@ export class Admins implements OnInit {
       role: resolvedRole || ADMINS_DEFAULT_ROLE,
     };
   }
+
+  protected readonly ADMINS_PAGE_SIZE = ADMINS_PAGE_SIZE;
 }
