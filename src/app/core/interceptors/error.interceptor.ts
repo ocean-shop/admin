@@ -12,6 +12,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      console.log(error, 'error');
       if (error.status === 401 && !req.url.includes('/auth/')) {
         return authService.refreshToken().pipe(
           switchMap((response) => {
@@ -35,6 +36,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           const message = error.error?.message || error.message || 'An unexpected error occurred';
           toasterService.danger(`Error ${error.status}`, message);
         }
+      }
+
+      if (error.status === 403) {
+        router.navigate(['/admin/not-permission']);
       }
       return throwError(() => error);
     }),

@@ -36,6 +36,13 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/admin/pages/admins/admins').then((m) => m.Admins),
       },
       {
+        path: 'not-permission',
+        loadComponent: () =>
+          import('./modules/admin/pages/system/not-permission/not-permission').then(
+            (m) => m.NotPermission,
+          ),
+      },
+      {
         path: 'settings',
         loadComponent: () =>
           import('./modules/admin/pages/settings/settings').then((m) => m.Settings),
