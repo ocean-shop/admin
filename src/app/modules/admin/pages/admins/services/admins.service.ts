@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AdminApiItem, AdminsApiResponse, AdminsQueryParams } from '../models/admin.model';
+import { AdminCreatePayload, AdminUpdatePayload } from '../models/admin-payload.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,24 @@ export class AdminsService {
         page: query.page,
         limit: query.limit,
       },
+    });
+  }
+
+  createAdmin(payload: AdminCreatePayload): Observable<AdminApiItem> {
+    return this.http.post<AdminApiItem>(`${this.API_URL}/user/admins/`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  updateAdmin(id: string, payload: AdminUpdatePayload): Observable<AdminApiItem> {
+    return this.http.patch<AdminApiItem>(`${this.API_URL}/user/admins/${id}`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  deleteAdmin(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/user/admins/${id}`, {
+      withCredentials: true,
     });
   }
 }

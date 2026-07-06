@@ -5,11 +5,15 @@
 }
 
 .user-card {
-  @apply flex items-center justify-between bg-surface-container-lowest border border-outline-variant rounded-xl px-6 h-[100px] w-full hover:border-primary transition-colors shadow-sm;
+  @apply flex flex-col items-stretch gap-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 w-full hover:border-primary transition-colors shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:min-h-[100px];
 }
 
 .user-meta {
-  @apply flex items-center gap-4;
+  @apply flex items-center gap-4 min-w-0;
+}
+
+.user-identity {
+  @apply min-w-0;
 }
 
 .user-icon {
@@ -17,27 +21,31 @@
 }
 
 .user-name {
-  @apply font-bold text-on-surface;
+  @apply font-bold text-on-surface leading-tight;
 }
 
 .user-email {
-  @apply text-sm text-on-surface-variant;
+  @apply text-sm text-on-surface-variant break-all leading-tight;
 }
 
 .user-actions-row {
-  @apply flex items-center gap-12;
+  @apply w-full flex items-center flex-wrap gap-3 sm:w-auto sm:flex-nowrap sm:gap-12;
 }
 
 .user-phone {
   @apply flex items-center gap-2 text-on-surface-variant;
 }
 
+.user-phone-text {
+  @apply text-sm leading-tight;
+}
+
 .user-role {
-  @apply px-3 py-1 bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest rounded-full border border-primary/20;
+  @apply px-3 py-1 bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest rounded-full border border-primary/20 shrink-0;
 }
 
 .action-buttons {
-  @apply flex items-center gap-2;
+  @apply ml-auto flex items-center gap-2 sm:ml-0;
 }
 
 .icon-btn-edit {

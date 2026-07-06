@@ -3,7 +3,7 @@
     <div class="user-icon">
       <span class="material-symbols-outlined">person</span>
     </div>
-    <div>
+    <div class="user-identity">
       <p class="user-name">{{ user().name }}</p>
       <p class="user-email">{{ user().email }}</p>
     </div>
@@ -12,7 +12,7 @@
   <div class="user-actions-row">
     <div class="user-phone">
       <span class="material-symbols-outlined text-sm">call</span>
-      <span class="text-sm">{{ user().phone }}</span>
+      <span class="user-phone-text">{{ user().phone }}</span>
     </div>
 
     <span class="user-role">{{ user().role }}</span>

@@ -2,14 +2,22 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
+import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Admins } from './admins';
 import { AdminsService } from './services/admins.service';
 import { AdminsApiResponse } from './models/admin.model';
+import { ADMINS_TEXTS } from './constants/admins.constants';
 
 describe('Admins', () => {
   let fixture: ComponentFixture<Admins>;
   let component: Admins;
-  let mockAdminsService: { getAdmins: ReturnType<typeof vi.fn> };
+  let mockAdminsService: {
+    getAdmins: ReturnType<typeof vi.fn>;
+    createAdmin: ReturnType<typeof vi.fn>;
+    updateAdmin: ReturnType<typeof vi.fn>;
+    deleteAdmin: ReturnType<typeof vi.fn>;
+  };
+  let mockToasterService: { success: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     const firstPageResponse: AdminsApiResponse = {
@@ -51,6 +59,12 @@ describe('Admins', () => {
         .fn()
         .mockReturnValueOnce(of(firstPageResponse))
         .mockReturnValue(of(secondPageResponse)),
+      createAdmin: vi.fn().mockReturnValue(of({ id: 'created-admin' })),
+      updateAdmin: vi.fn().mockReturnValue(of({ id: 'updated-admin' })),
+      deleteAdmin: vi.fn().mockReturnValue(of(void 0)),
+    };
+    mockToasterService = {
+      success: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -58,6 +72,7 @@ describe('Admins', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: AdminsService, useValue: mockAdminsService },
+        { provide: ToasterService, useValue: mockToasterService },
       ],
     }).compileComponents();
 
@@ -74,8 +89,8 @@ describe('Admins', () => {
   it('renders page title and create action', () => {
     const pageElement = fixture.nativeElement as HTMLElement;
 
-    expect(pageElement.textContent).toContain('Administrators');
-    expect(pageElement.textContent).toContain('Create Admin');
+    expect(pageElement.textContent).toContain(ADMINS_TEXTS.PAGE_TITLE);
+    expect(pageElement.textContent).toContain(ADMINS_TEXTS.CREATE_LABEL);
   });
 
   it('renders administrators list from API', () => {
@@ -83,16 +98,18 @@ describe('Admins', () => {
 
     expect(mockAdminsService.getAdmins).toHaveBeenCalledTimes(1);
     expect(mockAdminsService.getAdmins).toHaveBeenCalledWith({ page: 1, limit: 10 });
-    expect(pageElement.textContent).toContain('Unknown administrator');
+    expect(pageElement.textContent).toContain(ADMINS_TEXTS.DEFAULT_NAME);
     expect(pageElement.textContent).toContain('kukulyak.taras@gmail.com');
-    expect(pageElement.textContent).toContain('No phone');
+    expect(pageElement.textContent).toContain(ADMINS_TEXTS.DEFAULT_PHONE);
     expect(pageElement.textContent).toContain('super');
   });
 
   it('renders pagination summary from API metadata', () => {
     const pageElement = fixture.nativeElement as HTMLElement;
 
-    expect(pageElement.textContent).toContain('Showing 1 to 10 of 12 admins');
+    expect(pageElement.textContent).toContain(
+      `Showing 1 to 10 of 12 ${ADMINS_TEXTS.PAGINATION_LABEL}`,
+    );
   });
 
   it('requests selected page when pagination page is clicked', async () => {
@@ -105,5 +122,41 @@ describe('Admins', () => {
     await fixture.whenStable();
 
     expect(mockAdminsService.getAdmins).toHaveBeenNthCalledWith(2, { page: 2, limit: 10 });
+  });
+
+  it('creates admin and refreshes list after success', () => {
+    (component as any).onCreateAdmin();
+    (component as any).onConfirmFormModal({ email: 'new.admin@ocean-shop.com', role: 'admin' });
+
+    expect(mockAdminsService.createAdmin).toHaveBeenCalledWith({
+      email: 'new.admin@ocean-shop.com',
+      role: 'admin',
+    });
+    expect(mockToasterService.success).toHaveBeenCalledWith(ADMINS_TEXTS.CREATE_SUCCESS_TITLE);
+    expect(mockAdminsService.getAdmins).toHaveBeenCalledTimes(2);
+  });
+
+  it('updates selected admin and refreshes list after success', () => {
+    const admin = (component as any).admins()[0];
+    (component as any).onEditAdmin(admin);
+    (component as any).onConfirmFormModal({ phone: '1234567890', role: 'super' });
+
+    expect(mockAdminsService.updateAdmin).toHaveBeenCalledWith(admin.id, {
+      phone: '1234567890',
+      role: 'super',
+    });
+    expect(mockToasterService.success).toHaveBeenCalledWith(ADMINS_TEXTS.UPDATE_SUCCESS_TITLE);
+    expect(mockAdminsService.getAdmins).toHaveBeenCalledTimes(2);
+  });
+
+  it('deletes selected admin and refreshes list after success', () => {
+    const admin = (component as any).admins()[0];
+    (component as any).onDeleteAdmin(admin);
+
+    (component as any).onConfirmDelete();
+
+    expect(mockAdminsService.deleteAdmin).toHaveBeenCalledWith(admin.id);
+    expect(mockToasterService.success).toHaveBeenCalledWith(ADMINS_TEXTS.DELETE_SUCCESS_TITLE);
+    expect(mockAdminsService.getAdmins).toHaveBeenCalledTimes(2);
   });
 });

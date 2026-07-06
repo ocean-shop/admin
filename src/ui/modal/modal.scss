@@ -1,0 +1,41 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply contents;
+}
+
+.modal-overlay {
+  @apply fixed inset-0 z-[60] flex items-start justify-center bg-inverse-surface/60 backdrop-blur-sm;
+}
+
+.modal-content {
+  @apply bg-surface-container-lowest w-full max-w-[600px] rounded-xl overflow-hidden mx-4 mt-[200px];
+}
+
+.modal-header {
+  @apply flex items-center justify-between px-6 py-4 border-b border-outline-variant;
+}
+
+.modal-title {
+  @apply text-xl font-bold text-on-surface;
+}
+
+.modal-close-button {
+  @apply p-2 hover:bg-secondary-container rounded-full transition-colors;
+}
+
+.modal-body {
+  @apply p-6 space-y-4;
+}
+
+.modal-footer {
+  @apply px-6 py-4 bg-surface-container-low flex justify-end;
+}
+
+.modal-confirm-button {
+  @apply px-6 py-2 bg-primary text-on-primary rounded-lg font-bold hover:bg-primary-container transition-all active:scale-95 shadow-md disabled:opacity-60 disabled:pointer-events-none;
+}
+
+.modal-confirm-button-danger {
+  @apply bg-error text-on-error hover:bg-error/90;
+}

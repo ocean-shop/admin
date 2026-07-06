@@ -1,64 +1,83 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 import { Button } from '@ui/button/button';
+import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { UserCard } from '@ui/user-card/user-card';
+import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Admin, AdminApiItem, AdminsApiResponse, AdminsPagination } from './models/admin.model';
+import { AdminCreatePayload } from './models/admin-payload.model';
+import { AdminModalMode } from './models/admin-modal-mode.type';
+import { AdminFormModal } from './components/admin-form-modal/admin-form-modal';
 import { AdminsService } from './services/admins.service';
 import {
+  ADMINS_TEXTS,
   ADMINS_CREATE_ICON,
-  ADMINS_CREATE_LABEL,
-  ADMINS_DEFAULT_EMAIL,
-  ADMINS_DEFAULT_NAME,
-  ADMINS_DEFAULT_PHONE,
-  ADMINS_DEFAULT_ROLE,
-  ADMINS_EMPTY_STATE,
   ADMINS_PAGE_SIZE,
-  ADMINS_PAGE_TITLE,
-  ADMINS_PAGINATION_LABEL,
+  ADMINS_ROLE_OPTIONS,
 } from './constants/admins.constants';
 
 @Component({
   selector: 'app-admins',
-  imports: [Button, UserCard, Pagination],
+  imports: [Button, UserCard, Pagination, Modal, AdminFormModal],
   templateUrl: './admins.html',
   styleUrl: './admins.scss',
 })
 export class Admins implements OnInit {
   private readonly adminsService = inject(AdminsService);
+  private readonly toasterService = inject(ToasterService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly title = ADMINS_PAGE_TITLE;
-  protected readonly createAdminLabel = ADMINS_CREATE_LABEL;
+  protected readonly title = ADMINS_TEXTS.PAGE_TITLE;
+  protected readonly createAdminLabel = ADMINS_TEXTS.CREATE_LABEL;
   protected readonly createAdminIcon = ADMINS_CREATE_ICON;
-  protected readonly emptyState = ADMINS_EMPTY_STATE;
+  protected readonly emptyState = ADMINS_TEXTS.EMPTY_STATE;
+  protected readonly paginationLabel = ADMINS_TEXTS.PAGINATION_LABEL;
+  protected readonly roleOptions = ADMINS_ROLE_OPTIONS;
+  protected readonly ADMINS_PAGE_SIZE = ADMINS_PAGE_SIZE;
+  protected readonly deleteModalTitle = ADMINS_TEXTS.MODAL_DELETE_TITLE;
+  protected readonly deleteModalConfirmLabel = ADMINS_TEXTS.MODAL_DELETE_CONFIRM_LABEL;
+  protected readonly deleteModalMessage = ADMINS_TEXTS.MODAL_DELETE_MESSAGE;
 
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
+  protected readonly isActionLoading = signal(false);
   protected readonly admins = signal<Admin[]>([]);
   protected readonly currentPage = signal(1);
   protected readonly pageSize = signal(ADMINS_PAGE_SIZE);
   protected readonly totalItems = signal(0);
   protected readonly totalPages = signal(1);
-  protected readonly lastAction = signal<string | null>(null);
-  protected readonly paginationLabel = ADMINS_PAGINATION_LABEL;
+  protected readonly selectedAdmin = signal<Admin | null>(null);
+  protected readonly modalMode = signal<AdminModalMode>(null);
   protected readonly hasAdmins = computed(() => this.admins().length > 0);
+  protected readonly isFormModalOpen = computed(() => {
+    const mode = this.modalMode();
+    return mode === 'create' || mode === 'update';
+  });
+  protected readonly isDeleteModalOpen = computed(() => this.modalMode() === 'delete');
+  protected readonly formModalMode = computed(() => {
+    const mode = this.modalMode();
+    return mode === 'create' || mode === 'update' ? mode : 'create';
+  });
 
   ngOnInit(): void {
     this.loadAdmins();
   }
 
   protected onCreateAdmin(): void {
-    this.lastAction.set('create');
+    this.selectedAdmin.set(null);
+    this.modalMode.set('create');
   }
 
   protected onEditAdmin(admin: Admin): void {
-    this.lastAction.set(`edit:${admin.id}`);
+    this.selectedAdmin.set(admin);
+    this.modalMode.set('update');
   }
 
   protected onDeleteAdmin(admin: Admin): void {
-    this.lastAction.set(`delete:${admin.id}`);
+    this.selectedAdmin.set(admin);
+    this.modalMode.set('delete');
   }
 
   protected onPageChange(page: number): void {
@@ -68,6 +87,54 @@ export class Admins implements OnInit {
 
     this.currentPage.set(page);
     this.loadAdmins();
+  }
+
+  protected onCloseModal(): void {
+    if (this.isActionLoading()) {
+      return;
+    }
+
+    this.closeModal();
+  }
+
+  private closeModal(): void {
+    this.modalMode.set(null);
+    this.selectedAdmin.set(null);
+  }
+
+  protected onConfirmFormModal(payload: AdminCreatePayload): void {
+    if (this.isActionLoading()) {
+      return;
+    }
+
+    const mode = this.modalMode();
+    if (mode === 'create') {
+      this.executeMutation(
+        this.adminsService.createAdmin(payload),
+        ADMINS_TEXTS.CREATE_SUCCESS_TITLE,
+      );
+      return;
+    }
+
+    const selectedAdmin = this.selectedAdmin();
+    if (mode === 'update' && selectedAdmin) {
+      this.executeMutation(
+        this.adminsService.updateAdmin(selectedAdmin.id, payload),
+        ADMINS_TEXTS.UPDATE_SUCCESS_TITLE,
+      );
+    }
+  }
+
+  protected onConfirmDelete(): void {
+    const selectedAdmin = this.selectedAdmin();
+    if (!selectedAdmin || this.isActionLoading()) {
+      return;
+    }
+
+    this.executeMutation(
+      this.adminsService.deleteAdmin(selectedAdmin.id),
+      ADMINS_TEXTS.DELETE_SUCCESS_TITLE,
+    );
   }
 
   private loadAdmins(): void {
@@ -94,6 +161,23 @@ export class Admins implements OnInit {
         },
         error: () => {
           this.hasError.set(true);
+        },
+      });
+  }
+
+  private executeMutation(request$: Observable<unknown>, successTitle: string): void {
+    this.isActionLoading.set(true);
+
+    request$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isActionLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.toasterService.success(successTitle);
+          this.closeModal();
+          this.loadAdmins();
         },
       });
   }
@@ -147,12 +231,10 @@ export class Admins implements OnInit {
 
     return {
       id: String(admin.id ?? crypto.randomUUID()),
-      name: resolvedName || ADMINS_DEFAULT_NAME,
-      email: admin.email || ADMINS_DEFAULT_EMAIL,
-      phone: resolvedPhone || ADMINS_DEFAULT_PHONE,
-      role: resolvedRole || ADMINS_DEFAULT_ROLE,
+      name: resolvedName || ADMINS_TEXTS.DEFAULT_NAME,
+      email: admin.email || ADMINS_TEXTS.DEFAULT_EMAIL,
+      phone: resolvedPhone || ADMINS_TEXTS.DEFAULT_PHONE,
+      role: resolvedRole || ADMINS_TEXTS.DEFAULT_ROLE,
     };
   }
-
-  protected readonly ADMINS_PAGE_SIZE = ADMINS_PAGE_SIZE;
 }

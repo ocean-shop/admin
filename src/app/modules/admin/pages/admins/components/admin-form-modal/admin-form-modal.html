@@ -1,0 +1,27 @@
+<app-modal
+  [isOpen]="isOpen()"
+  [title]="title()"
+  [confirmLabel]="confirmLabel()"
+  [confirmDisabled]="!isFormValid() || confirmLoading()"
+  [confirmLoading]="confirmLoading()"
+  (closed)="onClose()"
+  (confirmed)="onConfirm()"
+>
+  <form class="admin-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
+    <app-input
+      [id]="identityFieldId"
+      [label]="identityLabel"
+      [placeholder]="identityPlaceholder"
+      [control]="adminForm.identity"
+    />
+
+    <app-dropdown
+      triggerMode="click"
+      variant="form"
+      icon="shield_person"
+      [label]="roleLabel"
+      [options]="roleOptions()"
+      [formField]="adminForm.role"
+    />
+  </form>
+</app-modal>

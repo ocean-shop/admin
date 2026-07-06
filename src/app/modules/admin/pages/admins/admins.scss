@@ -1,11 +1,11 @@
 @reference "../../../../../styles.scss";
 
 .admins-page {
-  @apply max-w-7xl mx-auto;
+  @apply max-w-7xl mx-auto px-3 sm:px-0;
 }
 
 .admins-header {
-  @apply flex items-center justify-between gap-4 mb-8;
+  @apply flex flex-col items-start justify-between gap-4 mb-8 sm:flex-row sm:items-center;
 }
 
 .admins-title {
@@ -26,4 +26,8 @@
 
 .admins-pagination {
   @apply w-full;
+}
+
+.admins-delete-message {
+  @apply text-on-surface-variant text-sm leading-6;
 }
