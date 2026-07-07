@@ -1,0 +1,43 @@
+@if (isOpen()) {
+<div
+  class="modal-overlay"
+  role="dialog"
+  tabindex="0"
+  aria-modal="true"
+  [attr.aria-label]="title()"
+  (click)="onBackdropClick($event)"
+  (keydown)="onBackdropKeydown($event)"
+>
+  <div class="modal-content m3-elevation-2">
+    <div class="modal-header">
+      <h3 class="modal-title">{{ title() }}</h3>
+      <button
+        class="modal-close-button"
+        type="button"
+        aria-label="Close modal"
+        (click)="closed.emit()"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <ng-content />
+    </div>
+
+    @if (showFooter()) {
+    <div class="modal-footer">
+      <button
+        class="modal-confirm-button"
+        [class.modal-confirm-button-danger]="isDanger()"
+        [disabled]="confirmDisabled() || confirmLoading()"
+        type="button"
+        (click)="confirmed.emit()"
+      >
+        {{ confirmLoading() ? 'Please wait...' : confirmLabel() }}
+      </button>
+    </div>
+    }
+  </div>
+</div>
+}

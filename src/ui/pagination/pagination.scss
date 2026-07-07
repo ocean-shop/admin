@@ -1,0 +1,29 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.pagination-container {
+  @apply mt-12 flex items-center justify-between border-t border-outline-variant pt-6;
+}
+
+.pagination-summary {
+  @apply text-sm text-on-surface-variant;
+}
+
+.pagination-controls {
+  @apply flex items-center gap-2;
+}
+
+.pagination-arrow-button {
+  @apply rounded-lg border border-outline-variant p-2 transition-colors hover:bg-secondary-container disabled:opacity-50 disabled:hover:bg-transparent;
+}
+
+.pagination-page-button {
+  @apply h-10 w-10 rounded-lg transition-colors hover:bg-secondary-container;
+}
+
+.pagination-page-button-active {
+  @apply bg-primary font-bold text-on-primary hover:bg-primary;
+}

@@ -35,13 +35,17 @@ export class Dropdown implements FormValueControl<string> {
   protected readonly isOpen = signal(false);
 
   protected readonly displayLabel = computed(() => {
+    const selected = this.options().find((option) => option.value === this.value());
+    if (selected?.label) {
+      return selected.label;
+    }
+
     const explicitLabel = this.label();
     if (explicitLabel) {
       return explicitLabel;
     }
 
-    const selected = this.options().find((option) => option.value === this.value());
-    return selected?.label ?? this.options()[0]?.label ?? '';
+    return this.options()[0]?.label ?? '';
   });
 
   protected toggleMenu(event: Event): void {

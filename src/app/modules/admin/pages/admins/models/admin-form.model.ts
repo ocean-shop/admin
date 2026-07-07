@@ -1,0 +1,4 @@
+export interface AdminFormData {
+  identity: string;
+  role: string;
+}
