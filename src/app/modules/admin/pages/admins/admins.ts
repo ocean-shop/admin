@@ -2,9 +2,9 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, Observable } from 'rxjs';
 import { Button } from '@ui/button/button';
+import { EntityCard, EntityCardData } from '@ui/entity-card/entity-card';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
-import { UserCard } from '@ui/user-card/user-card';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Admin, AdminApiItem, AdminsApiResponse, AdminsPagination } from './models/admin.model';
 import { AdminCreatePayload } from './models/admin-payload.model';
@@ -20,7 +20,7 @@ import {
 
 @Component({
   selector: 'app-admins',
-  imports: [Button, UserCard, Pagination, Modal, AdminFormModal],
+  imports: [Button, EntityCard, Pagination, Modal, AdminFormModal],
   templateUrl: './admins.html',
   styleUrl: './admins.scss',
 })
@@ -51,6 +51,15 @@ export class Admins implements OnInit {
   protected readonly selectedAdmin = signal<Admin | null>(null);
   protected readonly modalMode = signal<AdminModalMode>(null);
   protected readonly hasAdmins = computed(() => this.admins().length > 0);
+  protected readonly adminCards = computed(() =>
+    this.admins().map((admin) => ({
+      id: admin.id,
+      title: admin.name,
+      subtitle: admin.email,
+      detail: admin.phone,
+      badge: admin.role,
+    })),
+  );
   protected readonly isFormModalOpen = computed(() => {
     const mode = this.modalMode();
     return mode === 'create' || mode === 'update';
@@ -70,13 +79,23 @@ export class Admins implements OnInit {
     this.modalMode.set('create');
   }
 
-  protected onEditAdmin(admin: Admin): void {
-    this.selectedAdmin.set(admin);
+  protected onEditAdmin(adminCard: EntityCardData): void {
+    const selectedAdmin = this.admins().find((admin) => admin.id === adminCard.id);
+    if (!selectedAdmin) {
+      return;
+    }
+
+    this.selectedAdmin.set(selectedAdmin);
     this.modalMode.set('update');
   }
 
-  protected onDeleteAdmin(admin: Admin): void {
-    this.selectedAdmin.set(admin);
+  protected onDeleteAdmin(adminCard: EntityCardData): void {
+    const selectedAdmin = this.admins().find((admin) => admin.id === adminCard.id);
+    if (!selectedAdmin) {
+      return;
+    }
+
+    this.selectedAdmin.set(selectedAdmin);
     this.modalMode.set('delete');
   }
 

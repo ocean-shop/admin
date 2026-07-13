@@ -1,0 +1,32 @@
+<app-modal
+  [isOpen]="isOpen()"
+  [title]="title()"
+  [confirmLabel]="confirmLabel()"
+  [confirmDisabled]="!isFormValid() || confirmLoading()"
+  [confirmLoading]="confirmLoading()"
+  (closed)="onClose()"
+  (confirmed)="onConfirm()"
+>
+  <form class="shop-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
+    <app-input
+      [id]="nameFieldId"
+      [label]="nameLabel"
+      [placeholder]="namePlaceholder"
+      [control]="shopForm.name"
+    />
+
+    <app-textarea
+      [id]="descriptionFieldId"
+      [label]="descriptionLabel"
+      [placeholder]="descriptionPlaceholder"
+      [control]="shopForm.description"
+    />
+
+    <app-input
+      [id]="urlFieldId"
+      [label]="urlLabel"
+      [placeholder]="urlPlaceholder"
+      [control]="shopForm.url"
+    />
+  </form>
+</app-modal>

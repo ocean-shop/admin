@@ -16,8 +16,13 @@
   <p class="state-text">{{ emptyState }}</p>
   } @else {
   <div class="admins-list">
-    @for (admin of admins(); track admin.id) {
-    <app-user-card [user]="admin" (edit)="onEditAdmin(admin)" (removed)="onDeleteAdmin(admin)" />
+    @for (adminCard of adminCards(); track adminCard.id) {
+    <app-entity-card
+      [entity]="adminCard"
+      [icon]="'person'"
+      (edit)="onEditAdmin(adminCard)"
+      (removed)="onDeleteAdmin(adminCard)"
+    />
     }
   </div>
 

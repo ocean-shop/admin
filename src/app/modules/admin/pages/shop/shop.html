@@ -1,1 +1,62 @@
-<h1>Shop 1</h1>
+<section class="shops-page">
+  <header class="shops-header">
+    <h3 class="shops-title">{{ title }}</h3>
+    <app-button
+      [label]="createShopLabel"
+      [icon]="createShopIcon"
+      [iconLeading]="true"
+      [fullWidth]="false"
+      variant="create"
+      type="button"
+      (click)="onCreateShop()"
+    />
+  </header>
+
+  @if (!isLoading() && !hasShops()) {
+  <p class="state-text">{{ emptyState }}</p>
+  } @else {
+  <div class="shops-list">
+    @for (shopCard of shopCards(); track shopCard.id) {
+    <app-entity-card
+      [entity]="shopCard"
+      [icon]="'store'"
+      (edit)="onEditShop(shopCard)"
+      (removed)="onDeleteShop(shopCard)"
+    />
+    }
+  </div>
+
+  @if (totalItems() > SHOPS_PAGE_SIZE) {
+  <app-pagination
+    class="shops-pagination"
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize()"
+    [totalItems]="totalItems()"
+    [totalPages]="totalPages()"
+    [label]="paginationLabel"
+    (pageChange)="onPageChange($event)"
+  />
+  } }
+
+  <app-shop-form-modal
+    [isOpen]="isFormModalOpen()"
+    [mode]="formModalMode()"
+    [shop]="selectedShop()"
+    [confirmLoading]="isActionLoading()"
+    (closed)="onCloseModal()"
+    (confirmed)="onConfirmFormModal($event)"
+  />
+
+  <app-modal
+    [isOpen]="isDeleteModalOpen()"
+    [title]="deleteModalTitle"
+    [confirmLabel]="deleteModalConfirmLabel"
+    [confirmLoading]="isActionLoading()"
+    [confirmDisabled]="isActionLoading()"
+    [isDanger]="true"
+    (closed)="onCloseModal()"
+    (confirmed)="onConfirmDelete()"
+  >
+    <p class="shops-delete-message">{{ deleteModalMessage }}</p>
+  </app-modal>
+</section>
