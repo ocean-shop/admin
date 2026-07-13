@@ -22,6 +22,10 @@ describe('AdminFormModal', () => {
       { label: 'Admin', value: 'admin' },
       { label: 'Super', value: 'super' },
     ]);
+    fixture.componentRef.setInput('shopOptions', [
+      { label: 'Shop One', value: 'shop-1' },
+      { label: 'Shop Two', value: 'shop-2' },
+    ]);
     await fixture.whenStable();
     fixture.detectChanges();
   });
@@ -50,12 +54,17 @@ describe('AdminFormModal', () => {
     (component as any).adminFormModel.set({
       identity: 'new.admin@ocean-shop.com',
       role: 'admin',
+      shopIds: [],
     });
     fixture.detectChanges();
 
     (component as any).onConfirm();
 
-    expect(confirmedSpy).toHaveBeenCalledWith({ email: 'new.admin@ocean-shop.com', role: 'admin' });
+    expect(confirmedSpy).toHaveBeenCalledWith({
+      email: 'new.admin@ocean-shop.com',
+      role: 'admin',
+      shopIds: [],
+    });
   });
 
   it('emits payload with phone when form is valid and identity is a phone number', () => {
@@ -65,12 +74,17 @@ describe('AdminFormModal', () => {
     (component as any).adminFormModel.set({
       identity: '1234567890',
       role: 'super',
+      shopIds: ['shop-1', 'shop-2'],
     });
     fixture.detectChanges();
 
     (component as any).onConfirm();
 
-    expect(confirmedSpy).toHaveBeenCalledWith({ phone: '1234567890', role: 'super' });
+    expect(confirmedSpy).toHaveBeenCalledWith({
+      mobileNumber: '1234567890',
+      role: 'super',
+      shopIds: ['shop-1', 'shop-2'],
+    });
   });
 
   it('does not emit confirmed when form is invalid', () => {
@@ -80,6 +94,7 @@ describe('AdminFormModal', () => {
     (component as any).adminFormModel.set({
       identity: '',
       role: 'admin',
+      shopIds: [],
     });
     fixture.detectChanges();
 
@@ -117,6 +132,7 @@ describe('AdminFormModal', () => {
       email: 'admin.one@ocean-shop.com',
       phone: 'No phone',
       role: 'super',
+      shopIds: ['shop-1'],
     };
     fixture.componentRef.setInput('mode', 'update');
     fixture.componentRef.setInput('admin', admin);
@@ -125,6 +141,7 @@ describe('AdminFormModal', () => {
 
     expect((component as any).adminFormModel().identity).toBe('admin.one@ocean-shop.com');
     expect((component as any).adminFormModel().role).toBe('super');
+    expect((component as any).adminFormModel().shopIds).toEqual(['shop-1']);
   });
 
   it('resets form when admin input is null', async () => {
@@ -134,5 +151,6 @@ describe('AdminFormModal', () => {
 
     expect((component as any).adminFormModel().identity).toBe('');
     expect((component as any).adminFormModel().role).toBe('admin');
+    expect((component as any).adminFormModel().shopIds).toEqual([]);
   });
 });

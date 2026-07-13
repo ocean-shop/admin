@@ -1,0 +1,69 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.multi-select-container {
+  @apply relative;
+}
+
+.multi-select-trigger {
+  @apply flex items-center gap-sm px-md py-sm rounded-full hover:bg-primary/10 text-primary transition-colors font-body-sm;
+}
+
+.multi-select-trigger-form {
+  @apply w-full justify-between rounded-lg border border-outline-variant bg-transparent px-md py-[12px] text-on-surface font-body-md hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all;
+}
+
+.multi-select-container-form .multi-select-menu {
+  @apply left-0 right-0 w-full;
+}
+
+.multi-select-trigger-icon {
+  @apply text-outline;
+}
+
+.multi-select-container-form.multi-select-container-open .multi-select-trigger-icon {
+  @apply text-primary;
+}
+
+.multi-select-trigger-label {
+  @apply flex-1 text-left truncate;
+}
+
+.multi-select-icon-small {
+  @apply text-body-sm transition-transform duration-200;
+}
+
+.multi-select-icon-rotated {
+  @apply rotate-180;
+}
+
+.multi-select-menu {
+  @apply absolute right-0 mt-xs w-56 bg-surface-container-lowest rounded-lg border border-outline-variant opacity-0 invisible transition-all duration-200 z-10;
+}
+
+.multi-select-container:not(.multi-select-container-click):hover .multi-select-menu {
+  @apply opacity-100 visible;
+}
+
+.multi-select-container-open .multi-select-menu {
+  @apply opacity-100 visible;
+}
+
+.multi-select-list {
+  @apply py-xs max-h-56 overflow-auto;
+}
+
+.multi-select-item {
+  @apply w-full flex items-center justify-between gap-sm px-md py-sm text-body-sm text-on-surface hover:bg-primary/10 transition-colors;
+}
+
+.multi-select-item-label {
+  @apply text-left;
+}
+
+.multi-select-item-icon {
+  @apply text-body-sm text-primary;
+}

@@ -1,11 +1,13 @@
 export interface AdminCreatePayload {
   email?: string;
-  phone?: string;
+  mobileNumber?: string;
   role: string;
+  shopIds?: string[];
 }
 
 export interface AdminUpdatePayload {
   email?: string;
-  phone?: string;
+  mobileNumber?: string;
   role: string;
+  shopIds?: string[];
 }

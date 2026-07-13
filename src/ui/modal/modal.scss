@@ -9,7 +9,7 @@
 }
 
 .modal-content {
-  @apply bg-surface-container-lowest w-full max-w-[600px] rounded-xl overflow-hidden mx-4 mt-[200px];
+  @apply bg-surface-container-lowest w-full max-w-[600px] rounded-xl overflow-visible mx-4 mt-[200px];
 }
 
 .modal-header {
