@@ -1,0 +1,92 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  computed,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
+import { FormValueControl } from '@angular/forms/signals';
+import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
+import { DropdownTriggerMode } from '@ui/dropdown/models/dropdown-trigger-mode.type';
+import { DropdownVariant } from '@ui/dropdown/models/dropdown-variant.type';
+
+@Component({
+  selector: 'app-multi-select-dropdown',
+  imports: [],
+  templateUrl: './multi-select-dropdown.html',
+  styleUrl: './multi-select-dropdown.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+})
+export class MultiSelectDropdown implements FormValueControl<string[]> {
+  readonly value = model<string[]>([]);
+
+  readonly label = input<string>('Select options');
+  readonly icon = input<string>();
+  readonly options = input.required<DropdownOption[]>();
+  readonly triggerMode = input<DropdownTriggerMode>('click');
+  readonly variant = input<DropdownVariant>('default');
+
+  readonly optionToggled = output<DropdownOption>();
+
+  protected readonly isOpen = signal(false);
+
+  protected readonly displayLabel = computed(() => {
+    const selectedValues = this.value();
+    if (!selectedValues.length) {
+      return this.label();
+    }
+
+    const selectedOptions = this.options().filter((option) =>
+      selectedValues.includes(option.value),
+    );
+    if (!selectedOptions.length) {
+      return this.label();
+    }
+
+    if (selectedOptions.length === 1) {
+      return selectedOptions[0].label;
+    }
+
+    return `${selectedOptions.length} selected`;
+  });
+
+  protected toggleMenu(event: Event): void {
+    if (this.triggerMode() !== 'click') {
+      return;
+    }
+
+    event.stopPropagation();
+    this.isOpen.update((open) => !open);
+  }
+
+  protected toggleOption(option: DropdownOption, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.value.update((currentValues) => {
+      const hasOption = currentValues.includes(option.value);
+      if (hasOption) {
+        return currentValues.filter((value) => value !== option.value);
+      }
+
+      return [...currentValues, option.value];
+    });
+
+    this.optionToggled.emit(option);
+  }
+
+  protected isSelected(value: string): boolean {
+    return this.value().includes(value);
+  }
+
+  @HostListener('document:click')
+  protected closeMenu(): void {
+    if (this.triggerMode() === 'click') {
+      this.isOpen.set(false);
+    }
+  }
+}

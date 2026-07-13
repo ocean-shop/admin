@@ -1,0 +1,33 @@
+<article class="entity-card">
+  <div class="entity-meta">
+    <div class="entity-icon">
+      <span class="material-symbols-outlined">{{ icon() }}</span>
+    </div>
+    <div class="entity-identity">
+      <p class="entity-title">{{ entity().title }}</p>
+      <p class="entity-subtitle">{{ entity().subtitle }}</p>
+    </div>
+  </div>
+
+  <div class="entity-actions-row">
+    <div class="entity-detail">
+      @if (entity().detail) {
+      <span class="material-symbols-outlined text-sm">link</span>
+      <span class="entity-detail-text">{{ entity().detail }}</span>
+      }
+    </div>
+
+    @if (entity().badge) {
+    <span class="entity-badge">{{ entity().badge }}</span>
+    }
+
+    <div class="action-buttons">
+      <button class="icon-btn-edit" type="button" (click)="onEdit()">
+        <span class="material-symbols-outlined">edit</span>
+      </button>
+      <button class="icon-btn-delete" type="button" (click)="onDelete()">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </div>
+  </div>
+</article>

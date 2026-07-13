@@ -3,7 +3,13 @@ import { MenuFooterItem, MenuItem } from '../models/menu.model';
 export const ADMIN_HOME_ROUTE = '/admin';
 export const ADMIN_SETTINGS_ROUTE = '/admin/settings';
 export const ADMIN_ADMINS_ROUTE = '/admin/admins';
-export const ADMIN_PRIMARY_ROUTES = [ADMIN_HOME_ROUTE, ADMIN_SETTINGS_ROUTE, ADMIN_ADMINS_ROUTE];
+export const ADMIN_SHOPS_ROUTE = '/admin/shops';
+export const ADMIN_PRIMARY_ROUTES = [
+  ADMIN_HOME_ROUTE,
+  ADMIN_SETTINGS_ROUTE,
+  ADMIN_ADMINS_ROUTE,
+  ADMIN_SHOPS_ROUTE,
+];
 
 export const ADMIN_MENU_ITEMS: MenuItem[] = [
   { icon: 'dashboard', label: 'Головна', route: '/admin' },

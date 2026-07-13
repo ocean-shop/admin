@@ -23,6 +23,8 @@ export const ADMINS_TEXTS = {
   IDENTITY_INVALID_MESSAGE: 'Введіть дійсний email або номер телефону',
   ROLE_LABEL: 'Роль',
   ROLE_REQUIRED_MESSAGE: "Роль обов'язкова",
+  SHOPS_LABEL: 'Магазини',
+  SHOPS_PLACEHOLDER: 'Оберіть магазини',
   CREATE_SUCCESS_TITLE: 'Адміністратора створено',
   UPDATE_SUCCESS_TITLE: 'Адміністратора оновлено',
   DELETE_SUCCESS_TITLE: 'Адміністратора видалено',
@@ -38,3 +40,4 @@ export const ADMINS_ROLE_OPTIONS: DropdownOption[] = [
 ];
 
 export const ADMINS_IDENTITY_FIELD_ID = 'admin-identity';
+export const ADMINS_SHOPS_FIELD_ID = 'admin-shops';

@@ -23,5 +23,14 @@
       [options]="roleOptions()"
       [formField]="adminForm.role"
     />
+
+    <app-multi-select-dropdown
+      triggerMode="click"
+      variant="form"
+      icon="storefront"
+      [label]="shopsLabel"
+      [options]="shopOptions()"
+      [formField]="adminForm.shopIds"
+    />
   </form>
 </app-modal>

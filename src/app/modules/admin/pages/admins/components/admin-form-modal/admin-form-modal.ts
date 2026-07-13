@@ -3,6 +3,7 @@ import { form, FormField, pattern, required } from '@angular/forms/signals';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { Input } from '@ui/input/input';
+import { MultiSelectDropdown } from '@ui/multi-select-dropdown/multi-select-dropdown';
 import { Modal } from '@ui/modal/modal';
 import { Admin } from '../../models/admin.model';
 import { AdminCreatePayload } from '../../models/admin-payload.model';
@@ -13,10 +14,11 @@ import {
   ADMINS_IDENTITY_FIELD_ID,
   ADMINS_IDENTITY_PATTERN,
 } from '../../constants/admins.constants';
+import { AdminModalModeEnum } from '../../models/admin-modal-mode.type';
 
 @Component({
   selector: 'app-admin-form-modal',
-  imports: [Modal, Input, Dropdown, FormField],
+  imports: [Modal, Input, Dropdown, MultiSelectDropdown, FormField],
   templateUrl: './admin-form-modal.html',
   styleUrl: './admin-form-modal.scss',
   standalone: true,
@@ -26,6 +28,7 @@ export class AdminFormModal {
   readonly mode = input.required<'create' | 'update'>();
   readonly admin = input<Admin | null>(null);
   readonly roleOptions = input.required<DropdownOption[]>();
+  readonly shopOptions = input.required<DropdownOption[]>();
   readonly confirmLoading = input<boolean>(false);
 
   readonly closed = output<void>();
@@ -35,10 +38,12 @@ export class AdminFormModal {
   protected readonly identityLabel = ADMINS_TEXTS.IDENTITY_LABEL;
   protected readonly identityPlaceholder = ADMINS_TEXTS.IDENTITY_PLACEHOLDER;
   protected readonly roleLabel = ADMINS_TEXTS.ROLE_LABEL;
+  protected readonly shopsLabel = ADMINS_TEXTS.SHOPS_LABEL;
 
   protected readonly adminFormModel = signal<AdminFormData>({
     identity: '',
     role: ADMINS_DEFAULT_ROLE_VALUE,
+    shopIds: [],
   });
 
   protected readonly adminForm = form(this.adminFormModel, (schemaPath) => {
@@ -50,10 +55,12 @@ export class AdminFormModal {
   });
 
   protected readonly title = computed(() =>
-    this.mode() === 'create' ? ADMINS_TEXTS.MODAL_CREATE_TITLE : ADMINS_TEXTS.MODAL_UPDATE_TITLE,
+    this.mode() === AdminModalModeEnum.Create
+      ? ADMINS_TEXTS.MODAL_CREATE_TITLE
+      : ADMINS_TEXTS.MODAL_UPDATE_TITLE,
   );
   protected readonly confirmLabel = computed(() =>
-    this.mode() === 'create'
+    this.mode() === AdminModalModeEnum.Create
       ? ADMINS_TEXTS.MODAL_CREATE_CONFIRM_LABEL
       : ADMINS_TEXTS.MODAL_UPDATE_CONFIRM_LABEL,
   );
@@ -96,22 +103,24 @@ export class AdminFormModal {
   private buildPayload(): AdminCreatePayload | null {
     const identity = this.adminForm.identity().value()?.trim() ?? '';
     const role = this.adminForm.role().value()?.trim() ?? '';
+    const shopIds = this.resolveSelectedShopIds();
 
     if (!identity || !role) {
       return null;
     }
 
     if (identity.includes('@')) {
-      return { email: identity, role };
+      return { email: identity, role, shopIds };
     }
 
-    return { phone: identity, role };
+    return { mobileNumber: identity, role, shopIds };
   }
 
   private prefillAdminForm(admin: Admin): void {
     this.adminFormModel.set({
       identity: this.resolveAdminIdentity(admin),
       role: this.normalizeRoleValue(admin.role),
+      shopIds: admin.shopIds,
     });
   }
 
@@ -138,6 +147,13 @@ export class AdminFormModal {
     this.adminFormModel.set({
       identity: '',
       role: ADMINS_DEFAULT_ROLE_VALUE,
+      shopIds: [],
     });
+  }
+
+  private resolveSelectedShopIds(): string[] {
+    const selectedShopIds = this.adminForm.shopIds().value() ?? [];
+
+    return Array.from(new Set(selectedShopIds.map((shopId) => shopId.trim()).filter(Boolean)));
   }
 }

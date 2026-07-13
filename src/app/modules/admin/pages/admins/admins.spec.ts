@@ -7,6 +7,8 @@ import { Admins } from './admins';
 import { AdminsService } from './services/admins.service';
 import { AdminsApiResponse } from './models/admin.model';
 import { ADMINS_TEXTS } from './constants/admins.constants';
+import { ShopsService } from '../shop/services/shops.service';
+import { ShopsApiResponse } from '../shop/models/shop.model';
 
 describe('Admins', () => {
   let fixture: ComponentFixture<Admins>;
@@ -18,6 +20,7 @@ describe('Admins', () => {
     deleteAdmin: ReturnType<typeof vi.fn>;
   };
   let mockToasterService: { success: ReturnType<typeof vi.fn> };
+  let mockShopsService: { getShops: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     const firstPageResponse: AdminsApiResponse = {
@@ -66,12 +69,26 @@ describe('Admins', () => {
     mockToasterService = {
       success: vi.fn(),
     };
+    const shopsResponse: ShopsApiResponse = {
+      items: [
+        { id: 'shop-1', name: 'Shop One' },
+        { id: 'shop-2', name: 'Shop Two' },
+      ],
+      total: 2,
+      page: 1,
+      limit: 100,
+      totalPages: 1,
+    };
+    mockShopsService = {
+      getShops: vi.fn().mockReturnValue(of(shopsResponse)),
+    };
 
     await TestBed.configureTestingModule({
       imports: [Admins],
       providers: [
         provideZonelessChangeDetection(),
         { provide: AdminsService, useValue: mockAdminsService },
+        { provide: ShopsService, useValue: mockShopsService },
         { provide: ToasterService, useValue: mockToasterService },
       ],
     }).compileComponents();
@@ -98,6 +115,7 @@ describe('Admins', () => {
 
     expect(mockAdminsService.getAdmins).toHaveBeenCalledTimes(1);
     expect(mockAdminsService.getAdmins).toHaveBeenCalledWith({ page: 1, limit: 10 });
+    expect(mockShopsService.getShops).toHaveBeenCalledWith({ page: 1, limit: 100 });
     expect(pageElement.textContent).toContain(ADMINS_TEXTS.DEFAULT_NAME);
     expect(pageElement.textContent).toContain('kukulyak.taras@gmail.com');
     expect(pageElement.textContent).toContain(ADMINS_TEXTS.DEFAULT_PHONE);
@@ -139,10 +157,10 @@ describe('Admins', () => {
   it('updates selected admin and refreshes list after success', () => {
     const admin = (component as any).admins()[0];
     (component as any).onEditAdmin(admin);
-    (component as any).onConfirmFormModal({ phone: '1234567890', role: 'super' });
+    (component as any).onConfirmFormModal({ mobileNumber: '1234567890', role: 'super' });
 
     expect(mockAdminsService.updateAdmin).toHaveBeenCalledWith(admin.id, {
-      phone: '1234567890',
+      mobileNumber: '1234567890',
       role: 'super',
     });
     expect(mockToasterService.success).toHaveBeenCalledWith(ADMINS_TEXTS.UPDATE_SUCCESS_TITLE);

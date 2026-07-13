@@ -7,6 +7,17 @@ export interface AdminApiItem {
   email?: string | null;
   phone?: string | null;
   mobileNumber?: string | null;
+  shopIds?: (string | number)[] | null;
+  shops?:
+    | (
+        | string
+        | number
+        | {
+            id?: string | number | null;
+            name?: string | null;
+          }
+      )[]
+    | null;
   role?:
     | string
     | {
@@ -45,4 +56,5 @@ export interface Admin {
   email: string;
   phone: string;
   role: string;
+  shopIds: string[];
 }
