@@ -11,7 +11,7 @@ import { ShopApiItem, ShopsApiResponse } from '../shop/models/shop.model';
 import { ShopsService } from '../shop/services/shops.service';
 import { Admin, AdminApiItem, AdminsApiResponse, AdminsPagination } from './models/admin.model';
 import { AdminCreatePayload } from './models/admin-payload.model';
-import { AdminModalMode } from './models/admin-modal-mode.type';
+import { AdminModalMode, AdminModalModeEnum } from './models/admin-modal-mode.type';
 import { AdminFormModal } from './components/admin-form-modal/admin-form-modal';
 import { AdminsService } from './services/admins.service';
 import {
@@ -68,12 +68,16 @@ export class Admins implements OnInit {
   );
   protected readonly isFormModalOpen = computed(() => {
     const mode = this.modalMode();
-    return mode === 'create' || mode === 'update';
+    return mode === AdminModalModeEnum.Create || mode === AdminModalModeEnum.Update;
   });
-  protected readonly isDeleteModalOpen = computed(() => this.modalMode() === 'delete');
+  protected readonly isDeleteModalOpen = computed(
+    () => this.modalMode() === AdminModalModeEnum.Delete,
+  );
   protected readonly formModalMode = computed(() => {
     const mode = this.modalMode();
-    return mode === 'create' || mode === 'update' ? mode : 'create';
+    return mode === AdminModalModeEnum.Create || mode === AdminModalModeEnum.Update
+      ? mode
+      : AdminModalModeEnum.Create;
   });
 
   ngOnInit(): void {
@@ -83,7 +87,7 @@ export class Admins implements OnInit {
 
   protected onCreateAdmin(): void {
     this.selectedAdmin.set(null);
-    this.modalMode.set('create');
+    this.modalMode.set(AdminModalModeEnum.Create);
   }
 
   protected onEditAdmin(adminCard: EntityCardData): void {
@@ -93,7 +97,7 @@ export class Admins implements OnInit {
     }
 
     this.selectedAdmin.set(selectedAdmin);
-    this.modalMode.set('update');
+    this.modalMode.set(AdminModalModeEnum.Update);
   }
 
   protected onDeleteAdmin(adminCard: EntityCardData): void {
@@ -103,7 +107,7 @@ export class Admins implements OnInit {
     }
 
     this.selectedAdmin.set(selectedAdmin);
-    this.modalMode.set('delete');
+    this.modalMode.set(AdminModalModeEnum.Delete);
   }
 
   protected onPageChange(page: number): void {
@@ -134,7 +138,7 @@ export class Admins implements OnInit {
     }
 
     const mode = this.modalMode();
-    if (mode === 'create') {
+    if (mode === AdminModalModeEnum.Create) {
       this.executeMutation(
         this.adminsService.createAdmin(payload),
         ADMINS_TEXTS.CREATE_SUCCESS_TITLE,
@@ -143,7 +147,7 @@ export class Admins implements OnInit {
     }
 
     const selectedAdmin = this.selectedAdmin();
-    if (mode === 'update' && selectedAdmin) {
+    if (mode === AdminModalModeEnum.Update && selectedAdmin) {
       this.executeMutation(
         this.adminsService.updateAdmin(selectedAdmin.id, payload),
         ADMINS_TEXTS.UPDATE_SUCCESS_TITLE,

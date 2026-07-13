@@ -14,7 +14,7 @@ import {
   ShopsApiResponse,
   ShopsPagination,
 } from './models/shop.model';
-import { ShopModalMode } from './models/shop-modal-mode.type';
+import { ShopModalMode, ShopModalModeEnum } from './models/shop-modal-mode.type';
 import { ShopCreatePayload } from './models/shop-payload.model';
 import { ShopsService } from './services/shops.service';
 
@@ -29,15 +29,9 @@ export class Shop implements OnInit {
   private readonly toasterService = inject(ToasterService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly title = SHOPS_TEXTS.PAGE_TITLE;
-  protected readonly createShopLabel = SHOPS_TEXTS.CREATE_LABEL;
+  protected readonly textData = SHOPS_TEXTS;
   protected readonly createShopIcon = SHOPS_CREATE_ICON;
-  protected readonly emptyState = SHOPS_TEXTS.EMPTY_STATE;
-  protected readonly paginationLabel = SHOPS_TEXTS.PAGINATION_LABEL;
   protected readonly SHOPS_PAGE_SIZE = SHOPS_PAGE_SIZE;
-  protected readonly deleteModalTitle = SHOPS_TEXTS.MODAL_DELETE_TITLE;
-  protected readonly deleteModalConfirmLabel = SHOPS_TEXTS.MODAL_DELETE_CONFIRM_LABEL;
-  protected readonly deleteModalMessage = SHOPS_TEXTS.MODAL_DELETE_MESSAGE;
 
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
@@ -61,12 +55,16 @@ export class Shop implements OnInit {
   );
   protected readonly isFormModalOpen = computed(() => {
     const mode = this.modalMode();
-    return mode === 'create' || mode === 'update';
+    return mode === ShopModalModeEnum.Create || mode === ShopModalModeEnum.Update;
   });
-  protected readonly isDeleteModalOpen = computed(() => this.modalMode() === 'delete');
+  protected readonly isDeleteModalOpen = computed(
+    () => this.modalMode() === ShopModalModeEnum.Delete,
+  );
   protected readonly formModalMode = computed(() => {
     const mode = this.modalMode();
-    return mode === 'create' || mode === 'update' ? mode : 'create';
+    return mode === ShopModalModeEnum.Create || mode === ShopModalModeEnum.Update
+      ? mode
+      : ShopModalModeEnum.Create;
   });
 
   ngOnInit(): void {
@@ -75,7 +73,7 @@ export class Shop implements OnInit {
 
   protected onCreateShop(): void {
     this.selectedShop.set(null);
-    this.modalMode.set('create');
+    this.modalMode.set(ShopModalModeEnum.Create);
   }
 
   protected onEditShop(shopCard: EntityCardData): void {
@@ -85,7 +83,7 @@ export class Shop implements OnInit {
     }
 
     this.selectedShop.set(selectedShop);
-    this.modalMode.set('update');
+    this.modalMode.set(ShopModalModeEnum.Update);
   }
 
   protected onDeleteShop(shopCard: EntityCardData): void {
@@ -95,7 +93,7 @@ export class Shop implements OnInit {
     }
 
     this.selectedShop.set(selectedShop);
-    this.modalMode.set('delete');
+    this.modalMode.set(ShopModalModeEnum.Delete);
   }
 
   protected onPageChange(page: number): void {
@@ -121,13 +119,13 @@ export class Shop implements OnInit {
     }
 
     const mode = this.modalMode();
-    if (mode === 'create') {
+    if (mode === ShopModalModeEnum.Create) {
       this.executeMutation(this.shopsService.createShop(payload), SHOPS_TEXTS.CREATE_SUCCESS_TITLE);
       return;
     }
 
     const selectedShop = this.selectedShop();
-    if (mode === 'update' && selectedShop) {
+    if (mode === ShopModalModeEnum.Update && selectedShop) {
       this.executeMutation(
         this.shopsService.updateShop(selectedShop.id, payload),
         SHOPS_TEXTS.UPDATE_SUCCESS_TITLE,

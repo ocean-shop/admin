@@ -1,8 +1,8 @@
 <section class="shops-page">
   <header class="shops-header">
-    <h3 class="shops-title">{{ title }}</h3>
+    <h3 class="shops-title">{{ textData.PAGE_TITLE }}</h3>
     <app-button
-      [label]="createShopLabel"
+      [label]="textData.CREATE_LABEL"
       [icon]="createShopIcon"
       [iconLeading]="true"
       [fullWidth]="false"
@@ -13,7 +13,7 @@
   </header>
 
   @if (!isLoading() && !hasShops()) {
-  <p class="state-text">{{ emptyState }}</p>
+  <p class="state-text">{{ textData.EMPTY_STATE }}</p>
   } @else {
   <div class="shops-list">
     @for (shopCard of shopCards(); track shopCard.id) {
@@ -33,7 +33,7 @@
     [pageSize]="pageSize()"
     [totalItems]="totalItems()"
     [totalPages]="totalPages()"
-    [label]="paginationLabel"
+    [label]="textData.PAGINATION_LABEL"
     (pageChange)="onPageChange($event)"
   />
   } }
@@ -49,14 +49,14 @@
 
   <app-modal
     [isOpen]="isDeleteModalOpen()"
-    [title]="deleteModalTitle"
-    [confirmLabel]="deleteModalConfirmLabel"
+    [title]="textData.MODAL_DELETE_TITLE"
+    [confirmLabel]="textData.MODAL_DELETE_CONFIRM_LABEL"
     [confirmLoading]="isActionLoading()"
     [confirmDisabled]="isActionLoading()"
     [isDanger]="true"
     (closed)="onCloseModal()"
     (confirmed)="onConfirmDelete()"
   >
-    <p class="shops-delete-message">{{ deleteModalMessage }}</p>
+    <p class="shops-delete-message">{{ textData.MODAL_DELETE_MESSAGE }}</p>
   </app-modal>
 </section>

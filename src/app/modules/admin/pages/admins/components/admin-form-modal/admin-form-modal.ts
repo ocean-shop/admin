@@ -14,6 +14,7 @@ import {
   ADMINS_IDENTITY_FIELD_ID,
   ADMINS_IDENTITY_PATTERN,
 } from '../../constants/admins.constants';
+import { AdminModalModeEnum } from '../../models/admin-modal-mode.type';
 
 @Component({
   selector: 'app-admin-form-modal',
@@ -54,10 +55,12 @@ export class AdminFormModal {
   });
 
   protected readonly title = computed(() =>
-    this.mode() === 'create' ? ADMINS_TEXTS.MODAL_CREATE_TITLE : ADMINS_TEXTS.MODAL_UPDATE_TITLE,
+    this.mode() === AdminModalModeEnum.Create
+      ? ADMINS_TEXTS.MODAL_CREATE_TITLE
+      : ADMINS_TEXTS.MODAL_UPDATE_TITLE,
   );
   protected readonly confirmLabel = computed(() =>
-    this.mode() === 'create'
+    this.mode() === AdminModalModeEnum.Create
       ? ADMINS_TEXTS.MODAL_CREATE_CONFIRM_LABEL
       : ADMINS_TEXTS.MODAL_UPDATE_CONFIRM_LABEL,
   );

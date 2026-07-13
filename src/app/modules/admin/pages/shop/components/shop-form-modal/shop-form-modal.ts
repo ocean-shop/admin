@@ -13,6 +13,7 @@ import {
   SHOPS_URL_FIELD_ID,
   SHOPS_URL_PATTERN,
 } from '../../constants/shops.constants';
+import { ShopModalModeEnum } from '../../models/shop-modal-mode.type';
 
 @Component({
   selector: 'app-shop-form-modal',
@@ -53,10 +54,12 @@ export class ShopFormModal {
   });
 
   protected readonly title = computed(() =>
-    this.mode() === 'create' ? SHOPS_TEXTS.MODAL_CREATE_TITLE : SHOPS_TEXTS.MODAL_UPDATE_TITLE,
+    this.mode() === ShopModalModeEnum.Create
+      ? SHOPS_TEXTS.MODAL_CREATE_TITLE
+      : SHOPS_TEXTS.MODAL_UPDATE_TITLE,
   );
   protected readonly confirmLabel = computed(() =>
-    this.mode() === 'create'
+    this.mode() === ShopModalModeEnum.Create
       ? SHOPS_TEXTS.MODAL_CREATE_CONFIRM_LABEL
       : SHOPS_TEXTS.MODAL_UPDATE_CONFIRM_LABEL,
   );
