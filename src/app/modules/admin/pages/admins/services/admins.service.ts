@@ -21,6 +21,12 @@ export class AdminsService {
     });
   }
 
+  getAdminById(id: string): Observable<AdminApiItem> {
+    return this.http.get<AdminApiItem>(`${this.API_URL}/user/admins/${id}`, {
+      withCredentials: true,
+    });
+  }
+
   createAdmin(payload: AdminCreatePayload): Observable<AdminApiItem> {
     return this.http.post<AdminApiItem>(`${this.API_URL}/user/admins/`, payload, {
       withCredentials: true,

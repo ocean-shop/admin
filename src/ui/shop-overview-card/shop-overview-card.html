@@ -1,0 +1,31 @@
+<article class="group store-card">
+  <div class="card-bg-primary"></div>
+
+  <div class="card-header">
+    <div class="card-title-container">
+      <h4 class="card-title">{{ card().title }}</h4>
+    </div>
+  </div>
+
+  <div class="metrics-grid">
+    @for (metric of card().metrics; track metric.label) {
+    <div class="metric-box">
+      <p class="metric-label">{{ metric.label }}</p>
+      <p class="metric-value">{{ metric.value }}</p>
+      @if (metric.helperText) {
+      <span class="metric-helper">
+        @if (metric.helperIcon) {
+        <span class="material-symbols-outlined text-sm">{{ metric.helperIcon }}</span>
+        } {{ metric.helperText }}
+      </span>
+      }
+    </div>
+    }
+  </div>
+
+  <div class="card-actions">
+    <button class="btn-primary" type="button" (click)="onManageStore()">
+      {{ card().actionLabel || 'Manage Store' }}
+    </button>
+  </div>
+</article>

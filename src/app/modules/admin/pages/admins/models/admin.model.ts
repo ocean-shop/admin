@@ -1,3 +1,10 @@
+export interface AdminShopApiItem {
+  id?: string | number | null;
+  name?: string | null;
+  description?: string | null;
+  url?: string | null;
+}
+
 export interface AdminApiItem {
   id?: string | number | null;
   firstName?: string | null;
@@ -8,16 +15,7 @@ export interface AdminApiItem {
   phone?: string | null;
   mobileNumber?: string | null;
   shopIds?: (string | number)[] | null;
-  shops?:
-    | (
-        | string
-        | number
-        | {
-            id?: string | number | null;
-            name?: string | null;
-          }
-      )[]
-    | null;
+  shops?: (string | number | AdminShopApiItem)[] | null;
   role?:
     | string
     | {

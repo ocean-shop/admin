@@ -1,0 +1,13 @@
+@reference "../../../../../styles.scss";
+
+.shop-detail-container {
+  @apply max-w-7xl mx-auto;
+}
+
+.shop-detail-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight mb-2;
+}
+
+.shop-detail-placeholder {
+  @apply text-on-surface-variant text-lg;
+}

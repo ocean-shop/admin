@@ -32,6 +32,11 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/admin/pages/shop/shop').then((m) => m.Shop),
       },
       {
+        path: 'shop-detail/:shopId',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop-detail/shop-detail').then((m) => m.ShopDetail),
+      },
+      {
         path: 'admins',
         loadComponent: () => import('./modules/admin/pages/admins/admins').then((m) => m.Admins),
       },
