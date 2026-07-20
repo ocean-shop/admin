@@ -1,0 +1,61 @@
+@reference "../../../../../../../styles.scss";
+
+.attributes-page {
+  @apply ml-[280px] pt-16 min-h-screen;
+}
+
+.attributes-container {
+  @apply max-w-[1440px] mx-auto p-8 flex flex-col gap-6;
+}
+
+.attributes-header {
+  @apply flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center;
+}
+
+.attributes-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight;
+}
+
+.attributes-description {
+  @apply text-sm text-on-surface-variant mt-1;
+}
+
+.attributes-search {
+  @apply flex flex-col gap-2;
+}
+
+.attributes-search-label {
+  @apply text-sm font-semibold text-on-surface;
+}
+
+.attributes-search-controls {
+  @apply flex flex-col gap-2 sm:flex-row;
+}
+
+.attributes-search-input {
+  @apply flex-1 h-11 px-4 rounded-lg border border-outline-variant bg-surface text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary;
+}
+
+.attributes-search-button {
+  @apply h-11 px-4 rounded-lg bg-primary text-on-primary font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.attributes-search-reset {
+  @apply h-11 px-4 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.attributes-pagination {
+  @apply w-full;
+}
+
+.attributes-state {
+  @apply text-sm text-on-surface-variant;
+}
+
+.attributes-state-warning {
+  @apply text-error;
+}
+
+.attributes-delete-message {
+  @apply text-on-surface-variant text-sm leading-6;
+}

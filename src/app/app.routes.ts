@@ -54,6 +54,13 @@ export const routes: Routes = [
           import('./modules/admin/pages/shop/pages/tags/tags').then((m) => m.Tags),
       },
       {
+        path: 'shop/:shopId/attributes',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/attributes/attributes').then(
+            (m) => m.Attributes,
+          ),
+      },
+      {
         path: 'not-permission',
         loadComponent: () =>
           import('./modules/admin/pages/system/not-permission/not-permission').then(
