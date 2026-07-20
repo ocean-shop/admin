@@ -27,7 +27,7 @@
 }
 
 .nav-container {
-  @apply flex-1 space-y-1;
+  @apply flex-1 space-y-1 uppercase;
 }
 
 .nav-item-active {

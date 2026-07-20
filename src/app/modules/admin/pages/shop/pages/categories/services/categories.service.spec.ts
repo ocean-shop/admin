@@ -22,9 +22,9 @@ describe('CategoriesService', () => {
   });
 
   it('requests categories list with credentials', () => {
-    service.getCategories().subscribe();
+    service.getCategories('123').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/categories');
+    const req = httpMock.expectOne('http://localhost:3000/catalog/categories?shopId=123');
     expect(req.request.method).toBe('GET');
     expect(req.request.withCredentials).toBe(true);
     req.flush([]);

@@ -1,0 +1,18 @@
+<app-modal
+  [isOpen]="isOpen()"
+  [title]="title"
+  [confirmLabel]="confirmLabel"
+  [confirmDisabled]="!tagForm.name().valid() || confirmLoading()"
+  [confirmLoading]="confirmLoading()"
+  (closed)="onClose()"
+  (confirmed)="onConfirm()"
+>
+  <form class="tag-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
+    <app-input
+      [id]="nameFieldId"
+      [label]="nameLabel"
+      [placeholder]="namePlaceholder"
+      [control]="tagForm.name"
+    />
+  </form>
+</app-modal>

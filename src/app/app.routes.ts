@@ -49,6 +49,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'shop/:shopId/tags',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/tags/tags').then((m) => m.Tags),
+      },
+      {
         path: 'not-permission',
         loadComponent: () =>
           import('./modules/admin/pages/system/not-permission/not-permission').then(

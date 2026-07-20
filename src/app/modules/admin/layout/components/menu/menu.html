@@ -13,10 +13,10 @@
       <span class="material-symbols-outlined">{{ item.icon }}</span>
       <span class="nav-text-small">{{ item.label }}</span>
     </button>
-    } } @else { @for (item of menuItems; track item.label) {
+    } } @else { @for (item of resolvedMenuItems(); track item.label) {
     <a
       [routerLink]="item.route"
-      [routerLinkActiveOptions]="{exact: item.route === adminHomeRoute}"
+      [routerLinkActiveOptions]="{exact: useExactMatch(item.route)}"
       routerLinkActive="nav-item-active"
       #rla="routerLinkActive"
       [class.nav-item-active]="rla.isActive"

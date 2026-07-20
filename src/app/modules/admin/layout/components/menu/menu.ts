@@ -19,6 +19,7 @@ import { MenuFooterItem } from '../../models/menu.model';
   styleUrl: './menu.scss',
 })
 export class Menu {
+  private readonly shopRootRoutePattern = /^\/admin\/shop\/[^/]+$/;
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
@@ -38,6 +39,17 @@ export class Menu {
   );
 
   protected readonly isAdminHome = computed(() => this.primaryRoutes.includes(this.currentUrl()));
+  protected readonly resolvedMenuItems = computed(() => {
+    const shopId = this.extractShopIdFromUrl(this.currentUrl());
+    if (!shopId) {
+      return this.menuItems;
+    }
+
+    return this.menuItems.map((item) => ({
+      ...item,
+      route: item.route.replace(':shopId', shopId),
+    }));
+  });
 
   protected onFooterItemClick(item: MenuFooterItem): void {
     if (item.value === 'logout') {
@@ -51,7 +63,16 @@ export class Menu {
     }
   }
 
+  protected useExactMatch(route: string): boolean {
+    return this.shopRootRoutePattern.test(route);
+  }
+
   private normalizeUrl(url: string): string {
     return url.split('?')[0].split('#')[0];
+  }
+
+  private extractShopIdFromUrl(url: string): string | null {
+    const match = url.match(/\/admin\/shop\/([^/]+)/);
+    return match ? decodeURIComponent(match[1]) : null;
   }
 }

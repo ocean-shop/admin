@@ -12,10 +12,11 @@ export class CategoriesService {
   private readonly http = inject(HttpClient);
   private readonly API_URL = 'http://localhost:3000';
 
-  getCategories(): Observable<CategoriesApiResponse | CategoryApiItem[]> {
+  getCategories(shopId: string): Observable<CategoriesApiResponse | CategoryApiItem[]> {
     return this.http.get<CategoriesApiResponse | CategoryApiItem[]>(
       `${this.API_URL}/catalog/categories`,
       {
+        params: { shopId },
         withCredentials: true,
       },
     );

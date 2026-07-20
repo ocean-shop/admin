@@ -6,11 +6,11 @@ describe('LoginForm', () => {
   let component: LoginForm;
   let fixture: ComponentFixture<LoginForm>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [LoginForm],
       providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
+    });
 
     fixture = TestBed.createComponent(LoginForm);
     component = fixture.componentInstance;

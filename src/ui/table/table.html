@@ -1,0 +1,56 @@
+<section class="table-wrapper">
+  @if (loading()) {
+  <p class="table-state">{{ loadingText() }}</p>
+  } @else if (rows().length === 0) {
+  <p class="table-state">{{ emptyText() }}</p>
+  } @else {
+  <div class="table-scroll">
+    <table class="table-content">
+      <thead>
+        <tr>
+          @for (column of columns(); track column.key) {
+          <th
+            class="table-head-cell"
+            [style.width]="column.width || null"
+            [class.table-cell-center]="resolveAlignment(column.align) === 'center'"
+            [class.table-cell-right]="resolveAlignment(column.align) === 'right'"
+          >
+            {{ column.header }}
+          </th>
+          } @if (deleteEnabled()) {
+          <th class="table-head-cell table-actions-head">{{ deleteLabel() }}</th>
+          }
+        </tr>
+      </thead>
+
+      <tbody class="table-body">
+        @for (row of rows(); track resolveRowKey(row, $index)) {
+        <tr class="table-row">
+          @for (column of columns(); track column.key) {
+          <td
+            class="table-cell"
+            [class.table-cell-center]="resolveAlignment(column.align) === 'center'"
+            [class.table-cell-right]="resolveAlignment(column.align) === 'right'"
+          >
+            {{ resolveCellValue(row, column) }}
+          </td>
+          } @if (deleteEnabled()) {
+          <td class="table-cell table-actions-cell">
+            <button
+              class="table-delete-button"
+              type="button"
+              [attr.title]="deleteLabel()"
+              [attr.aria-label]="deleteLabel()"
+              (click)="onDelete(row)"
+            >
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </td>
+          }
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</section>

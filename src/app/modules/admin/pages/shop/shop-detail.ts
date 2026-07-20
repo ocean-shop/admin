@@ -21,4 +21,9 @@ export class ShopDetail {
     this.shopId() || ':shopId',
     'categories',
   ]);
+  protected readonly tagsRoute = computed(() => [
+    '/admin/shop',
+    this.shopId() || ':shopId',
+    'tags',
+  ]);
 }

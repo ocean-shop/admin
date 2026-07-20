@@ -1,0 +1,104 @@
+<main class="tags-page">
+  <div class="tags-container">
+    <header class="tags-header">
+      <div>
+        <h1 class="tags-title">{{ textData.PAGE_TITLE }}</h1>
+        <p class="tags-description">{{ textData.PAGE_DESCRIPTION }}</p>
+      </div>
+      <app-button
+        [label]="textData.CREATE_LABEL"
+        [icon]="createTagIcon"
+        [iconLeading]="true"
+        [fullWidth]="false"
+        [disabled]="!isShopContextReady() || isActionLoading()"
+        variant="create"
+        type="button"
+        (click)="onCreateTag()"
+      />
+    </header>
+
+    @if (!isShopContextReady()) {
+    <p class="tags-state tags-state-warning">{{ textData.SHOP_ID_REQUIRED_MESSAGE }}</p>
+    }
+
+    <form class="tags-search" (submit)="$event.preventDefault(); onSearchSubmit()">
+      <label class="tags-search-label" for="tags-search-input">{{ textData.SEARCH_LABEL }}</label>
+      <div class="tags-search-controls">
+        <input
+          id="tags-search-input"
+          class="tags-search-input"
+          type="text"
+          [value]="searchInput()"
+          [placeholder]="textData.SEARCH_PLACEHOLDER"
+          [disabled]="!isShopContextReady() || isLoading()"
+          (input)="onSearchInput($event)"
+        />
+        <button
+          class="tags-search-button"
+          type="submit"
+          [disabled]="!isShopContextReady() || isLoading()"
+        >
+          {{ textData.SEARCH_BUTTON_LABEL }}
+        </button>
+        <button
+          class="tags-search-reset"
+          type="button"
+          [disabled]="!isShopContextReady() || isLoading()"
+          (click)="onSearchReset()"
+        >
+          {{ textData.SEARCH_RESET_LABEL }}
+        </button>
+      </div>
+    </form>
+
+    @if (hasError()) {
+    <p class="tags-state">Не вдалося завантажити теги. Спробуйте ще раз.</p>
+    }
+
+    <app-table
+      [columns]="tableColumns"
+      [rows]="tagRows()"
+      [loading]="isLoading()"
+      [loadingText]="textData.TABLE_LOADING_TEXT"
+      [emptyText]="textData.EMPTY_STATE"
+      [deleteEnabled]="true"
+      [deleteLabel]="textData.TABLE_DELETE_LABEL"
+      (deleteRow)="onDeleteTag($event)"
+    />
+
+    @if (totalItems() > pageSize) {
+    <app-pagination
+      class="tags-pagination"
+      [currentPage]="currentPage()"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems()"
+      [totalPages]="totalPages()"
+      [label]="textData.PAGINATION_LABEL"
+      (pageChange)="onPageChange($event)"
+    />
+    }
+
+    <app-tag-form-modal
+      [isOpen]="isCreateModalOpen()"
+      [confirmLoading]="isActionLoading()"
+      (closed)="onCloseModal()"
+      (confirmed)="onConfirmCreate($event)"
+    />
+
+    <app-modal
+      [isOpen]="isDeleteModalOpen()"
+      [title]="textData.MODAL_DELETE_TITLE"
+      [confirmLabel]="textData.MODAL_DELETE_CONFIRM_LABEL"
+      [confirmLoading]="isActionLoading()"
+      [confirmDisabled]="isActionLoading()"
+      [isDanger]="true"
+      (closed)="onCloseModal()"
+      (confirmed)="onConfirmDelete()"
+    >
+      <p class="tags-delete-message">
+        {{ textData.MODAL_DELETE_MESSAGE }}
+        <strong>{{ selectedTag()?.name }}</strong>{{ textData.MODAL_DELETE_MESSAGE_SUFFIX }}
+      </p>
+    </app-modal>
+  </div>
+</main>

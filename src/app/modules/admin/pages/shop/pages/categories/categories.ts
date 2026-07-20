@@ -74,7 +74,6 @@ export class Categories implements OnInit {
 
   ngOnInit(): void {
     this.watchShopId();
-    this.loadCategories();
   }
 
   protected onCreateRootCategory(): void {
@@ -237,15 +236,30 @@ export class Categories implements OnInit {
       )
       .subscribe((shopId) => {
         this.shopId.set(shopId);
+        if (!shopId) {
+          this.categories.set([]);
+          this.stats.set({});
+          this.initializeExpandedNodes();
+          this.isLoading.set(false);
+          return;
+        }
+
+        this.loadCategories();
       });
   }
 
   private loadCategories(options?: { preserveExpanded?: boolean }): void {
+    const currentShopId = this.shopId();
+    if (!currentShopId) {
+      this.isLoading.set(false);
+      return;
+    }
+
     this.isLoading.set(true);
     this.hasError.set(false);
 
     this.categoriesService
-      .getCategories()
+      .getCategories(currentShopId)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.isLoading.set(false)),
