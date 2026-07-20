@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { ShopFormModal } from './shop-form-modal';
+import { ShopsFormModal } from './shops-form-modal';
 import { Shop } from '../../models/shop.model';
 import { SHOPS_TEXTS } from '../../constants/shops.constants';
 
-describe('ShopFormModal', () => {
-  let fixture: ComponentFixture<ShopFormModal>;
-  let component: ShopFormModal;
+describe('ShopsFormModal', () => {
+  let fixture: ComponentFixture<ShopsFormModal>;
+  let component: ShopsFormModal;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShopFormModal],
+      imports: [ShopsFormModal],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ShopFormModal);
+    fixture = TestBed.createComponent(ShopsFormModal);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('isOpen', true);
     fixture.componentRef.setInput('mode', 'create');

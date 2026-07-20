@@ -7,8 +7,8 @@ import { Admins } from './admins';
 import { AdminsService } from './services/admins.service';
 import { AdminsApiResponse } from './models/admin.model';
 import { ADMINS_TEXTS } from './constants/admins.constants';
-import { ShopsService } from '../shop/services/shops.service';
-import { ShopsApiResponse } from '../shop/models/shop.model';
+import { ShopsService } from '../shops/services/shops.service';
+import { ShopsApiResponse } from '../shops/models/shop.model';
 
 describe('Admins', () => {
   let fixture: ComponentFixture<Admins>;

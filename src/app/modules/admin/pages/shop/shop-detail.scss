@@ -1,0 +1,21 @@
+@reference "../../../../../styles.scss";
+
+.shop-detail-container {
+  @apply max-w-7xl mx-auto;
+}
+
+.shop-detail-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight mb-2;
+}
+
+.shop-detail-placeholder {
+  @apply text-on-surface-variant text-lg;
+}
+
+.shop-detail-categories {
+  @apply flex flex-col;
+}
+
+.shop-detail-categories-link {
+  @apply inline-flex mt-6 px-4 py-2 rounded-md bg-primary text-on-primary font-medium hover:opacity-90 transition-opacity;
+}

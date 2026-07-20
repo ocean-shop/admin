@@ -1,0 +1,32 @@
+<app-modal
+  [isOpen]="isOpen()"
+  [title]="title()"
+  [confirmLabel]="confirmLabel()"
+  [confirmDisabled]="!isFormValid() || confirmLoading()"
+  [confirmLoading]="confirmLoading()"
+  (closed)="onClose()"
+  (confirmed)="onConfirm()"
+>
+  <form class="category-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
+    @if (parentCategory()) {
+    <p class="category-parent-hint">
+      {{ parentHintPrefix }}
+      <span class="category-parent-name">{{ parentCategory()?.name }}</span>
+    </p>
+    }
+
+    <app-input
+      [id]="nameFieldId"
+      [label]="nameLabel"
+      [placeholder]="namePlaceholder"
+      [control]="categoryForm.name"
+    />
+
+    <app-input
+      [id]="slugFieldId"
+      [label]="slugLabel"
+      [placeholder]="slugPlaceholder"
+      [control]="categoryForm.slug"
+    />
+  </form>
+</app-modal>

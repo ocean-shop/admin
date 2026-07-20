@@ -6,7 +6,7 @@ import { Button } from '@ui/button/button';
 import { EntityCard, EntityCardData } from '@ui/entity-card/entity-card';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
-import { ShopFormModal } from './components/shop-form-modal/shop-form-modal';
+import { ShopsFormModal } from './components/shops-form-modal/shops-form-modal';
 import { SHOPS_CREATE_ICON, SHOPS_PAGE_SIZE, SHOPS_TEXTS } from './constants/shops.constants';
 import {
   Shop as ShopModel,
@@ -19,12 +19,12 @@ import { ShopCreatePayload } from './models/shop-payload.model';
 import { ShopsService } from './services/shops.service';
 
 @Component({
-  selector: 'app-shop',
-  imports: [Button, EntityCard, Pagination, Modal, ShopFormModal],
-  templateUrl: './shop.html',
-  styleUrl: './shop.scss',
+  selector: 'app-shops',
+  imports: [Button, EntityCard, Pagination, Modal, ShopsFormModal],
+  templateUrl: './shops.html',
+  styleUrl: './shops.scss',
 })
-export class Shop implements OnInit {
+export class Shops implements OnInit {
   private readonly shopsService = inject(ShopsService);
   private readonly toasterService = inject(ToasterService);
   private readonly destroyRef = inject(DestroyRef);

@@ -1,0 +1,106 @@
+<main class="attributes-page">
+  <div class="attributes-container">
+    <header class="attributes-header">
+      <div>
+        <h1 class="attributes-title">{{ textData.PAGE_TITLE }}</h1>
+        <p class="attributes-description">{{ textData.PAGE_DESCRIPTION }}</p>
+      </div>
+      <app-button
+        [label]="textData.CREATE_LABEL"
+        [icon]="createAttributeIcon"
+        [iconLeading]="true"
+        [fullWidth]="false"
+        [disabled]="!isShopContextReady() || isActionLoading()"
+        variant="create"
+        type="button"
+        (click)="onCreateAttribute()"
+      />
+    </header>
+
+    @if (!isShopContextReady()) {
+    <p class="attributes-state attributes-state-warning">{{ textData.SHOP_ID_REQUIRED_MESSAGE }}</p>
+    }
+
+    <form class="attributes-search" (submit)="$event.preventDefault(); onSearchSubmit()">
+      <label class="attributes-search-label" for="attributes-search-input"
+        >{{ textData.SEARCH_LABEL }}</label
+      >
+      <div class="attributes-search-controls">
+        <input
+          id="attributes-search-input"
+          class="attributes-search-input"
+          type="text"
+          [value]="searchInput()"
+          [placeholder]="textData.SEARCH_PLACEHOLDER"
+          [disabled]="!isShopContextReady() || isLoading()"
+          (input)="onSearchInput($event)"
+        />
+        <button
+          class="attributes-search-button"
+          type="submit"
+          [disabled]="!isShopContextReady() || isLoading()"
+        >
+          {{ textData.SEARCH_BUTTON_LABEL }}
+        </button>
+        <button
+          class="attributes-search-reset"
+          type="button"
+          [disabled]="!isShopContextReady() || isLoading()"
+          (click)="onSearchReset()"
+        >
+          {{ textData.SEARCH_RESET_LABEL }}
+        </button>
+      </div>
+    </form>
+
+    @if (hasError()) {
+    <p class="attributes-state">Не вдалося завантажити атрибути. Спробуйте ще раз.</p>
+    }
+
+    <app-table
+      [columns]="tableColumns"
+      [rows]="attributeRows()"
+      [loading]="isLoading()"
+      [loadingText]="textData.TABLE_LOADING_TEXT"
+      [emptyText]="textData.EMPTY_STATE"
+      [deleteEnabled]="true"
+      [deleteLabel]="textData.TABLE_DELETE_LABEL"
+      (deleteRow)="onDeleteAttribute($event)"
+    />
+
+    @if (totalItems() > pageSize) {
+    <app-pagination
+      class="attributes-pagination"
+      [currentPage]="currentPage()"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems()"
+      [totalPages]="totalPages()"
+      [label]="textData.PAGINATION_LABEL"
+      (pageChange)="onPageChange($event)"
+    />
+    }
+
+    <app-attribute-form-modal
+      [isOpen]="isCreateModalOpen()"
+      [confirmLoading]="isActionLoading()"
+      (closed)="onCloseModal()"
+      (confirmed)="onConfirmCreate($event)"
+    />
+
+    <app-modal
+      [isOpen]="isDeleteModalOpen()"
+      [title]="textData.MODAL_DELETE_TITLE"
+      [confirmLabel]="textData.MODAL_DELETE_CONFIRM_LABEL"
+      [confirmLoading]="isActionLoading()"
+      [confirmDisabled]="isActionLoading()"
+      [isDanger]="true"
+      (closed)="onCloseModal()"
+      (confirmed)="onConfirmDelete()"
+    >
+      <p class="attributes-delete-message">
+        {{ textData.MODAL_DELETE_MESSAGE }}
+        <strong>{{ selectedAttribute()?.name }}</strong>{{ textData.MODAL_DELETE_MESSAGE_SUFFIX }}
+      </p>
+    </app-modal>
+  </div>
+</main>

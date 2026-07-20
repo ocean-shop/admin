@@ -1,0 +1,24 @@
+<app-modal
+  [isOpen]="isOpen()"
+  [title]="title"
+  [confirmLabel]="confirmLabel"
+  [confirmDisabled]="!attributeForm.name().valid() || !attributeForm.value().valid() || confirmLoading()"
+  [confirmLoading]="confirmLoading()"
+  (closed)="onClose()"
+  (confirmed)="onConfirm()"
+>
+  <form class="attribute-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
+    <app-input
+      [id]="nameFieldId"
+      [label]="nameLabel"
+      [placeholder]="namePlaceholder"
+      [control]="attributeForm.name"
+    />
+    <app-input
+      [id]="valueFieldId"
+      [label]="valueLabel"
+      [placeholder]="valuePlaceholder"
+      [control]="attributeForm.value"
+    />
+  </form>
+</app-modal>

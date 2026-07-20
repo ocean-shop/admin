@@ -1,0 +1,149 @@
+<main class="categories-page">
+  <div class="categories-container">
+    <header class="categories-header">
+      <div>
+        <h1 class="categories-title">{{ textData.PAGE_TITLE }}</h1>
+        <p class="categories-description">{{ textData.PAGE_DESCRIPTION }}</p>
+      </div>
+      <button
+        class="create-root-button"
+        type="button"
+        [disabled]="!isShopContextReady() || isActionLoading()"
+        (click)="onCreateRootCategory()"
+      >
+        <span class="material-symbols-outlined">{{ createIcon }}</span>
+        {{ textData.CREATE_ROOT_LABEL }}
+      </button>
+    </header>
+
+    @if (!isShopContextReady()) {
+    <p class="categories-state categories-state-warning">{{ textData.SHOP_ID_REQUIRED_MESSAGE }}</p>
+    } @if (hasVisibleStats()) {
+    <section class="categories-stats">
+      @if (stats().totalCategories !== undefined) {
+      <article class="categories-stat-card">
+        <p class="categories-stat-label">{{ textData.TOTAL_CATEGORIES_LABEL }}</p>
+        <p class="categories-stat-value">{{ stats().totalCategories }}</p>
+      </article>
+      } @if (stats().deepestLevel !== undefined) {
+      <article class="categories-stat-card">
+        <p class="categories-stat-label">{{ textData.DEEPEST_LEVEL_LABEL }}</p>
+        <p class="categories-stat-value">{{ stats().deepestLevel }} {{ textData.LEVEL_SUFFIX }}</p>
+      </article>
+      }
+    </section>
+    } @if (!isLoading() && !hasCategories()) {
+    <p class="categories-state">{{ textData.EMPTY_STATE }}</p>
+    } @else {
+    <section class="categories-tree">
+      @for (node of visibleNodes(); track node.category.id) {
+      <article class="category-tree-row" [style.margin-left.px]="node.depth * 24">
+        <div class="category-info">
+          @if (node.hasChildren) {
+          <button
+            class="toggle-button"
+            [class.toggle-button-expanded]="node.isExpanded"
+            type="button"
+            (click)="onToggleNode(node)"
+          >
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+          } @else {
+          <span class="toggle-spacer"></span>
+          }
+
+          <span class="material-symbols-outlined category-icon">category</span>
+          <div class="category-name-group">
+            <p class="category-name">{{ node.category.name }}</p>
+            <p class="category-slug">{{ node.category.slug }}</p>
+          </div>
+        </div>
+
+        @if (hasProductCounts()) {
+        <div class="category-count">
+          {{ node.category.productCount !== undefined ? node.category.productCount :
+          textData.PRODUCT_COUNT_FALLBACK }}
+        </div>
+        }
+
+        <div class="category-actions">
+          <button
+            type="button"
+            title="Move category up"
+            [disabled]="!node.canMoveUp || isActionLoading()"
+            (click)="onChangeSort(node, 'up')"
+          >
+            <span class="material-symbols-outlined">keyboard_arrow_up</span>
+          </button>
+          <button
+            type="button"
+            title="Move category down"
+            [disabled]="!node.canMoveDown || isActionLoading()"
+            (click)="onChangeSort(node, 'down')"
+          >
+            <span class="material-symbols-outlined">keyboard_arrow_down</span>
+          </button>
+          <button
+            type="button"
+            title="Edit category"
+            [disabled]="isActionLoading()"
+            (click)="onEditCategory(node)"
+          >
+            <span class="material-symbols-outlined">edit</span>
+          </button>
+          <button
+            type="button"
+            title="Add subcategory"
+            [disabled]="isActionLoading()"
+            (click)="onCreateChildCategory(node)"
+          >
+            <span class="material-symbols-outlined">add</span>
+          </button>
+          <button
+            type="button"
+            title="Delete category"
+            [disabled]="isActionLoading()"
+            (click)="onDeleteCategory(node)"
+          >
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </div>
+      </article>
+      }
+    </section>
+    }
+
+    <app-category-form-modal
+      [isOpen]="isFormModalOpen()"
+      [mode]="'create'"
+      [category]="null"
+      [parentCategory]="selectedParentCategory()"
+      [confirmLoading]="isActionLoading()"
+      (closed)="onCloseModal()"
+      (confirmed)="onConfirmCreate($event)"
+    />
+
+    <app-category-form-modal
+      [isOpen]="isUpdateModalOpen()"
+      [mode]="'update'"
+      [category]="selectedCategory()"
+      [parentCategory]="selectedParentCategory()"
+      [confirmLoading]="isActionLoading()"
+      (closed)="onCloseModal()"
+      (confirmed)="onConfirmUpdate($event)"
+    />
+
+    <app-modal
+      [isOpen]="isDeleteModalOpen()"
+      [title]="textData.MODAL_DELETE_TITLE"
+      [confirmLabel]="textData.MODAL_DELETE_CONFIRM_LABEL"
+      [confirmLoading]="isActionLoading()"
+      [confirmDisabled]="isActionLoading()"
+      [isDanger]="true"
+      (closed)="onCloseModal()"
+      (confirmed)="onConfirmDelete()"
+    >
+      <p class="categories-delete-message">{{ textData.MODAL_DELETE_MESSAGE }}</p>
+    </app-modal>
+  </div>
+</main>

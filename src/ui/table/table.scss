@@ -1,0 +1,61 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block w-full;
+}
+
+.table-wrapper {
+  @apply bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0_4px_20px_-2px_rgba(13,148,136,0.05)] overflow-hidden;
+}
+
+.table-scroll {
+  @apply overflow-x-auto;
+}
+
+.table-content {
+  @apply w-full border-collapse min-w-[640px];
+}
+
+.table-head-cell {
+  @apply bg-surface-container-low border-b border-outline-variant px-6 py-4 text-label-md font-bold uppercase tracking-widest text-on-surface-variant text-left;
+}
+
+.table-body {
+  @apply divide-y divide-outline-variant;
+}
+
+.table-row {
+  @apply transition-colors hover:bg-surface-container;
+}
+
+.table-cell {
+  @apply px-6 py-2 text-body-md text-on-surface align-middle;
+}
+
+tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.table-cell-center {
+  @apply text-center;
+}
+
+.table-cell-right {
+  @apply text-right;
+}
+
+.table-actions-head {
+  @apply text-right;
+}
+
+.table-actions-cell {
+  @apply text-right;
+}
+
+.table-delete-button {
+  @apply inline-flex items-center justify-center rounded-lg p-2 text-outline transition-all hover:bg-error-container/20 hover:text-error active:scale-90;
+}
+
+.table-state {
+  @apply px-6 py-6 text-body-md text-on-surface-variant;
+}
