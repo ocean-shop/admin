@@ -29,7 +29,7 @@ export class Home {
   }
 
   protected onManageStore(shopId: string): void {
-    this.router.navigate(['/admin/shop-detail', shopId]);
+    this.router.navigate(['/admin/shop', shopId]);
   }
 
   private loadAdminShops(): void {

@@ -3,14 +3,14 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { Shop } from './shop';
+import { Shops } from './shops';
 import { ShopsService } from './services/shops.service';
 import { ShopsApiResponse } from './models/shop.model';
 import { SHOPS_TEXTS } from './constants/shops.constants';
 
-describe('Shop', () => {
-  let fixture: ComponentFixture<Shop>;
-  let component: Shop;
+describe('Shops', () => {
+  let fixture: ComponentFixture<Shops>;
+  let component: Shops;
   let mockShopsService: {
     getShops: ReturnType<typeof vi.fn>;
     createShop: ReturnType<typeof vi.fn>;
@@ -68,7 +68,7 @@ describe('Shop', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [Shop],
+      imports: [Shops],
       providers: [
         provideZonelessChangeDetection(),
         { provide: ShopsService, useValue: mockShopsService },
@@ -76,7 +76,7 @@ describe('Shop', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Shop);
+    fixture = TestBed.createComponent(Shops);
     component = fixture.componentInstance;
     await fixture.whenStable();
     fixture.detectChanges();

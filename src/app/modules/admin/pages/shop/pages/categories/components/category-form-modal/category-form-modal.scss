@@ -1,0 +1,13 @@
+@reference "../../../../../../../../../styles.scss";
+
+.category-form-modal-form {
+  @apply flex flex-col gap-4;
+}
+
+.category-parent-hint {
+  @apply text-sm text-on-surface-variant;
+}
+
+.category-parent-name {
+  @apply font-semibold text-on-surface;
+}

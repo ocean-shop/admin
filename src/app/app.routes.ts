@@ -24,21 +24,29 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/admin/pages/home/home').then((m) => m.Home),
       },
       {
-        path: 'shop',
-        loadComponent: () => import('./modules/admin/pages/shop/shop').then((m) => m.Shop),
+        path: 'admins',
+        loadComponent: () => import('./modules/admin/pages/admins/admins').then((m) => m.Admins),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./modules/admin/pages/settings/settings').then((m) => m.Settings),
       },
       {
         path: 'shops',
-        loadComponent: () => import('./modules/admin/pages/shop/shop').then((m) => m.Shop),
+        loadComponent: () => import('./modules/admin/pages/shops/shops').then((m) => m.Shops),
       },
       {
-        path: 'shop-detail/:shopId',
+        path: 'shop/:shopId',
         loadComponent: () =>
-          import('./modules/admin/pages/shop-detail/shop-detail').then((m) => m.ShopDetail),
+          import('./modules/admin/pages/shop/shop-detail').then((m) => m.ShopDetail),
       },
       {
-        path: 'admins',
-        loadComponent: () => import('./modules/admin/pages/admins/admins').then((m) => m.Admins),
+        path: 'shop/:shopId/categories',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/categories/categories').then(
+            (m) => m.Categories,
+          ),
       },
       {
         path: 'not-permission',
@@ -46,11 +54,6 @@ export const routes: Routes = [
           import('./modules/admin/pages/system/not-permission/not-permission').then(
             (m) => m.NotPermission,
           ),
-      },
-      {
-        path: 'settings',
-        loadComponent: () =>
-          import('./modules/admin/pages/settings/settings').then((m) => m.Settings),
       },
     ],
   },

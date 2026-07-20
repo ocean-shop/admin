@@ -1,0 +1,109 @@
+@reference "../../../../../../../styles.scss";
+
+.categories-page {
+  @apply ml-[280px] pt-16 min-h-screen;
+}
+
+.categories-container {
+  @apply max-w-[1440px] mx-auto p-8;
+}
+
+.categories-header {
+  @apply flex flex-col gap-4 md:flex-row md:items-center justify-between mb-8;
+}
+
+.categories-title {
+  @apply text-3xl font-bold text-on-background mb-2;
+}
+
+.categories-description {
+  @apply text-on-surface-variant max-w-2xl;
+}
+
+.create-root-button {
+  @apply inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-lg font-semibold transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.categories-state {
+  @apply text-on-surface-variant text-base mb-6;
+}
+
+.categories-state-warning {
+  @apply text-error;
+}
+
+.categories-stats {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6 mb-10;
+}
+
+.categories-stat-card {
+  @apply bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm;
+}
+
+.categories-stat-label {
+  @apply text-sm text-secondary uppercase tracking-widest mb-1;
+}
+
+.categories-stat-value {
+  @apply text-3xl font-bold text-primary;
+}
+
+.categories-tree {
+  @apply space-y-3;
+}
+
+.category-tree-row {
+  @apply flex items-center gap-4 bg-surface-container-lowest hover:bg-white hover:shadow-md transition-all px-4 py-4 rounded-lg border border-transparent hover:border-primary/20;
+}
+
+.category-info {
+  @apply flex-1 flex items-center gap-3 min-w-0;
+}
+
+.toggle-button {
+  @apply text-primary p-1 rounded transition-transform;
+}
+
+.toggle-button-expanded {
+  @apply rotate-90;
+}
+
+.toggle-spacer {
+  @apply block w-8;
+}
+
+.category-icon {
+  @apply text-primary-container;
+}
+
+.category-name-group {
+  @apply min-w-0;
+}
+
+.category-name {
+  @apply font-semibold text-on-surface truncate;
+}
+
+.category-slug {
+  @apply text-xs text-on-surface-variant truncate;
+}
+
+.category-count {
+  @apply w-32 text-center text-on-surface-variant font-medium;
+}
+
+.category-actions {
+  @apply w-40 flex justify-end gap-2;
+}
+
+.category-actions button {
+  @apply p-2 rounded transition-colors text-primary hover:bg-primary-container hover:text-on-primary-container;
+}
+
+.category-actions button:last-child {
+  @apply text-error hover:bg-error-container hover:text-on-error-container;
+}
+
+.categories-delete-message {
+  @apply text-on-surface-variant text-sm leading-6;
+}

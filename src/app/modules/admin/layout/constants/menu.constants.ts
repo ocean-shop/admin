@@ -13,8 +13,12 @@ export const ADMIN_PRIMARY_ROUTES = [
 
 export const ADMIN_MENU_ITEMS: MenuItem[] = [
   { icon: 'dashboard', label: 'Головна', route: '/admin' },
-  { icon: 'leaderboard', label: 'Каталог', route: '/admin/products' },
-  { icon: 'settings', label: 'Налаштування', route: '/admin/settings' },
+  { icon: 'category', label: 'Категорії', route: '/admin/shop/:shopId/categories' },
+  { icon: 'inventory', label: 'Продукти', route: '/admin/catalog/products' },
+  { icon: 'label', label: 'Аттрибути', route: '/admin/catalog/products' },
+  { icon: 'tags', label: 'Теги', route: '/admin/catalog/tags' },
+  { icon: 'receipt', label: 'Замовлення', route: '/admin/orders' },
+  { icon: 'settings', label: 'Налаштування', route: '/admin/shop/settings' },
 ];
 
 export const ADMIN_MENU_FOOTER_ITEMS: MenuFooterItem[] = [

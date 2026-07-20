@@ -16,13 +16,13 @@ import {
 import { ShopModalModeEnum } from '../../models/shop-modal-mode.type';
 
 @Component({
-  selector: 'app-shop-form-modal',
+  selector: 'app-shops-form-modal',
   imports: [Modal, Input, Textarea],
-  templateUrl: './shop-form-modal.html',
-  styleUrl: './shop-form-modal.scss',
+  templateUrl: './shops-form-modal.html',
+  styleUrl: './shops-form-modal.scss',
   standalone: true,
 })
-export class ShopFormModal {
+export class ShopsFormModal {
   readonly isOpen = input.required<boolean>();
   readonly mode = input.required<'create' | 'update'>();
   readonly shop = input<Shop | null>(null);
