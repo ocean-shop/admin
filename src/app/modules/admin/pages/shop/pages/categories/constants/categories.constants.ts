@@ -27,6 +27,7 @@ export const CATEGORIES_TEXTS = {
   CREATE_SUCCESS_TITLE: 'Категорію створено',
   UPDATE_SUCCESS_TITLE: 'Категорію оновлено',
   DELETE_SUCCESS_TITLE: 'Категорію видалено',
+  SORT_SUCCESS_TITLE: 'Порядок категорії оновлено',
   PRODUCT_COUNT_FALLBACK: '-',
 };
 

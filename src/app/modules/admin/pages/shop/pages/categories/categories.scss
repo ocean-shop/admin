@@ -93,15 +93,15 @@
 }
 
 .category-actions {
-  @apply w-40 flex justify-end gap-2;
+  @apply w-56 flex justify-end gap-2;
 }
 
 .category-actions button {
-  @apply p-2 rounded transition-colors text-primary hover:bg-primary-container hover:text-on-primary-container;
+  @apply p-2 rounded transition-colors text-primary hover:bg-primary-container hover:text-on-primary-container disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-primary;
 }
 
 .category-actions button:last-child {
-  @apply text-error hover:bg-error-container hover:text-on-error-container;
+  @apply text-error hover:bg-error-container hover:text-on-error-container disabled:hover:bg-transparent disabled:hover:text-error;
 }
 
 .categories-delete-message {

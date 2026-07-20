@@ -3,6 +3,7 @@ export interface CategoryApiItem {
   parentId?: string | number | null;
   name?: string | null;
   slug?: string | null;
+  sort?: number | null;
   productCount?: number | null;
   productsCount?: number | null;
   itemsCount?: number | null;
@@ -21,6 +22,7 @@ export interface Category {
   parentId?: string;
   name: string;
   slug: string;
+  sort: number;
   productCount?: number;
 }
 

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ChangeCategorySortPayload } from '../models/change-category-sort.model';
 import { CategoriesApiResponse, CategoryApiItem } from '../models/category.model';
 import { CreateCategoryPayload, UpdateCategoryPayload } from '../models/category-payload.model';
 
@@ -36,6 +37,16 @@ export class CategoriesService {
     return this.http.patch<CategoryApiItem>(`${this.API_URL}/catalog/categories/${id}`, payload, {
       withCredentials: true,
     });
+  }
+
+  changeCategorySort(id: string, payload: ChangeCategorySortPayload): Observable<CategoryApiItem> {
+    return this.http.patch<CategoryApiItem>(
+      `${this.API_URL}/catalog/categories/${id}/sort`,
+      payload,
+      {
+        withCredentials: true,
+      },
+    );
   }
 
   deleteCategory(id: string): Observable<void> {

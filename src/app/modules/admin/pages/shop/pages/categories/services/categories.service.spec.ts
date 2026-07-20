@@ -78,4 +78,14 @@ describe('CategoriesService', () => {
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
   });
+
+  it('changes category sort with credentials', () => {
+    service.changeCategorySort('category-1', { direction: 'up' }).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/categories/category-1/sort');
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual({ direction: 'up' });
+    req.flush({ id: 'category-1', sort: 0 });
+  });
 });

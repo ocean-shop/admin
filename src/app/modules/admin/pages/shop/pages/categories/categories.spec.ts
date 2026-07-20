@@ -17,6 +17,7 @@ describe('Categories', () => {
     getCategoryById: ReturnType<typeof vi.fn>;
     createCategory: ReturnType<typeof vi.fn>;
     updateCategory: ReturnType<typeof vi.fn>;
+    changeCategorySort: ReturnType<typeof vi.fn>;
     deleteCategory: ReturnType<typeof vi.fn>;
   };
   let mockToasterService: { success: ReturnType<typeof vi.fn> };
@@ -27,16 +28,25 @@ describe('Categories', () => {
       getCategories: vi.fn().mockReturnValue(
         of({
           items: [
-            { id: 'cat-1', name: 'Electronics', slug: 'electronics', productCount: 5 },
-            { id: 'cat-2', parentId: 'cat-1', name: 'Laptops', slug: 'laptops', productCount: 2 },
+            { id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 0, productCount: 5 },
+            { id: 'cat-2', name: 'Home', slug: 'home', sort: 1, productCount: 3 },
+            {
+              id: 'cat-3',
+              parentId: 'cat-1',
+              name: 'Laptops',
+              slug: 'laptops',
+              sort: 0,
+              productCount: 2,
+            },
           ],
         }),
       ),
       getCategoryById: vi
         .fn()
-        .mockReturnValue(of({ id: 'cat-1', name: 'Electronics', slug: 'electronics' })),
-      createCategory: vi.fn().mockReturnValue(of({ id: 'cat-3' })),
+        .mockReturnValue(of({ id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 0 })),
+      createCategory: vi.fn().mockReturnValue(of({ id: 'cat-4' })),
       updateCategory: vi.fn().mockReturnValue(of({ id: 'cat-1' })),
+      changeCategorySort: vi.fn().mockReturnValue(of({ id: 'cat-1', sort: 1 })),
       deleteCategory: vi.fn().mockReturnValue(of(void 0)),
     };
     mockToasterService = {
@@ -80,18 +90,24 @@ describe('Categories', () => {
 
     expect(mockCategoriesService.getCategories).toHaveBeenCalledTimes(1);
     expect(pageElement.textContent).toContain('Electronics');
+    expect(pageElement.textContent).not.toContain('Laptops');
+
+    const firstToggleButton = fixture.debugElement.query(By.css('.toggle-button'));
+    firstToggleButton.triggerEventHandler('click');
+    fixture.detectChanges();
+
     expect(pageElement.textContent).toContain('Laptops');
   });
 
-  it('collapses child rows when a parent toggle is clicked', async () => {
+  it('expands child rows when a parent toggle is clicked', async () => {
     const firstToggleButton = fixture.debugElement.query(By.css('.toggle-button'));
 
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Laptops');
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Laptops');
     firstToggleButton.triggerEventHandler('click');
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Laptops');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Laptops');
   });
 
   it('creates root category with shopId from route params', () => {
@@ -172,5 +188,76 @@ describe('Categories', () => {
 
     expect(pageElement.textContent).not.toContain(CATEGORIES_TEXTS.TOTAL_CATEGORIES_LABEL);
     expect(pageElement.textContent).not.toContain(CATEGORIES_TEXTS.DEEPEST_LEVEL_LABEL);
+  });
+
+  it('disables up on first sibling and down on last sibling', async () => {
+    const firstToggleButton = fixture.debugElement.query(By.css('.toggle-button'));
+    firstToggleButton.triggerEventHandler('click');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const moveUpButtons = fixture.debugElement.queryAll(By.css('button[title="Move category up"]'));
+    const moveDownButtons = fixture.debugElement.queryAll(
+      By.css('button[title="Move category down"]'),
+    );
+
+    expect(moveUpButtons[0].nativeElement.disabled).toBe(true);
+    expect(moveDownButtons[0].nativeElement.disabled).toBe(false);
+    expect(moveUpButtons[2].nativeElement.disabled).toBe(false);
+    expect(moveDownButtons[2].nativeElement.disabled).toBe(true);
+  });
+
+  it('moves category down and refreshes sorted tree order', async () => {
+    mockCategoriesService.getCategories.mockReturnValueOnce(
+      of({
+        items: [
+          { id: 'cat-2', name: 'Home', slug: 'home', sort: 0, productCount: 3 },
+          { id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 1, productCount: 5 },
+          {
+            id: 'cat-3',
+            parentId: 'cat-1',
+            name: 'Laptops',
+            slug: 'laptops',
+            sort: 0,
+            productCount: 2,
+          },
+        ],
+      }),
+    );
+
+    const firstNode = (component as any).visibleNodes()[0];
+    (component as any).onChangeSort(firstNode, 'down');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockCategoriesService.changeCategorySort).toHaveBeenCalledWith('cat-1', {
+      direction: 'down',
+    });
+    expect(mockToasterService.success).toHaveBeenCalledWith(CATEGORIES_TEXTS.SORT_SUCCESS_TITLE);
+
+    const rootNames = (component as any)
+      .visibleNodes()
+      .filter((node: { depth: number }) => node.depth === 0)
+      .map((node: { category: { name: string } }) => node.category.name);
+
+    expect(rootNames).toEqual(['Home', 'Electronics']);
+  });
+
+  it('preserves expanded state after sort reload', async () => {
+    const firstToggleButton = fixture.debugElement.query(By.css('.toggle-button'));
+    firstToggleButton.triggerEventHandler('click');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Laptops');
+    expect((component as any).expandedCategoryIds().has('cat-1')).toBe(true);
+
+    const firstNode = (component as any).visibleNodes()[0];
+    (component as any).onChangeSort(firstNode, 'down');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect((component as any).expandedCategoryIds().has('cat-1')).toBe(true);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Laptops');
   });
 });

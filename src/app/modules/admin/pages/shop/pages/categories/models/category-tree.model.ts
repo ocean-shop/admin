@@ -10,4 +10,6 @@ export interface VisibleCategoryNode {
   depth: number;
   hasChildren: boolean;
   isExpanded: boolean;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
 }

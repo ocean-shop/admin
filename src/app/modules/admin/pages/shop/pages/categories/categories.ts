@@ -6,6 +6,7 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Modal } from '@ui/modal/modal';
 import { CategoryFormModal } from './components/category-form-modal/category-form-modal';
 import { CATEGORIES_CREATE_ICON, CATEGORIES_TEXTS } from './constants/categories.constants';
+import { CategorySortDirection } from './models/change-category-sort.model';
 import { CategoryModalMode, CategoryModalModeEnum } from './models/category-modal-mode.type';
 import {
   CategoriesApiResponse,
@@ -207,6 +208,27 @@ export class Categories implements OnInit {
     );
   }
 
+  protected onChangeSort(node: VisibleCategoryNode, direction: CategorySortDirection): void {
+    const canMove = direction === 'up' ? node.canMoveUp : node.canMoveDown;
+    if (!canMove || this.isActionLoading()) {
+      return;
+    }
+
+    this.isActionLoading.set(true);
+    this.categoriesService
+      .changeCategorySort(node.category.id, { direction })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isActionLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.toasterService.success(CATEGORIES_TEXTS.SORT_SUCCESS_TITLE);
+          this.loadCategories({ preserveExpanded: true });
+        },
+      });
+  }
+
   private watchShopId(): void {
     this.activatedRoute.paramMap
       .pipe(
@@ -218,7 +240,7 @@ export class Categories implements OnInit {
       });
   }
 
-  private loadCategories(): void {
+  private loadCategories(options?: { preserveExpanded?: boolean }): void {
     this.isLoading.set(true);
     this.hasError.set(false);
 
@@ -235,7 +257,9 @@ export class Categories implements OnInit {
           );
           this.categories.set(categories);
           this.stats.set(this.resolveStats(response));
-          this.initializeExpandedNodes(categories);
+          if (!options?.preserveExpanded) {
+            this.initializeExpandedNodes();
+          }
         },
         error: () => {
           this.hasError.set(true);
@@ -298,19 +322,13 @@ export class Categories implements OnInit {
       ...(category.parentId ? { parentId: String(category.parentId) } : {}),
       name: (category.name ?? '').trim() || 'Untitled category',
       slug: (category.slug ?? '').trim() || 'category',
+      sort: typeof category.sort === 'number' ? category.sort : 0,
       ...(typeof productCount === 'number' ? { productCount } : {}),
     };
   }
 
-  private initializeExpandedNodes(categories: Category[]): void {
-    const rootIds = categories
-      .filter(
-        (category) =>
-          !category.parentId || !categories.some((item) => item.id === category.parentId),
-      )
-      .map((category) => category.id);
-
-    this.expandedCategoryIds.set(new Set(rootIds));
+  private initializeExpandedNodes(): void {
+    this.expandedCategoryIds.set(new Set());
   }
 
   private buildTree(categories: Category[]): CategoryTreeNode[] {
@@ -340,14 +358,30 @@ export class Categories implements OnInit {
       parentNode.children.push(node);
     });
 
+    this.sortSiblingNodes(roots);
+    nodeMap.forEach((node) => this.sortSiblingNodes(node.children));
+
     return roots;
+  }
+
+  private sortSiblingNodes(nodes: CategoryTreeNode[]): void {
+    nodes.sort((left, right) => {
+      const sortDiff = left.category.sort - right.category.sort;
+      if (sortDiff !== 0) {
+        return sortDiff;
+      }
+
+      return left.category.id.localeCompare(right.category.id);
+    });
   }
 
   private flattenTree(tree: CategoryTreeNode[], expandedIds: Set<string>): VisibleCategoryNode[] {
     const flattened: VisibleCategoryNode[] = [];
     const visited = new Set<string>();
 
-    tree.forEach((node) => this.appendNode(flattened, node, 0, expandedIds, visited));
+    tree.forEach((node, index) =>
+      this.appendNode(flattened, node, 0, expandedIds, visited, index, tree.length),
+    );
 
     return flattened;
   }
@@ -358,6 +392,8 @@ export class Categories implements OnInit {
     depth: number,
     expandedIds: Set<string>,
     visited: Set<string>,
+    siblingIndex: number,
+    siblingCount: number,
   ): void {
     if (visited.has(node.category.id)) {
       return;
@@ -372,14 +408,24 @@ export class Categories implements OnInit {
       depth,
       hasChildren,
       isExpanded,
+      canMoveUp: siblingIndex > 0,
+      canMoveDown: siblingIndex < siblingCount - 1,
     });
 
     if (!hasChildren || !isExpanded) {
       return;
     }
 
-    node.children.forEach((childNode) =>
-      this.appendNode(output, childNode, depth + 1, expandedIds, visited),
+    node.children.forEach((childNode, index) =>
+      this.appendNode(
+        output,
+        childNode,
+        depth + 1,
+        expandedIds,
+        visited,
+        index,
+        node.children.length,
+      ),
     );
   }
 }
