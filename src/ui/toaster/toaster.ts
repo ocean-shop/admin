@@ -6,7 +6,7 @@ import {
   TOAST_ICONS,
   TOAST_ICON_FILLS,
 } from './constants/toaster.constant';
-import { ToasterService } from '../../app/core/services/toaster/toaster.service';
+import { ToasterService } from '@core/services/toaster/toaster.service';
 
 @Component({
   selector: 'app-toaster',
