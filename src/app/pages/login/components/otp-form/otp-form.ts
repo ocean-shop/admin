@@ -15,7 +15,7 @@ import { Input } from '@ui/input/input';
 import { Button } from '@ui/button/button';
 import { ButtonLine } from '@ui/button-line/button-line';
 import { LocalStorageService } from '@core/services/local-storage/local-storage.service';
-import { OTP_EXPIRATION_KEY, OTP_PATTERN } from '../../constants/login.constant';
+import { OTP_EXPIRATION_KEY, OTP_PATTERN, LOGIN_TEXTS } from '../../constants/login.constants';
 import { OtpData } from '../../models/login.model';
 
 @Component({
@@ -28,6 +28,7 @@ import { OtpData } from '../../models/login.model';
 export class OtpForm implements OnInit {
   private localStorageService = inject(LocalStorageService);
   private destroyRef = inject(DestroyRef);
+  protected readonly texts = LOGIN_TEXTS.otpForm;
 
   submitEvent = output<string>();
   backToLoginEvent = output<void>();
@@ -40,8 +41,8 @@ export class OtpForm implements OnInit {
   });
 
   otpForm = form(this.otpModel, (schemaPath) => {
-    required(schemaPath.otp, { message: 'OTP is required' });
-    pattern(schemaPath.otp, OTP_PATTERN, { message: 'Please enter a valid 4-digit OTP' });
+    required(schemaPath.otp, { message: this.texts.requiredMessage });
+    pattern(schemaPath.otp, OTP_PATTERN, { message: this.texts.invalidMessage });
   });
 
   formattedTime = computed(() => {

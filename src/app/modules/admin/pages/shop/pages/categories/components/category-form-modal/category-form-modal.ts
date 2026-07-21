@@ -29,11 +29,7 @@ export class CategoryFormModal {
 
   protected readonly nameFieldId = CATEGORIES_NAME_FIELD_ID;
   protected readonly slugFieldId = CATEGORIES_SLUG_FIELD_ID;
-  protected readonly nameLabel = CATEGORIES_TEXTS.NAME_LABEL;
-  protected readonly namePlaceholder = CATEGORIES_TEXTS.NAME_PLACEHOLDER;
-  protected readonly slugLabel = CATEGORIES_TEXTS.SLUG_LABEL;
-  protected readonly slugPlaceholder = CATEGORIES_TEXTS.SLUG_PLACEHOLDER;
-  protected readonly parentHintPrefix = CATEGORIES_TEXTS.PARENT_HINT_PREFIX;
+  protected readonly texts = CATEGORIES_TEXTS;
 
   protected readonly categoryFormModel = signal<CategoryFormData>({
     name: '',

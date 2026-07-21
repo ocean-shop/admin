@@ -1,10 +1,10 @@
-export interface CreateAttributePayload {
+export type CreateAttributePayload = {
   shopId: string;
   name: string;
   value: string;
-}
+};
 
-export interface AttributeFormSubmitPayload {
+export type AttributeFormSubmitPayload = {
   name: string;
   value: string;
-}
+};

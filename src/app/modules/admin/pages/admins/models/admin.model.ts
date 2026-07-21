@@ -1,11 +1,11 @@
-export interface AdminShopApiItem {
+export type AdminShopApiItem = {
   id?: string | number | null;
   name?: string | null;
   description?: string | null;
   url?: string | null;
-}
+};
 
-export interface AdminApiItem {
+export type AdminApiItem = {
   id?: string | number | null;
   firstName?: string | null;
   lastName?: string | null;
@@ -24,9 +24,9 @@ export interface AdminApiItem {
         description?: string | null;
       }
     | null;
-}
+};
 
-export interface AdminsApiResponse {
+export type AdminsApiResponse = {
   admins?: AdminApiItem[] | null;
   data?: AdminApiItem[] | null;
   items?: AdminApiItem[] | null;
@@ -34,25 +34,25 @@ export interface AdminsApiResponse {
   page?: number;
   limit?: number;
   totalPages?: number;
-}
+};
 
-export interface AdminsQueryParams {
+export type AdminsQueryParams = {
   page: number;
   limit: number;
-}
+};
 
-export interface AdminsPagination {
+export type AdminsPagination = {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
-}
+};
 
-export interface Admin {
+export type Admin = {
   id: string;
   name: string;
   email: string;
   phone: string;
   role: string;
   shopIds: string[];
-}
+};

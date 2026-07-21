@@ -1,13 +1,13 @@
 <form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
   <app-input
     id="identity"
-    placeholder="Email або телефон"
-    label="Email або телефон"
+    [placeholder]="texts.identityPlaceholder"
+    [label]="texts.identityLabel"
     icon="person"
     [control]="loginForm.identity"
   ></app-input>
   <app-button
-    label="Увійти"
+    [label]="texts.submitButtonLabel"
     icon="arrow_forward"
     type="submit"
     [disabled]="!isFormValid() || isLoading()"

@@ -1,6 +1,6 @@
 <main class="main-container">
   <header class="header">
-    <h1 class="title">Ocean Shop</h1>
+    <h1 class="title">{{ pageTexts.title }}</h1>
   </header>
   <section
     class="login-card"
@@ -8,8 +8,8 @@
     [class.m3-elevation-2]="!isFocused()"
   >
     <div class="welcome-section">
-      <h2 class="subtitle">З поверненням!</h2>
-      <p class="description">Увійдіть, щоб керувати своїми запасами та замовленнями.</p>
+      <h2 class="subtitle">{{ pageTexts.welcomeTitle }}</h2>
+      <p class="description">{{ pageTexts.welcomeDescription }}</p>
     </div>
     @if (currentView() === LoginView.Login) {
     <app-login-form [isLoading]="isLoading()" (submitEvent)="onSubmit($event)"></app-login-form>

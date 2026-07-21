@@ -1,4 +1,4 @@
-export interface CategoryFormData {
+export type CategoryFormData = {
   name: string;
   slug: string;
-}
+};

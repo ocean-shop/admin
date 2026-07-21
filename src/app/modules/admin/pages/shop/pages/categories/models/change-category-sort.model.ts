@@ -1,5 +1,5 @@
 export type CategorySortDirection = 'up' | 'down';
 
-export interface ChangeCategorySortPayload {
+export type ChangeCategorySortPayload = {
   direction: CategorySortDirection;
-}
+};

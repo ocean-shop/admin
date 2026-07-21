@@ -8,7 +8,7 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
 import { LoginService } from './services/login.service';
 import { AuthService } from '@core/services/auth/auth.service';
 import { LoginView } from './models/login.enum';
-import { VIEW_STORAGE_KEY, OTP_EXPIRATION_KEY } from './constants/login.constant';
+import { VIEW_STORAGE_KEY, OTP_EXPIRATION_KEY, LOGIN_TEXTS } from './constants/login.constants';
 
 describe('Login', () => {
   let component: Login;
@@ -74,8 +74,8 @@ describe('Login', () => {
     component.onSubmit('test@example.com');
     expect(mockLoginService.requestOtp).toHaveBeenCalledWith('test@example.com');
     expect(mockToasterService.success).toHaveBeenCalledWith(
-      'OTP Sent',
-      'Будь ласка, перевірте свою електронну пошту або телефон, щоб знайти одноразовий код (OTP).',
+      LOGIN_TEXTS.toaster.otpSentTitle,
+      LOGIN_TEXTS.toaster.otpSentDescription,
     );
     expect(mockLocalStorageService.removeItem).toHaveBeenCalledWith(OTP_EXPIRATION_KEY);
     expect(component.currentView()).toBe(LoginView.Otp);

@@ -1,15 +1,15 @@
 import { Category } from './category.model';
 
-export interface CategoryTreeNode {
+export type CategoryTreeNode = {
   category: Category;
   children: CategoryTreeNode[];
-}
+};
 
-export interface VisibleCategoryNode {
+export type VisibleCategoryNode = {
   category: Category;
   depth: number;
   hasChildren: boolean;
   isExpanded: boolean;
   canMoveUp: boolean;
   canMoveDown: boolean;
-}
+};

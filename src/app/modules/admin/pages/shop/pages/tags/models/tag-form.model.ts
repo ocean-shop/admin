@@ -1,3 +1,3 @@
-export interface TagFormData {
+export type TagFormData = {
   name: string;
-}
+};

@@ -1,4 +1,4 @@
-export interface AttributeFormData {
+export type AttributeFormData = {
   name: string;
   value: string;
-}
+};

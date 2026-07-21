@@ -1,7 +1,7 @@
-export interface LoginData {
+export type LoginData = {
   identity: string;
-}
+};
 
-export interface OtpData {
+export type OtpData = {
   otp: string;
-}
+};

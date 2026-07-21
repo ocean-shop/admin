@@ -1,12 +1,12 @@
 import { ProductStatus } from './product-status.enum';
 import { ProductType } from './product-type.enum';
 
-export interface ProductCategoryApiItem {
+export type ProductCategoryApiItem = {
   id?: string | null;
   name?: string | null;
-}
+};
 
-export interface ProductApiItem {
+export type ProductApiItem = {
   id?: string | null;
   shopId?: string | null;
   title?: string | null;
@@ -18,17 +18,17 @@ export interface ProductApiItem {
   categories?: (ProductCategoryApiItem | string)[] | null;
   createdAt?: string | null;
   updatedAt?: string | null;
-}
+};
 
-export interface ProductListResponse {
+export type ProductListResponse = {
   items: ProductApiItem[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
-}
+};
 
-export interface ProductListQueryParams {
+export type ProductListQueryParams = {
   page: number;
   limit: number;
   shopId: string;
@@ -37,9 +37,9 @@ export interface ProductListQueryParams {
   categoryIds?: string[];
   sortBy?: 'createdAt' | 'name';
   sortOrder?: 'asc' | 'desc';
-}
+};
 
-export interface Product {
+export type Product = {
   id: string;
   shopId: string;
   title: string;
@@ -48,4 +48,4 @@ export interface Product {
   status: string;
   price: string;
   categories: string;
-}
+};

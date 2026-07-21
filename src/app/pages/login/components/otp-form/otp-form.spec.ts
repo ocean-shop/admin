@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { OtpForm } from './otp-form';
 import { LocalStorageService } from '../../../../core/services/local-storage/local-storage.service';
-import { OTP_EXPIRATION_KEY } from '../../constants/login.constant';
+import { OTP_EXPIRATION_KEY } from '../../constants/login.constants';
 
 describe('OtpForm', () => {
   let component: OtpForm;

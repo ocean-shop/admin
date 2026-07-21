@@ -34,13 +34,7 @@ export class ShopsFormModal {
   protected readonly nameFieldId = SHOPS_NAME_FIELD_ID;
   protected readonly descriptionFieldId = SHOPS_DESCRIPTION_FIELD_ID;
   protected readonly urlFieldId = SHOPS_URL_FIELD_ID;
-
-  protected readonly nameLabel = SHOPS_TEXTS.NAME_LABEL;
-  protected readonly namePlaceholder = SHOPS_TEXTS.NAME_PLACEHOLDER;
-  protected readonly descriptionLabel = SHOPS_TEXTS.DESCRIPTION_LABEL;
-  protected readonly descriptionPlaceholder = SHOPS_TEXTS.DESCRIPTION_PLACEHOLDER;
-  protected readonly urlLabel = SHOPS_TEXTS.URL_LABEL;
-  protected readonly urlPlaceholder = SHOPS_TEXTS.URL_PLACEHOLDER;
+  protected readonly texts = SHOPS_TEXTS;
 
   protected readonly shopFormModel = signal<ShopFormData>({
     name: '',

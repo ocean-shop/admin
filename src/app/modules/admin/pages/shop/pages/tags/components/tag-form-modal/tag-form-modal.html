@@ -10,8 +10,8 @@
   <form class="tag-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
     <app-input
       [id]="nameFieldId"
-      [label]="nameLabel"
-      [placeholder]="namePlaceholder"
+      [label]="texts.NAME_LABEL"
+      [placeholder]="texts.NAME_PLACEHOLDER"
       [control]="tagForm.name"
     />
   </form>

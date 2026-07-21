@@ -35,10 +35,7 @@ export class AdminFormModal {
   readonly confirmed = output<AdminCreatePayload>();
 
   protected readonly identityFieldId = ADMINS_IDENTITY_FIELD_ID;
-  protected readonly identityLabel = ADMINS_TEXTS.IDENTITY_LABEL;
-  protected readonly identityPlaceholder = ADMINS_TEXTS.IDENTITY_PLACEHOLDER;
-  protected readonly roleLabel = ADMINS_TEXTS.ROLE_LABEL;
-  protected readonly shopsLabel = ADMINS_TEXTS.SHOPS_LABEL;
+  protected readonly texts = ADMINS_TEXTS;
 
   protected readonly adminFormModel = signal<AdminFormData>({
     identity: '',
@@ -139,7 +136,6 @@ export class AdminFormModal {
   private normalizeRoleValue(role: string): string {
     const normalized = role.trim().toLowerCase();
     const roleExists = this.roleOptions().some((option) => option.value === normalized);
-
     return roleExists ? normalized : ADMINS_DEFAULT_ROLE_VALUE;
   }
 
@@ -153,7 +149,6 @@ export class AdminFormModal {
 
   private resolveSelectedShopIds(): string[] {
     const selectedShopIds = this.adminForm.shopIds().value() ?? [];
-
     return Array.from(new Set(selectedShopIds.map((shopId) => shopId.trim()).filter(Boolean)));
   }
 }
