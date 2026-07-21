@@ -1,0 +1,77 @@
+@reference "../../../../../../../styles.scss";
+
+.products-page {
+  @apply ml-[50px] pt-8 min-h-screen;
+}
+
+.products-container {
+  @apply max-w-[1440px] mx-auto p-8 flex flex-col gap-6;
+}
+
+.products-header {
+  @apply flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center;
+}
+
+.products-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight;
+}
+
+.products-description {
+  @apply text-sm text-on-surface-variant mt-1;
+}
+
+.products-filters {
+  @apply flex flex-col gap-4 xl:flex-row xl:flex-wrap xl:items-end;
+}
+
+.products-filters-left {
+  @apply grid gap-4 md:grid-cols-2 xl:flex xl:flex-wrap xl:items-end;
+}
+
+.products-filter-field {
+  @apply flex flex-col gap-2 xl:min-w-[200px];
+}
+
+.products-filter-field-categories {
+  @apply min-w-[260px];
+}
+
+.products-filter-label {
+  @apply text-sm font-semibold text-on-surface;
+}
+
+.products-filter-input {
+  @apply h-11 px-4 rounded-lg border border-outline-variant bg-surface text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary;
+}
+
+.products-filters-right {
+  @apply flex flex-col gap-4 sm:flex-row sm:items-end;
+}
+
+.products-sort-block {
+  @apply flex flex-col gap-2 min-w-[220px];
+}
+
+.products-filter-actions {
+  @apply flex gap-2;
+}
+
+.products-filter-button {
+  @apply h-11 px-4 rounded-lg bg-primary text-on-primary font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.products-filter-reset {
+  @apply h-11 px-4 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.products-pagination {
+  @apply w-full;
+}
+
+.products-state {
+  @apply text-sm text-on-surface-variant;
+}
+
+.products-state-warning {
+  @apply text-error;
+}

@@ -6,6 +6,8 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Modal } from '@ui/modal/modal';
 import { CategoryFormModal } from './components/category-form-modal/category-form-modal';
 import { CATEGORIES_CREATE_ICON, CATEGORIES_TEXTS } from './constants/categories.constants';
+import { buildTree } from '../../helpers/tree.helper';
+import { TreeNode } from '../../models/tree-node.model';
 import { CategorySortDirection } from './models/change-category-sort.model';
 import { CategoryModalMode, CategoryModalModeEnum } from './models/category-modal-mode.type';
 import {
@@ -346,47 +348,27 @@ export class Categories implements OnInit {
   }
 
   private buildTree(categories: Category[]): CategoryTreeNode[] {
-    const nodeMap = new Map<string, CategoryTreeNode>();
-    const roots: CategoryTreeNode[] = [];
+    const tree = buildTree(categories, {
+      getId: (category) => category.id,
+      getParentId: (category) => category.parentId?.trim(),
+      compareSiblings: (left, right) => {
+        const sortDiff = left.sort - right.sort;
+        if (sortDiff !== 0) {
+          return sortDiff;
+        }
 
-    categories.forEach((category) => {
-      nodeMap.set(category.id, {
-        category,
-        children: [],
-      });
+        return left.id.localeCompare(right.id);
+      },
     });
 
-    nodeMap.forEach((node) => {
-      const parentId = node.category.parentId;
-      if (!parentId) {
-        roots.push(node);
-        return;
-      }
-
-      const parentNode = nodeMap.get(parentId);
-      if (!parentNode || parentNode.category.id === node.category.id) {
-        roots.push(node);
-        return;
-      }
-
-      parentNode.children.push(node);
-    });
-
-    this.sortSiblingNodes(roots);
-    nodeMap.forEach((node) => this.sortSiblingNodes(node.children));
-
-    return roots;
+    return tree.map((node) => this.mapCategoryTreeNode(node));
   }
 
-  private sortSiblingNodes(nodes: CategoryTreeNode[]): void {
-    nodes.sort((left, right) => {
-      const sortDiff = left.category.sort - right.category.sort;
-      if (sortDiff !== 0) {
-        return sortDiff;
-      }
-
-      return left.category.id.localeCompare(right.category.id);
-    });
+  private mapCategoryTreeNode(node: TreeNode<Category>): CategoryTreeNode {
+    return {
+      category: node.value,
+      children: node.children.map((childNode) => this.mapCategoryTreeNode(childNode)),
+    };
   }
 
   private flattenTree(tree: CategoryTreeNode[], expandedIds: Set<string>): VisibleCategoryNode[] {

@@ -61,6 +61,18 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'shop/:shopId/products',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/products/products').then((m) => m.Products),
+      },
+      {
+        path: 'shop/:shopId/products/create',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/products-create/products-create').then(
+            (m) => m.ProductsCreate,
+          ),
+      },
+      {
         path: 'not-permission',
         loadComponent: () =>
           import('./modules/admin/pages/system/not-permission/not-permission').then(

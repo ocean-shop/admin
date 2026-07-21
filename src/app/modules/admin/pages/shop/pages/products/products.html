@@ -1,0 +1,128 @@
+<main class="products-page">
+  <div class="products-container">
+    <header class="products-header">
+      <div>
+        <h1 class="products-title">{{ textData.PAGE_TITLE }}</h1>
+        <p class="products-description">{{ textData.PAGE_DESCRIPTION }}</p>
+      </div>
+      <app-button
+        [label]="textData.CREATE_LABEL"
+        [icon]="createProductIcon"
+        [iconLeading]="true"
+        [fullWidth]="false"
+        [disabled]="!isShopContextReady()"
+        variant="create"
+        type="button"
+        (click)="onCreateProduct()"
+      />
+    </header>
+
+    @if (!isShopContextReady()) {
+    <p class="products-state products-state-warning">{{ textData.SHOP_ID_REQUIRED_MESSAGE }}</p>
+    }
+
+    <form class="products-filters" (submit)="$event.preventDefault(); onApplyFilters()">
+      <div class="products-filters-left">
+        <div class="products-filter-field">
+          <label class="products-filter-label" [attr.for]="nameFilterId"
+            >{{ textData.NAME_FILTER_LABEL }}</label
+          >
+          <input
+            [id]="nameFilterId"
+            class="products-filter-input"
+            type="text"
+            [value]="nameInput()"
+            [placeholder]="textData.NAME_FILTER_PLACEHOLDER"
+            [disabled]="!isShopContextReady() || isLoading()"
+            (input)="onNameInput($event)"
+          />
+        </div>
+
+        <div class="products-filter-field">
+          <label class="products-filter-label" [attr.for]="skuFilterId"
+            >{{ textData.SKU_FILTER_LABEL }}</label
+          >
+          <input
+            [id]="skuFilterId"
+            class="products-filter-input"
+            type="text"
+            [value]="skuInput()"
+            [placeholder]="textData.SKU_FILTER_PLACEHOLDER"
+            [disabled]="!isShopContextReady() || isLoading()"
+            (input)="onSkuInput($event)"
+          />
+        </div>
+
+        <div class="products-filter-field products-filter-field-categories">
+          <span class="products-filter-label">{{ textData.CATEGORY_FILTER_LABEL }}</span>
+          <app-multi-select-dropdown
+            triggerMode="click"
+            variant="bordered"
+            optionVariant="tree"
+            icon="category"
+            [label]="textData.CATEGORY_FILTER_LABEL"
+            [options]="categoryOptions()"
+            [value]="categoryIdsInput()"
+            (optionToggled)="onCategoryOptionToggled($event)"
+          />
+        </div>
+      </div>
+
+      <div class="products-filters-right">
+        <div class="products-sort-block">
+          <span class="products-filter-label">{{ textData.SORT_LABEL }}</span>
+          <app-dropdown
+            triggerMode="click"
+            variant="bordered"
+            icon="swap_vert"
+            [options]="sortOptions"
+            [value]="selectedSort()"
+            (optionSelected)="onSortSelected($event)"
+          />
+        </div>
+
+        <div class="products-filter-actions">
+          <button
+            class="products-filter-button"
+            type="submit"
+            [disabled]="!isShopContextReady() || isLoading() || isCategoriesLoading()"
+          >
+            {{ textData.FILTER_APPLY_LABEL }}
+          </button>
+          <button
+            class="products-filter-reset"
+            type="button"
+            [disabled]="!isShopContextReady() || isLoading()"
+            (click)="onResetFilters()"
+          >
+            {{ textData.FILTER_RESET_LABEL }}
+          </button>
+        </div>
+      </div>
+    </form>
+
+    @if (hasError()) {
+    <p class="products-state">{{ textData.LOAD_ERROR_MESSAGE }}</p>
+    }
+
+    <app-table
+      [columns]="tableColumns"
+      [rows]="productRows()"
+      [loading]="isLoading()"
+      [loadingText]="textData.TABLE_LOADING_TEXT"
+      [emptyText]="textData.EMPTY_STATE"
+    />
+
+    @if (totalItems() > pageSize) {
+    <app-pagination
+      class="products-pagination"
+      [currentPage]="currentPage()"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems()"
+      [totalPages]="totalPages()"
+      [label]="textData.PAGINATION_LABEL"
+      (pageChange)="onPageChange($event)"
+    />
+    }
+  </div>
+</main>

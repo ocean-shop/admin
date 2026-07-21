@@ -1,0 +1,13 @@
+@reference "../../../../../../../styles.scss";
+
+.products-create-container {
+  @apply max-w-7xl mx-auto;
+}
+
+.products-create-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight mb-2;
+}
+
+.products-create-placeholder {
+  @apply text-on-surface-variant text-lg;
+}

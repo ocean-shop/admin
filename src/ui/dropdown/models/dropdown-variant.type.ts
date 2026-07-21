@@ -1,1 +1,1 @@
-export type DropdownVariant = 'default' | 'form';
+export type DropdownVariant = 'default' | 'form' | 'bordered';
