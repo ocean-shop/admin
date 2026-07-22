@@ -120,6 +120,22 @@
       (deleteRow)="onDeleteProduct($event)"
     />
 
+    <app-modal
+      [isOpen]="isDeleteModalOpen()"
+      [title]="textData.MODAL_DELETE_TITLE"
+      [confirmLabel]="textData.MODAL_DELETE_CONFIRM_LABEL"
+      [confirmLoading]="isActionLoading()"
+      [confirmDisabled]="isActionLoading()"
+      [isDanger]="true"
+      (closed)="onCloseDeleteModal()"
+      (confirmed)="onConfirmDelete()"
+    >
+      <p class="products-delete-message">
+        {{ textData.MODAL_DELETE_MESSAGE }}
+        <strong>{{ selectedProduct()?.title }}</strong>{{ textData.MODAL_DELETE_MESSAGE_SUFFIX }}
+      </p>
+    </app-modal>
+
     @if (totalItems() > pageSize) {
     <app-pagination
       class="products-pagination"

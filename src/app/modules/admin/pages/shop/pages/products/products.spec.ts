@@ -2,7 +2,6 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
-import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of } from 'rxjs';
 import { CategoriesService } from '../categories/services/categories.service';
 import { PRODUCTS_TEXTS } from './constants/products.constants';
@@ -19,7 +18,6 @@ describe('Products', () => {
     deleteProduct: ReturnType<typeof vi.fn>;
   };
   let mockCategoriesService: { getCategories: ReturnType<typeof vi.fn> };
-  let mockToasterService: { success: ReturnType<typeof vi.fn> };
   let mockRouter: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
@@ -78,9 +76,6 @@ describe('Products', () => {
         }),
       ),
     };
-    mockToasterService = {
-      success: vi.fn(),
-    };
     mockRouter = {
       navigate: vi.fn(),
     };
@@ -91,7 +86,6 @@ describe('Products', () => {
         provideZonelessChangeDetection(),
         { provide: ProductsService, useValue: mockProductsService },
         { provide: CategoriesService, useValue: mockCategoriesService },
-        { provide: ToasterService, useValue: mockToasterService },
         { provide: Router, useValue: mockRouter },
         {
           provide: ActivatedRoute,
@@ -232,10 +226,15 @@ describe('Products', () => {
     ]);
   });
 
-  it('deletes product from row action and refetches list', () => {
+  it('opens delete modal from row action and deletes only after confirmation', () => {
     const getProductsCallsBeforeDelete = mockProductsService.getProducts.mock.calls.length;
 
     (component as any).onDeleteProduct({ id: 'product-1' });
+
+    expect((component as any).selectedProduct()?.id).toBe('product-1');
+    expect(mockProductsService.deleteProduct).not.toHaveBeenCalled();
+
+    (component as any).onConfirmDelete();
 
     expect(mockProductsService.deleteProduct).toHaveBeenCalledWith('product-1');
     expect(mockProductsService.getProducts).toHaveBeenCalledTimes(getProductsCallsBeforeDelete + 1);

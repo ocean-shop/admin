@@ -75,3 +75,7 @@
 .products-state-warning {
   @apply text-error;
 }
+
+.products-delete-message {
+  @apply text-sm text-on-surface;
+}

@@ -25,6 +25,10 @@ export const PRODUCTS_TEXTS = {
   TABLE_ACTIONS_LABEL: 'Дії',
   TABLE_UPDATE_LABEL: 'Оновити продукт',
   TABLE_DELETE_LABEL: 'Видалити продукт',
+  MODAL_DELETE_TITLE: 'Видалити продукт',
+  MODAL_DELETE_MESSAGE: 'Ви справді хочете видалити продукт ',
+  MODAL_DELETE_MESSAGE_SUFFIX: '? Цю дію не можна скасувати.',
+  MODAL_DELETE_CONFIRM_LABEL: 'Видалити',
   PAGINATION_LABEL: 'продуктів',
   LOAD_ERROR_MESSAGE: 'Не вдалося завантажити продукти. Спробуйте ще раз.',
 };

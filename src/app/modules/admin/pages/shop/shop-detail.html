@@ -1,10 +1,74 @@
 <section class="shop-detail-container">
-  <h3 class="shop-detail-title">Деталі Магазину</h3>
-  <p class="shop-detail-placeholder">Тут буде статистика магазину!</p>
-  <div class="shop-detail-categories">
-    <a class="shop-detail-categories-link" [routerLink]="categoriesRoute()">Перейти до категорій</a>
-    <a class="shop-detail-categories-link" [routerLink]="tagsRoute()">Перейти до тегів</a>
-    <a class="shop-detail-categories-link" [routerLink]="attributesRoute()">Перейти до атрибутів</a>
-    <a class="shop-detail-categories-link" [routerLink]="productsRoute()">Перейти до продуктів</a>
+  <header class="shop-detail-header">
+    <h3 class="shop-detail-title">Деталі Магазину</h3>
+    <p class="shop-detail-placeholder">
+      Оберіть розділ, щоб керувати контентом магазину: структурою каталогу, фільтрами та продуктами.
+    </p>
+  </header>
+
+  <div class="shop-detail-cards">
+    <article class="shop-detail-card">
+      <div class="shop-detail-card-icon-wrapper">
+        <span class="material-symbols-outlined shop-detail-card-icon">account_tree</span>
+      </div>
+      <div class="shop-detail-card-content">
+        <h4 class="shop-detail-card-title">Категорії</h4>
+        <p class="shop-detail-card-description">
+          Створюйте та впорядковуйте дерево категорій для зручної навігації у магазині.
+        </p>
+      </div>
+      <a class="shop-detail-card-link" [routerLink]="categoriesRoute()">
+        <span class="shop-detail-card-link-label">Перейти до категорій</span>
+        <span class="material-symbols-outlined shop-detail-card-link-icon">arrow_forward</span>
+      </a>
+    </article>
+
+    <article class="shop-detail-card">
+      <div class="shop-detail-card-icon-wrapper">
+        <span class="material-symbols-outlined shop-detail-card-icon">sell</span>
+      </div>
+      <div class="shop-detail-card-content">
+        <h4 class="shop-detail-card-title">Теги</h4>
+        <p class="shop-detail-card-description">
+          Додавайте теги для кращого пошуку, сегментації товарів і швидкої фільтрації.
+        </p>
+      </div>
+      <a class="shop-detail-card-link" [routerLink]="tagsRoute()">
+        <span class="shop-detail-card-link-label">Перейти до тегів</span>
+        <span class="material-symbols-outlined shop-detail-card-link-icon">arrow_forward</span>
+      </a>
+    </article>
+
+    <article class="shop-detail-card">
+      <div class="shop-detail-card-icon-wrapper">
+        <span class="material-symbols-outlined shop-detail-card-icon">tune</span>
+      </div>
+      <div class="shop-detail-card-content">
+        <h4 class="shop-detail-card-title">Атрибути</h4>
+        <p class="shop-detail-card-description">
+          Налаштовуйте атрибути для варіацій товарів і детальнішого опису характеристик.
+        </p>
+      </div>
+      <a class="shop-detail-card-link" [routerLink]="attributesRoute()">
+        <span class="shop-detail-card-link-label">Перейти до атрибутів</span>
+        <span class="material-symbols-outlined shop-detail-card-link-icon">arrow_forward</span>
+      </a>
+    </article>
+
+    <article class="shop-detail-card">
+      <div class="shop-detail-card-icon-wrapper">
+        <span class="material-symbols-outlined shop-detail-card-icon">inventory_2</span>
+      </div>
+      <div class="shop-detail-card-content">
+        <h4 class="shop-detail-card-title">Продукти</h4>
+        <p class="shop-detail-card-description">
+          Керуйте списком продуктів, їх статусами, цінами та прив'язкою до категорій.
+        </p>
+      </div>
+      <a class="shop-detail-card-link" [routerLink]="productsRoute()">
+        <span class="shop-detail-card-link-label">Перейти до продуктів</span>
+        <span class="material-symbols-outlined shop-detail-card-link-icon">arrow_forward</span>
+      </a>
+    </article>
   </div>
 </section>

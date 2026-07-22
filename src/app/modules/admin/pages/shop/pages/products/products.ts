@@ -10,6 +10,7 @@ import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { MultiSelectDropdown } from '@ui/multi-select-dropdown/multi-select-dropdown';
 import { DropdownTreeOption } from '@ui/multi-select-dropdown/models/dropdown-tree-option.type';
+import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
 import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
@@ -29,7 +30,7 @@ import { ProductsService } from './services/products.service';
 
 @Component({
   selector: 'app-products',
-  imports: [Button, Dropdown, MultiSelectDropdown, Pagination, Table],
+  imports: [Button, Dropdown, MultiSelectDropdown, Pagination, Table, Modal],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
@@ -58,7 +59,9 @@ export class Products implements OnInit {
   protected readonly isLoading = signal(true);
   protected readonly isCategoriesLoading = signal(true);
   protected readonly hasError = signal(false);
+  protected readonly isActionLoading = signal(false);
   protected readonly products = signal<Product[]>([]);
+  protected readonly selectedProduct = signal<Product | null>(null);
   protected readonly categoryOptions = signal<DropdownTreeOption[]>([]);
   protected readonly shopId = signal<string | null>(null);
   protected readonly currentPage = signal(1);
@@ -73,6 +76,7 @@ export class Products implements OnInit {
   protected readonly categoryIdsFilter = signal<string[]>([]);
 
   protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
+  protected readonly isDeleteModalOpen = computed(() => Boolean(this.selectedProduct()));
   protected readonly productRows = computed<TableRowData[]>(() =>
     this.products().map((product) => ({
       id: product.id,
@@ -184,15 +188,42 @@ export class Products implements OnInit {
       return;
     }
 
-    this.isLoading.set(true);
+    const product = this.products().find((item) => item.id === productId);
+    if (!product) {
+      return;
+    }
+
+    this.selectedProduct.set(product);
+  }
+
+  protected onCloseDeleteModal(): void {
+    if (this.isActionLoading()) {
+      return;
+    }
+
+    this.selectedProduct.set(null);
+  }
+
+  protected onConfirmDelete(): void {
+    const selectedProduct = this.selectedProduct();
+    if (!selectedProduct || this.isActionLoading()) {
+      return;
+    }
+
+    this.isActionLoading.set(true);
     this.productsService
-      .deleteProduct(productId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .deleteProduct(selectedProduct.id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isActionLoading.set(false)),
+      )
       .subscribe({
-        next: () => this.loadProducts(),
+        next: () => {
+          this.selectedProduct.set(null);
+          this.loadProducts();
+        },
         error: () => {
           this.hasError.set(true);
-          this.isLoading.set(false);
         },
       });
   }
