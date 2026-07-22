@@ -165,7 +165,7 @@ export class Products implements OnInit {
       return;
     }
 
-    this.router.navigate(['/admin/shop', shopId, 'products/create']);
+    this.router.navigate(['/admin/shop', shopId, 'products', 'create']);
   }
 
   protected onPageChange(page: number): void {

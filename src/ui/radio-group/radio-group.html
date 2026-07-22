@@ -1,0 +1,22 @@
+<fieldset class="admin-radio-group" [disabled]="disabled()">
+  @if (label()) {
+  <legend class="admin-radio-group-legend">{{ label() }}</legend>
+  }
+
+  <div class="admin-radio-group-options">
+    @for (option of options(); track option.value) {
+    <label class="admin-radio-option" [class.admin-radio-option-disabled]="!!option.disabled">
+      <input
+        [id]="option.id"
+        type="radio"
+        [name]="name()"
+        [value]="option.value"
+        [checked]="selectedValue() === option.value"
+        [disabled]="disabled() || !!option.disabled"
+        (change)="onOptionChange(option.value)"
+      />
+      <span>{{ option.label }}</span>
+    </label>
+    }
+  </div>
+</fieldset>

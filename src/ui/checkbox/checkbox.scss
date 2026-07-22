@@ -1,0 +1,17 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.admin-checkbox-option {
+  @apply inline-flex items-center gap-3 cursor-pointer text-sm font-medium text-on-surface;
+}
+
+.admin-checkbox-option input {
+  @apply w-5 h-5 text-primary rounded-sm border-outline-variant focus:ring-primary;
+}
+
+.admin-checkbox-option-disabled {
+  @apply opacity-60 cursor-not-allowed;
+}

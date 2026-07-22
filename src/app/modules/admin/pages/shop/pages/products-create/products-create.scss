@@ -1,13 +1,141 @@
 @reference "../../../../../../../styles.scss";
 
+.products-create-page {
+  @apply ml-[50px] pt-8 min-h-screen;
+}
+
 .products-create-container {
-  @apply max-w-7xl mx-auto;
+  @apply max-w-[1440px] mx-auto p-8 flex flex-col gap-6;
+}
+
+.products-create-header {
+  @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
 }
 
 .products-create-title {
-  @apply text-3xl font-semibold text-on-surface tracking-tight mb-2;
+  @apply text-3xl font-bold text-on-surface tracking-tight;
 }
 
-.products-create-placeholder {
-  @apply text-on-surface-variant text-lg;
+.products-create-description {
+  @apply text-sm text-on-surface-variant mt-1;
+}
+
+.products-create-submit {
+  @apply px-6 py-3 bg-primary text-on-primary rounded-md font-bold text-sm shadow-sm hover:bg-primary-container hover:text-on-primary-container hover:-translate-y-0.5 transition-all w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0;
+}
+
+.products-create-warning {
+  @apply text-sm text-error;
+}
+
+.products-create-grid {
+  @apply grid grid-cols-1 lg:grid-cols-12 gap-6;
+}
+
+.products-create-main {
+  @apply lg:col-span-8 flex flex-col gap-6;
+}
+
+.products-create-sidebar {
+  @apply lg:col-span-4 flex flex-col gap-6;
+}
+
+.products-create-card {
+  @apply bg-surface-container-lowest rounded-lg border border-outline-variant p-6 shadow-sm;
+}
+
+.products-create-card-title {
+  @apply text-lg font-semibold text-on-surface mb-4 pb-2 border-b border-surface-container;
+}
+
+.products-create-card-title-icon {
+  @apply inline-flex items-center gap-2;
+}
+
+.products-create-card-title-icon .material-symbols-outlined {
+  @apply text-primary text-[20px];
+}
+
+.products-create-field-group {
+  @apply flex flex-col gap-2 mb-4;
+}
+
+.products-create-label {
+  @apply text-xs uppercase tracking-wider font-semibold text-on-surface-variant;
+}
+
+.products-create-input,
+.products-create-textarea,
+.products-create-select,
+.products-create-sidebar-search {
+  @apply w-full px-4 py-2.5 bg-surface text-sm text-on-surface rounded-md border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-fixed focus:outline-none transition-all;
+}
+
+.products-create-textarea {
+  @apply resize-none;
+}
+
+.products-create-type-fieldset {
+  @apply border-none p-0 m-0;
+}
+
+.products-create-radio-group {
+  @apply flex gap-4;
+}
+
+.products-create-radio-option {
+  @apply inline-flex items-center gap-2 cursor-pointer text-sm text-on-surface;
+}
+
+.products-create-two-columns {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.products-create-checkbox-option {
+  @apply inline-flex items-center gap-3 mt-2 cursor-pointer text-sm font-medium text-on-surface;
+}
+
+.products-create-checkbox-option input {
+  @apply w-5 h-5 text-primary rounded-sm border-outline-variant focus:ring-primary;
+}
+
+.products-create-static-scroll {
+  @apply max-h-[300px] overflow-y-auto pr-2 space-y-2 mt-4;
+}
+
+.products-create-tree-row {
+  @apply flex items-center gap-2 p-1 rounded-sm text-sm text-on-surface hover:bg-surface-container transition-colors cursor-pointer;
+}
+
+.products-create-tree-children {
+  @apply ml-6 space-y-2;
+}
+
+.products-create-chip-list,
+.products-create-tag-list {
+  @apply flex flex-wrap gap-2 mt-4;
+}
+
+.products-create-chip {
+  @apply inline-flex items-center gap-1 px-3 py-1 bg-surface-container text-on-surface-variant text-sm rounded-full border border-surface-dim;
+}
+
+.products-create-chip button {
+  @apply hover:text-error transition-colors;
+}
+
+.products-create-chip .material-symbols-outlined {
+  @apply text-[16px];
+}
+
+.products-create-tag {
+  @apply inline-flex items-center gap-1 px-3 py-1 bg-secondary-fixed text-on-secondary-fixed text-xs uppercase tracking-wide rounded-sm;
+}
+
+.products-create-tag button {
+  @apply hover:text-error transition-colors;
+}
+
+.products-create-tag .material-symbols-outlined {
+  @apply text-[14px];
 }

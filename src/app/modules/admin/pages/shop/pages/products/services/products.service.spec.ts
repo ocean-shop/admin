@@ -1,6 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { ProductStatus } from '../models/product-status.enum';
+import { ProductType } from '../models/product-type.enum';
 import { ProductsService } from './products.service';
 
 describe('ProductsService', () => {
@@ -69,5 +71,36 @@ describe('ProductsService', () => {
     expect(req.request.params.has('sortBy')).toBe(false);
     expect(req.request.params.has('sortOrder')).toBe(false);
     req.flush({ items: [], total: 0, page: 1, limit: 20, totalPages: 1 });
+  });
+
+  it('requests single product by id', () => {
+    service.getProductById('product-1').subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1');
+    expect(req.request.method).toBe('GET');
+    expect(req.request.withCredentials).toBe(true);
+    req.flush({ id: 'product-1' });
+  });
+
+  it('creates product with payload', () => {
+    const payload = {
+      shopId: 'shop-1',
+      type: ProductType.Simple,
+      name: 'Coastal Linen Shirt',
+      description: 'Lightweight shirt.',
+      status: ProductStatus.Draft,
+      available: true,
+      sku: 'CSTL-SHRT-01',
+      price: 99.99,
+      oldPrice: 119.99,
+    };
+
+    service.createProduct(payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({ id: 'product-1', ...payload });
   });
 });

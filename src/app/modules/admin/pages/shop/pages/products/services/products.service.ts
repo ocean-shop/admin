@@ -1,7 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ProductListQueryParams, ProductListResponse } from '../models/product.model';
+import { CreateProductPayload } from '../../products-create/models/product-create-payload.model';
+import {
+  ProductApiItem,
+  ProductListQueryParams,
+  ProductListResponse,
+} from '../models/product.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +28,18 @@ export class ProductsService {
         ...(query.sortBy ? { sortBy: query.sortBy } : {}),
         ...(query.sortOrder ? { sortOrder: query.sortOrder } : {}),
       },
+    });
+  }
+
+  getProductById(id: string): Observable<ProductApiItem> {
+    return this.http.get<ProductApiItem>(`${this.API_URL}/catalog/products/${id}`, {
+      withCredentials: true,
+    });
+  }
+
+  createProduct(payload: CreateProductPayload): Observable<ProductApiItem> {
+    return this.http.post<ProductApiItem>(`${this.API_URL}/catalog/products`, payload, {
+      withCredentials: true,
     });
   }
 }

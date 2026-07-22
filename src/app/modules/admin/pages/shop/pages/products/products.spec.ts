@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of } from 'rxjs';
 import { CategoriesService } from '../categories/services/categories.service';
@@ -17,6 +17,7 @@ describe('Products', () => {
   let mockProductsService: { getProducts: ReturnType<typeof vi.fn> };
   let mockCategoriesService: { getCategories: ReturnType<typeof vi.fn> };
   let mockToasterService: { success: ReturnType<typeof vi.fn> };
+  let mockRouter: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     paramMap$ = new BehaviorSubject(convertToParamMap({ shopId: 'shop-1' }));
@@ -76,6 +77,9 @@ describe('Products', () => {
     mockToasterService = {
       success: vi.fn(),
     };
+    mockRouter = {
+      navigate: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [Products],
@@ -84,6 +88,7 @@ describe('Products', () => {
         { provide: ProductsService, useValue: mockProductsService },
         { provide: CategoriesService, useValue: mockCategoriesService },
         { provide: ToasterService, useValue: mockToasterService },
+        { provide: Router, useValue: mockRouter },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -198,5 +203,16 @@ describe('Products', () => {
       PRODUCTS_TEXTS.SHOP_ID_REQUIRED_MESSAGE,
     );
     expect((component as any).products()).toEqual([]);
+  });
+
+  it('navigates to product create page from create action', () => {
+    (component as any).onCreateProduct();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith([
+      '/admin/shop',
+      'shop-1',
+      'products',
+      'create',
+    ]);
   });
 });
