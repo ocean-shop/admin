@@ -168,6 +168,35 @@ export class Products implements OnInit {
     this.router.navigate(['/admin/shop', shopId, 'products', 'create']);
   }
 
+  protected onUpdateProduct(row: TableRowData): void {
+    const shopId = this.shopId();
+    const productId = this.resolveProductId(row);
+    if (!shopId || !productId) {
+      return;
+    }
+
+    this.router.navigate(['/admin/shop', shopId, 'products', productId, 'update']);
+  }
+
+  protected onDeleteProduct(row: TableRowData): void {
+    const productId = this.resolveProductId(row);
+    if (!productId) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.productsService
+      .deleteProduct(productId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.loadProducts(),
+        error: () => {
+          this.hasError.set(true);
+          this.isLoading.set(false);
+        },
+      });
+  }
+
   protected onPageChange(page: number): void {
     if (page === this.currentPage() || page < 1 || page > this.totalPages()) {
       return;
@@ -433,5 +462,19 @@ export class Products implements OnInit {
 
   private isValidSortValue(value: string): value is ProductSortValue {
     return value === 'newest' || value === 'older' || value === 'alphabet';
+  }
+
+  private resolveProductId(row: TableRowData): string | null {
+    const productId = row['id'];
+    if (typeof productId === 'string') {
+      const normalizedProductId = productId.trim();
+      return normalizedProductId || null;
+    }
+
+    if (typeof productId === 'number') {
+      return String(productId);
+    }
+
+    return null;
   }
 }

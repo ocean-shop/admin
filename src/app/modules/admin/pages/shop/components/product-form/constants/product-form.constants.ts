@@ -1,0 +1,79 @@
+import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
+import { ProductStatus } from '../../../pages/products/models/product-status.enum';
+import { ProductType } from '../../../pages/products/models/product-type.enum';
+import { ProductFormFieldIds } from '../models/product-form-field-ids.model';
+import { ProductFormModel } from '../models/product-form.model';
+import { ProductFormStaticCategory } from '../models/product-form-static-category.model';
+import { ProductFormTexts } from '../models/product-form-texts.model';
+
+export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
+  BASIC_INFORMATION_TITLE: 'Основна інформація',
+  PRICING_INVENTORY_TITLE: 'Ціна та запаси',
+  PRODUCT_NAME_LABEL: 'Назва товару',
+  PRODUCT_NAME_PLACEHOLDER: 'напр. Лляна сорочка Coastal',
+  PRODUCT_NAME_REQUIRED: 'Назва товару є обов’язковою.',
+  PRODUCT_TYPE_LABEL: 'Тип товару',
+  PRODUCT_TYPE_SIMPLE_LABEL: 'Простий',
+  PRODUCT_TYPE_VARIABLE_LABEL: 'Варіативний',
+  DESCRIPTION_LABEL: 'Опис',
+  DESCRIPTION_PLACEHOLDER: 'Введіть опис товару...',
+  PRICE_LABEL: 'Ціна ($)',
+  PRICE_PLACEHOLDER: '0.00',
+  OLD_PRICE_LABEL: 'Стара ціна (знижка)',
+  OLD_PRICE_PLACEHOLDER: '0.00',
+  SKU_LABEL: 'SKU',
+  SKU_PLACEHOLDER: 'напр. CSTL-SHRT-01',
+  STATUS_LABEL: 'Статус',
+  AVAILABLE_LABEL: 'Доступний',
+  CATEGORIES_TITLE: 'Категорії',
+  ATTRIBUTES_TITLE: 'Атрибути',
+  TAGS_TITLE: 'Теги',
+  CATEGORIES_SEARCH_PLACEHOLDER: 'Пошук категорій...',
+  ATTRIBUTES_SEARCH_PLACEHOLDER: 'Пошук атрибутів...',
+  TAGS_INPUT_PLACEHOLDER: 'Додати теги...',
+};
+
+export const PRODUCT_FORM_FIELD_IDS: ProductFormFieldIds = {
+  PRODUCT_NAME: 'product-name',
+  PRODUCT_DESCRIPTION: 'product-description',
+  PRICE: 'product-price',
+  OLD_PRICE: 'product-old-price',
+  SKU: 'product-sku',
+  STATUS: 'product-status',
+  TYPE_SIMPLE: 'product-type-simple',
+  TYPE_VARIABLE: 'product-type-variable',
+  AVAILABLE: 'product-available',
+};
+
+export const PRODUCT_FORM_STATUS_OPTIONS: DropdownOption[] = [
+  { label: 'Чернетка', value: ProductStatus.Draft },
+  { label: 'Активний', value: ProductStatus.Active },
+  { label: 'Архівний', value: ProductStatus.Archived },
+];
+
+export const PRODUCT_FORM_STATIC_CATEGORIES: ProductFormStaticCategory[] = [
+  {
+    label: 'Одяг',
+    checked: false,
+    children: [
+      { label: 'Сорочки', checked: true },
+      { label: 'Штани', checked: false },
+    ],
+  },
+  { label: 'Аксесуари', checked: false },
+  { label: 'Взуття', checked: false },
+];
+
+export const PRODUCT_FORM_STATIC_ATTRIBUTES = ['Колір: Океанічний синій', 'Розмір: Великий'];
+export const PRODUCT_FORM_STATIC_TAGS = ['Літо', 'Льон', 'Чоловіче'];
+
+export const PRODUCT_FORM_DEFAULT_VALUE: ProductFormModel = {
+  name: '',
+  type: ProductType.Simple,
+  description: '',
+  price: '',
+  oldPrice: '',
+  sku: '',
+  status: ProductStatus.Draft,
+  available: true,
+};

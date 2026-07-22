@@ -15,9 +15,13 @@ export class Table {
   readonly loadingText = input<string>('Loading...');
   readonly emptyText = input<string>('No records found.');
   readonly rowIdKey = input<string>('id');
+  readonly updateEnabled = input<boolean>(false);
+  readonly updateLabel = input<string>('Update');
   readonly deleteEnabled = input<boolean>(false);
   readonly deleteLabel = input<string>('Delete');
+  readonly actionsLabel = input<string>('');
 
+  readonly updateRow = output<TableRowData>();
   readonly deleteRow = output<TableRowData>();
 
   protected resolveCellValue(row: TableRowData, column: TableColumn): string {
@@ -52,6 +56,31 @@ export class Table {
 
   protected resolveAlignment(align?: TableCellAlign): TableCellAlign {
     return align ?? 'left';
+  }
+
+  protected hasActions(): boolean {
+    return this.updateEnabled() || this.deleteEnabled();
+  }
+
+  protected resolveActionsLabel(): string {
+    const actionsLabel = this.actionsLabel().trim();
+    if (actionsLabel) {
+      return actionsLabel;
+    }
+
+    if (this.updateEnabled() && this.deleteEnabled()) {
+      return 'Actions';
+    }
+
+    if (this.updateEnabled()) {
+      return this.updateLabel();
+    }
+
+    return this.deleteLabel();
+  }
+
+  protected onUpdate(row: TableRowData): void {
+    this.updateRow.emit(row);
   }
 
   protected onDelete(row: TableRowData): void {

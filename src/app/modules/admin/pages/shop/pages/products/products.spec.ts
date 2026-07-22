@@ -14,7 +14,10 @@ describe('Products', () => {
   let fixture: ComponentFixture<Products>;
   let component: Products;
   let paramMap$: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
-  let mockProductsService: { getProducts: ReturnType<typeof vi.fn> };
+  let mockProductsService: {
+    getProducts: ReturnType<typeof vi.fn>;
+    deleteProduct: ReturnType<typeof vi.fn>;
+  };
   let mockCategoriesService: { getCategories: ReturnType<typeof vi.fn> };
   let mockToasterService: { success: ReturnType<typeof vi.fn> };
   let mockRouter: { navigate: ReturnType<typeof vi.fn> };
@@ -63,6 +66,7 @@ describe('Products', () => {
         .fn()
         .mockReturnValueOnce(of(firstPageResponse))
         .mockReturnValue(of(secondPageResponse)),
+      deleteProduct: vi.fn().mockReturnValue(of(void 0)),
     };
     mockCategoriesService = {
       getCategories: vi.fn().mockReturnValue(
@@ -214,5 +218,26 @@ describe('Products', () => {
       'products',
       'create',
     ]);
+  });
+
+  it('navigates to product update page from row action', () => {
+    (component as any).onUpdateProduct({ id: 'product-1' });
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith([
+      '/admin/shop',
+      'shop-1',
+      'products',
+      'product-1',
+      'update',
+    ]);
+  });
+
+  it('deletes product from row action and refetches list', () => {
+    const getProductsCallsBeforeDelete = mockProductsService.getProducts.mock.calls.length;
+
+    (component as any).onDeleteProduct({ id: 'product-1' });
+
+    expect(mockProductsService.deleteProduct).toHaveBeenCalledWith('product-1');
+    expect(mockProductsService.getProducts).toHaveBeenCalledTimes(getProductsCallsBeforeDelete + 1);
   });
 });

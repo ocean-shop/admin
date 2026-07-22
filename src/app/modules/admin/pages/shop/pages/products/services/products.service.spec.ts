@@ -103,4 +103,34 @@ describe('ProductsService', () => {
     expect(req.request.body).toEqual(payload);
     req.flush({ id: 'product-1', ...payload });
   });
+
+  it('updates product with payload', () => {
+    const payload = {
+      name: 'Updated Coastal Shirt',
+      type: ProductType.Variable,
+      description: 'Updated description.',
+      status: ProductStatus.Active,
+      available: true,
+      sku: 'UPD-SHRT-01',
+      price: 89.99,
+      oldPrice: 109.99,
+    };
+
+    service.updateProduct('product-1', payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1');
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({ id: 'product-1', ...payload });
+  });
+
+  it('deletes product by id', () => {
+    service.deleteProduct('product-1').subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1');
+    expect(req.request.method).toBe('DELETE');
+    expect(req.request.withCredentials).toBe(true);
+    req.flush({});
+  });
 });

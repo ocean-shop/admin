@@ -17,8 +17,8 @@
           >
             {{ column.header }}
           </th>
-          } @if (deleteEnabled()) {
-          <th class="table-head-cell table-actions-head">{{ deleteLabel() }}</th>
+          } @if (hasActions()) {
+          <th class="table-head-cell table-actions-head">{{ resolveActionsLabel() }}</th>
           }
         </tr>
       </thead>
@@ -34,17 +34,31 @@
           >
             {{ resolveCellValue(row, column) }}
           </td>
-          } @if (deleteEnabled()) {
+          } @if (hasActions()) {
           <td class="table-cell table-actions-cell">
-            <button
-              class="table-delete-button"
-              type="button"
-              [attr.title]="deleteLabel()"
-              [attr.aria-label]="deleteLabel()"
-              (click)="onDelete(row)"
-            >
-              <span class="material-symbols-outlined">delete</span>
-            </button>
+            <div class="table-actions-list">
+              @if (updateEnabled()) {
+              <button
+                class="table-update-button"
+                type="button"
+                [attr.title]="updateLabel()"
+                [attr.aria-label]="updateLabel()"
+                (click)="onUpdate(row)"
+              >
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              } @if (deleteEnabled()) {
+              <button
+                class="table-delete-button"
+                type="button"
+                [attr.title]="deleteLabel()"
+                [attr.aria-label]="deleteLabel()"
+                (click)="onDelete(row)"
+              >
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+              }
+            </div>
           </td>
           }
         </tr>

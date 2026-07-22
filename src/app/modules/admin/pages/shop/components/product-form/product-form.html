@@ -1,0 +1,166 @@
+<div class="product-form-grid">
+  <section class="product-form-main">
+    <article class="product-form-card">
+      <h2 class="product-form-card-title">{{ texts().BASIC_INFORMATION_TITLE }}</h2>
+
+      <div class="product-form-field-group">
+        <app-input
+          [id]="fieldIds().PRODUCT_NAME"
+          [label]="texts().PRODUCT_NAME_LABEL"
+          [placeholder]="texts().PRODUCT_NAME_PLACEHOLDER"
+          [control]="productForm().name"
+        />
+      </div>
+
+      <div class="product-form-field-group">
+        <app-radio-group
+          name="product-type"
+          [label]="texts().PRODUCT_TYPE_LABEL"
+          [options]="productTypeOptions()"
+          [selectedValue]="productForm().type().value() ?? productTypeSimple()"
+          (valueChange)="onProductTypeOptionChange($event)"
+        />
+      </div>
+
+      <div class="product-form-field-group">
+        <app-textarea
+          [id]="fieldIds().PRODUCT_DESCRIPTION"
+          [label]="texts().DESCRIPTION_LABEL"
+          [rows]="5"
+          [placeholder]="texts().DESCRIPTION_PLACEHOLDER"
+          [control]="productForm().description"
+        />
+      </div>
+    </article>
+
+    <article class="product-form-card">
+      <h2 class="product-form-card-title">{{ texts().PRICING_INVENTORY_TITLE }}</h2>
+
+      <div class="product-form-two-columns">
+        <div class="product-form-field-group">
+          <app-input
+            [id]="fieldIds().PRICE"
+            [label]="texts().PRICE_LABEL"
+            type="number"
+            [placeholder]="texts().PRICE_PLACEHOLDER"
+            [control]="productForm().price"
+          />
+        </div>
+
+        <div class="product-form-field-group">
+          <app-input
+            [id]="fieldIds().OLD_PRICE"
+            [label]="texts().OLD_PRICE_LABEL"
+            type="number"
+            [placeholder]="texts().OLD_PRICE_PLACEHOLDER"
+            [control]="productForm().oldPrice"
+          />
+        </div>
+      </div>
+
+      <div class="product-form-two-columns">
+        <div class="product-form-field-group">
+          <app-input
+            [id]="fieldIds().SKU"
+            [label]="texts().SKU_LABEL"
+            [placeholder]="texts().SKU_PLACEHOLDER"
+            [control]="productForm().sku"
+          />
+        </div>
+
+        <div class="product-form-field-group">
+          <app-dropdown
+            triggerMode="click"
+            variant="form"
+            [options]="statusOptions()"
+            [formField]="productForm().status"
+          />
+        </div>
+      </div>
+
+      <app-checkbox
+        [id]="fieldIds().AVAILABLE"
+        [label]="texts().AVAILABLE_LABEL"
+        [control]="productForm().available"
+      />
+    </article>
+  </section>
+
+  <aside class="product-form-sidebar">
+    <article class="product-form-card">
+      <h2 class="product-form-card-title product-form-card-title-icon">
+        <span class="material-symbols-outlined">category</span>
+        {{ texts().CATEGORIES_TITLE }}
+      </h2>
+      <app-input
+        id="categories-search"
+        [label]="texts().CATEGORIES_SEARCH_PLACEHOLDER"
+        [placeholder]="texts().CATEGORIES_SEARCH_PLACEHOLDER"
+      />
+      <div class="product-form-static-scroll">
+        @for (category of staticCategories(); track category.label) {
+        <app-checkbox
+          class="product-form-tree-row"
+          [label]="category.label"
+          [checked]="category.checked"
+        />
+
+        @if (category.children?.length) {
+        <div class="product-form-tree-children">
+          @for (childCategory of category.children; track childCategory.label) {
+          <app-checkbox
+            class="product-form-tree-row"
+            [label]="childCategory.label"
+            [checked]="childCategory.checked"
+          />
+          }
+        </div>
+        } }
+      </div>
+    </article>
+
+    <article class="product-form-card">
+      <h2 class="product-form-card-title product-form-card-title-icon">
+        <span class="material-symbols-outlined">list_alt</span>
+        {{ texts().ATTRIBUTES_TITLE }}
+      </h2>
+      <app-input
+        id="attributes-search"
+        [label]="texts().ATTRIBUTES_SEARCH_PLACEHOLDER"
+        [placeholder]="texts().ATTRIBUTES_SEARCH_PLACEHOLDER"
+      />
+      <div class="product-form-chip-list">
+        @for (attribute of staticAttributes(); track attribute) {
+        <span class="product-form-chip">
+          {{ attribute }}
+          <button type="button" aria-label="Remove attribute">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </span>
+        }
+      </div>
+    </article>
+
+    <article class="product-form-card">
+      <h2 class="product-form-card-title product-form-card-title-icon">
+        <span class="material-symbols-outlined">local_offer</span>
+        {{ texts().TAGS_TITLE }}
+      </h2>
+      <app-input
+        id="tags-input"
+        [label]="texts().TAGS_INPUT_PLACEHOLDER"
+        [placeholder]="texts().TAGS_INPUT_PLACEHOLDER"
+      />
+      <div class="product-form-tag-list">
+        @for (tag of staticTags(); track tag) {
+        <span class="product-form-tag">
+          {{ tag }}
+          <button type="button" aria-label="Remove tag">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </span>
+        }
+      </div>
+    </article>
+  </aside>
+</div>

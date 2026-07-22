@@ -1,21 +1,21 @@
-<main class="products-create-page">
-  <form class="products-create-container" (submit)="$event.preventDefault(); onSubmit()">
-    <header class="products-create-header">
+<main class="products-update-page">
+  <form class="products-update-container" (submit)="$event.preventDefault(); onSubmit()">
+    <header class="products-update-header">
       <div>
-        <h1 class="products-create-title">{{ textData.PAGE_TITLE }}</h1>
-        <p class="products-create-description">{{ textData.PAGE_DESCRIPTION }}</p>
+        <h1 class="products-update-title">{{ textData.PAGE_TITLE }}</h1>
+        <p class="products-update-description">{{ textData.PAGE_DESCRIPTION }}</p>
       </div>
       <app-button
-        [label]="textData.CREATE_LABEL"
+        [label]="textData.UPDATE_LABEL"
         type="submit"
         variant="create"
         [fullWidth]="false"
-        [disabled]="!isShopContextReady() || !isFormValid() || isSubmitting()"
+        [disabled]="!isRouteContextReady() || !isFormValid() || isSubmitting() || isLoadingProduct()"
       />
     </header>
 
-    @if (!isShopContextReady()) {
-    <p class="products-create-warning">{{ textData.SHOP_ID_REQUIRED_MESSAGE }}</p>
+    @if (!isRouteContextReady()) {
+    <p class="products-update-warning">{{ textData.SHOP_CONTEXT_REQUIRED_MESSAGE }}</p>
     }
 
     <app-product-form

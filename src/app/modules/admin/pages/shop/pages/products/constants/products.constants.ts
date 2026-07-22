@@ -22,6 +22,9 @@ export const PRODUCTS_TEXTS = {
   TABLE_STATUS_HEADER: 'Статус',
   TABLE_PRICE_HEADER: 'Ціна',
   TABLE_CATEGORIES_HEADER: 'Категорії',
+  TABLE_ACTIONS_LABEL: 'Дії',
+  TABLE_UPDATE_LABEL: 'Оновити продукт',
+  TABLE_DELETE_LABEL: 'Видалити продукт',
   PAGINATION_LABEL: 'продуктів',
   LOAD_ERROR_MESSAGE: 'Не вдалося завантажити продукти. Спробуйте ще раз.',
 };

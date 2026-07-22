@@ -73,6 +73,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'shop/:shopId/products/:productId/update',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/products-update/products-update').then(
+            (m) => m.ProductsUpdate,
+          ),
+      },
+      {
         path: 'not-permission',
         loadComponent: () =>
           import('./modules/admin/pages/system/not-permission/not-permission').then(

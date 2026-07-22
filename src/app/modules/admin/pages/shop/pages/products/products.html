@@ -111,6 +111,13 @@
       [loading]="isLoading()"
       [loadingText]="textData.TABLE_LOADING_TEXT"
       [emptyText]="textData.EMPTY_STATE"
+      [updateEnabled]="true"
+      [updateLabel]="textData.TABLE_UPDATE_LABEL"
+      [deleteEnabled]="true"
+      [deleteLabel]="textData.TABLE_DELETE_LABEL"
+      [actionsLabel]="textData.TABLE_ACTIONS_LABEL"
+      (updateRow)="onUpdateProduct($event)"
+      (deleteRow)="onDeleteProduct($event)"
     />
 
     @if (totalItems() > pageSize) {

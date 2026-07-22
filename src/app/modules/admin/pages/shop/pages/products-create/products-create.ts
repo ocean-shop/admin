@@ -1,15 +1,10 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { form, FormField, required } from '@angular/forms/signals';
+import { form, required } from '@angular/forms/signals';
 import { finalize, map } from 'rxjs';
 import { Button } from '@ui/button/button';
-import { Checkbox } from '@ui/checkbox/checkbox';
-import { Dropdown } from '@ui/dropdown/dropdown';
-import { Input } from '@ui/input/input';
-import { RadioGroup } from '@ui/radio-group/radio-group';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
-import { Textarea } from '@ui/textarea/textarea';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import {
   PRODUCTS_CREATE_DEFAULT_FORM_VALUE,
@@ -24,10 +19,11 @@ import { ProductCreateFormModel } from './models/product-create-form.model';
 import { CreateProductPayload } from './models/product-create-payload.model';
 import { ProductType } from '../products/models/product-type.enum';
 import { ProductsService } from '../products/services/products.service';
+import { ProductForm } from '../../components/product-form/product-form';
 
 @Component({
   selector: 'app-products-create',
-  imports: [FormField, Button, Checkbox, Dropdown, Input, RadioGroup, Textarea],
+  imports: [Button, ProductForm],
   templateUrl: './products-create.html',
   styleUrl: './products-create.scss',
 })
@@ -110,14 +106,6 @@ export class ProductsCreate implements OnInit {
       ...currentValue,
       type,
     }));
-  }
-
-  protected onProductTypeOptionChange(value: string | number | boolean): void {
-    if (value !== ProductType.Simple && value !== ProductType.Variable) {
-      return;
-    }
-
-    this.onProductTypeChange(value);
   }
 
   private watchShopId(): void {

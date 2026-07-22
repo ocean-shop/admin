@@ -11,10 +11,13 @@ export type ProductApiItem = {
   shopId?: string | null;
   title?: string | null;
   name?: string | null;
+  description?: string | null;
   sku?: string | null;
   type?: ProductType | string | null;
   status?: ProductStatus | string | null;
+  available?: boolean | null;
   price?: number | string | null;
+  oldPrice?: number | string | null;
   categories?: (ProductCategoryApiItem | string)[] | null;
   createdAt?: string | null;
   updatedAt?: string | null;

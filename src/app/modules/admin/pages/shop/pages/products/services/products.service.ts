@@ -7,6 +7,7 @@ import {
   ProductListQueryParams,
   ProductListResponse,
 } from '../models/product.model';
+import { UpdateProductPayload } from '../models/update-product-payload.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +40,18 @@ export class ProductsService {
 
   createProduct(payload: CreateProductPayload): Observable<ProductApiItem> {
     return this.http.post<ProductApiItem>(`${this.API_URL}/catalog/products`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  updateProduct(id: string, payload: UpdateProductPayload): Observable<ProductApiItem> {
+    return this.http.patch<ProductApiItem>(`${this.API_URL}/catalog/products/${id}`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  deleteProduct(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/catalog/products/${id}`, {
       withCredentials: true,
     });
   }

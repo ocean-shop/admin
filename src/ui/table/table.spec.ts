@@ -117,6 +117,30 @@ describe('Table', () => {
     expect(emitSpy).toHaveBeenCalledWith(rows[0]);
   });
 
+  it('should render update and delete actions and emit corresponding events', () => {
+    fixture.componentRef.setInput('updateEnabled', true);
+    fixture.componentRef.setInput('updateLabel', 'Update row');
+    fixture.componentRef.setInput('deleteEnabled', true);
+    fixture.componentRef.setInput('deleteLabel', 'Delete row');
+    fixture.detectChanges();
+
+    const updateEmitSpy = vi.spyOn(component.updateRow, 'emit');
+    const deleteEmitSpy = vi.spyOn(component.deleteRow, 'emit');
+    const actionHead = fixture.debugElement.query(By.css('.table-actions-head'));
+    const updateButtons = fixture.debugElement.queryAll(By.css('.table-update-button'));
+    const deleteButtons = fixture.debugElement.queryAll(By.css('.table-delete-button'));
+
+    expect(actionHead.nativeElement.textContent).toContain('Actions');
+    expect(updateButtons.length).toBe(2);
+    expect(deleteButtons.length).toBe(2);
+
+    updateButtons[0].nativeElement.click();
+    deleteButtons[0].nativeElement.click();
+
+    expect(updateEmitSpy).toHaveBeenCalledWith(rows[0]);
+    expect(deleteEmitSpy).toHaveBeenCalledWith(rows[0]);
+  });
+
   it('should resolve row keys and alignment defaults', () => {
     expect((component as any).resolveRowKey({ id: 'shop-x' }, 0)).toBe('shop-x');
     expect((component as any).resolveRowKey({ id: 11 }, 1)).toBe('11');
