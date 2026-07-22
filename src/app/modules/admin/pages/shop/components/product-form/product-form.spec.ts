@@ -6,12 +6,12 @@ import {
   PRODUCT_FORM_DEFAULT_VALUE,
   PRODUCT_FORM_FIELD_IDS,
   PRODUCT_FORM_STATIC_ATTRIBUTES,
-  PRODUCT_FORM_STATIC_CATEGORIES,
   PRODUCT_FORM_STATIC_TAGS,
   PRODUCT_FORM_STATUS_OPTIONS,
   PRODUCT_FORM_TEXTS,
 } from './constants/product-form.constants';
 import { ProductForm } from './product-form';
+import { ProductFormCategoryNode } from './models/product-form-category-node.model';
 import { ProductFormModel } from './models/product-form.model';
 import { ProductType } from '../../pages/products/models/product-type.enum';
 
@@ -28,6 +28,17 @@ describe('ProductForm', () => {
       id: PRODUCT_FORM_FIELD_IDS.TYPE_VARIABLE,
       value: ProductType.Variable,
       label: PRODUCT_FORM_TEXTS.PRODUCT_TYPE_VARIABLE_LABEL,
+    },
+  ];
+  const categories: ProductFormCategoryNode[] = [
+    {
+      id: 'cat-1',
+      label: 'Одяг',
+      checked: false,
+      children: [
+        { id: 'cat-2', label: 'Сорочки', checked: true },
+        { id: 'cat-3', label: 'Штани', checked: false },
+      ],
     },
   ];
 
@@ -48,7 +59,7 @@ describe('ProductForm', () => {
     fixture.componentRef.setInput('statusOptions', PRODUCT_FORM_STATUS_OPTIONS);
     fixture.componentRef.setInput('productTypeOptions', productTypeOptions);
     fixture.componentRef.setInput('productTypeSimple', ProductType.Simple);
-    fixture.componentRef.setInput('staticCategories', PRODUCT_FORM_STATIC_CATEGORIES);
+    fixture.componentRef.setInput('categories', categories);
     fixture.componentRef.setInput('staticAttributes', PRODUCT_FORM_STATIC_ATTRIBUTES);
     fixture.componentRef.setInput('staticTags', PRODUCT_FORM_STATIC_TAGS);
     fixture.detectChanges();

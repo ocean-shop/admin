@@ -6,16 +6,21 @@ import { finalize, map } from 'rxjs';
 import { Button } from '@ui/button/button';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import { buildTree } from '../../helpers/tree.helper';
+import { TreeNode } from '../../models/tree-node.model';
+import { ProductFormCategoryNode } from '../../components/product-form/models/product-form-category-node.model';
+import { ProductFormCategoryToggleEvent } from '../../components/product-form/models/product-form-category-toggle-event.model';
 import {
   PRODUCT_FORM_DEFAULT_VALUE,
   PRODUCT_FORM_FIELD_IDS,
   PRODUCT_FORM_STATIC_ATTRIBUTES,
-  PRODUCT_FORM_STATIC_CATEGORIES,
   PRODUCT_FORM_STATIC_TAGS,
   PRODUCT_FORM_STATUS_OPTIONS,
 } from '../../components/product-form/constants/product-form.constants';
 import { ProductForm } from '../../components/product-form/product-form';
 import { ProductFormModel } from '../../components/product-form/models/product-form.model';
+import { CategoryApiItem, CategoriesApiResponse } from '../categories/models/category.model';
+import { CategoriesService } from '../categories/services/categories.service';
 import { ProductApiItem } from '../products/models/product.model';
 import { ProductStatus } from '../products/models/product-status.enum';
 import { ProductType } from '../products/models/product-type.enum';
@@ -31,6 +36,7 @@ import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
 })
 export class ProductsUpdate implements OnInit {
   private readonly productsService = inject(ProductsService);
+  private readonly categoriesService = inject(CategoriesService);
   private readonly toasterService = inject(ToasterService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -39,7 +45,6 @@ export class ProductsUpdate implements OnInit {
   protected readonly textData = PRODUCTS_UPDATE_TEXTS;
   protected readonly fieldIds = PRODUCT_FORM_FIELD_IDS;
   protected readonly statusOptions = PRODUCT_FORM_STATUS_OPTIONS;
-  protected readonly staticCategories = PRODUCT_FORM_STATIC_CATEGORIES;
   protected readonly staticAttributes = PRODUCT_FORM_STATIC_ATTRIBUTES;
   protected readonly staticTags = PRODUCT_FORM_STATIC_TAGS;
   protected readonly productTypeSimple = ProductType.Simple;
@@ -60,6 +65,10 @@ export class ProductsUpdate implements OnInit {
   protected readonly productId = signal<string | null>(null);
   protected readonly isSubmitting = signal(false);
   protected readonly isLoadingProduct = signal(false);
+  protected readonly isCategoriesLoading = signal(false);
+  protected readonly isCategoryToggleLoading = signal(false);
+  protected readonly categoryItems = signal<CategoryApiItem[]>([]);
+  protected readonly selectedCategoryIds = signal<Set<string>>(new Set());
   protected readonly productFormModel = signal<ProductFormModel>({
     ...PRODUCT_FORM_DEFAULT_VALUE,
   });
@@ -71,6 +80,11 @@ export class ProductsUpdate implements OnInit {
     () => Boolean(this.shopId()) && Boolean(this.productId()),
   );
   protected readonly isFormValid = computed(() => this.productForm.name().valid());
+  protected readonly categoryNodes = computed(() =>
+    this.buildCategoryTreeNodes(this.categoryItems(), this.selectedCategoryIds(), {
+      disabled: this.isCategoryToggleLoading() || this.isCategoriesLoading(),
+    }),
+  );
 
   ngOnInit(): void {
     this.watchRouteContext();
@@ -116,6 +130,43 @@ export class ProductsUpdate implements OnInit {
     }));
   }
 
+  protected onCategoryToggle(event: ProductFormCategoryToggleEvent): void {
+    const currentProductId = this.productId();
+    if (!currentProductId || this.isCategoryToggleLoading()) {
+      return;
+    }
+
+    const categoryId = event.categoryId.trim();
+    if (!categoryId) {
+      return;
+    }
+
+    this.updateSelectedCategory(categoryId, event.checked);
+    this.isCategoryToggleLoading.set(true);
+    this.productsService
+      .toggleCategory(currentProductId, { categoryId, assign: event.checked })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isCategoryToggleLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.toasterService.success(
+            event.checked
+              ? PRODUCTS_UPDATE_TEXTS.CATEGORY_ASSIGN_SUCCESS_TITLE
+              : PRODUCTS_UPDATE_TEXTS.CATEGORY_UNASSIGN_SUCCESS_TITLE,
+          );
+        },
+        error: () => {
+          this.updateSelectedCategory(categoryId, !event.checked);
+          this.toasterService.danger(
+            PRODUCTS_UPDATE_TEXTS.CATEGORY_ASSIGN_ERROR_TITLE,
+            PRODUCTS_UPDATE_TEXTS.CATEGORY_ASSIGN_ERROR_MESSAGE,
+          );
+        },
+      });
+  }
+
   private watchRouteContext(): void {
     this.activatedRoute.paramMap
       .pipe(
@@ -129,10 +180,35 @@ export class ProductsUpdate implements OnInit {
         this.shopId.set(shopId);
         this.productId.set(productId);
         if (!shopId || !productId) {
+          this.categoryItems.set([]);
+          this.selectedCategoryIds.set(new Set());
           return;
         }
 
+        this.loadCategories(shopId);
         this.loadProduct(productId);
+      });
+  }
+
+  private loadCategories(shopId: string): void {
+    this.isCategoriesLoading.set(true);
+    this.categoriesService
+      .getCategories(shopId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isCategoriesLoading.set(false)),
+      )
+      .subscribe({
+        next: (response) => {
+          this.categoryItems.set(this.extractCategories(response));
+        },
+        error: () => {
+          this.categoryItems.set([]);
+          this.toasterService.danger(
+            PRODUCTS_UPDATE_TEXTS.CATEGORIES_LOAD_ERROR_TITLE,
+            PRODUCTS_UPDATE_TEXTS.CATEGORIES_LOAD_ERROR_MESSAGE,
+          );
+        },
       });
   }
 
@@ -147,6 +223,7 @@ export class ProductsUpdate implements OnInit {
       .subscribe({
         next: (product) => {
           this.productFormModel.set(this.mapProductToFormModel(product));
+          this.selectedCategoryIds.set(this.extractProductCategoryIds(product));
         },
         error: () => {
           this.toasterService.danger(
@@ -246,5 +323,102 @@ export class ProductsUpdate implements OnInit {
     }
 
     return ProductStatus.Draft;
+  }
+
+  private extractCategories(
+    response: CategoriesApiResponse | CategoryApiItem[],
+  ): CategoryApiItem[] {
+    if (Array.isArray(response)) {
+      return response;
+    }
+
+    return response.items ?? response.categories ?? response.data ?? [];
+  }
+
+  private extractProductCategoryIds(product: ProductApiItem): Set<string> {
+    const categoryIds = (product.categories ?? [])
+      .map((category) => {
+        if (typeof category === 'string') {
+          return category.trim();
+        }
+
+        return String(category.id ?? '').trim();
+      })
+      .filter(Boolean);
+
+    return new Set(categoryIds);
+  }
+
+  private buildCategoryTreeNodes(
+    categories: CategoryApiItem[],
+    selectedCategoryIds: Set<string>,
+    options?: { disabled?: boolean },
+  ): ProductFormCategoryNode[] {
+    const normalizedCategories = categories
+      .map((category) => this.normalizeCategory(category, selectedCategoryIds, options))
+      .filter((category): category is ProductFormCategoryNode & { parentId?: string } =>
+        Boolean(category),
+      );
+
+    const tree = buildTree(normalizedCategories, {
+      getId: (category) => category.id,
+      getParentId: (category) => category.parentId?.trim(),
+      compareSiblings: (left, right) => left.label.localeCompare(right.label),
+    });
+
+    return tree.map((node) => this.mapCategoryTreeNode(node.value, node.children));
+  }
+
+  private normalizeCategory(
+    category: CategoryApiItem,
+    selectedCategoryIds: Set<string>,
+    options?: { disabled?: boolean },
+  ): (ProductFormCategoryNode & { parentId?: string }) | null {
+    const id = String(category.id ?? '').trim();
+    if (!id) {
+      return null;
+    }
+
+    const parentId = String(category.parentId ?? '').trim();
+
+    return {
+      id,
+      label: category.name?.trim() || `Category ${id}`,
+      checked: selectedCategoryIds.has(id),
+      disabled: Boolean(options?.disabled),
+      ...(parentId && parentId !== id ? { parentId } : {}),
+    };
+  }
+
+  private mapCategoryTreeNode(
+    category: ProductFormCategoryNode & { parentId?: string },
+    children: TreeNode<ProductFormCategoryNode & { parentId?: string }>[],
+  ): ProductFormCategoryNode {
+    return {
+      id: category.id,
+      label: category.label,
+      checked: category.checked,
+      ...(category.disabled ? { disabled: category.disabled } : {}),
+      ...(children.length
+        ? {
+            children: children.map((childNode) =>
+              this.mapCategoryTreeNode(childNode.value, childNode.children ?? []),
+            ),
+          }
+        : {}),
+    };
+  }
+
+  private updateSelectedCategory(categoryId: string, checked: boolean): void {
+    this.selectedCategoryIds.update((currentValue) => {
+      const nextValue = new Set(currentValue);
+      if (checked) {
+        nextValue.add(categoryId);
+      } else {
+        nextValue.delete(categoryId);
+      }
+
+      return nextValue;
+    });
   }
 }

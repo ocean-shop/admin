@@ -8,8 +8,9 @@ import { RadioGroup } from '@ui/radio-group/radio-group';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { Textarea } from '@ui/textarea/textarea';
 import { ProductType } from '../../pages/products/models/product-type.enum';
+import { ProductFormCategoryNode } from './models/product-form-category-node.model';
+import { ProductFormCategoryToggleEvent } from './models/product-form-category-toggle-event.model';
 import { ProductFormFieldIds } from './models/product-form-field-ids.model';
-import { ProductFormStaticCategory } from './models/product-form-static-category.model';
 import { ProductFormTexts } from './models/product-form-texts.model';
 
 @Component({
@@ -25,11 +26,12 @@ export class ProductForm {
   readonly statusOptions = input.required<DropdownOption[]>();
   readonly productTypeOptions = input.required<RadioGroupOption[]>();
   readonly productTypeSimple = input.required<ProductType>();
-  readonly staticCategories = input.required<ProductFormStaticCategory[]>();
+  readonly categories = input.required<ProductFormCategoryNode[]>();
   readonly staticAttributes = input.required<string[]>();
   readonly staticTags = input.required<string[]>();
 
   readonly productTypeChange = output<ProductType>();
+  readonly categoryToggle = output<ProductFormCategoryToggleEvent>();
 
   protected onProductTypeOptionChange(value: string | number | boolean): void {
     if (value !== ProductType.Simple && value !== ProductType.Variable) {
@@ -37,5 +39,14 @@ export class ProductForm {
     }
 
     this.productTypeChange.emit(value);
+  }
+
+  protected onCategoryCheckedChange(categoryId: string, checked: boolean): void {
+    const normalizedCategoryId = categoryId.trim();
+    if (!normalizedCategoryId) {
+      return;
+    }
+
+    this.categoryToggle.emit({ categoryId: normalizedCategoryId, checked });
   }
 }

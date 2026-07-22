@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of, throwError } from 'rxjs';
+import { CategoriesService } from '../categories/services/categories.service';
 import { ProductStatus } from '../products/models/product-status.enum';
 import { ProductType } from '../products/models/product-type.enum';
 import { ProductsService } from '../products/services/products.service';
@@ -16,6 +17,10 @@ describe('ProductsUpdate', () => {
   let mockProductsService: {
     getProductById: ReturnType<typeof vi.fn>;
     updateProduct: ReturnType<typeof vi.fn>;
+    toggleCategory: ReturnType<typeof vi.fn>;
+  };
+  let mockCategoriesService: {
+    getCategories: ReturnType<typeof vi.fn>;
   };
   let mockToasterService: {
     success: ReturnType<typeof vi.fn>;
@@ -44,6 +49,10 @@ describe('ProductsUpdate', () => {
         }),
       ),
       updateProduct: vi.fn().mockReturnValue(of({ id: 'product-1' })),
+      toggleCategory: vi.fn().mockReturnValue(of({})),
+    };
+    mockCategoriesService = {
+      getCategories: vi.fn().mockReturnValue(of([])),
     };
     mockToasterService = {
       success: vi.fn(),
@@ -58,6 +67,7 @@ describe('ProductsUpdate', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: ProductsService, useValue: mockProductsService },
+        { provide: CategoriesService, useValue: mockCategoriesService },
         { provide: ToasterService, useValue: mockToasterService },
         { provide: Router, useValue: mockRouter },
         {
@@ -92,6 +102,15 @@ describe('ProductsUpdate', () => {
     expect((component as any).productFormModel().type).toBe(ProductType.Variable);
     expect((component as any).productFormModel().price).toBe('99.50');
     expect((component as any).productFormModel().available).toBe(false);
+  });
+
+  it('toggles product category assignment', () => {
+    (component as any).onCategoryToggle({ categoryId: 'cat-1', checked: true });
+
+    expect(mockProductsService.toggleCategory).toHaveBeenCalledWith('product-1', {
+      categoryId: 'cat-1',
+      assign: true,
+    });
   });
 
   it('submits valid form and redirects to products page', () => {

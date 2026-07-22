@@ -92,26 +92,27 @@
         <span class="material-symbols-outlined">category</span>
         {{ texts().CATEGORIES_TITLE }}
       </h2>
-      <app-input
-        id="categories-search"
-        [label]="texts().CATEGORIES_SEARCH_PLACEHOLDER"
-        [placeholder]="texts().CATEGORIES_SEARCH_PLACEHOLDER"
-      />
       <div class="product-form-static-scroll">
-        @for (category of staticCategories(); track category.label) {
+        @for (category of categories(); track category.id) {
         <app-checkbox
           class="product-form-tree-row"
+          [id]="'category-' + category.id"
           [label]="category.label"
           [checked]="category.checked"
+          [disabled]="!!category.disabled"
+          (checkedChange)="onCategoryCheckedChange(category.id, $event)"
         />
 
         @if (category.children?.length) {
         <div class="product-form-tree-children">
-          @for (childCategory of category.children; track childCategory.label) {
+          @for (childCategory of category.children; track childCategory.id) {
           <app-checkbox
             class="product-form-tree-row"
+            [id]="'category-' + childCategory.id"
             [label]="childCategory.label"
             [checked]="childCategory.checked"
+            [disabled]="!!childCategory.disabled"
+            (checkedChange)="onCategoryCheckedChange(childCategory.id, $event)"
           />
           }
         </div>

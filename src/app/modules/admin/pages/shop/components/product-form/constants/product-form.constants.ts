@@ -3,7 +3,6 @@ import { ProductStatus } from '../../../pages/products/models/product-status.enu
 import { ProductType } from '../../../pages/products/models/product-type.enum';
 import { ProductFormFieldIds } from '../models/product-form-field-ids.model';
 import { ProductFormModel } from '../models/product-form.model';
-import { ProductFormStaticCategory } from '../models/product-form-static-category.model';
 import { ProductFormTexts } from '../models/product-form-texts.model';
 
 export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
@@ -49,19 +48,6 @@ export const PRODUCT_FORM_STATUS_OPTIONS: DropdownOption[] = [
   { label: 'Чернетка', value: ProductStatus.Draft },
   { label: 'Активний', value: ProductStatus.Active },
   { label: 'Архівний', value: ProductStatus.Archived },
-];
-
-export const PRODUCT_FORM_STATIC_CATEGORIES: ProductFormStaticCategory[] = [
-  {
-    label: 'Одяг',
-    checked: false,
-    children: [
-      { label: 'Сорочки', checked: true },
-      { label: 'Штани', checked: false },
-    ],
-  },
-  { label: 'Аксесуари', checked: false },
-  { label: 'Взуття', checked: false },
 ];
 
 export const PRODUCT_FORM_STATIC_ATTRIBUTES = ['Колір: Океанічний синій', 'Розмір: Великий'];

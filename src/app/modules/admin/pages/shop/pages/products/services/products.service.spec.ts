@@ -125,6 +125,27 @@ describe('ProductsService', () => {
     req.flush({ id: 'product-1', ...payload });
   });
 
+  it('assigns category to product', () => {
+    service.assignCategory('product-1', 'category-1').subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/categories');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual({ categoryId: 'category-1', assign: true });
+    req.flush({});
+  });
+
+  it('toggles category assignment for product', () => {
+    const payload = { categoryId: 'category-2', assign: false };
+    service.toggleCategory('product-1', payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/categories');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({});
+  });
+
   it('deletes product by id', () => {
     service.deleteProduct('product-1').subscribe();
 

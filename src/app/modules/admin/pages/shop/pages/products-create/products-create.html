@@ -25,10 +25,11 @@
       [statusOptions]="statusOptions"
       [productTypeOptions]="productTypeOptions"
       [productTypeSimple]="productTypeSimple"
-      [staticCategories]="staticCategories"
+      [categories]="categoryNodes()"
       [staticAttributes]="staticAttributes"
       [staticTags]="staticTags"
       (productTypeChange)="onProductTypeChange($event)"
+      (categoryToggle)="onCategoryToggle($event)"
     />
   </form>
 </main>

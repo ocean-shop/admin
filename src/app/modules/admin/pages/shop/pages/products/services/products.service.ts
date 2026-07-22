@@ -7,6 +7,7 @@ import {
   ProductListQueryParams,
   ProductListResponse,
 } from '../models/product.model';
+import { ToggleProductCategoryPayload } from '../models/toggle-product-category-payload.model';
 import { UpdateProductPayload } from '../models/update-product-payload.model';
 
 @Injectable({
@@ -48,6 +49,20 @@ export class ProductsService {
     return this.http.patch<ProductApiItem>(`${this.API_URL}/catalog/products/${id}`, payload, {
       withCredentials: true,
     });
+  }
+
+  assignCategory(productId: string, categoryId: string): Observable<void> {
+    return this.toggleCategory(productId, { categoryId, assign: true });
+  }
+
+  toggleCategory(productId: string, payload: ToggleProductCategoryPayload): Observable<void> {
+    return this.http.post<void>(
+      `${this.API_URL}/catalog/products/${productId}/categories`,
+      payload,
+      {
+        withCredentials: true,
+      },
+    );
   }
 
   deleteProduct(id: string): Observable<void> {

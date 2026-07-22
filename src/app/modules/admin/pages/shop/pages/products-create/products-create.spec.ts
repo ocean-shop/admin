@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of, throwError } from 'rxjs';
+import { CategoriesService } from '../categories/services/categories.service';
 import { ProductStatus } from '../products/models/product-status.enum';
 import { ProductType } from '../products/models/product-type.enum';
 import { ProductsService } from '../products/services/products.service';
@@ -15,6 +16,10 @@ describe('ProductsCreate', () => {
   let paramMap$: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
   let mockProductsService: {
     createProduct: ReturnType<typeof vi.fn>;
+    toggleCategory: ReturnType<typeof vi.fn>;
+  };
+  let mockCategoriesService: {
+    getCategories: ReturnType<typeof vi.fn>;
   };
   let mockToasterService: {
     success: ReturnType<typeof vi.fn>;
@@ -28,6 +33,10 @@ describe('ProductsCreate', () => {
     paramMap$ = new BehaviorSubject(convertToParamMap({ shopId: 'shop-1' }));
     mockProductsService = {
       createProduct: vi.fn().mockReturnValue(of({ id: 'product-1' })),
+      toggleCategory: vi.fn().mockReturnValue(of({})),
+    };
+    mockCategoriesService = {
+      getCategories: vi.fn().mockReturnValue(of([])),
     };
     mockToasterService = {
       success: vi.fn(),
@@ -42,6 +51,7 @@ describe('ProductsCreate', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: ProductsService, useValue: mockProductsService },
+        { provide: CategoriesService, useValue: mockCategoriesService },
         { provide: ToasterService, useValue: mockToasterService },
         { provide: Router, useValue: mockRouter },
         {
@@ -98,6 +108,32 @@ describe('ProductsCreate', () => {
       PRODUCTS_CREATE_TEXTS.CREATE_SUCCESS_TITLE,
     );
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/admin/shop', 'shop-1', 'products']);
+  });
+
+  it('assigns selected categories after product is created', () => {
+    (component as any).selectedCategoryIds.set(new Set(['cat-1', 'cat-2']));
+    (component as any).productFormModel.set({
+      name: 'Coastal Linen Shirt',
+      type: ProductType.Simple,
+      description: 'Lightweight beach shirt',
+      price: '99.99',
+      oldPrice: '129.99',
+      sku: 'CSTL-SHRT-01',
+      status: ProductStatus.Draft,
+      available: true,
+    });
+
+    (component as any).onSubmit();
+
+    expect(mockProductsService.toggleCategory).toHaveBeenCalledTimes(2);
+    expect(mockProductsService.toggleCategory).toHaveBeenCalledWith('product-1', {
+      categoryId: 'cat-1',
+      assign: true,
+    });
+    expect(mockProductsService.toggleCategory).toHaveBeenCalledWith('product-1', {
+      categoryId: 'cat-2',
+      assign: true,
+    });
   });
 
   it('does not submit when name is empty', () => {
