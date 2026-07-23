@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CreateProductPayload } from '../../products-create/models/product-create-payload.model';
+import { CreateProductPayload } from '../models/create-product-payload.model';
 import {
   ProductApiItem,
   ProductListQueryParams,

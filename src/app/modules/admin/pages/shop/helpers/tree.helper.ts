@@ -6,7 +6,7 @@ type TreeBuilderConfig<T> = {
   compareSiblings?: (left: T, right: T) => number;
 };
 
-export function buildTree<T>(values: T[], config: TreeBuilderConfig<T>): TreeNode<T>[] {
+export const buildTree = <T>(values: T[], config: TreeBuilderConfig<T>): TreeNode<T>[] => {
   const nodeMap = new Map<string, TreeNode<T>>();
 
   for (const value of values) {
@@ -41,13 +41,13 @@ export function buildTree<T>(values: T[], config: TreeBuilderConfig<T>): TreeNod
   }
 
   return roots;
-}
+};
 
-export function flattenTree<T, TResult>(
+export const flattenTree = <T, TResult>(
   roots: TreeNode<T>[],
   getId: (value: T) => string,
   mapValue: (value: T, level: number) => TResult,
-): TResult[] {
+): TResult[] => {
   const flattened: TResult[] = [];
   const visited = new Set<string>();
 
@@ -56,14 +56,14 @@ export function flattenTree<T, TResult>(
   }
 
   return flattened;
-}
+};
 
-function hasCycle<T>(
+const hasCycle = <T>(
   nodeMap: Map<string, TreeNode<T>>,
   getParentId: (value: T) => string | undefined,
   nodeId: string,
   parentId: string,
-): boolean {
+): boolean => {
   let currentParentId: string | undefined = parentId;
   const checked = new Set<string>();
 
@@ -78,27 +78,27 @@ function hasCycle<T>(
   }
 
   return false;
-}
+};
 
-function sortTreeRecursively<T>(
+const sortTreeRecursively = <T>(
   nodes: TreeNode<T>[],
   compareSiblings: (left: T, right: T) => number,
-): void {
+): void => {
   nodes.sort((left, right) => compareSiblings(left.value, right.value));
 
   for (const node of nodes) {
     sortTreeRecursively(node.children, compareSiblings);
   }
-}
+};
 
-function appendFlattenedNode<T, TResult>(
+const appendFlattenedNode = <T, TResult>(
   node: TreeNode<T>,
   level: number,
   flattened: TResult[],
   visited: Set<string>,
   getId: (value: T) => string,
   mapValue: (value: T, level: number) => TResult,
-): void {
+): void => {
   const nodeId = getId(node.value).trim();
   if (!nodeId || visited.has(nodeId)) {
     return;
@@ -110,4 +110,4 @@ function appendFlattenedNode<T, TResult>(
   for (const childNode of node.children) {
     appendFlattenedNode(childNode, level + 1, flattened, visited, getId, mapValue);
   }
-}
+};
