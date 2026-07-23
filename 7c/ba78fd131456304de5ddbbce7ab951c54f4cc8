@@ -1,0 +1,164 @@
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-attribute-option.model.ts
+  s_9b88d24a398c3f::t_d235df8ec5a160 1-4
+src/app/modules/admin/pages/shop/pages/products-update/products-update.ts
+  s_9b88d24a398c3f::t_993de2ae03759e 11-12,25,33-34,45-46,52-55,80-83,86-91,197-204,228-280,318-334,347-356,401-402,436-438,477-478,485-486,492-493,532-533,540-541,547-548
+  s_65125084a2924e::t_1e8c95289cdc91 13-14,24,109-115,205-227,281-317,413-435,439,441,444-445,449-450,456-457,470-471,491,494,509,512,525-526,546,549,697,708-709,737,746,828-829,842,845,854-855
+  s_65125084a2924e::t_c20cba2f2af13d 440
+  s_65125084a2924e::t_d89fec25b8ce37 442-443
+  s_65125084a2924e::t_291235cd38c5de 446-448
+  s_65125084a2924e::t_e10b906236cc0e 451-455
+  s_65125084a2924e::t_ec5d889f798c09 458-460,467-469
+  s_9b88d24a398c3f::t_763b10679d63b4 479-484
+  s_65125084a2924e::t_0ff98ac306876a 495-497,506-508
+  s_65125084a2924e::t_cfd1d0873f7d34 510-511
+  s_65125084a2924e::t_295c3a64d7ee2c 513-515,522-524
+  s_9b88d24a398c3f::t_7f45a0dc279f3b 534-539
+  s_65125084a2924e::t_cbd146dc008268 550
+  s_65125084a2924e::t_2f43dcfcc03c7d 694-696
+  s_65125084a2924e::t_d262c50883299b 698-700,705-707
+  s_65125084a2924e::t_4e0bd084207235 710-712,734-736
+  s_65125084a2924e::t_7bdf715b22b5ad 738-740,743-745
+  s_65125084a2924e::t_e0078c84260c5e 747-748
+  s_65125084a2924e::t_b28a72e0ad46ad 825-827
+  s_65125084a2924e::t_9066b8baf5b0a3 830-832,839-841
+  s_65125084a2924e::t_531aba177922e5 843-844
+  s_65125084a2924e::t_c3dca55e2ddc22 846-848,851-853
+  s_65125084a2924e::t_ad682c15c17a31 856
+src/app/modules/admin/pages/shop/pages/products/models/toggle-product-attribute-payload.model.ts
+  s_9b88d24a398c3f::t_82cb101ae4ecd7 1-4
+src/app/modules/admin/pages/shop/pages/products-create/products-create.spec.ts
+  s_65125084a2924e::t_dc5a0fa5012176 151-162,218,258,326,339
+  s_65125084a2924e::t_811a7dc430b82f 3,6,11,21,23,52-56,61
+  s_65125084a2924e::t_11690066dd961e 29,62-64,72-73,91-94,105,133-134,137-139,141-143
+  s_9b88d24a398c3f::t_3f2e420f885465 24,30-31,36-37,44,46-47,144,150,163-171,176-191,195-196,198,204,207,215-216,220,223,229,233,263,267-268,275,313,316
+  s_9b88d24a398c3f::t_83ca0f38f36a7d 192-194
+  s_9b88d24a398c3f::t_7c02278508f036 197
+  s_9b88d24a398c3f::t_a1010cb8076c71 199-203
+  s_9b88d24a398c3f::t_e3a926b41e2ce3 205-206
+  s_9b88d24a398c3f::t_fe7b4b0da9663a 208-210,212-214
+  s_9b88d24a398c3f::t_a2a3bf9cc8e305 221-222
+  s_9b88d24a398c3f::t_e67ce65721d3e1 224-228
+  s_9b88d24a398c3f::t_205997d0b48158 230-232
+  s_9b88d24a398c3f::t_6c788be3df1886 264-266
+  s_9b88d24a398c3f::t_f74b7c7256ac97 269-274
+  s_9b88d24a398c3f::t_84eb931a2cf2c1 276
+  s_9b88d24a398c3f::t_a0eb16618eaa6d 314-315
+  s_65125084a2924e::t_b845919654ce12 327-329,336-338
+src/app/modules/admin/pages/shop/pages/products-create/products-create.ts
+  s_65125084a2924e::t_632cfc9467cca2 13,28-29,162,165-170,173,175-176,182-189,192-193,197-200,202-239,243,246-247,249,359-364,374-379,433-435,458,484-504,531,533,567,602,604,620,659,683
+  s_9b88d24a398c3f::t_dc535309fa93fd 3,5,11-12,14,24-25,33,44-45,50-53,74-79,82-87,98,101-105,109-115,125-127,131-157,159,240-242,244-245,248,250-343,354-358,380-432,505-507,532,538,545,554-555,561,568,581-582,586,588-589,592-593,596-597,599-600,603,605,623,636-637,641,643-644,647-648,651-652,654-655,657-658,660,669-670,686,695,773-774
+  s_65125084a2924e::t_95107dfe757cb9 528-530
+  s_9b88d24a398c3f::t_1b94f577ec51a4 539-541
+  s_9b88d24a398c3f::t_4bf3d2087184c2 551-553
+  s_9b88d24a398c3f::t_f51f83e743b1c6 558-560
+  s_9b88d24a398c3f::t_c3810dd533f271 569-571,578-580
+  s_9b88d24a398c3f::t_0236f907504b34 583-585
+  s_9b88d24a398c3f::t_18e2686b8b57d4 587
+  s_9b88d24a398c3f::t_4ddde8d6ffb9a3 590-591
+  s_9b88d24a398c3f::t_ee17d0aa3551a3 594-595
+  s_9b88d24a398c3f::t_f5ded64bc15810 598
+  s_9b88d24a398c3f::t_da18c389033061 624-626,633-635
+  s_9b88d24a398c3f::t_bca52cc319735e 638-640
+  s_9b88d24a398c3f::t_0b92cf594d74b3 642
+  s_9b88d24a398c3f::t_d3f74164c35bda 645-646
+  s_9b88d24a398c3f::t_eda75546f6afca 649-650
+  s_9b88d24a398c3f::t_2175f99d3d12e7 653
+  s_9b88d24a398c3f::t_8bac31e1d533e0 656
+  s_9b88d24a398c3f::t_43018acd7b7fcf 661-663,666-668
+  s_9b88d24a398c3f::t_a74308cb1ef7cf 687-689,692-694
+  s_9b88d24a398c3f::t_851d921f3c9ecc 770-772
+src/app/modules/admin/pages/shop/components/product-form/product-form.spec.ts
+  s_9b88d24a398c3f::t_7c993f9dae5120 11
+  s_65125084a2924e::t_abe4c5c0b9d0fc 12-14,46-57
+  s_65125084a2924e::t_b7d12b08f1ae4d 76,78-85
+src/app/modules/admin/pages/shop/pages/products/models/product.model.ts
+  s_9b88d24a398c3f::t_24472de95fcf3d 9-12,23-24
+  s_65125084a2924e::t_799a8facfb7a4c 13-22,25-29
+  s_65125084a2924e::t_cdf153961ce901 30
+src/app/modules/admin/pages/shop/components/product-form/product-form.ts
+  s_9b88d24a398c3f::t_18083e1e0dba0c 14,34-42,46-51,83,96
+  s_65125084a2924e::t_97995ed1041ccd 11-13,62-65,73-82,85-86,89,92-94,98-99,102,106,109-111,115-116,119,122-124,128-129,132
+  s_65125084a2924e::t_2bf129dd816ba3 87-88
+  s_65125084a2924e::t_b780bfe3a019d7 90-91
+  s_65125084a2924e::t_93937629daaef9 100-101
+  s_65125084a2924e::t_3c877b3a7a0665 103-105
+  s_65125084a2924e::t_4aed2a4549374c 107-108
+  s_65125084a2924e::t_65b3f1e34405ef 112-114
+  s_65125084a2924e::t_35dad682443ab6 117-118
+  s_65125084a2924e::t_bbb505be183bbf 120-121
+  s_65125084a2924e::t_fc5d1c8b256d33 125-127
+  s_65125084a2924e::t_0c61b0e6ac3b4a 130-131
+src/app/modules/admin/pages/shop/components/product-form/product-form.scss
+  s_9b88d24a398c3f::t_3214de20706f3c 23-26,53,70,74,78,82,94,110
+  s_9b88d24a398c3f::t_488fe5ee9cabde 51-52
+  s_9b88d24a398c3f::t_e93c826ce24109 54
+  s_9b88d24a398c3f::t_5b07eb2238711f 68-69
+  s_9b88d24a398c3f::t_4021e00282b762 71-73
+  s_9b88d24a398c3f::t_0cedba23d34b8d 75-77
+  s_9b88d24a398c3f::t_d76772eb2b3e11 79-81
+  s_9b88d24a398c3f::t_63faf127c8b6db 83
+  s_9b88d24a398c3f::t_fdae1a0b702391 92-93
+  s_9b88d24a398c3f::t_bd7261967516bb 95
+  s_9b88d24a398c3f::t_e6727a34d51faf 108-109
+  s_9b88d24a398c3f::t_3e29384e7dd9ee 111
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-tag-option.model.ts
+  s_65125084a2924e::t_17fdc09df08016 1-4
+src/app/modules/admin/pages/shop/pages/products/services/products.service.ts
+  s_9b88d24a398c3f::t_43e1fe67b46803 10
+  s_65125084a2924e::t_e88b8cb1d73ceb 12
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-assigned-attribute.model.ts
+  s_9b88d24a398c3f::t_7ea869bfbcbe47 1-4
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-assigned-tag.model.ts
+  s_65125084a2924e::t_8329b0d6a29029 1-4
+src/app/modules/admin/pages/shop/pages/products-update/products-update.spec.ts
+  s_65125084a2924e::t_744e54cd501721 29-30,65-66,71-75,83-87,94-95,114-117,135-138,150-156,164,180,188,199,231-232,243,271-272
+  s_9b88d24a398c3f::t_48ed1cb20546e6 6,11,24,31,39-41,157-158,174
+  s_65125084a2924e::t_53063d9a3ab337 23,59-60
+  s_65125084a2924e::t_982daa69963735 181-183,185-187
+  s_65125084a2924e::t_a71a040a3d6c9a 189-191,196-198
+  s_65125084a2924e::t_86363b8f01f5f1 200-202,228-230
+  s_65125084a2924e::t_6cc6ccaa205c1f 233-235,240-242
+  s_65125084a2924e::t_b0c3fc55cb17d9 244-246,268-270
+  s_65125084a2924e::t_de013d2e7a47e2 273
+src/app/modules/admin/pages/shop/components/product-form/product-form.html
+  s_0fba6464438860::t_916b8e2693789a 1-4
+src/app/modules/admin/pages/shop/pages/products/models/toggle-product-tag-payload.model.ts
+  s_65125084a2924e::t_3076cc2016bb1f 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "7cba78fd131456304de5ddbbce7ab951c54f4cc8",
+  "prompts": {},
+  "humans": {
+    "h_eee5bfb8805eb8": {
+      "author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  },
+  "sessions": {
+    "s_0fba6464438860": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d5bda4f4-8ea4-418c-8a8e-18f2d68cfcda",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    },
+    "s_65125084a2924e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "87b17771-2587-4d96-a2af-4fe1d87ffe97",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    },
+    "s_9b88d24a398c3f": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "db84eae0-2746-46d6-8b7a-933214417a6e",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
