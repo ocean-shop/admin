@@ -6,6 +6,28 @@ export type ProductCategoryApiItem = {
   name?: string | null;
 };
 
+export type ProductAttributeApiItem = {
+  id?: string | null;
+  attributeTypeId?: string | null;
+  name?: string | null;
+  value?: string | null;
+  attributeType?: {
+    id?: string | null;
+    name?: string | null;
+    value?: string | null;
+  } | null;
+};
+
+export type ProductTagApiItem = {
+  id?: string | null;
+  tagId?: string | null;
+  name?: string | null;
+  tag?: {
+    id?: string | null;
+    name?: string | null;
+  } | null;
+};
+
 export type ProductApiItem = {
   id?: string | null;
   shopId?: string | null;
@@ -19,6 +41,9 @@ export type ProductApiItem = {
   price?: number | string | null;
   oldPrice?: number | string | null;
   categories?: (ProductCategoryApiItem | string)[] | null;
+  attributes?: (ProductAttributeApiItem | string)[] | null;
+  attributeTypes?: (ProductAttributeApiItem | string)[] | null;
+  tags?: (ProductTagApiItem | string)[] | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 };

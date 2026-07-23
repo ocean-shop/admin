@@ -8,17 +8,21 @@ import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.mode
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { buildTree } from '../../helpers/tree.helper';
 import { TreeNode } from '../../models/tree-node.model';
+import { ProductFormAssignedAttribute } from '../../components/product-form/models/product-form-assigned-attribute.model';
+import { ProductFormAssignedTag } from '../../components/product-form/models/product-form-assigned-tag.model';
+import { ProductFormAttributeOption } from '../../components/product-form/models/product-form-attribute-option.model';
+import { ProductFormTagOption } from '../../components/product-form/models/product-form-tag-option.model';
 import { ProductFormCategoryNode } from '../../components/product-form/models/product-form-category-node.model';
 import { ProductFormCategoryToggleEvent } from '../../components/product-form/models/product-form-category-toggle-event.model';
 import {
   PRODUCT_FORM_DEFAULT_VALUE,
   PRODUCT_FORM_FIELD_IDS,
-  PRODUCT_FORM_STATIC_ATTRIBUTES,
-  PRODUCT_FORM_STATIC_TAGS,
   PRODUCT_FORM_STATUS_OPTIONS,
 } from '../../components/product-form/constants/product-form.constants';
 import { ProductForm } from '../../components/product-form/product-form';
 import { ProductFormModel } from '../../components/product-form/models/product-form.model';
+import { AttributeApiItem } from '../attributes/models/attribute.model';
+import { AttributesService } from '../attributes/services/attributes.service';
 import { CategoryApiItem, CategoriesApiResponse } from '../categories/models/category.model';
 import { CategoriesService } from '../categories/services/categories.service';
 import { ProductApiItem } from '../products/models/product.model';
@@ -26,6 +30,8 @@ import { ProductStatus } from '../products/models/product-status.enum';
 import { ProductType } from '../products/models/product-type.enum';
 import { UpdateProductPayload } from '../products/models/update-product-payload.model';
 import { ProductsService } from '../products/services/products.service';
+import { TagApiItem } from '../tags/models/tag.model';
+import { TagsService } from '../tags/services/tags.service';
 import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
 
 @Component({
@@ -36,17 +42,21 @@ import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
 })
 export class ProductsUpdate implements OnInit {
   private readonly productsService = inject(ProductsService);
+  private readonly attributesService = inject(AttributesService);
+  private readonly tagsService = inject(TagsService);
   private readonly categoriesService = inject(CategoriesService);
   private readonly toasterService = inject(ToasterService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private attributeSearchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private attributeSearchRequestId = 0;
+  private tagSearchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private tagSearchRequestId = 0;
 
   protected readonly textData = PRODUCTS_UPDATE_TEXTS;
   protected readonly fieldIds = PRODUCT_FORM_FIELD_IDS;
   protected readonly statusOptions = PRODUCT_FORM_STATUS_OPTIONS;
-  protected readonly staticAttributes = PRODUCT_FORM_STATIC_ATTRIBUTES;
-  protected readonly staticTags = PRODUCT_FORM_STATIC_TAGS;
   protected readonly productTypeSimple = ProductType.Simple;
   protected readonly productTypeOptions: RadioGroupOption[] = [
     {
@@ -67,8 +77,18 @@ export class ProductsUpdate implements OnInit {
   protected readonly isLoadingProduct = signal(false);
   protected readonly isCategoriesLoading = signal(false);
   protected readonly isCategoryToggleLoading = signal(false);
+  protected readonly isAttributeSearchLoading = signal(false);
+  protected readonly isAttributeToggleLoading = signal(false);
+  protected readonly isTagSearchLoading = signal(false);
+  protected readonly isTagToggleLoading = signal(false);
   protected readonly categoryItems = signal<CategoryApiItem[]>([]);
   protected readonly selectedCategoryIds = signal<Set<string>>(new Set());
+  protected readonly attributeSearchValue = signal('');
+  protected readonly attributeSearchResults = signal<ProductFormAttributeOption[]>([]);
+  protected readonly assignedAttributes = signal<ProductFormAssignedAttribute[]>([]);
+  protected readonly tagSearchValue = signal('');
+  protected readonly tagSearchResults = signal<ProductFormTagOption[]>([]);
+  protected readonly assignedTags = signal<ProductFormAssignedTag[]>([]);
   protected readonly productFormModel = signal<ProductFormModel>({
     ...PRODUCT_FORM_DEFAULT_VALUE,
   });
@@ -85,6 +105,13 @@ export class ProductsUpdate implements OnInit {
       disabled: this.isCategoryToggleLoading() || this.isCategoriesLoading(),
     }),
   );
+
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.clearAttributeSearchDebounce();
+      this.clearTagSearchDebounce();
+    });
+  }
 
   ngOnInit(): void {
     this.watchRouteContext();
@@ -167,6 +194,144 @@ export class ProductsUpdate implements OnInit {
       });
   }
 
+  protected onAttributeSearchChange(value: string): void {
+    this.attributeSearchValue.set(value);
+    this.queueAttributeSearch();
+  }
+
+  protected onAttributeAssign(attributeId: string): void {
+    const currentProductId = this.productId();
+    if (!currentProductId || this.isAttributeToggleLoading()) {
+      return;
+    }
+
+    const selectedOption = this.attributeSearchResults().find(
+      (option) => option.id === attributeId,
+    );
+    if (!selectedOption) {
+      return;
+    }
+
+    this.isAttributeToggleLoading.set(true);
+    this.productsService
+      .toggleAttribute(currentProductId, { attributeTypeId: attributeId, assign: true })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isAttributeToggleLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.upsertAssignedAttribute(selectedOption);
+          this.attributeSearchValue.set('');
+          this.attributeSearchResults.set([]);
+          this.toasterService.success(PRODUCTS_UPDATE_TEXTS.ATTRIBUTE_ASSIGN_SUCCESS_TITLE);
+        },
+        error: () => {
+          this.toasterService.danger(
+            PRODUCTS_UPDATE_TEXTS.ATTRIBUTE_ASSIGN_ERROR_TITLE,
+            PRODUCTS_UPDATE_TEXTS.ATTRIBUTE_ASSIGN_ERROR_MESSAGE,
+          );
+        },
+      });
+  }
+
+  protected onAttributeUnassign(attributeId: string): void {
+    const currentProductId = this.productId();
+    if (!currentProductId || this.isAttributeToggleLoading()) {
+      return;
+    }
+
+    this.isAttributeToggleLoading.set(true);
+    this.productsService
+      .toggleAttribute(currentProductId, { attributeTypeId: attributeId, assign: false })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isAttributeToggleLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.assignedAttributes.update((currentValue) =>
+            currentValue.filter((attribute) => attribute.id !== attributeId),
+          );
+          this.toasterService.success(PRODUCTS_UPDATE_TEXTS.ATTRIBUTE_UNASSIGN_SUCCESS_TITLE);
+        },
+        error: () => {
+          this.toasterService.danger(
+            PRODUCTS_UPDATE_TEXTS.ATTRIBUTE_ASSIGN_ERROR_TITLE,
+            PRODUCTS_UPDATE_TEXTS.ATTRIBUTE_ASSIGN_ERROR_MESSAGE,
+          );
+        },
+      });
+  }
+
+  protected onTagSearchChange(value: string): void {
+    this.tagSearchValue.set(value);
+    this.queueTagSearch();
+  }
+
+  protected onTagAssign(tagId: string): void {
+    const currentProductId = this.productId();
+    if (!currentProductId || this.isTagToggleLoading()) {
+      return;
+    }
+
+    const selectedOption = this.tagSearchResults().find((option) => option.id === tagId);
+    if (!selectedOption) {
+      return;
+    }
+
+    this.isTagToggleLoading.set(true);
+    this.productsService
+      .toggleTag(currentProductId, { tagId, assign: true })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isTagToggleLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.upsertAssignedTag(selectedOption);
+          this.tagSearchValue.set('');
+          this.tagSearchResults.set([]);
+          this.toasterService.success(PRODUCTS_UPDATE_TEXTS.TAG_ASSIGN_SUCCESS_TITLE);
+        },
+        error: () => {
+          this.toasterService.danger(
+            PRODUCTS_UPDATE_TEXTS.TAG_ASSIGN_ERROR_TITLE,
+            PRODUCTS_UPDATE_TEXTS.TAG_ASSIGN_ERROR_MESSAGE,
+          );
+        },
+      });
+  }
+
+  protected onTagUnassign(tagId: string): void {
+    const currentProductId = this.productId();
+    if (!currentProductId || this.isTagToggleLoading()) {
+      return;
+    }
+
+    this.isTagToggleLoading.set(true);
+    this.productsService
+      .toggleTag(currentProductId, { tagId, assign: false })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isTagToggleLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.assignedTags.update((currentValue) =>
+            currentValue.filter((currentTag) => currentTag.id !== tagId),
+          );
+          this.toasterService.success(PRODUCTS_UPDATE_TEXTS.TAG_UNASSIGN_SUCCESS_TITLE);
+        },
+        error: () => {
+          this.toasterService.danger(
+            PRODUCTS_UPDATE_TEXTS.TAG_ASSIGN_ERROR_TITLE,
+            PRODUCTS_UPDATE_TEXTS.TAG_ASSIGN_ERROR_MESSAGE,
+          );
+        },
+      });
+  }
+
   private watchRouteContext(): void {
     this.activatedRoute.paramMap
       .pipe(
@@ -179,9 +344,18 @@ export class ProductsUpdate implements OnInit {
       .subscribe(({ shopId, productId }) => {
         this.shopId.set(shopId);
         this.productId.set(productId);
+        this.selectedCategoryIds.set(new Set());
+        this.assignedAttributes.set([]);
+        this.assignedTags.set([]);
+        this.attributeSearchValue.set('');
+        this.attributeSearchResults.set([]);
+        this.tagSearchValue.set('');
+        this.tagSearchResults.set([]);
+        this.clearAttributeSearchDebounce();
+        this.clearTagSearchDebounce();
+
         if (!shopId || !productId) {
           this.categoryItems.set([]);
-          this.selectedCategoryIds.set(new Set());
           return;
         }
 
@@ -224,12 +398,152 @@ export class ProductsUpdate implements OnInit {
         next: (product) => {
           this.productFormModel.set(this.mapProductToFormModel(product));
           this.selectedCategoryIds.set(this.extractProductCategoryIds(product));
+          this.assignedAttributes.set(this.extractProductAttributes(product));
+          this.assignedTags.set(this.extractProductTags(product));
         },
         error: () => {
           this.toasterService.danger(
             PRODUCTS_UPDATE_TEXTS.PRODUCT_NOT_FOUND_TITLE,
             PRODUCTS_UPDATE_TEXTS.PRODUCT_NOT_FOUND_MESSAGE,
           );
+        },
+      });
+  }
+
+  private queueAttributeSearch(): void {
+    this.clearAttributeSearchDebounce();
+
+    const shopId = this.shopId();
+    const searchName = this.attributeSearchValue().trim();
+    if (!shopId || !searchName) {
+      this.isAttributeSearchLoading.set(false);
+      this.attributeSearchResults.set([]);
+      return;
+    }
+
+    this.attributeSearchDebounceTimer = setTimeout(() => {
+      this.loadAttributeSearchResults(shopId, searchName);
+    }, 300);
+  }
+
+  private clearAttributeSearchDebounce(): void {
+    if (this.attributeSearchDebounceTimer) {
+      clearTimeout(this.attributeSearchDebounceTimer);
+      this.attributeSearchDebounceTimer = null;
+    }
+  }
+
+  private queueTagSearch(): void {
+    this.clearTagSearchDebounce();
+
+    const shopId = this.shopId();
+    const searchName = this.tagSearchValue().trim();
+    if (!shopId || !searchName) {
+      this.isTagSearchLoading.set(false);
+      this.tagSearchResults.set([]);
+      return;
+    }
+
+    this.tagSearchDebounceTimer = setTimeout(() => {
+      this.loadTagSearchResults(shopId, searchName);
+    }, 300);
+  }
+
+  private clearTagSearchDebounce(): void {
+    if (this.tagSearchDebounceTimer) {
+      clearTimeout(this.tagSearchDebounceTimer);
+      this.tagSearchDebounceTimer = null;
+    }
+  }
+
+  private loadAttributeSearchResults(shopId: string, name: string): void {
+    const requestId = ++this.attributeSearchRequestId;
+    this.isAttributeSearchLoading.set(true);
+
+    this.attributesService
+      .getAttributes({
+        page: 1,
+        limit: 20,
+        shopId,
+        name,
+      })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          if (requestId === this.attributeSearchRequestId) {
+            this.isAttributeSearchLoading.set(false);
+          }
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if (requestId !== this.attributeSearchRequestId) {
+            return;
+          }
+
+          this.attributeSearchResults.set(this.mapAttributeSearchResults(response.items));
+        },
+        error: () => {
+          if (requestId !== this.attributeSearchRequestId) {
+            return;
+          }
+
+          this.attributeSearchResults.set([]);
+        },
+      });
+  }
+
+  private mapAttributeSearchResults(items: AttributeApiItem[]): ProductFormAttributeOption[] {
+    const assignedIds = new Set(this.assignedAttributes().map((attribute) => attribute.id));
+    const options: ProductFormAttributeOption[] = [];
+    for (const item of items) {
+      const id = String(item.id ?? '').trim();
+      if (!id || assignedIds.has(id)) {
+        continue;
+      }
+
+      const name = item.name?.trim() ?? '';
+      const value = item.value?.trim() ?? '';
+      const label = value ? `${name || 'Атрибут'}: ${value}` : name || 'Атрибут';
+      options.push({ id, label });
+    }
+
+    return options;
+  }
+
+  private loadTagSearchResults(shopId: string, name: string): void {
+    const requestId = ++this.tagSearchRequestId;
+    this.isTagSearchLoading.set(true);
+
+    this.tagsService
+      .getTags({
+        page: 1,
+        limit: 20,
+        shopId,
+        name,
+      })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          if (requestId === this.tagSearchRequestId) {
+            this.isTagSearchLoading.set(false);
+          }
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if (requestId !== this.tagSearchRequestId) {
+            return;
+          }
+
+          this.tagSearchResults.set(this.mapTagSearchResults(response.items));
+        },
+        error: () => {
+          if (requestId !== this.tagSearchRequestId) {
+            return;
+          }
+
+          this.tagSearchResults.set([]);
         },
       });
   }
@@ -349,6 +663,89 @@ export class ProductsUpdate implements OnInit {
     return new Set(categoryIds);
   }
 
+  private extractProductAttributes(product: ProductApiItem): ProductFormAssignedAttribute[] {
+    const productAttributes = product.attributes ?? product.attributeTypes ?? [];
+    const assignedAttributes: ProductFormAssignedAttribute[] = [];
+
+    for (const productAttribute of productAttributes) {
+      if (typeof productAttribute === 'string') {
+        const id = productAttribute.trim();
+        if (!id) {
+          continue;
+        }
+
+        assignedAttributes.push({ id, label: id });
+        continue;
+      }
+
+      const directId = String(productAttribute.id ?? '').trim();
+      const attributeTypeId = String(productAttribute.attributeTypeId ?? '').trim();
+      const nestedAttributeType = productAttribute.attributeType;
+      const nestedId = String(nestedAttributeType?.id ?? '').trim();
+      const id = directId || attributeTypeId || nestedId;
+      if (!id) {
+        continue;
+      }
+
+      const name =
+        productAttribute.name?.trim() ||
+        nestedAttributeType?.name?.trim() ||
+        PRODUCTS_UPDATE_TEXTS.ATTRIBUTES_TITLE;
+      const value = productAttribute.value?.trim() || nestedAttributeType?.value?.trim() || '';
+      const label = value ? `${name}: ${value}` : name;
+      assignedAttributes.push({ id, label });
+    }
+
+    return assignedAttributes.reduce<ProductFormAssignedAttribute[]>(
+      (accumulator, currentAttribute) => {
+        if (accumulator.some((attribute) => attribute.id === currentAttribute.id)) {
+          return accumulator;
+        }
+
+        return [...accumulator, currentAttribute];
+      },
+      [],
+    );
+  }
+
+  private extractProductTags(product: ProductApiItem): ProductFormAssignedTag[] {
+    const productTags = product.tags ?? [];
+    const assignedTags: ProductFormAssignedTag[] = [];
+
+    for (const productTag of productTags) {
+      if (typeof productTag === 'string') {
+        const id = productTag.trim();
+        if (!id) {
+          continue;
+        }
+
+        assignedTags.push({ id, label: id });
+        continue;
+      }
+
+      const directId = String(productTag.id ?? '').trim();
+      const tagId = String(productTag.tagId ?? '').trim();
+      const nestedTag = productTag.tag;
+      const nestedId = String(nestedTag?.id ?? '').trim();
+      const id = directId || tagId || nestedId;
+      if (!id) {
+        continue;
+      }
+
+      const label =
+        productTag.name?.trim() || nestedTag?.name?.trim() || PRODUCTS_UPDATE_TEXTS.TAGS_TITLE;
+      assignedTags.push({ id, label });
+    }
+
+    return assignedTags.reduce<ProductFormAssignedTag[]>((accumulator, currentTag) => {
+      if (accumulator.some((tag) => tag.id === currentTag.id)) {
+        return accumulator;
+      }
+
+      return [...accumulator, currentTag];
+    }, []);
+  }
+
   private buildCategoryTreeNodes(
     categories: CategoryApiItem[],
     selectedCategoryIds: Set<string>,
@@ -419,6 +816,42 @@ export class ProductsUpdate implements OnInit {
       }
 
       return nextValue;
+    });
+  }
+
+  private upsertAssignedAttribute(attribute: ProductFormAttributeOption): void {
+    this.assignedAttributes.update((currentValue) => {
+      if (currentValue.some((currentAttribute) => currentAttribute.id === attribute.id)) {
+        return currentValue;
+      }
+
+      return [...currentValue, { id: attribute.id, label: attribute.label }];
+    });
+  }
+
+  private mapTagSearchResults(items: TagApiItem[]): ProductFormTagOption[] {
+    const assignedIds = new Set(this.assignedTags().map((tag) => tag.id));
+    const options: ProductFormTagOption[] = [];
+    for (const item of items) {
+      const id = String(item.id ?? '').trim();
+      if (!id || assignedIds.has(id)) {
+        continue;
+      }
+
+      const label = item.name?.trim() || 'Тег';
+      options.push({ id, label });
+    }
+
+    return options;
+  }
+
+  private upsertAssignedTag(tag: ProductFormTagOption): void {
+    this.assignedTags.update((currentValue) => {
+      if (currentValue.some((currentTag) => currentTag.id === tag.id)) {
+        return currentValue;
+      }
+
+      return [...currentValue, { id: tag.id, label: tag.label }];
     });
   }
 }

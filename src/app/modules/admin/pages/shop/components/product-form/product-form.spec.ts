@@ -5,11 +5,13 @@ import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.mode
 import {
   PRODUCT_FORM_DEFAULT_VALUE,
   PRODUCT_FORM_FIELD_IDS,
-  PRODUCT_FORM_STATIC_ATTRIBUTES,
-  PRODUCT_FORM_STATIC_TAGS,
   PRODUCT_FORM_STATUS_OPTIONS,
   PRODUCT_FORM_TEXTS,
 } from './constants/product-form.constants';
+import { ProductFormAssignedAttribute } from './models/product-form-assigned-attribute.model';
+import { ProductFormAssignedTag } from './models/product-form-assigned-tag.model';
+import { ProductFormAttributeOption } from './models/product-form-attribute-option.model';
+import { ProductFormTagOption } from './models/product-form-tag-option.model';
 import { ProductForm } from './product-form';
 import { ProductFormCategoryNode } from './models/product-form-category-node.model';
 import { ProductFormModel } from './models/product-form.model';
@@ -41,6 +43,18 @@ describe('ProductForm', () => {
       ],
     },
   ];
+  const attributeSearchResults: ProductFormAttributeOption[] = [
+    { id: 'attr-1', label: 'Колір: Синій' },
+    { id: 'attr-2', label: 'Розмір: L' },
+  ];
+  const assignedAttributes: ProductFormAssignedAttribute[] = [
+    { id: 'attr-5', label: 'Матеріал: Льон' },
+  ];
+  const tagSearchResults: ProductFormTagOption[] = [
+    { id: 'tag-1', label: 'Літо' },
+    { id: 'tag-2', label: 'Льон' },
+  ];
+  const assignedTags: ProductFormAssignedTag[] = [{ id: 'tag-5', label: 'Чоловіче' }];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -59,9 +73,16 @@ describe('ProductForm', () => {
     fixture.componentRef.setInput('statusOptions', PRODUCT_FORM_STATUS_OPTIONS);
     fixture.componentRef.setInput('productTypeOptions', productTypeOptions);
     fixture.componentRef.setInput('productTypeSimple', ProductType.Simple);
+    fixture.componentRef.setInput('sidebarDisabled', false);
     fixture.componentRef.setInput('categories', categories);
-    fixture.componentRef.setInput('staticAttributes', PRODUCT_FORM_STATIC_ATTRIBUTES);
-    fixture.componentRef.setInput('staticTags', PRODUCT_FORM_STATIC_TAGS);
+    fixture.componentRef.setInput('attributeSearchValue', 'col');
+    fixture.componentRef.setInput('isAttributeSearchLoading', false);
+    fixture.componentRef.setInput('attributeSearchResults', attributeSearchResults);
+    fixture.componentRef.setInput('assignedAttributes', assignedAttributes);
+    fixture.componentRef.setInput('tagSearchValue', 'tag');
+    fixture.componentRef.setInput('isTagSearchLoading', false);
+    fixture.componentRef.setInput('tagSearchResults', tagSearchResults);
+    fixture.componentRef.setInput('assignedTags', assignedTags);
     fixture.detectChanges();
   });
 
@@ -83,5 +104,74 @@ describe('ProductForm', () => {
     (component as any).onProductTypeOptionChange(ProductType.Variable);
 
     expect(emitSpy).toHaveBeenCalledWith(ProductType.Variable);
+  });
+
+  it('emits attribute search changes', () => {
+    const emitSpy = vi.spyOn((component as any).attributeSearchChange, 'emit');
+
+    (component as any).onAttributeSearchChange('new search');
+
+    expect(emitSpy).toHaveBeenCalledWith('new search');
+  });
+
+  it('emits attribute assignment and unassignment', () => {
+    const assignSpy = vi.spyOn((component as any).attributeAssign, 'emit');
+    const unassignSpy = vi.spyOn((component as any).attributeUnassign, 'emit');
+
+    (component as any).onAttributeAssign('attr-1');
+    (component as any).onAttributeUnassign('attr-5');
+
+    expect(assignSpy).toHaveBeenCalledWith('attr-1');
+    expect(unassignSpy).toHaveBeenCalledWith('attr-5');
+  });
+
+  it('emits tag search, assignment and unassignment', () => {
+    const searchSpy = vi.spyOn((component as any).tagSearchChange, 'emit');
+    const assignSpy = vi.spyOn((component as any).tagAssign, 'emit');
+    const unassignSpy = vi.spyOn((component as any).tagUnassign, 'emit');
+
+    (component as any).onTagSearchChange('summer');
+    (component as any).onTagAssign('tag-1');
+    (component as any).onTagUnassign('tag-5');
+
+    expect(searchSpy).toHaveBeenCalledWith('summer');
+    expect(assignSpy).toHaveBeenCalledWith('tag-1');
+    expect(unassignSpy).toHaveBeenCalledWith('tag-5');
+  });
+
+  it('does not emit assignments when ids are empty', () => {
+    const attributeAssignSpy = vi.spyOn((component as any).attributeAssign, 'emit');
+    const attributeUnassignSpy = vi.spyOn((component as any).attributeUnassign, 'emit');
+    const tagAssignSpy = vi.spyOn((component as any).tagAssign, 'emit');
+    const tagUnassignSpy = vi.spyOn((component as any).tagUnassign, 'emit');
+
+    (component as any).onAttributeAssign('   ');
+    (component as any).onAttributeUnassign('   ');
+    (component as any).onTagAssign('   ');
+    (component as any).onTagUnassign('   ');
+
+    expect(attributeAssignSpy).not.toHaveBeenCalled();
+    expect(attributeUnassignSpy).not.toHaveBeenCalled();
+    expect(tagAssignSpy).not.toHaveBeenCalled();
+    expect(tagUnassignSpy).not.toHaveBeenCalled();
+  });
+
+  it('does not emit assignments when sidebar is disabled', () => {
+    fixture.componentRef.setInput('sidebarDisabled', true);
+    fixture.detectChanges();
+    const attributeAssignSpy = vi.spyOn((component as any).attributeAssign, 'emit');
+    const attributeUnassignSpy = vi.spyOn((component as any).attributeUnassign, 'emit');
+    const tagAssignSpy = vi.spyOn((component as any).tagAssign, 'emit');
+    const tagUnassignSpy = vi.spyOn((component as any).tagUnassign, 'emit');
+
+    (component as any).onAttributeAssign('attr-1');
+    (component as any).onAttributeUnassign('attr-5');
+    (component as any).onTagAssign('tag-1');
+    (component as any).onTagUnassign('tag-5');
+
+    expect(attributeAssignSpy).not.toHaveBeenCalled();
+    expect(attributeUnassignSpy).not.toHaveBeenCalled();
+    expect(tagAssignSpy).not.toHaveBeenCalled();
+    expect(tagUnassignSpy).not.toHaveBeenCalled();
   });
 });

@@ -146,6 +146,28 @@ describe('ProductsService', () => {
     req.flush({});
   });
 
+  it('toggles attribute assignment for product', () => {
+    const payload = { attributeTypeId: 'attribute-2', assign: false };
+    service.toggleAttribute('product-1', payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/attributes');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({});
+  });
+
+  it('toggles tag assignment for product', () => {
+    const payload = { tagId: 'tag-2', assign: false };
+    service.toggleTag('product-1', payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/tags');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({});
+  });
+
   it('deletes product by id', () => {
     service.deleteProduct('product-1').subscribe();
 

@@ -29,7 +29,14 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   TAGS_TITLE: 'Теги',
   CATEGORIES_SEARCH_PLACEHOLDER: 'Пошук категорій...',
   ATTRIBUTES_SEARCH_PLACEHOLDER: 'Пошук атрибутів...',
+  SIDEBAR_DISABLED_HINT: 'Спочатку створіть товар, щоб керувати категоріями, атрибутами та тегами.',
+  ATTRIBUTES_SEARCH_LOADING: 'Завантаження атрибутів...',
+  ATTRIBUTES_SEARCH_EMPTY: 'Атрибути не знайдено.',
+  ATTRIBUTES_ASSIGNED_EMPTY: 'Ще немає призначених атрибутів.',
   TAGS_INPUT_PLACEHOLDER: 'Додати теги...',
+  TAGS_SEARCH_LOADING: 'Завантаження тегів...',
+  TAGS_SEARCH_EMPTY: 'Теги не знайдено.',
+  TAGS_ASSIGNED_EMPTY: 'Ще немає призначених тегів.',
 };
 
 export const PRODUCT_FORM_FIELD_IDS: ProductFormFieldIds = {
@@ -49,9 +56,6 @@ export const PRODUCT_FORM_STATUS_OPTIONS: DropdownOption[] = [
   { label: 'Активний', value: ProductStatus.Active },
   { label: 'Архівний', value: ProductStatus.Archived },
 ];
-
-export const PRODUCT_FORM_STATIC_ATTRIBUTES = ['Колір: Океанічний синій', 'Розмір: Великий'];
-export const PRODUCT_FORM_STATIC_TAGS = ['Літо', 'Льон', 'Чоловіче'];
 
 export const PRODUCT_FORM_DEFAULT_VALUE: ProductFormModel = {
   name: '',

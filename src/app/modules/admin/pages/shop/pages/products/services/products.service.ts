@@ -7,7 +7,9 @@ import {
   ProductListQueryParams,
   ProductListResponse,
 } from '../models/product.model';
+import { ToggleProductAttributePayload } from '../models/toggle-product-attribute-payload.model';
 import { ToggleProductCategoryPayload } from '../models/toggle-product-category-payload.model';
+import { ToggleProductTagPayload } from '../models/toggle-product-tag-payload.model';
 import { UpdateProductPayload } from '../models/update-product-payload.model';
 
 @Injectable({
@@ -63,6 +65,22 @@ export class ProductsService {
         withCredentials: true,
       },
     );
+  }
+
+  toggleAttribute(productId: string, payload: ToggleProductAttributePayload): Observable<void> {
+    return this.http.post<void>(
+      `${this.API_URL}/catalog/products/${productId}/attributes`,
+      payload,
+      {
+        withCredentials: true,
+      },
+    );
+  }
+
+  toggleTag(productId: string, payload: ToggleProductTagPayload): Observable<void> {
+    return this.http.post<void>(`${this.API_URL}/catalog/products/${productId}/tags`, payload, {
+      withCredentials: true,
+    });
   }
 
   deleteProduct(id: string): Observable<void> {
