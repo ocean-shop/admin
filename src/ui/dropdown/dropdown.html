@@ -8,6 +8,7 @@
     type="button"
     class="admin-dropdown-trigger"
     [class.admin-dropdown-trigger-form]="variant() === 'form'"
+    [class.admin-dropdown-trigger-bordered]="variant() === 'bordered'"
     (click)="toggleMenu($event)"
   >
     @if (icon()) {

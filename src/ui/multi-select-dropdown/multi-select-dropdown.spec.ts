@@ -63,4 +63,29 @@ describe('MultiSelectDropdown', () => {
 
     expect(triggerText).toBe('2 selected');
   });
+
+  it('uses basic variant without tree indentation by default', () => {
+    fixture.debugElement.query(By.css('.multi-select-trigger')).nativeElement.click();
+    fixture.detectChanges();
+
+    const firstOption = fixture.debugElement.query(By.css('.multi-select-item')).nativeElement;
+    expect(firstOption.style.paddingLeft).toBe('16px');
+  });
+
+  it('renders provided tree levels when optionVariant is tree', async () => {
+    fixture.componentRef.setInput('optionVariant', 'tree');
+    fixture.componentRef.setInput('options', [
+      { label: 'Parent', value: 'shop-1', level: 0 },
+      { label: 'Child', value: 'shop-2', parentId: 'shop-1', level: 1 },
+    ]);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('.multi-select-trigger')).nativeElement.click();
+    fixture.detectChanges();
+
+    const items = fixture.debugElement.queryAll(By.css('.multi-select-item'));
+    expect(items[0].nativeElement.style.paddingLeft).toBe('16px');
+    expect(items[1].nativeElement.style.paddingLeft).toBe('32px');
+  });
 });

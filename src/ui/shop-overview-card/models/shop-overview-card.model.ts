@@ -1,13 +1,13 @@
-export interface ShopOverviewMetric {
+export type ShopOverviewMetric = {
   label: string;
   value: string;
   helperText?: string;
   helperIcon?: string;
-}
+};
 
-export interface ShopOverviewCardData {
+export type ShopOverviewCardData = {
   shopId: string;
   title: string;
   metrics: ShopOverviewMetric[];
   actionLabel?: string;
-}
+};

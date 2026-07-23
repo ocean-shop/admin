@@ -12,6 +12,8 @@ import { FormValueControl } from '@angular/forms/signals';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { DropdownTriggerMode } from '@ui/dropdown/models/dropdown-trigger-mode.type';
 import { DropdownVariant } from '@ui/dropdown/models/dropdown-variant.type';
+import { DropdownTreeOption } from '@ui/multi-select-dropdown/models/dropdown-tree-option.type';
+import { MultiSelectOptionVariant } from '@ui/multi-select-dropdown/models/multi-select-option-variant.type';
 
 @Component({
   selector: 'app-multi-select-dropdown',
@@ -26,13 +28,17 @@ export class MultiSelectDropdown implements FormValueControl<string[]> {
 
   readonly label = input<string>('Select options');
   readonly icon = input<string>();
-  readonly options = input.required<DropdownOption[]>();
+  readonly options = input.required<(DropdownOption | DropdownTreeOption)[]>();
   readonly triggerMode = input<DropdownTriggerMode>('click');
   readonly variant = input<DropdownVariant>('default');
+  readonly optionVariant = input<MultiSelectOptionVariant>('basic');
 
   readonly optionToggled = output<DropdownOption>();
 
   protected readonly isOpen = signal(false);
+  protected readonly displayOptions = computed<DropdownTreeOption[]>(() =>
+    this.normalizeOptions(this.options(), this.optionVariant()),
+  );
 
   protected readonly displayLabel = computed(() => {
     const selectedValues = this.value();
@@ -81,6 +87,35 @@ export class MultiSelectDropdown implements FormValueControl<string[]> {
 
   protected isSelected(value: string): boolean {
     return this.value().includes(value);
+  }
+
+  private normalizeOptions(
+    options: (DropdownOption | DropdownTreeOption)[],
+    optionVariant: MultiSelectOptionVariant,
+  ): DropdownTreeOption[] {
+    if (optionVariant === 'tree') {
+      return options.map((option) => ({
+        ...option,
+        level: this.resolveOptionLevel(option),
+      }));
+    }
+
+    return options.map((option) => ({
+      ...option,
+      level: 0,
+    }));
+  }
+
+  protected resolveOptionPadding(option: DropdownTreeOption): number {
+    return 16 + option.level * 16;
+  }
+
+  private resolveOptionLevel(option: DropdownOption | DropdownTreeOption): number {
+    if ('level' in option && typeof option.level === 'number' && option.level >= 0) {
+      return option.level;
+    }
+
+    return 0;
   }
 
   @HostListener('document:click')

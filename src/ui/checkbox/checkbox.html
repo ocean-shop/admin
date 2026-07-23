@@ -1,0 +1,19 @@
+<label
+  class="admin-checkbox-option"
+  [class.admin-checkbox-option-disabled]="disabled()"
+  [attr.for]="inputId()"
+>
+  @if (control()) {
+  <input [id]="inputId()" type="checkbox" [formField]="control()" (change)="onChange($event)" />
+  } @else {
+  <input
+    [id]="inputId()"
+    type="checkbox"
+    [checked]="checked()"
+    [disabled]="disabled()"
+    (change)="onChange($event)"
+  />
+  }
+
+  <span>{{ label() }}</span>
+</label>

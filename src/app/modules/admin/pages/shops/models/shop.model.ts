@@ -1,4 +1,4 @@
-export interface ShopApiItem {
+export type ShopApiItem = {
   id?: string | number | null;
   name?: string | null;
   description?: string | null;
@@ -7,9 +7,9 @@ export interface ShopApiItem {
   updated?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
-}
+};
 
-export interface ShopsApiResponse {
+export type ShopsApiResponse = {
   shops?: ShopApiItem[] | null;
   data?: ShopApiItem[] | null;
   items?: ShopApiItem[] | null;
@@ -17,25 +17,25 @@ export interface ShopsApiResponse {
   page?: number;
   limit?: number;
   totalPages?: number;
-}
+};
 
-export interface ShopsQueryParams {
+export type ShopsQueryParams = {
   page: number;
   limit: number;
-}
+};
 
-export interface ShopsPagination {
+export type ShopsPagination = {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
-}
+};
 
-export interface Shop {
+export type Shop = {
   id: string;
   name: string;
   description?: string;
   url?: string;
   createdAt?: string;
   updatedAt?: string;
-}
+};

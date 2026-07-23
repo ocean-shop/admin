@@ -1,0 +1,15 @@
+<span
+  class="chip"
+  [class.chip-attribute]="variant() === 'attribute'"
+  [class.chip-tag]="variant() === 'tag'"
+>
+  {{ label() }}
+  <button
+    type="button"
+    [attr.aria-label]="removeAriaLabel()"
+    [disabled]="disabled()"
+    (click)="onRemoveClick()"
+  >
+    <span class="material-symbols-outlined">close</span>
+  </button>
+</span>

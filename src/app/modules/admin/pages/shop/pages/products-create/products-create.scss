@@ -1,0 +1,29 @@
+@reference "../../../../../../../styles.scss";
+
+.products-create-page {
+  @apply ml-[50px] pt-8 min-h-screen;
+}
+
+.products-create-container {
+  @apply max-w-[1440px] mx-auto p-8 flex flex-col gap-6;
+}
+
+.products-create-header {
+  @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+}
+
+.products-create-title {
+  @apply text-3xl font-bold text-on-surface tracking-tight;
+}
+
+.products-create-description {
+  @apply text-sm text-on-surface-variant mt-1;
+}
+
+.products-create-submit {
+  @apply px-6 py-3 bg-primary text-on-primary rounded-md font-bold text-sm shadow-sm hover:bg-primary-container hover:text-on-primary-container hover:-translate-y-0.5 transition-all w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0;
+}
+
+.products-create-warning {
+  @apply text-sm text-error;
+}

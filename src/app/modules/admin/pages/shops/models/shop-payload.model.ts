@@ -1,11 +1,11 @@
-export interface ShopCreatePayload {
+export type ShopCreatePayload = {
   name: string;
   description?: string;
   url?: string;
-}
+};
 
-export interface ShopUpdatePayload {
+export type ShopUpdatePayload = {
   name?: string;
   description?: string;
   url?: string;
-}
+};

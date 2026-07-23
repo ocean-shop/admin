@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
-import { AuthService } from '../../../../../core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { LayoutService } from '../../services/layout.service';
 import {
   ADMIN_HOME_ROUTE,

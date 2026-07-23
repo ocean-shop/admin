@@ -25,10 +25,7 @@ export class AttributeFormModal {
 
   protected readonly nameFieldId = ATTRIBUTES_NAME_FIELD_ID;
   protected readonly valueFieldId = ATTRIBUTES_VALUE_FIELD_ID;
-  protected readonly nameLabel = ATTRIBUTES_TEXTS.NAME_LABEL;
-  protected readonly namePlaceholder = ATTRIBUTES_TEXTS.NAME_PLACEHOLDER;
-  protected readonly valueLabel = ATTRIBUTES_TEXTS.VALUE_LABEL;
-  protected readonly valuePlaceholder = ATTRIBUTES_TEXTS.VALUE_PLACEHOLDER;
+  protected readonly texts = ATTRIBUTES_TEXTS;
   protected readonly title = ATTRIBUTES_TEXTS.MODAL_CREATE_TITLE;
   protected readonly confirmLabel = ATTRIBUTES_TEXTS.MODAL_CREATE_CONFIRM_LABEL;
 

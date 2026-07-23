@@ -7,7 +7,8 @@ import {
   VIEW_STORAGE_KEY,
   OTP_EXPIRATION_KEY,
   IDENTITY_STORAGE_KEY,
-} from './constants/login.constant';
+  LOGIN_TEXTS,
+} from './constants/login.constants';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { LocalStorageService } from '@core/services/local-storage/local-storage.service';
 import { LoginView } from './models/login.enum';
@@ -30,6 +31,7 @@ export class Login implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   LoginView = LoginView;
+  protected readonly pageTexts = LOGIN_TEXTS.page;
 
   isFocused = signal(false);
   currentView = signal<LoginView>(LoginView.Login);
@@ -82,8 +84,8 @@ export class Login implements OnInit {
   private handleOtpRequestSuccess(): void {
     this.isLoading.set(false);
     this.toasterService.success(
-      'OTP Sent',
-      'Будь ласка, перевірте свою електронну пошту або телефон, щоб знайти одноразовий код (OTP).',
+      LOGIN_TEXTS.toaster.otpSentTitle,
+      LOGIN_TEXTS.toaster.otpSentDescription,
     );
     this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
     this.setView(LoginView.Otp);

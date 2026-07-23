@@ -1,19 +1,19 @@
 <form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
   <app-input
     id="otp"
-    placeholder="Введіть OTP Code"
-    label="Введіть OTP Code"
+    [placeholder]="texts.otpPlaceholder"
+    [label]="texts.otpLabel"
     icon="lock"
     [control]="otpForm.otp"
   ></app-input>
   @if (timeLeft() > 0) {
   <div class="resend-container">
     <p class="resend-text">
-      Повторне надсилання коду через <span class="resend-timer">{{ formattedTime() }}</span>
+      {{ texts.timerPrefix }} <span class="resend-timer">{{ formattedTime() }}</span>
     </p>
   </div>
   <app-button
-    label="Підтвердити код"
+    [label]="texts.submitButtonLabel"
     icon="arrow_forward"
     type="submit"
     [disabled]="!isFormValid() || isLoading()"
@@ -21,13 +21,13 @@
   } @else {
   <div class="flex justify-center text-label-md text-on-surface-variant">
     <app-button-line
-      label="Надіслати код повторно"
+      [label]="texts.resendButtonLabel"
       type="button"
       (click)="resendCode()"
     ></app-button-line>
   </div>
   <app-button
-    label="Назад до входу"
+    [label]="texts.backButtonLabel"
     icon="arrow_back"
     type="button"
     (click)="onBackToLogin()"

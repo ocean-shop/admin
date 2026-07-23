@@ -10,22 +10,22 @@
   <form class="category-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
     @if (parentCategory()) {
     <p class="category-parent-hint">
-      {{ parentHintPrefix }}
+      {{ texts.PARENT_HINT_PREFIX }}
       <span class="category-parent-name">{{ parentCategory()?.name }}</span>
     </p>
     }
 
     <app-input
       [id]="nameFieldId"
-      [label]="nameLabel"
-      [placeholder]="namePlaceholder"
+      [label]="texts.NAME_LABEL"
+      [placeholder]="texts.NAME_PLACEHOLDER"
       [control]="categoryForm.name"
     />
 
     <app-input
       [id]="slugFieldId"
-      [label]="slugLabel"
-      [placeholder]="slugPlaceholder"
+      [label]="texts.SLUG_LABEL"
+      [placeholder]="texts.SLUG_PLACEHOLDER"
       [control]="categoryForm.slug"
     />
   </form>

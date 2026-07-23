@@ -20,8 +20,7 @@ export class TagFormModal {
   readonly confirmed = output<TagFormSubmitPayload>();
 
   protected readonly nameFieldId = TAGS_NAME_FIELD_ID;
-  protected readonly nameLabel = TAGS_TEXTS.NAME_LABEL;
-  protected readonly namePlaceholder = TAGS_TEXTS.NAME_PLACEHOLDER;
+  protected readonly texts = TAGS_TEXTS;
   protected readonly title = TAGS_TEXTS.MODAL_CREATE_TITLE;
   protected readonly confirmLabel = TAGS_TEXTS.MODAL_CREATE_CONFIRM_LABEL;
 

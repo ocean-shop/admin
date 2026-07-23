@@ -1,30 +1,30 @@
-export interface TagApiItem {
+export type TagApiItem = {
   id?: string | null;
   shopId?: string | null;
   name?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
-}
+};
 
-export interface TagListResponse {
+export type TagListResponse = {
   items: TagApiItem[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
-}
+};
 
-export interface TagListQueryParams {
+export type TagListQueryParams = {
   page: number;
   limit: number;
   shopId: string;
   name?: string;
-}
+};
 
-export interface Tag {
+export type Tag = {
   id: string;
   shopId: string;
   name: string;
   createdAt?: string;
   updatedAt?: string;
-}
+};

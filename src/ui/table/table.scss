@@ -52,6 +52,14 @@ tbody tr:last-child td {
   @apply text-right;
 }
 
+.table-actions-list {
+  @apply inline-flex items-center justify-end gap-1;
+}
+
+.table-update-button {
+  @apply inline-flex items-center justify-center rounded-lg p-2 text-primary transition-all hover:bg-primary/10 hover:text-primary active:scale-90;
+}
+
 .table-delete-button {
   @apply inline-flex items-center justify-center rounded-lg p-2 text-outline transition-all hover:bg-error-container/20 hover:text-error active:scale-90;
 }

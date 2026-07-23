@@ -1,13 +1,13 @@
-export interface MenuItem {
+export type MenuItem = {
   icon: string;
   label: string;
   route: string;
-}
+};
 
-export interface MenuFooterItem {
+export type MenuFooterItem = {
   icon: string;
   label: string;
   route?: string;
   value?: string;
   buttonClass: 'footer-btn' | 'footer-btn-danger';
-}
+};

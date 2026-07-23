@@ -1,13 +1,13 @@
-export interface AdminCreatePayload {
+export type AdminCreatePayload = {
   email?: string;
   mobileNumber?: string;
   role: string;
   shopIds?: string[];
-}
+};
 
-export interface AdminUpdatePayload {
+export type AdminUpdatePayload = {
   email?: string;
   mobileNumber?: string;
   role: string;
   shopIds?: string[];
-}
+};

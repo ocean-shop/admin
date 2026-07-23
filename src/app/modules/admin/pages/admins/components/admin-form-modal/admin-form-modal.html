@@ -10,8 +10,8 @@
   <form class="admin-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
     <app-input
       [id]="identityFieldId"
-      [label]="identityLabel"
-      [placeholder]="identityPlaceholder"
+      [label]="texts.IDENTITY_LABEL"
+      [placeholder]="texts.IDENTITY_PLACEHOLDER"
       [control]="adminForm.identity"
     />
 
@@ -19,7 +19,7 @@
       triggerMode="click"
       variant="form"
       icon="shield_person"
-      [label]="roleLabel"
+      [label]="texts.ROLE_LABEL"
       [options]="roleOptions()"
       [formField]="adminForm.role"
     />
@@ -28,7 +28,7 @@
       triggerMode="click"
       variant="form"
       icon="storefront"
-      [label]="shopsLabel"
+      [label]="texts.SHOPS_LABEL"
       [options]="shopOptions()"
       [formField]="adminForm.shopIds"
     />

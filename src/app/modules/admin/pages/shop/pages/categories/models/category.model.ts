@@ -1,4 +1,4 @@
-export interface CategoryApiItem {
+export type CategoryApiItem = {
   id?: string | number | null;
   parentId?: string | number | null;
   name?: string | null;
@@ -7,26 +7,26 @@ export interface CategoryApiItem {
   productCount?: number | null;
   productsCount?: number | null;
   itemsCount?: number | null;
-}
+};
 
-export interface CategoriesApiResponse {
+export type CategoriesApiResponse = {
   categories?: CategoryApiItem[] | null;
   items?: CategoryApiItem[] | null;
   data?: CategoryApiItem[] | null;
   totalCategories?: number;
   deepestLevel?: number;
-}
+};
 
-export interface Category {
+export type Category = {
   id: string;
   parentId?: string;
   name: string;
   slug: string;
   sort: number;
   productCount?: number;
-}
+};
 
-export interface CategoriesStats {
+export type CategoriesStats = {
   totalCategories?: number;
   deepestLevel?: number;
-}
+};

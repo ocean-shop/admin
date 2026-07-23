@@ -1,0 +1,29 @@
+@reference "../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.products-update-page {
+  @apply ml-[50px] min-h-screen pt-8;
+}
+
+.products-update-container {
+  @apply mx-auto flex max-w-[1440px] flex-col gap-6 p-8;
+}
+
+.products-update-header {
+  @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+}
+
+.products-update-title {
+  @apply text-3xl font-bold tracking-tight text-on-surface;
+}
+
+.products-update-description {
+  @apply mt-1 text-sm text-on-surface-variant;
+}
+
+.products-update-warning {
+  @apply text-sm text-error;
+}

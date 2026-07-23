@@ -1,8 +1,8 @@
-export interface CreateTagPayload {
+export type CreateTagPayload = {
   shopId: string;
   name: string;
-}
+};
 
-export interface TagFormSubmitPayload {
+export type TagFormSubmitPayload = {
   name: string;
-}
+};

@@ -1,0 +1,48 @@
+<main class="products-update-page">
+  <form class="products-update-container" (submit)="$event.preventDefault(); onSubmit()">
+    <header class="products-update-header">
+      <div>
+        <h1 class="products-update-title">{{ textData.PAGE_TITLE }}</h1>
+        <p class="products-update-description">{{ textData.PAGE_DESCRIPTION }}</p>
+      </div>
+      <app-button
+        [label]="textData.UPDATE_LABEL"
+        type="submit"
+        variant="create"
+        [fullWidth]="false"
+        [disabled]="!isRouteContextReady() || !isFormValid() || isSubmitting() || isLoadingProduct()"
+      />
+    </header>
+
+    @if (!isRouteContextReady()) {
+    <p class="products-update-warning">{{ textData.SHOP_CONTEXT_REQUIRED_MESSAGE }}</p>
+    }
+
+    <app-product-form
+      [productForm]="productForm"
+      [texts]="textData"
+      [fieldIds]="fieldIds"
+      [statusOptions]="statusOptions"
+      [productTypeOptions]="productTypeOptions"
+      [productTypeSimple]="productTypeSimple"
+      [sidebarDisabled]="false"
+      [categories]="categoryNodes()"
+      [attributeSearchValue]="attributeSearchValue()"
+      [isAttributeSearchLoading]="isAttributeSearchLoading()"
+      [attributeSearchResults]="attributeSearchResults()"
+      [assignedAttributes]="assignedAttributes()"
+      [tagSearchValue]="tagSearchValue()"
+      [isTagSearchLoading]="isTagSearchLoading()"
+      [tagSearchResults]="tagSearchResults()"
+      [assignedTags]="assignedTags()"
+      (productTypeChange)="onProductTypeChange($event)"
+      (categoryToggle)="onCategoryToggle($event)"
+      (attributeSearchChange)="onAttributeSearchChange($event)"
+      (attributeAssign)="onAttributeAssign($event)"
+      (attributeUnassign)="onAttributeUnassign($event)"
+      (tagSearchChange)="onTagSearchChange($event)"
+      (tagAssign)="onTagAssign($event)"
+      (tagUnassign)="onTagUnassign($event)"
+    />
+  </form>
+</main>

@@ -10,22 +10,22 @@
   <form class="shops-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
     <app-input
       [id]="nameFieldId"
-      [label]="nameLabel"
-      [placeholder]="namePlaceholder"
+      [label]="texts.NAME_LABEL"
+      [placeholder]="texts.NAME_PLACEHOLDER"
       [control]="shopForm.name"
     />
 
     <app-textarea
       [id]="descriptionFieldId"
-      [label]="descriptionLabel"
-      [placeholder]="descriptionPlaceholder"
+      [label]="texts.DESCRIPTION_LABEL"
+      [placeholder]="texts.DESCRIPTION_PLACEHOLDER"
       [control]="shopForm.description"
     />
 
     <app-input
       [id]="urlFieldId"
-      [label]="urlLabel"
-      [placeholder]="urlPlaceholder"
+      [label]="texts.URL_LABEL"
+      [placeholder]="texts.URL_PLACEHOLDER"
       [control]="shopForm.url"
     />
   </form>

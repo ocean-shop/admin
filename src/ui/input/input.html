@@ -4,7 +4,7 @@
     <div class="input-icon-container">
       <span class="material-symbols-outlined">{{ icon() }}</span>
     </div>
-    }
+    } @if (control()) {
     <input
       class="admin-input"
       [class.has-icon]="!!icon()"
@@ -15,8 +15,22 @@
       [formField]="control()"
       (focus)="focusEvent.emit($event)"
       (blur)="blurEvent.emit($event)"
+      (input)="onInput($event)"
     />
-    @if (label()) {
+    } @else {
+    <input
+      class="admin-input"
+      [class.has-icon]="!!icon()"
+      [id]="id()"
+      [placeholder]="placeholder() || ' '"
+      [type]="type()"
+      [value]="value()"
+      [disabled]="disabled()"
+      (focus)="focusEvent.emit($event)"
+      (blur)="blurEvent.emit($event)"
+      (input)="onInput($event)"
+    />
+    } @if (label()) {
     <label class="font-body-md" [for]="id()">{{ label() }}</label>
     }
   </div>

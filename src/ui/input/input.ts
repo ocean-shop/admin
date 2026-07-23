@@ -16,11 +16,14 @@ export class Input {
   placeholder = input<string>('');
   label = input<string>('');
   icon = input<string>('');
+  value = input<string>('');
+  disabled = input<boolean>(false);
 
-  control = input.required<any>();
+  control = input<any>();
 
   focusEvent = output<FocusEvent>();
   blurEvent = output<FocusEvent>();
+  valueChange = output<string>();
 
   errorMessage = computed(() => {
     const fieldFn = this.control();
@@ -33,4 +36,9 @@ export class Input {
     }
     return '';
   });
+
+  protected onInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.valueChange.emit(target.value);
+  }
 }

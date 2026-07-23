@@ -10,14 +10,14 @@
   <form class="attribute-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
     <app-input
       [id]="nameFieldId"
-      [label]="nameLabel"
-      [placeholder]="namePlaceholder"
+      [label]="texts.NAME_LABEL"
+      [placeholder]="texts.NAME_PLACEHOLDER"
       [control]="attributeForm.name"
     />
     <app-input
       [id]="valueFieldId"
-      [label]="valueLabel"
-      [placeholder]="valuePlaceholder"
+      [label]="texts.VALUE_LABEL"
+      [placeholder]="texts.VALUE_PLACEHOLDER"
       [control]="attributeForm.value"
     />
   </form>

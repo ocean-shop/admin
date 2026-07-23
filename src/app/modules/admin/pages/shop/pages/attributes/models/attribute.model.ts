@@ -1,32 +1,32 @@
-export interface AttributeApiItem {
+export type AttributeApiItem = {
   id?: string | null;
   shopId?: string | null;
   name?: string | null;
   value?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
-}
+};
 
-export interface AttributeListResponse {
+export type AttributeListResponse = {
   items: AttributeApiItem[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
-}
+};
 
-export interface AttributeListQueryParams {
+export type AttributeListQueryParams = {
   page: number;
   limit: number;
   shopId: string;
   name?: string;
-}
+};
 
-export interface Attribute {
+export type Attribute = {
   id: string;
   shopId: string;
   name: string;
   value: string;
   createdAt?: string;
   updatedAt?: string;
-}
+};

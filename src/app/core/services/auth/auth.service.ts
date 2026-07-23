@@ -5,9 +5,9 @@ import { jwtDecode } from 'jwt-decode';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AUTH_STORAGE_KEYS, SESSION_HINT_KEY } from '../../constants/auth.constant';
 
-interface RefreshResponse {
+type RefreshResponse = {
   accessToken: string;
-}
+};
 
 @Injectable({
   providedIn: 'root',
