@@ -1,0 +1,36 @@
+src/app/modules/admin/pages/shop/components/product-form/product-form.spec.ts
+  s_9a9d9dd3633c19::t_a555a0fb9d6955 4
+src/ui/chip/models/chip-variant.type.ts
+  s_9a9d9dd3633c19::t_38752ae21166e8 1
+src/ui/chip/chip.ts
+  s_9a9d9dd3633c19::t_971d7f1431df61 1-27
+src/ui/chip/chip.html
+  s_9a9d9dd3633c19::t_043e2755c81411 1-11
+  s_9a9d9dd3633c19::t_ad739c707aee58 12-14
+src/ui/chip/chip.scss
+  s_9a9d9dd3633c19::t_543fc024901228 1-33
+src/ui/chip/chip.spec.ts
+  s_9a9d9dd3633c19::t_e1936f39d25980 1-70
+  s_9a9d9dd3633c19::t_a1ba9ded7f1283 71-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "3c3298204e51295315f3e9414639a4d6c4dec8e2",
+  "prompts": {},
+  "humans": {
+    "h_eee5bfb8805eb8": {
+      "author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  },
+  "sessions": {
+    "s_9a9d9dd3633c19": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "026d70be-6bbb-4185-9dd0-4d05d14ac871",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
