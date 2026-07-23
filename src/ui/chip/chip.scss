@@ -1,0 +1,33 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply inline-block;
+}
+
+.chip {
+  @apply inline-flex items-center gap-0.5;
+}
+
+.chip button {
+  @apply transition-colors hover:text-error;
+}
+
+.chip button:disabled {
+  @apply cursor-not-allowed opacity-60 hover:text-current;
+}
+
+.chip-attribute {
+  @apply rounded-full border border-surface-dim bg-surface-container px-2.5 py-0.5 text-xs text-on-surface-variant;
+}
+
+.chip-attribute .material-symbols-outlined {
+  @apply text-[14px];
+}
+
+.chip-tag {
+  @apply rounded-sm bg-secondary-fixed px-2 py-0.5 text-[11px] uppercase tracking-wide text-on-secondary-fixed;
+}
+
+.chip-tag .material-symbols-outlined {
+  @apply text-[12px];
+}

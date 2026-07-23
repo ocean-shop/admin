@@ -158,17 +158,13 @@
         @if (!assignedAttributes().length) {
         <span class="product-form-placeholder-chip">{{ texts().ATTRIBUTES_ASSIGNED_EMPTY }}</span>
         } @else { @for (attribute of assignedAttributes(); track attribute.id) {
-        <span class="product-form-chip">
-          {{ attribute.label }}
-          <button
-            type="button"
-            aria-label="Remove attribute"
-            [disabled]="sidebarDisabled()"
-            (click)="onAttributeUnassign(attribute.id)"
-          >
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </span>
+        <app-chip
+          [label]="attribute.label"
+          variant="attribute"
+          removeAriaLabel="Remove attribute"
+          [disabled]="sidebarDisabled()"
+          (remove)="onAttributeUnassign(attribute.id)"
+        />
         } }
       </div>
     </article>
@@ -203,17 +199,13 @@
         @if (!assignedTags().length) {
         <span class="product-form-placeholder-chip">{{ texts().TAGS_ASSIGNED_EMPTY }}</span>
         } @else { @for (tag of assignedTags(); track tag.id) {
-        <span class="product-form-tag">
-          {{ tag.label }}
-          <button
-            type="button"
-            aria-label="Remove tag"
-            [disabled]="sidebarDisabled()"
-            (click)="onTagUnassign(tag.id)"
-          >
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </span>
+        <app-chip
+          [label]="tag.label"
+          variant="tag"
+          removeAriaLabel="Remove tag"
+          [disabled]="sidebarDisabled()"
+          (remove)="onTagUnassign(tag.id)"
+        />
         } }
       </div>
     </article>

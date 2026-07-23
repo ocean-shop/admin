@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { form } from '@angular/forms/signals';
+import { By } from '@angular/platform-browser';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import {
   PRODUCT_FORM_DEFAULT_VALUE,
@@ -98,6 +99,29 @@ describe('ProductForm', () => {
     expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.CATEGORIES_TITLE);
   });
 
+  it('renders assigned attributes and tags as chips', () => {
+    const chipElements = fixture.debugElement.queryAll(By.css('app-chip'));
+
+    expect(chipElements).toHaveLength(assignedAttributes.length + assignedTags.length);
+  });
+
+  it('emits unassign events when chip remove buttons are clicked', () => {
+    const attributeUnassignSpy = vi.spyOn((component as any).attributeUnassign, 'emit');
+    const tagUnassignSpy = vi.spyOn((component as any).tagUnassign, 'emit');
+    const attributeRemoveButton = fixture.debugElement.query(
+      By.css('app-chip button[aria-label="Remove attribute"]'),
+    )?.nativeElement as HTMLButtonElement;
+    const tagRemoveButton = fixture.debugElement.query(
+      By.css('app-chip button[aria-label="Remove tag"]'),
+    )?.nativeElement as HTMLButtonElement;
+
+    attributeRemoveButton.click();
+    tagRemoveButton.click();
+
+    expect(attributeUnassignSpy).toHaveBeenCalledWith(assignedAttributes[0].id);
+    expect(tagUnassignSpy).toHaveBeenCalledWith(assignedTags[0].id);
+  });
+
   it('emits product type changes for supported values', () => {
     const emitSpy = vi.spyOn((component as any).productTypeChange, 'emit');
 
@@ -173,5 +197,16 @@ describe('ProductForm', () => {
     expect(attributeUnassignSpy).not.toHaveBeenCalled();
     expect(tagAssignSpy).not.toHaveBeenCalled();
     expect(tagUnassignSpy).not.toHaveBeenCalled();
+  });
+
+  it('disables chip remove buttons when sidebar is disabled', () => {
+    fixture.componentRef.setInput('sidebarDisabled', true);
+    fixture.detectChanges();
+    const chipRemoveButtons = fixture.debugElement.queryAll(By.css('app-chip button'));
+
+    expect(chipRemoveButtons.length).toBeGreaterThan(0);
+    expect(
+      chipRemoveButtons.every((button) => (button.nativeElement as HTMLButtonElement).disabled),
+    ).toBe(true);
   });
 });
