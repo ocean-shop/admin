@@ -1,0 +1,65 @@
+src/app/modules/admin/pages/shop/pages/products-update/products-update.ts
+  s_fef3104587c1b2::t_6b2219c13218d8 79-80,178-197
+src/app/modules/admin/pages/shop/helpers/product-editor.facade.spec.ts
+  s_fef3104587c1b2::t_cd22f8e9a306f5 139-142
+  s_fef3104587c1b2::t_9b736c4b03d3af 17,43,95-97,135-138,143-178
+src/app/modules/admin/pages/shop/components/product-form/product-form.spec.ts
+  s_fef3104587c1b2::t_946b6281bba57b 18,60-62,91-92,106,173-193,218-223,229-233,239-243
+src/app/modules/admin/pages/shop/pages/products/models/assign-product-image-item-payload.model.ts
+  s_fef3104587c1b2::t_85d98cbbdd0eae 1-4
+src/app/modules/admin/pages/shop/pages/products-create/constants/products-create.constants.ts
+  s_fef3104587c1b2::t_0682a9f3bef31c 35-37
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/product-form-images.ts
+  s_fef3104587c1b2::t_9c815a1a267e7a 1-116
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/product-form-images.html
+  s_fef3104587c1b2::t_44cc13b378cb39 1-78
+  s_fef3104587c1b2::t_05b26022fb92f0 79-80
+src/app/modules/admin/pages/shop/components/product-form/product-form.ts
+  s_fef3104587c1b2::t_0ed57e2f179d74 8,12,27,51-52,62-66,148-206
+src/app/modules/admin/pages/shop/pages/products-update/constants/products-update.constants.ts
+  s_fef3104587c1b2::t_6258f5161df27d 25-27
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/product-form-images.scss
+  s_fef3104587c1b2::t_bdfb6a2cdbc3e7 1-97
+src/app/modules/admin/pages/shop/pages/products-create/products-create.html
+  s_fef3104587c1b2::t_4bd5bc6c8b24c9 38-39,48-52
+src/app/modules/admin/pages/shop/pages/products/services/products.service.spec.ts
+  s_fef3104587c1b2::t_92638cf76e159c 171-186
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-image-item.model.ts
+  s_fef3104587c1b2::t_e13955fb0e9c82 1-5
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/product-form-images.spec.ts
+  s_fef3104587c1b2::t_2fce9f55b2958e 1-121
+src/app/modules/admin/pages/shop/pages/products/models/assign-product-images-payload.model.ts
+  s_fef3104587c1b2::t_89abdcd4f5b2ac 1-5
+src/app/modules/admin/pages/shop/components/product-form/product-form.html
+  s_fef3104587c1b2::t_bb4e04d5e023fd 32-43
+src/app/modules/admin/pages/shop/facades/product-editor.facade.ts
+  s_fef3104587c1b2::t_a9bd5b69a0ac13 10,53,62,79,84,338-413,558-621
+src/app/modules/admin/pages/shop/pages/products/services/products.service.ts
+  s_fef3104587c1b2::t_a2da993013f308 4,87-92
+src/app/modules/admin/pages/shop/components/product-form/constants/product-form.constants.ts
+  s_fef3104587c1b2::t_c50111148eab54 40-44
+src/app/modules/admin/pages/shop/helpers/models/product-editor-toast-texts.model.ts
+  s_fef3104587c1b2::t_3a2e9b7ad24e33 16-18
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-texts.model.ts
+  s_fef3104587c1b2::t_b14f8c8acad522 33-37
+src/app/modules/admin/pages/shop/pages/products-update/products-update.html
+  s_fef3104587c1b2::t_c5e051106709a3 38-39,48-52
+src/app/modules/admin/pages/shop/pages/products-create/products-create.ts
+  s_fef3104587c1b2::t_4a9de173a11264 74-75,159-178
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "13cc885ef2bdb0141c550532b92b7b15cdca6e3a",
+  "prompts": {},
+  "sessions": {
+    "s_fef3104587c1b2": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "be5987a6-4dd7-4e76-a9a0-e81d71907bc2",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
