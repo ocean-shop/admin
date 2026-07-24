@@ -1,0 +1,69 @@
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.scss
+  s_0f3e46c772fb60::t_6e423ddbdf0f70 1-45
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-basic-info/product-form-basic-info.html
+  s_0f3e46c772fb60::t_7ab12d6c33e380 1-32
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.html
+  s_0f3e46c772fb60::t_048472cc1fb6cd 1-40
+  s_0f3e46c772fb60::t_41b1a9f577be20 41-43
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-pricing-inventory/product-form-pricing-inventory.ts
+  s_0f3e46c772fb60::t_769519533f1962 1-21
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-pricing-inventory/product-form-pricing-inventory.html
+  s_0f3e46c772fb60::t_28a0603785ef7c 1-51
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/product-form-categories.scss
+  s_0f3e46c772fb60::t_89ace971ddc3ec 1-37
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/product-form-tags.html
+  s_0f3e46c772fb60::t_68344d4a879099 1-40
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-basic-info/product-form-basic-info.spec.ts
+  s_0f3e46c772fb60::t_40a68d16ee48f8 1-76
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/product-form-categories.ts
+  s_0f3e46c772fb60::t_29357ae9dbab6d 1-32
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.ts
+  s_0f3e46c772fb60::t_dd0ac06667f8ba 1-55
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/product-form-tags.scss
+  s_0f3e46c772fb60::t_a62d2a05a9f88c 1-45
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/product-form-categories.html
+  s_0f3e46c772fb60::t_df01ac8de7ea83 1-32
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/product-form-categories.spec.ts
+  s_0f3e46c772fb60::t_6397d62c8797ca 1-70
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/product-form-tags.spec.ts
+  s_0f3e46c772fb60::t_4cf8528a907636 1-88
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-pricing-inventory/product-form-pricing-inventory.spec.ts
+  s_0f3e46c772fb60::t_f760927b9952fd 1-51
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-basic-info/product-form-basic-info.scss
+  s_0f3e46c772fb60::t_f82ea615defe7d 1-17
+src/app/modules/admin/pages/shop/components/product-form/product-form.html
+  s_0f3e46c772fb60::t_cf36609c0d820e 29
+  s_0f3e46c772fb60::t_acb06ed4974149 7-21,25-28,30-54
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/product-form-tags.ts
+  s_0f3e46c772fb60::t_c328cfa59f3ab4 1-55
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.spec.ts
+  s_0f3e46c772fb60::t_a832b0fff655cb 1-88
+  s_0f3e46c772fb60::t_d81c779f5d5c40 89-90
+src/app/modules/admin/pages/shop/components/product-form/product-form.ts
+  s_0f3e46c772fb60::t_f4791af401596a 5-9,21-27
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-basic-info/product-form-basic-info.ts
+  s_0f3e46c772fb60::t_ae61667cc69f92 1-32
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-pricing-inventory/product-form-pricing-inventory.scss
+  s_0f3e46c772fb60::t_aa3eac36ac562c 1-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "76f6b8dad52bdcd54006210cef403b45f432cfe1",
+  "prompts": {},
+  "humans": {
+    "h_eee5bfb8805eb8": {
+      "author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  },
+  "sessions": {
+    "s_0f3e46c772fb60": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "5414c3e3-20e4-4301-a135-6080463584ba",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
