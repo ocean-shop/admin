@@ -1,0 +1,44 @@
+<article class="product-form-card" [class.product-form-card-disabled]="sidebarDisabled()">
+  <h2 class="product-form-card-title product-form-card-title-icon">
+    <span class="material-symbols-outlined">list_alt</span>
+    {{ texts().ATTRIBUTES_TITLE }}
+  </h2>
+  <app-input
+    id="attributes-search"
+    [label]="texts().ATTRIBUTES_SEARCH_PLACEHOLDER"
+    [placeholder]="texts().ATTRIBUTES_SEARCH_PLACEHOLDER"
+    [disabled]="sidebarDisabled()"
+    [value]="attributeSearchValue()"
+    (valueChange)="onAttributeSearchChange($event)"
+  />
+  @if (!sidebarDisabled() && attributeSearchValue().trim()) {
+  <div class="product-form-attribute-results">
+    @if (isAttributeSearchLoading()) {
+    <p class="product-form-attribute-state">{{ texts().ATTRIBUTES_SEARCH_LOADING }}</p>
+    } @else if (!attributeSearchResults().length) {
+    <p class="product-form-attribute-state">{{ texts().ATTRIBUTES_SEARCH_EMPTY }}</p>
+    } @else { @for (attribute of attributeSearchResults(); track attribute.id) {
+    <button
+      type="button"
+      class="product-form-attribute-result"
+      (click)="onAttributeAssign(attribute.id)"
+    >
+      {{ attribute.label }}
+    </button>
+    } }
+  </div>
+  }
+  <div class="product-form-chip-list">
+    @if (!assignedAttributes().length) {
+    <span class="product-form-placeholder-chip">{{ texts().ATTRIBUTES_ASSIGNED_EMPTY }}</span>
+    } @else { @for (attribute of assignedAttributes(); track attribute.id) {
+    <app-chip
+      [label]="attribute.label"
+      variant="attribute"
+      removeAriaLabel="Remove attribute"
+      [disabled]="sidebarDisabled()"
+      (remove)="onAttributeUnassign(attribute.id)"
+    />
+    } }
+  </div>
+</article>

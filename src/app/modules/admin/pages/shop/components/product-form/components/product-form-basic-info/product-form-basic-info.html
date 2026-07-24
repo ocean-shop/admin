@@ -1,0 +1,32 @@
+<article class="product-form-card">
+  <h2 class="product-form-card-title">{{ texts().BASIC_INFORMATION_TITLE }}</h2>
+
+  <div class="product-form-field-group">
+    <app-input
+      [id]="fieldIds().PRODUCT_NAME"
+      [label]="texts().PRODUCT_NAME_LABEL"
+      [placeholder]="texts().PRODUCT_NAME_PLACEHOLDER"
+      [control]="productForm().name"
+    />
+  </div>
+
+  <div class="product-form-field-group">
+    <app-radio-group
+      name="product-type"
+      [label]="texts().PRODUCT_TYPE_LABEL"
+      [options]="productTypeOptions()"
+      [selectedValue]="productForm().type().value() ?? productTypeSimple()"
+      (valueChange)="onProductTypeOptionChange($event)"
+    />
+  </div>
+
+  <div class="product-form-field-group">
+    <app-textarea
+      [id]="fieldIds().PRODUCT_DESCRIPTION"
+      [label]="texts().DESCRIPTION_LABEL"
+      [rows]="5"
+      [placeholder]="texts().DESCRIPTION_PLACEHOLDER"
+      [control]="productForm().description"
+    />
+  </div>
+</article>

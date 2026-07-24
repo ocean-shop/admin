@@ -1,0 +1,37 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.product-form-card {
+  @apply rounded-lg border border-outline-variant bg-surface-container-lowest p-6 shadow-sm;
+}
+
+.product-form-card-disabled {
+  @apply opacity-70;
+}
+
+.product-form-card-title {
+  @apply mb-4 border-b border-surface-container pb-2 text-lg font-semibold text-on-surface;
+}
+
+.product-form-card-title-icon {
+  @apply inline-flex items-center gap-2;
+}
+
+.product-form-card-title-icon .material-symbols-outlined {
+  @apply text-[20px] text-primary;
+}
+
+.product-form-static-scroll {
+  @apply max-h-[300px] space-y-2 overflow-y-auto pr-2;
+}
+
+.product-form-tree-row {
+  @apply flex cursor-pointer items-center gap-2 rounded-sm p-1 text-sm text-on-surface transition-colors hover:bg-surface-container;
+}
+
+.product-form-tree-children {
+  @apply ml-6 space-y-2;
+}

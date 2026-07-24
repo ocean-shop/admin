@@ -1,14 +1,12 @@
 import { Component, input, output } from '@angular/core';
-import { FormField } from '@angular/forms/signals';
-import { Checkbox } from '@ui/checkbox/checkbox';
-import { Chip } from '@ui/chip/chip';
-import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
-import { Input } from '@ui/input/input';
-import { RadioGroup } from '@ui/radio-group/radio-group';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
-import { Textarea } from '@ui/textarea/textarea';
 import { ProductType } from '../../pages/products/models/product-type.enum';
+import { ProductFormAttributes } from './components/product-form-attributes/product-form-attributes';
+import { ProductFormBasicInfo } from './components/product-form-basic-info/product-form-basic-info';
+import { ProductFormCategories } from './components/product-form-categories/product-form-categories';
+import { ProductFormPricingInventory } from './components/product-form-pricing-inventory/product-form-pricing-inventory';
+import { ProductFormTags } from './components/product-form-tags/product-form-tags';
 import { ProductFormAssignedAttribute } from './models/product-form-assigned-attribute.model';
 import { ProductFormAssignedTag } from './models/product-form-assigned-tag.model';
 import { ProductFormAttributeOption } from './models/product-form-attribute-option.model';
@@ -20,7 +18,13 @@ import { ProductFormTexts } from './models/product-form-texts.model';
 
 @Component({
   selector: 'app-product-form',
-  imports: [FormField, Checkbox, Chip, Dropdown, Input, RadioGroup, Textarea],
+  imports: [
+    ProductFormAttributes,
+    ProductFormBasicInfo,
+    ProductFormCategories,
+    ProductFormPricingInventory,
+    ProductFormTags,
+  ],
   templateUrl: './product-form.html',
   styleUrl: './product-form.scss',
 })

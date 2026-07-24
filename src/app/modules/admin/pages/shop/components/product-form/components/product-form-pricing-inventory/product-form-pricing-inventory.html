@@ -1,0 +1,51 @@
+<article class="product-form-card">
+  <h2 class="product-form-card-title">{{ texts().PRICING_INVENTORY_TITLE }}</h2>
+
+  <div class="product-form-two-columns">
+    <div class="product-form-field-group">
+      <app-input
+        [id]="fieldIds().PRICE"
+        [label]="texts().PRICE_LABEL"
+        type="number"
+        [placeholder]="texts().PRICE_PLACEHOLDER"
+        [control]="productForm().price"
+      />
+    </div>
+
+    <div class="product-form-field-group">
+      <app-input
+        [id]="fieldIds().OLD_PRICE"
+        [label]="texts().OLD_PRICE_LABEL"
+        type="number"
+        [placeholder]="texts().OLD_PRICE_PLACEHOLDER"
+        [control]="productForm().oldPrice"
+      />
+    </div>
+  </div>
+
+  <div class="product-form-two-columns">
+    <div class="product-form-field-group">
+      <app-input
+        [id]="fieldIds().SKU"
+        [label]="texts().SKU_LABEL"
+        [placeholder]="texts().SKU_PLACEHOLDER"
+        [control]="productForm().sku"
+      />
+    </div>
+
+    <div class="product-form-field-group">
+      <app-dropdown
+        triggerMode="click"
+        variant="form"
+        [options]="statusOptions()"
+        [formField]="productForm().status"
+      />
+    </div>
+  </div>
+
+  <app-checkbox
+    [id]="fieldIds().AVAILABLE"
+    [label]="texts().AVAILABLE_LABEL"
+    [control]="productForm().available"
+  />
+</article>
