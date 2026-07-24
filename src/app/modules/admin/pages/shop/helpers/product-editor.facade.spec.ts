@@ -14,6 +14,7 @@ describe('ProductEditorFacade', () => {
     toggleCategory: ReturnType<typeof vi.fn>;
     toggleAttribute: ReturnType<typeof vi.fn>;
     toggleTag: ReturnType<typeof vi.fn>;
+    assignImages: ReturnType<typeof vi.fn>;
   };
   let mockAttributesService: {
     getAttributes: ReturnType<typeof vi.fn>;
@@ -39,6 +40,7 @@ describe('ProductEditorFacade', () => {
       toggleCategory: vi.fn().mockReturnValue(of({})),
       toggleAttribute: vi.fn().mockReturnValue(of({})),
       toggleTag: vi.fn().mockReturnValue(of({})),
+      assignImages: vi.fn().mockReturnValue(of({})),
     };
     mockAttributesService = {
       getAttributes: vi
@@ -90,6 +92,9 @@ describe('ProductEditorFacade', () => {
         TAG_UNASSIGN_SUCCESS_TITLE: 'Тег відв’язано',
         TAG_ASSIGN_ERROR_TITLE: 'Тег не оновлено',
         TAG_ASSIGN_ERROR_MESSAGE: 'Спробуйте ще раз',
+        IMAGES_ASSIGN_SUCCESS_TITLE: 'Зображення збережено',
+        IMAGES_ASSIGN_ERROR_TITLE: 'Зображення не збережено',
+        IMAGES_ASSIGN_ERROR_MESSAGE: 'Спробуйте ще раз',
       },
     });
   });
@@ -126,5 +131,49 @@ describe('ProductEditorFacade', () => {
     });
     expect(facade.assignedTags()).toEqual([{ id: 'tag-2', label: 'Льон' }]);
     expect(mockToasterService.success).toHaveBeenCalledWith('Тег прив’язано');
+  });
+
+  it('updates image list locally with reorder and remove operations', async () => {
+    const imageFile = new File(['img'], 'img-1.jpg', { type: 'image/jpeg' });
+    const imageFileSecond = new File(['img'], 'img-2.jpg', { type: 'image/jpeg' });
+    vi.spyOn(facade as any, 'mapFilesToImageItems').mockResolvedValue([
+      { id: 'img-1', name: 'img-1.jpg', imageDataUrl: 'data:image/jpeg;base64,Zm9v' },
+      { id: 'img-2', name: 'img-2.jpg', imageDataUrl: 'data:image/jpeg;base64,YmFy' },
+    ]);
+
+    facade.onImageFilesSelected([imageFile, imageFileSecond]);
+    await Promise.resolve();
+
+    const firstId = facade.images()[0]?.id;
+    const secondId = facade.images()[1]?.id;
+    expect(facade.images()).toHaveLength(2);
+    expect(firstId).toBeTruthy();
+    expect(secondId).toBeTruthy();
+
+    facade.onImageMoveDown(firstId!);
+    expect(facade.images()[0].id).toBe(secondId);
+
+    facade.onImageMoveUp(firstId!);
+    expect(facade.images()[0].id).toBe(firstId);
+
+    facade.onImageRemove(firstId!);
+    expect(facade.images()).toHaveLength(1);
+  });
+
+  it('uploads staged images only when requested', () => {
+    facade.images.set([
+      { id: 'img-1', name: 'img-1.jpg', imageDataUrl: 'data:image/jpeg;base64,Zm9v' },
+      { id: 'img-2', name: 'img-2.jpg', imageDataUrl: 'data:image/jpeg;base64,YmFy' },
+    ]);
+
+    facade.uploadImages();
+
+    expect(mockProductsService.assignImages).toHaveBeenCalledWith('product-1', {
+      images: [
+        { image: 'data:image/jpeg;base64,Zm9v', sort: 0 },
+        { image: 'data:image/jpeg;base64,YmFy', sort: 1 },
+      ],
+    });
+    expect(mockToasterService.success).toHaveBeenCalledWith('Зображення збережено');
   });
 });

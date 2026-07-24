@@ -15,6 +15,7 @@ import { ProductFormAttributeOption } from './models/product-form-attribute-opti
 import { ProductFormTagOption } from './models/product-form-tag-option.model';
 import { ProductForm } from './product-form';
 import { ProductFormCategoryNode } from './models/product-form-category-node.model';
+import { ProductFormImageItem } from './models/product-form-image-item.model';
 import { ProductFormModel } from './models/product-form.model';
 import { ProductType } from '../../pages/products/models/product-type.enum';
 
@@ -56,6 +57,9 @@ describe('ProductForm', () => {
     { id: 'tag-2', label: 'Льон' },
   ];
   const assignedTags: ProductFormAssignedTag[] = [{ id: 'tag-5', label: 'Чоловіче' }];
+  const images: ProductFormImageItem[] = [
+    { id: 'img-1', name: 'image-1.jpg', imageDataUrl: 'data:image/jpeg;base64,Zm9v' },
+  ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -84,6 +88,8 @@ describe('ProductForm', () => {
     fixture.componentRef.setInput('isTagSearchLoading', false);
     fixture.componentRef.setInput('tagSearchResults', tagSearchResults);
     fixture.componentRef.setInput('assignedTags', assignedTags);
+    fixture.componentRef.setInput('images', images);
+    fixture.componentRef.setInput('isImageUploadLoading', false);
     fixture.detectChanges();
   });
 
@@ -97,6 +103,7 @@ describe('ProductForm', () => {
     expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.BASIC_INFORMATION_TITLE);
     expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.PRICING_INVENTORY_TITLE);
     expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.CATEGORIES_TITLE);
+    expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.IMAGES_TITLE);
   });
 
   it('renders assigned attributes and tags as chips', () => {
@@ -163,6 +170,27 @@ describe('ProductForm', () => {
     expect(unassignSpy).toHaveBeenCalledWith('tag-5');
   });
 
+  it('emits image events', () => {
+    const filesSelectedSpy = vi.spyOn((component as any).imageFilesSelected, 'emit');
+    const moveUpSpy = vi.spyOn((component as any).imageMoveUp, 'emit');
+    const moveDownSpy = vi.spyOn((component as any).imageMoveDown, 'emit');
+    const removeSpy = vi.spyOn((component as any).imageRemove, 'emit');
+    const uploadSpy = vi.spyOn((component as any).imageUpload, 'emit');
+    const imageFile = new File(['img'], 'img-1.jpg', { type: 'image/jpeg' });
+
+    (component as any).onImageFilesSelected([imageFile]);
+    (component as any).onImageMoveUp('img-1');
+    (component as any).onImageMoveDown('img-1');
+    (component as any).onImageRemove('img-1');
+    (component as any).onImageUpload();
+
+    expect(filesSelectedSpy).toHaveBeenCalledWith([imageFile]);
+    expect(moveUpSpy).toHaveBeenCalledWith('img-1');
+    expect(moveDownSpy).toHaveBeenCalledWith('img-1');
+    expect(removeSpy).toHaveBeenCalledWith('img-1');
+    expect(uploadSpy).toHaveBeenCalled();
+  });
+
   it('does not emit assignments when ids are empty', () => {
     const attributeAssignSpy = vi.spyOn((component as any).attributeAssign, 'emit');
     const attributeUnassignSpy = vi.spyOn((component as any).attributeUnassign, 'emit');
@@ -187,16 +215,32 @@ describe('ProductForm', () => {
     const attributeUnassignSpy = vi.spyOn((component as any).attributeUnassign, 'emit');
     const tagAssignSpy = vi.spyOn((component as any).tagAssign, 'emit');
     const tagUnassignSpy = vi.spyOn((component as any).tagUnassign, 'emit');
+    const imageFilesSelectedSpy = vi.spyOn((component as any).imageFilesSelected, 'emit');
+    const imageMoveUpSpy = vi.spyOn((component as any).imageMoveUp, 'emit');
+    const imageMoveDownSpy = vi.spyOn((component as any).imageMoveDown, 'emit');
+    const imageRemoveSpy = vi.spyOn((component as any).imageRemove, 'emit');
+    const imageUploadSpy = vi.spyOn((component as any).imageUpload, 'emit');
+    const imageFile = new File(['img'], 'img-1.jpg', { type: 'image/jpeg' });
 
     (component as any).onAttributeAssign('attr-1');
     (component as any).onAttributeUnassign('attr-5');
     (component as any).onTagAssign('tag-1');
     (component as any).onTagUnassign('tag-5');
+    (component as any).onImageFilesSelected([imageFile]);
+    (component as any).onImageMoveUp('img-1');
+    (component as any).onImageMoveDown('img-1');
+    (component as any).onImageRemove('img-1');
+    (component as any).onImageUpload();
 
     expect(attributeAssignSpy).not.toHaveBeenCalled();
     expect(attributeUnassignSpy).not.toHaveBeenCalled();
     expect(tagAssignSpy).not.toHaveBeenCalled();
     expect(tagUnassignSpy).not.toHaveBeenCalled();
+    expect(imageFilesSelectedSpy).not.toHaveBeenCalled();
+    expect(imageMoveUpSpy).not.toHaveBeenCalled();
+    expect(imageMoveDownSpy).not.toHaveBeenCalled();
+    expect(imageRemoveSpy).not.toHaveBeenCalled();
+    expect(imageUploadSpy).not.toHaveBeenCalled();
   });
 
   it('disables chip remove buttons when sidebar is disabled', () => {

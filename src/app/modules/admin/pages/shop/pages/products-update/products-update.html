@@ -35,6 +35,8 @@
       [isTagSearchLoading]="isTagSearchLoading()"
       [tagSearchResults]="tagSearchResults()"
       [assignedTags]="assignedTags()"
+      [images]="images()"
+      [isImageUploadLoading]="isImageUploadLoading()"
       (productTypeChange)="onProductTypeChange($event)"
       (categoryToggle)="onCategoryToggle($event)"
       (attributeSearchChange)="onAttributeSearchChange($event)"
@@ -43,6 +45,11 @@
       (tagSearchChange)="onTagSearchChange($event)"
       (tagAssign)="onTagAssign($event)"
       (tagUnassign)="onTagUnassign($event)"
+      (imageFilesSelected)="onImageFilesSelected($event)"
+      (imageMoveUp)="onImageMoveUp($event)"
+      (imageMoveDown)="onImageMoveDown($event)"
+      (imageRemove)="onImageRemove($event)"
+      (imageUpload)="onImageUpload()"
     />
   </form>
 </main>

@@ -7,6 +7,7 @@ import { ProductFormAssignedTag } from '../components/product-form/models/produc
 import { ProductFormAttributeOption } from '../components/product-form/models/product-form-attribute-option.model';
 import { ProductFormCategoryNode } from '../components/product-form/models/product-form-category-node.model';
 import { ProductFormCategoryToggleEvent } from '../components/product-form/models/product-form-category-toggle-event.model';
+import { ProductFormImageItem } from '../components/product-form/models/product-form-image-item.model';
 import { ProductFormTagOption } from '../components/product-form/models/product-form-tag-option.model';
 import { extractCategoriesFromResponse } from '../helpers/categories-response.helper';
 import {
@@ -49,6 +50,7 @@ export class ProductEditorFacade {
   readonly isAttributeToggleLoading = signal(false);
   readonly isTagSearchLoading = signal(false);
   readonly isTagToggleLoading = signal(false);
+  readonly isImageUploadLoading = signal(false);
   readonly categoryItems = signal<CategoryApiItem[]>([]);
   readonly selectedCategoryIds = signal<Set<string>>(new Set());
   readonly attributeSearchValue = signal('');
@@ -57,6 +59,7 @@ export class ProductEditorFacade {
   readonly tagSearchValue = signal('');
   readonly tagSearchResults = signal<ProductFormTagOption[]>([]);
   readonly assignedTags = signal<ProductFormAssignedTag[]>([]);
+  readonly images = signal<ProductFormImageItem[]>([]);
 
   constructor() {
     this.destroyRef.onDestroy(() => {
@@ -73,10 +76,12 @@ export class ProductEditorFacade {
     this.selectedCategoryIds.set(new Set());
     this.assignedAttributes.set([]);
     this.assignedTags.set([]);
+    this.images.set([]);
     this.attributeSearchValue.set('');
     this.attributeSearchResults.set([]);
     this.tagSearchValue.set('');
     this.tagSearchResults.set([]);
+    this.isImageUploadLoading.set(false);
     this.clearAttributeSearchDebounce();
     this.clearTagSearchDebounce();
     this.attributeSearchRequestId = 0;
@@ -330,6 +335,82 @@ export class ProductEditorFacade {
       });
   }
 
+  onImageFilesSelected(files: File[]): void {
+    if (!this.isSidebarEnabled() || this.isImageUploadLoading()) {
+      return;
+    }
+
+    const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+    if (!imageFiles.length) {
+      return;
+    }
+
+    void this.appendImageFiles(imageFiles);
+  }
+
+  onImageMoveUp(imageId: string): void {
+    if (!this.isSidebarEnabled() || this.isImageUploadLoading()) {
+      return;
+    }
+
+    this.images.update((currentImages) => this.moveImageByOffset(currentImages, imageId, -1));
+  }
+
+  onImageMoveDown(imageId: string): void {
+    if (!this.isSidebarEnabled() || this.isImageUploadLoading()) {
+      return;
+    }
+
+    this.images.update((currentImages) => this.moveImageByOffset(currentImages, imageId, 1));
+  }
+
+  onImageRemove(imageId: string): void {
+    if (!this.isSidebarEnabled() || this.isImageUploadLoading()) {
+      return;
+    }
+
+    this.images.update((currentImages) =>
+      currentImages.filter((image) => image.id !== imageId.trim()),
+    );
+  }
+
+  uploadImages(): void {
+    if (!this.isSidebarEnabled() || this.isImageUploadLoading()) {
+      return;
+    }
+
+    const productId = this.getProductId();
+    if (!productId) {
+      return;
+    }
+
+    const images = this.images();
+    if (!images.length) {
+      return;
+    }
+
+    this.isImageUploadLoading.set(true);
+    this.productsService
+      .assignImages(productId, {
+        images: images.map((image, index) => ({ image: image.imageDataUrl, sort: index })),
+      })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isImageUploadLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.toasterService.success(this.requireContext().texts.IMAGES_ASSIGN_SUCCESS_TITLE);
+        },
+        error: () => {
+          this.toasterService.danger(
+            this.requireContext().texts.IMAGES_ASSIGN_ERROR_TITLE,
+            this.requireContext().texts.IMAGES_ASSIGN_ERROR_MESSAGE,
+          );
+        },
+      });
+  }
+
   private queueAttributeSearch(): void {
     this.clearAttributeSearchDebounce();
 
@@ -473,5 +554,69 @@ export class ProductEditorFacade {
     }
 
     return this.context;
+  }
+
+  private async appendImageFiles(imageFiles: File[]): Promise<void> {
+    const mappedImages = await this.mapFilesToImageItems(imageFiles);
+    if (!mappedImages.length) {
+      return;
+    }
+
+    this.images.update((currentImages) => [...currentImages, ...mappedImages]);
+  }
+
+  private async mapFilesToImageItems(imageFiles: File[]): Promise<ProductFormImageItem[]> {
+    const mappedItems = await Promise.all(
+      imageFiles.map(async (file, index) => ({
+        id: this.createImageId(file, index),
+        name: file.name.trim() || `image-${Date.now()}-${index + 1}`,
+        imageDataUrl: await this.readFileAsDataUrl(file),
+      })),
+    );
+
+    return mappedItems.filter((item) => item.imageDataUrl.startsWith('data:image/'));
+  }
+
+  private moveImageByOffset(
+    images: ProductFormImageItem[],
+    imageId: string,
+    offset: -1 | 1,
+  ): ProductFormImageItem[] {
+    const normalizedImageId = imageId.trim();
+    if (!normalizedImageId) {
+      return images;
+    }
+
+    const currentIndex = images.findIndex((image) => image.id === normalizedImageId);
+    if (currentIndex < 0) {
+      return images;
+    }
+
+    const targetIndex = currentIndex + offset;
+    if (targetIndex < 0 || targetIndex >= images.length) {
+      return images;
+    }
+
+    const nextImages = [...images];
+    const currentItem = nextImages[currentIndex];
+    nextImages[currentIndex] = nextImages[targetIndex];
+    nextImages[targetIndex] = currentItem;
+
+    return nextImages;
+  }
+
+  private readFileAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ''));
+      reader.onerror = () => reject(new Error('Failed to read image file.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  private createImageId(file: File, index: number): string {
+    const randomPart = Math.random().toString(36).slice(2, 8);
+    const namePart = file.name.trim().replace(/\s+/g, '-').toLowerCase() || 'image';
+    return `${namePart}-${Date.now()}-${index}-${randomPart}`;
   }
 }

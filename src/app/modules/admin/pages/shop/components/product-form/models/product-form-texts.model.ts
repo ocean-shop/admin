@@ -30,4 +30,9 @@ export type ProductFormTexts = {
   TAGS_SEARCH_LOADING: string;
   TAGS_SEARCH_EMPTY: string;
   TAGS_ASSIGNED_EMPTY: string;
+  IMAGES_TITLE: string;
+  IMAGES_UPLOAD_LABEL: string;
+  IMAGES_UPLOAD_LOADING_LABEL: string;
+  IMAGES_DROPZONE_HINT: string;
+  IMAGES_ASSIGNED_EMPTY: string;
 };

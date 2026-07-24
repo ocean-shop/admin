@@ -71,6 +71,8 @@ export class ProductsCreate implements OnInit {
   protected readonly tagSearchValue = this.productEditorFacade.tagSearchValue;
   protected readonly tagSearchResults = this.productEditorFacade.tagSearchResults;
   protected readonly assignedTags = this.productEditorFacade.assignedTags;
+  protected readonly images = this.productEditorFacade.images;
+  protected readonly isImageUploadLoading = this.productEditorFacade.isImageUploadLoading;
 
   protected readonly productFormModel = signal<ProductCreateFormModel>({
     ...PRODUCTS_CREATE_DEFAULT_FORM_VALUE,
@@ -152,6 +154,26 @@ export class ProductsCreate implements OnInit {
 
   protected onTagUnassign(tagId: string): void {
     this.productEditorFacade.onTagUnassign(tagId);
+  }
+
+  protected onImageFilesSelected(files: File[]): void {
+    this.productEditorFacade.onImageFilesSelected(files);
+  }
+
+  protected onImageMoveUp(imageId: string): void {
+    this.productEditorFacade.onImageMoveUp(imageId);
+  }
+
+  protected onImageMoveDown(imageId: string): void {
+    this.productEditorFacade.onImageMoveDown(imageId);
+  }
+
+  protected onImageRemove(imageId: string): void {
+    this.productEditorFacade.onImageRemove(imageId);
+  }
+
+  protected onImageUpload(): void {
+    this.productEditorFacade.uploadImages();
   }
 
   private watchShopId(): void {

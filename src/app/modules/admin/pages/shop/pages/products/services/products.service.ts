@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AssignProductImagesPayload } from '../models/assign-product-images-payload.model';
 import { CreateProductPayload } from '../models/create-product-payload.model';
 import {
   ProductApiItem,
@@ -79,6 +80,12 @@ export class ProductsService {
 
   toggleTag(productId: string, payload: ToggleProductTagPayload): Observable<void> {
     return this.http.post<void>(`${this.API_URL}/catalog/products/${productId}/tags`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  assignImages(productId: string, payload: AssignProductImagesPayload): Observable<void> {
+    return this.http.put<void>(`${this.API_URL}/catalog/products/${productId}/images`, payload, {
       withCredentials: true,
     });
   }

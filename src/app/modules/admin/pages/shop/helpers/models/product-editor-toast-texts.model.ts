@@ -13,4 +13,7 @@ export type ProductEditorToastTexts = {
   TAG_UNASSIGN_SUCCESS_TITLE: string;
   TAG_ASSIGN_ERROR_TITLE: string;
   TAG_ASSIGN_ERROR_MESSAGE: string;
+  IMAGES_ASSIGN_SUCCESS_TITLE: string;
+  IMAGES_ASSIGN_ERROR_TITLE: string;
+  IMAGES_ASSIGN_ERROR_MESSAGE: string;
 };

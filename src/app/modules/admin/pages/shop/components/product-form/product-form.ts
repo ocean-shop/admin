@@ -5,9 +5,11 @@ import { ProductType } from '../../pages/products/models/product-type.enum';
 import { ProductFormAttributes } from './components/product-form-attributes/product-form-attributes';
 import { ProductFormBasicInfo } from './components/product-form-basic-info/product-form-basic-info';
 import { ProductFormCategories } from './components/product-form-categories/product-form-categories';
+import { ProductFormImages } from './components/product-form-images/product-form-images';
 import { ProductFormPricingInventory } from './components/product-form-pricing-inventory/product-form-pricing-inventory';
 import { ProductFormTags } from './components/product-form-tags/product-form-tags';
 import { ProductFormAssignedAttribute } from './models/product-form-assigned-attribute.model';
+import { ProductFormImageItem } from './models/product-form-image-item.model';
 import { ProductFormAssignedTag } from './models/product-form-assigned-tag.model';
 import { ProductFormAttributeOption } from './models/product-form-attribute-option.model';
 import { ProductFormTagOption } from './models/product-form-tag-option.model';
@@ -22,6 +24,7 @@ import { ProductFormTexts } from './models/product-form-texts.model';
     ProductFormAttributes,
     ProductFormBasicInfo,
     ProductFormCategories,
+    ProductFormImages,
     ProductFormPricingInventory,
     ProductFormTags,
   ],
@@ -45,6 +48,8 @@ export class ProductForm {
   readonly isTagSearchLoading = input<boolean>(false);
   readonly tagSearchResults = input<ProductFormTagOption[]>([]);
   readonly assignedTags = input<ProductFormAssignedTag[]>([]);
+  readonly images = input<ProductFormImageItem[]>([]);
+  readonly isImageUploadLoading = input<boolean>(false);
 
   readonly productTypeChange = output<ProductType>();
   readonly categoryToggle = output<ProductFormCategoryToggleEvent>();
@@ -54,6 +59,11 @@ export class ProductForm {
   readonly tagSearchChange = output<string>();
   readonly tagAssign = output<string>();
   readonly tagUnassign = output<string>();
+  readonly imageFilesSelected = output<File[]>();
+  readonly imageMoveUp = output<string>();
+  readonly imageMoveDown = output<string>();
+  readonly imageRemove = output<string>();
+  readonly imageUpload = output<void>();
 
   protected onProductTypeOptionChange(value: string | number | boolean): void {
     if (value !== ProductType.Simple && value !== ProductType.Variable) {
@@ -134,5 +144,64 @@ export class ProductForm {
     }
 
     this.tagUnassign.emit(normalizedTagId);
+  }
+
+  protected onImageFilesSelected(files: File[]): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    if (!files.length) {
+      return;
+    }
+
+    this.imageFilesSelected.emit(files);
+  }
+
+  protected onImageMoveUp(imageId: string): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    const normalizedImageId = imageId.trim();
+    if (!normalizedImageId) {
+      return;
+    }
+
+    this.imageMoveUp.emit(normalizedImageId);
+  }
+
+  protected onImageMoveDown(imageId: string): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    const normalizedImageId = imageId.trim();
+    if (!normalizedImageId) {
+      return;
+    }
+
+    this.imageMoveDown.emit(normalizedImageId);
+  }
+
+  protected onImageRemove(imageId: string): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    const normalizedImageId = imageId.trim();
+    if (!normalizedImageId) {
+      return;
+    }
+
+    this.imageRemove.emit(normalizedImageId);
+  }
+
+  protected onImageUpload(): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.imageUpload.emit();
   }
 }

@@ -32,6 +32,9 @@ export const PRODUCTS_CREATE_TEXTS = {
   TAG_UNASSIGN_SUCCESS_TITLE: 'Тег відв’язано',
   TAG_ASSIGN_ERROR_TITLE: 'Не вдалося оновити тег',
   TAG_ASSIGN_ERROR_MESSAGE: 'Спробуйте ще раз через кілька секунд.',
+  IMAGES_ASSIGN_SUCCESS_TITLE: 'Зображення збережено',
+  IMAGES_ASSIGN_ERROR_TITLE: 'Не вдалося зберегти зображення',
+  IMAGES_ASSIGN_ERROR_MESSAGE: 'Спробуйте ще раз через кілька секунд.',
 };
 
 export const PRODUCTS_CREATE_FIELD_IDS = PRODUCT_FORM_FIELD_IDS;

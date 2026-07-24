@@ -29,6 +29,18 @@
       (categoryToggle)="onCategoryCheckedChange($event.categoryId, $event.checked)"
     />
 
+    <app-product-form-images
+      [texts]="texts()"
+      [sidebarDisabled]="sidebarDisabled()"
+      [images]="images()"
+      [isUploadLoading]="isImageUploadLoading()"
+      (filesSelected)="onImageFilesSelected($event)"
+      (moveUp)="onImageMoveUp($event)"
+      (moveDown)="onImageMoveDown($event)"
+      (remove)="onImageRemove($event)"
+      (upload)="onImageUpload()"
+    />
+
     <app-product-form-attributes
       [texts]="texts()"
       [sidebarDisabled]="sidebarDisabled()"

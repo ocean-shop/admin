@@ -168,6 +168,22 @@ describe('ProductsService', () => {
     req.flush({});
   });
 
+  it('assigns product images with sort order', () => {
+    const payload = {
+      images: [
+        { image: 'data:image/jpeg;base64,Zm9v', sort: 0 },
+        { image: 'data:image/jpeg;base64,YmFy', sort: 1 },
+      ],
+    };
+    service.assignImages('product-1', payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/images');
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({});
+  });
+
   it('deletes product by id', () => {
     service.deleteProduct('product-1').subscribe();
 
