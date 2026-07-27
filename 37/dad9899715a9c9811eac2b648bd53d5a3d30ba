@@ -1,0 +1,62 @@
+src/ui/dropdown/dropdown.scss
+  s_df62c6586fb20b::t_b1ce747a970b8b 48
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/product-form-categories.scss
+  h_eee5bfb8805eb8 8
+  s_df62c6586fb20b::t_8d570984469a1f 28
+src/app/modules/admin/pages/shop/components/product-form/product-form.spec.ts
+  s_52e4d63a8de354::t_14fa9d6fae3780 109-129
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-basic-info/product-form-basic-info.scss
+  h_eee5bfb8805eb8 8
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-basic-info/product-form-basic-info.ts
+  s_df62c6586fb20b::t_d4b6cc71a2b7dd 2-4,15,23
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-basic-info/product-form-basic-info.spec.ts
+  s_df62c6586fb20b::t_273a01576188af 8,47
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/product-form-tags.scss
+  s_df62c6586fb20b::t_4e8df8f2eae491 20
+src/app/modules/admin/pages/shop/pages/products-update/products-update.ts
+  s_52e4d63a8de354::t_398cdc4f411667 3
+  s_52e4d63a8de354::t_af6dbdfed5e566 117
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-basic-info/product-form-basic-info.html
+  s_df62c6586fb20b::t_20cf98af5fe847 13-21
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-pricing-inventory/product-form-pricing-inventory.ts
+  s_df62c6586fb20b::t_719ad25ba5a694 9
+src/app/modules/admin/pages/shop/pages/products-update/products-update.spec.ts
+  s_52e4d63a8de354::t_a3dd249bc4750b 3,271
+src/app/modules/admin/pages/shop/components/product-form/product-form.html
+  s_52e4d63a8de354::t_9a56801fca0188 17,23
+  s_df62c6586fb20b::t_7519b39afa5258 11,34-43
+  h_eee5bfb8805eb8 44-45
+src/app/modules/admin/pages/shop/components/product-form/product-form.ts
+  s_52e4d63a8de354::t_7a8c04247e62ae 1,67-69
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.scss
+  s_df62c6586fb20b::t_aa6c754a25234c 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "37dad9899715a9c9811eac2b648bd53d5a3d30ba",
+  "prompts": {},
+  "humans": {
+    "h_eee5bfb8805eb8": {
+      "author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  },
+  "sessions": {
+    "s_52e4d63a8de354": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ce0d96ac-0385-438f-b7d4-ec376b5ac75b",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    },
+    "s_df62c6586fb20b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "3568f47c-90c5-4c01-b76f-94dc5646a43f",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
