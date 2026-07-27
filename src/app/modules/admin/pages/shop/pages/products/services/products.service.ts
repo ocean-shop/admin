@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AssignProductImagesPayload } from '../models/assign-product-images-payload.model';
+import { ChangeProductImageSortPayload } from '../models/change-product-image-sort-payload.model';
 import { CreateProductPayload } from '../models/create-product-payload.model';
 import {
   ProductApiItem,
@@ -86,6 +87,18 @@ export class ProductsService {
 
   assignImages(productId: string, payload: AssignProductImagesPayload): Observable<void> {
     return this.http.put<void>(`${this.API_URL}/catalog/products/${productId}/images`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  changeImageSort(imageId: string, payload: ChangeProductImageSortPayload): Observable<void> {
+    return this.http.patch<void>(`${this.API_URL}/catalog/images/${imageId}/sort`, payload, {
+      withCredentials: true,
+    });
+  }
+
+  removeImage(imageId: string): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/catalog/images/${imageId}`, {
       withCredentials: true,
     });
   }

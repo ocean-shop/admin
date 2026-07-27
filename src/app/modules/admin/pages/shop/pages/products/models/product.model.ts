@@ -28,6 +28,15 @@ export type ProductTagApiItem = {
   } | null;
 };
 
+export type ProductImageApiItem = {
+  id?: string | null;
+  image?: string | null;
+  url?: string | null;
+  src?: string | null;
+  name?: string | null;
+  title?: string | null;
+};
+
 export type ProductApiItem = {
   id?: string | null;
   shopId?: string | null;
@@ -44,6 +53,7 @@ export type ProductApiItem = {
   attributes?: (ProductAttributeApiItem | string)[] | null;
   attributeTypes?: (ProductAttributeApiItem | string)[] | null;
   tags?: (ProductTagApiItem | string)[] | null;
+  images?: (ProductImageApiItem | string)[] | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 };

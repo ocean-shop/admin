@@ -184,6 +184,26 @@ describe('ProductsService', () => {
     req.flush({});
   });
 
+  it('changes image sort direction', () => {
+    const payload = { direction: 'up' as const };
+    service.changeImageSort('image-1', payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/images/image-1/sort');
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({});
+  });
+
+  it('removes image by id', () => {
+    service.removeImage('image-2').subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/images/image-2');
+    expect(req.request.method).toBe('DELETE');
+    expect(req.request.withCredentials).toBe(true);
+    req.flush({});
+  });
+
   it('deletes product by id', () => {
     service.deleteProduct('product-1').subscribe();
 

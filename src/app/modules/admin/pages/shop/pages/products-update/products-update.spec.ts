@@ -58,6 +58,7 @@ describe('ProductsUpdate', () => {
           available: false,
           attributes: [{ id: 'attr-1', name: 'Колір', value: 'Синій' }],
           tags: [{ id: 'tag-1', name: 'Літо' }],
+          images: [{ id: 'img-1', image: 'https://cdn.example.com/cover.jpg', name: 'Cover' }],
         }),
       ),
       updateProduct: vi.fn().mockReturnValue(of({ id: 'product-1' })),
@@ -136,6 +137,9 @@ describe('ProductsUpdate', () => {
       { id: 'attr-1', label: 'Колір: Синій' },
     ]);
     expect((component as any).assignedTags()).toEqual([{ id: 'tag-1', label: 'Літо' }]);
+    expect((component as any).images()).toEqual([
+      { id: 'img-1', name: 'Cover', imageDataUrl: 'https://cdn.example.com/cover.jpg' },
+    ]);
   });
 
   it('toggles product category assignment', () => {

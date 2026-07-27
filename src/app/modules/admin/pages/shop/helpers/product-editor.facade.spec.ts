@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { AttributesService } from '../pages/attributes/services/attributes.service';
 import { CategoriesService } from '../pages/categories/services/categories.service';
 import { ProductsService } from '../pages/products/services/products.service';
@@ -11,10 +11,13 @@ import { ProductEditorFacade } from '../facades/product-editor.facade';
 describe('ProductEditorFacade', () => {
   let facade: ProductEditorFacade;
   let mockProductsService: {
+    getProductById: ReturnType<typeof vi.fn>;
     toggleCategory: ReturnType<typeof vi.fn>;
     toggleAttribute: ReturnType<typeof vi.fn>;
     toggleTag: ReturnType<typeof vi.fn>;
     assignImages: ReturnType<typeof vi.fn>;
+    changeImageSort: ReturnType<typeof vi.fn>;
+    removeImage: ReturnType<typeof vi.fn>;
   };
   let mockAttributesService: {
     getAttributes: ReturnType<typeof vi.fn>;
@@ -37,10 +40,20 @@ describe('ProductEditorFacade', () => {
     sidebarEnabled = true;
 
     mockProductsService = {
+      getProductById: vi.fn().mockReturnValue(
+        of({
+          id: 'product-1',
+          images: [
+            { id: 'api-img-1', image: 'https://cdn.example.com/img-1.jpg', name: 'Image 1' },
+          ],
+        }),
+      ),
       toggleCategory: vi.fn().mockReturnValue(of({})),
       toggleAttribute: vi.fn().mockReturnValue(of({})),
       toggleTag: vi.fn().mockReturnValue(of({})),
       assignImages: vi.fn().mockReturnValue(of({})),
+      changeImageSort: vi.fn().mockReturnValue(of({})),
+      removeImage: vi.fn().mockReturnValue(of({})),
     };
     mockAttributesService = {
       getAttributes: vi
@@ -133,7 +146,7 @@ describe('ProductEditorFacade', () => {
     expect(mockToasterService.success).toHaveBeenCalledWith('Тег прив’язано');
   });
 
-  it('updates image list locally with reorder and remove operations', async () => {
+  it('calls image sort/remove endpoints and updates state on success', async () => {
     const imageFile = new File(['img'], 'img-1.jpg', { type: 'image/jpeg' });
     const imageFileSecond = new File(['img'], 'img-2.jpg', { type: 'image/jpeg' });
     vi.spyOn(facade as any, 'mapFilesToImageItems').mockResolvedValue([
@@ -151,13 +164,51 @@ describe('ProductEditorFacade', () => {
     expect(secondId).toBeTruthy();
 
     facade.onImageMoveDown(firstId!);
+    expect(mockProductsService.changeImageSort).toHaveBeenNthCalledWith(1, firstId, {
+      direction: 'down',
+    });
     expect(facade.images()[0].id).toBe(secondId);
 
     facade.onImageMoveUp(firstId!);
+    expect(mockProductsService.changeImageSort).toHaveBeenNthCalledWith(2, firstId, {
+      direction: 'up',
+    });
     expect(facade.images()[0].id).toBe(firstId);
 
     facade.onImageRemove(firstId!);
+    expect(mockProductsService.removeImage).toHaveBeenCalledWith(firstId);
     expect(facade.images()).toHaveLength(1);
+  });
+
+  it('keeps image order and shows error when sort request fails', () => {
+    facade.images.set([
+      { id: 'img-1', name: 'img-1.jpg', imageDataUrl: 'https://cdn.example.com/img-1.jpg' },
+      { id: 'img-2', name: 'img-2.jpg', imageDataUrl: 'https://cdn.example.com/img-2.jpg' },
+    ]);
+    mockProductsService.changeImageSort.mockReturnValueOnce(throwError(() => new Error('Failed')));
+
+    facade.onImageMoveDown('img-1');
+
+    expect(facade.images().map((image) => image.id)).toEqual(['img-1', 'img-2']);
+    expect(mockToasterService.danger).toHaveBeenCalledWith(
+      'Зображення не збережено',
+      'Спробуйте ще раз',
+    );
+  });
+
+  it('keeps image in state and shows error when remove request fails', () => {
+    facade.images.set([
+      { id: 'img-1', name: 'img-1.jpg', imageDataUrl: 'https://cdn.example.com/img-1.jpg' },
+    ]);
+    mockProductsService.removeImage.mockReturnValueOnce(throwError(() => new Error('Failed')));
+
+    facade.onImageRemove('img-1');
+
+    expect(facade.images()).toHaveLength(1);
+    expect(mockToasterService.danger).toHaveBeenCalledWith(
+      'Зображення не збережено',
+      'Спробуйте ще раз',
+    );
   });
 
   it('uploads staged images only when requested', () => {
@@ -174,6 +225,14 @@ describe('ProductEditorFacade', () => {
         { image: 'data:image/jpeg;base64,YmFy', sort: 1 },
       ],
     });
+    expect(mockProductsService.getProductById).toHaveBeenCalledWith('product-1');
+    expect(facade.images()).toEqual([
+      {
+        id: 'api-img-1',
+        name: 'Image 1',
+        imageDataUrl: 'https://cdn.example.com/img-1.jpg',
+      },
+    ]);
     expect(mockToasterService.success).toHaveBeenCalledWith('Зображення збережено');
   });
 });

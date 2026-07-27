@@ -1,7 +1,7 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { finalize } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
 import { ProductFormAssignedAttribute } from '../components/product-form/models/product-form-assigned-attribute.model';
 import { ProductFormAssignedTag } from '../components/product-form/models/product-form-assigned-tag.model';
 import { ProductFormAttributeOption } from '../components/product-form/models/product-form-attribute-option.model';
@@ -10,6 +10,7 @@ import { ProductFormCategoryToggleEvent } from '../components/product-form/model
 import { ProductFormImageItem } from '../components/product-form/models/product-form-image-item.model';
 import { ProductFormTagOption } from '../components/product-form/models/product-form-tag-option.model';
 import { extractCategoriesFromResponse } from '../helpers/categories-response.helper';
+import { extractProductImages } from '../helpers/product-api-mapping.helper';
 import {
   buildProductCategoryTreeNodes,
   updateSelectedCategoryIds,
@@ -349,19 +350,11 @@ export class ProductEditorFacade {
   }
 
   onImageMoveUp(imageId: string): void {
-    if (!this.isSidebarEnabled() || this.isImageUploadLoading()) {
-      return;
-    }
-
-    this.images.update((currentImages) => this.moveImageByOffset(currentImages, imageId, -1));
+    this.changeImageSort(imageId, 'up', -1);
   }
 
   onImageMoveDown(imageId: string): void {
-    if (!this.isSidebarEnabled() || this.isImageUploadLoading()) {
-      return;
-    }
-
-    this.images.update((currentImages) => this.moveImageByOffset(currentImages, imageId, 1));
+    this.changeImageSort(imageId, 'down', 1);
   }
 
   onImageRemove(imageId: string): void {
@@ -369,9 +362,31 @@ export class ProductEditorFacade {
       return;
     }
 
-    this.images.update((currentImages) =>
-      currentImages.filter((image) => image.id !== imageId.trim()),
-    );
+    const normalizedImageId = imageId.trim();
+    if (!normalizedImageId) {
+      return;
+    }
+
+    this.isImageUploadLoading.set(true);
+    this.productsService
+      .removeImage(normalizedImageId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isImageUploadLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.images.update((currentImages) =>
+            currentImages.filter((image) => image.id !== normalizedImageId),
+          );
+        },
+        error: () => {
+          this.toasterService.danger(
+            this.requireContext().texts.IMAGES_ASSIGN_ERROR_TITLE,
+            this.requireContext().texts.IMAGES_ASSIGN_ERROR_MESSAGE,
+          );
+        },
+      });
   }
 
   uploadImages(): void {
@@ -395,11 +410,13 @@ export class ProductEditorFacade {
         images: images.map((image, index) => ({ image: image.imageDataUrl, sort: index })),
       })
       .pipe(
+        switchMap(() => this.productsService.getProductById(productId)),
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.isImageUploadLoading.set(false)),
       )
       .subscribe({
-        next: () => {
+        next: (product) => {
+          this.images.set(extractProductImages(product));
           this.toasterService.success(this.requireContext().texts.IMAGES_ASSIGN_SUCCESS_TITLE);
         },
         error: () => {
@@ -575,6 +592,38 @@ export class ProductEditorFacade {
     );
 
     return mappedItems.filter((item) => item.imageDataUrl.startsWith('data:image/'));
+  }
+
+  private changeImageSort(imageId: string, direction: 'up' | 'down', offset: -1 | 1): void {
+    if (!this.isSidebarEnabled() || this.isImageUploadLoading()) {
+      return;
+    }
+
+    const normalizedImageId = imageId.trim();
+    if (!normalizedImageId) {
+      return;
+    }
+
+    this.isImageUploadLoading.set(true);
+    this.productsService
+      .changeImageSort(normalizedImageId, { direction })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isImageUploadLoading.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.images.update((currentImages) =>
+            this.moveImageByOffset(currentImages, normalizedImageId, offset),
+          );
+        },
+        error: () => {
+          this.toasterService.danger(
+            this.requireContext().texts.IMAGES_ASSIGN_ERROR_TITLE,
+            this.requireContext().texts.IMAGES_ASSIGN_ERROR_MESSAGE,
+          );
+        },
+      });
   }
 
   private moveImageByOffset(

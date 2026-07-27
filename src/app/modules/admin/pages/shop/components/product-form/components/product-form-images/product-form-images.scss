@@ -61,7 +61,7 @@
 }
 
 .product-form-image-row {
-  @apply flex min-h-24 items-center justify-between gap-3 rounded-sm border border-surface-dim bg-surface p-2;
+  @apply flex min-h-20 items-center justify-between gap-3 rounded-sm border border-surface-dim bg-surface p-2;
 }
 
 .product-form-image-row-content {
@@ -69,7 +69,7 @@
 }
 
 .product-form-image-preview {
-  @apply h-16 w-16 rounded-sm object-cover;
+  @apply h-14 w-14 rounded-sm object-cover;
 }
 
 .product-form-image-meta {

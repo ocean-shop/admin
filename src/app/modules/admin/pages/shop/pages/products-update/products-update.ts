@@ -23,6 +23,7 @@ import { buildUpdateProductPayload } from '../../helpers/product-form-payload.he
 import {
   extractProductAttributes,
   extractProductCategoryIds,
+  extractProductImages,
   extractProductTags,
   mapProductToFormModel,
 } from '../../helpers/product-api-mapping.helper';
@@ -230,6 +231,7 @@ export class ProductsUpdate implements OnInit {
         next: (product) => {
           this.productFormModel.set(mapProductToFormModel(product));
           this.productEditorFacade.selectedCategoryIds.set(extractProductCategoryIds(product));
+          this.productEditorFacade.images.set(extractProductImages(product));
           this.productEditorFacade.assignedAttributes.set(
             extractProductAttributes(product, {
               attributesFallbackLabel: PRODUCTS_UPDATE_TEXTS.ATTRIBUTES_TITLE,

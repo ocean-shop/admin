@@ -2,6 +2,7 @@ import { ProductStatus } from '../pages/products/models/product-status.enum';
 import { ProductType } from '../pages/products/models/product-type.enum';
 import {
   extractProductAttributes,
+  extractProductImages,
   extractProductTags,
   mapProductToFormModel,
 } from './product-api-mapping.helper';
@@ -57,6 +58,35 @@ describe('product-api-mapping.helper', () => {
     ).toEqual([
       { id: 'tag-raw', label: 'tag-raw' },
       { id: 'tag-2', label: 'Теги' },
+    ]);
+  });
+
+  it('extracts product images from mixed shapes', () => {
+    expect(
+      extractProductImages({
+        images: [
+          'https://cdn.example.com/first.jpg',
+          { id: 'img-2', image: 'https://cdn.example.com/second.jpg', name: 'Second image' },
+          { url: 'https://cdn.example.com/third.jpg', title: 'Third image' },
+          { src: '' },
+        ],
+      }),
+    ).toEqual([
+      {
+        id: 'product-image-0-https://cdn.example.com/first.jpg',
+        name: 'Image 1',
+        imageDataUrl: 'https://cdn.example.com/first.jpg',
+      },
+      {
+        id: 'img-2',
+        name: 'Second image',
+        imageDataUrl: 'https://cdn.example.com/second.jpg',
+      },
+      {
+        id: 'product-image-2-https://cdn.example.com/third.jpg',
+        name: 'Third image',
+        imageDataUrl: 'https://cdn.example.com/third.jpg',
+      },
     ]);
   });
 });

@@ -1,5 +1,6 @@
 import { ProductFormAssignedAttribute } from '../components/product-form/models/product-form-assigned-attribute.model';
 import { ProductFormAssignedTag } from '../components/product-form/models/product-form-assigned-tag.model';
+import { ProductFormImageItem } from '../components/product-form/models/product-form-image-item.model';
 import { ProductFormModel } from '../components/product-form/models/product-form.model';
 import { ProductApiItem } from '../pages/products/models/product.model';
 import { ProductStatus } from '../pages/products/models/product-status.enum';
@@ -119,6 +120,46 @@ export const extractProductTags = (
     }
 
     return [...accumulator, currentTag];
+  }, []);
+};
+
+export const extractProductImages = (product: ProductApiItem): ProductFormImageItem[] => {
+  const productImages = product.images ?? [];
+
+  return productImages.reduce<ProductFormImageItem[]>((accumulator, productImage, index) => {
+    if (typeof productImage === 'string') {
+      const imageUrl = productImage.trim();
+      if (!imageUrl) {
+        return accumulator;
+      }
+
+      return [
+        ...accumulator,
+        {
+          id: `product-image-${index}-${imageUrl}`,
+          name: `Image ${index + 1}`,
+          imageDataUrl: imageUrl,
+        },
+      ];
+    }
+
+    const imageUrl =
+      productImage.image?.trim() || productImage.url?.trim() || productImage.src?.trim() || '';
+    if (!imageUrl) {
+      return accumulator;
+    }
+
+    const imageId = productImage.id?.trim() || `product-image-${index}-${imageUrl}`;
+    const imageName =
+      productImage.name?.trim() || productImage.title?.trim() || `Image ${index + 1}`;
+    return [
+      ...accumulator,
+      {
+        id: imageId,
+        name: imageName,
+        imageDataUrl: imageUrl,
+      },
+    ];
   }, []);
 };
 
