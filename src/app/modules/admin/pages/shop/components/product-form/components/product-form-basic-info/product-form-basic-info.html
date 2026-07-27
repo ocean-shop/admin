@@ -11,6 +11,15 @@
   </div>
 
   <div class="product-form-field-group">
+    <app-dropdown
+      triggerMode="click"
+      variant="form"
+      [options]="statusOptions()"
+      [formField]="productForm().status"
+    />
+  </div>
+
+  <div class="product-form-field-group">
     <app-radio-group
       name="product-type"
       [label]="texts().PRODUCT_TYPE_LABEL"

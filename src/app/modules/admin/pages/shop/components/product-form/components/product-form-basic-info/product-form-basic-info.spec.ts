@@ -5,6 +5,7 @@ import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.mode
 import {
   PRODUCT_FORM_DEFAULT_VALUE,
   PRODUCT_FORM_FIELD_IDS,
+  PRODUCT_FORM_STATUS_OPTIONS,
   PRODUCT_FORM_TEXTS,
 } from '../../constants/product-form.constants';
 import { ProductFormModel } from '../../models/product-form.model';
@@ -43,6 +44,7 @@ describe('ProductFormBasicInfo', () => {
     fixture.componentRef.setInput('productForm', productForm);
     fixture.componentRef.setInput('texts', PRODUCT_FORM_TEXTS);
     fixture.componentRef.setInput('fieldIds', PRODUCT_FORM_FIELD_IDS);
+    fixture.componentRef.setInput('statusOptions', PRODUCT_FORM_STATUS_OPTIONS);
     fixture.componentRef.setInput('productTypeOptions', productTypeOptions);
     fixture.componentRef.setInput('productTypeSimple', ProductType.Simple);
     fixture.detectChanges();

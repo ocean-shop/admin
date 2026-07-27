@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { ProductType } from '../../pages/products/models/product-type.enum';
@@ -64,6 +64,9 @@ export class ProductForm {
   readonly imageMoveDown = output<string>();
   readonly imageRemove = output<string>();
   readonly imageUpload = output<void>();
+  protected readonly shouldShowPricingInventory = computed(
+    () => this.productForm().type().value() !== ProductType.Variable,
+  );
 
   protected onProductTypeOptionChange(value: string | number | boolean): void {
     if (value !== ProductType.Simple && value !== ProductType.Variable) {

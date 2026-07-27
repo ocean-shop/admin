@@ -106,6 +106,27 @@ describe('ProductForm', () => {
     expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.IMAGES_TITLE);
   });
 
+  it('hides pricing and inventory section for variable products', () => {
+    const variableFormModel = signal<ProductFormModel>({
+      ...PRODUCT_FORM_DEFAULT_VALUE,
+      type: ProductType.Variable,
+    });
+    const variableProductForm = TestBed.runInInjectionContext(() =>
+      form(variableFormModel, () => undefined),
+    );
+
+    fixture.componentRef.setInput('productForm', variableProductForm);
+    fixture.detectChanges();
+
+    const pricingInventorySection = fixture.debugElement.query(
+      By.css('app-product-form-pricing-inventory'),
+    );
+    const pageElement = fixture.nativeElement as HTMLElement;
+
+    expect(pricingInventorySection).toBeNull();
+    expect(pageElement.textContent).not.toContain(PRODUCT_FORM_TEXTS.PRICING_INVENTORY_TITLE);
+  });
+
   it('renders assigned attributes and tags as chips', () => {
     const chipElements = fixture.debugElement.queryAll(By.css('app-chip'));
 

@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { form, required } from '@angular/forms/signals';
 import { finalize, map } from 'rxjs';
 import { Button } from '@ui/button/button';
@@ -41,7 +41,6 @@ export class ProductsUpdate implements OnInit {
   private readonly productEditorFacade = inject(ProductEditorFacade);
   private readonly toasterService = inject(ToasterService);
   private readonly activatedRoute = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly textData = PRODUCTS_UPDATE_TEXTS;
@@ -114,9 +113,8 @@ export class ProductsUpdate implements OnInit {
     }
 
     const currentProductId = this.productId();
-    const currentShopId = this.shopId();
     const payload = this.buildPayload();
-    if (!currentProductId || !currentShopId || !payload) {
+    if (!currentProductId || !payload) {
       return;
     }
 
@@ -130,7 +128,6 @@ export class ProductsUpdate implements OnInit {
       .subscribe({
         next: () => {
           this.toasterService.success(PRODUCTS_UPDATE_TEXTS.UPDATE_SUCCESS_TITLE);
-          this.router.navigate(['/admin/shop', currentShopId, 'products']);
         },
         error: () => {
           this.toasterService.danger(

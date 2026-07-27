@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { AttributesService } from '../attributes/services/attributes.service';
@@ -32,9 +32,6 @@ describe('ProductsUpdate', () => {
   let mockToasterService: {
     success: ReturnType<typeof vi.fn>;
     danger: ReturnType<typeof vi.fn>;
-  };
-  let mockRouter: {
-    navigate: ReturnType<typeof vi.fn>;
   };
   let mockTagsService: {
     getTags: ReturnType<typeof vi.fn>;
@@ -78,9 +75,6 @@ describe('ProductsUpdate', () => {
       success: vi.fn(),
       danger: vi.fn(),
     };
-    mockRouter = {
-      navigate: vi.fn(),
-    };
     mockTagsService = {
       getTags: vi
         .fn()
@@ -96,7 +90,6 @@ describe('ProductsUpdate', () => {
         { provide: TagsService, useValue: mockTagsService },
         { provide: CategoriesService, useValue: mockCategoriesService },
         { provide: ToasterService, useValue: mockToasterService },
-        { provide: Router, useValue: mockRouter },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -275,7 +268,7 @@ describe('ProductsUpdate', () => {
     ]);
   });
 
-  it('submits valid form and redirects to products page', () => {
+  it('submits valid form and keeps user on update page', () => {
     (component as any).productFormModel.set({
       name: 'Updated shirt',
       type: ProductType.Simple,
@@ -302,7 +295,6 @@ describe('ProductsUpdate', () => {
     expect(mockToasterService.success).toHaveBeenCalledWith(
       PRODUCTS_UPDATE_TEXTS.UPDATE_SUCCESS_TITLE,
     );
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/admin/shop', 'shop-1', 'products']);
   });
 
   it('does not submit when name is empty', () => {
@@ -341,7 +333,6 @@ describe('ProductsUpdate', () => {
       PRODUCTS_UPDATE_TEXTS.UPDATE_ERROR_TITLE,
       PRODUCTS_UPDATE_TEXTS.UPDATE_ERROR_MESSAGE,
     );
-    expect(mockRouter.navigate).not.toHaveBeenCalled();
   });
 
   it('shows load error toast when product request fails', async () => {
