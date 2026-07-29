@@ -1,0 +1,24 @@
+src/app/modules/admin/pages/shop/pages/products-create/products-create.html
+  h_eee5bfb8805eb8 12
+src/app/modules/admin/pages/shop/pages/products-create/products-create.ts
+  h_eee5bfb8805eb8 33-35,55,73
+src/app/modules/admin/pages/shop/constants/products.constants.ts
+  h_eee5bfb8805eb8 1-19
+src/app/modules/admin/pages/shop/components/product-form/constants/product-form.constants.ts
+  h_eee5bfb8805eb8 32
+src/app/modules/admin/pages/shop/pages/products-update/products-update.html
+  h_eee5bfb8805eb8 13
+src/app/modules/admin/pages/shop/pages/products-update/products-update.ts
+  h_eee5bfb8805eb8 39,59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "0a39d76d318041bfd8ecb57bfe7703f609148d99",
+  "prompts": {},
+  "humans": {
+    "h_eee5bfb8805eb8": {
+      "author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
