@@ -1,0 +1,93 @@
+src/app/modules/admin/pages/shop/pages/products-update/products-update.ts
+  s_b62b237de4f894::t_103f58b05e8b63 15-17,19,58-62,126,147-150,156,172-179
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/models/product-images-toast-texts.model.ts
+  s_b62b237de4f894::t_91e0670bd7bf41 1-5
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-variations/product-form-variations.spec.ts
+  s_a06f4ad743a95e::t_8a452f41d17f41 3
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-toast-texts.model.ts
+  s_b62b237de4f894::t_3f8f4df8697208 1-11
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/product-form-categories.html
+  s_b62b237de4f894::t_88378d5dc9ebfa 7
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-variations/services/product-variations.service.ts
+  s_b62b237de4f894::t_8c14738464cc15 3,5-22,25,31-36,42,45-48,50,53-55,57,81-82,128,223,227,231,308,312-313,319-320,341-343,346-347,353,356-358,361-363,376,380,398,431,449,618-619,636,642,660,665-684
+src/app/modules/admin/pages/shop/components/product-form/product-form.ts
+  s_b62b237de4f894::t_3adae54584c54d 17,37,42-43,45-49,52
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/product-form-categories.spec.ts
+  s_a06f4ad743a95e::t_402834fa4b0bb7 4,10,20,22-25,27,38,41-42,44,46,49,52,56,59-60
+  s_a06f4ad743a95e::t_d89c6872816d95 3
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/product-form-tags.ts
+  s_b62b237de4f894::t_a999076ec81744 1,6-7,12,17-18,20-22,24-45,48,52,56
+src/app/modules/admin/pages/shop/pages/products-update/products-update.html
+  s_b62b237de4f894::t_863d39701d8f42 20,25-26,28-32
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/product-form-images.ts
+  s_b62b237de4f894::t_734043b782cf45 1,5-6,11,16-17,19-20,22-41,44,48,52,56,60
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/models/product-tags-toast-texts.model.ts
+  s_b62b237de4f894::t_4c07895b5ff544 1-6
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-editor-context.model.ts
+  s_b62b237de4f894::t_f6170a0d3b1a5e 1,4
+src/app/modules/admin/pages/shop/pages/products-update/products-update.spec.ts
+  s_a06f4ad743a95e::t_a0ae63a7624e33 53,57,112,119,133,200-224,227
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/services/product-categories.service.ts
+  s_b62b237de4f894::t_95752ddc72c3e9 1-146
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/models/product-attributes-toast-texts.model.ts
+  s_b62b237de4f894::t_801136e2af8838 1-6
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-variations/product-form-variations.ts
+  s_b62b237de4f894::t_ab897c2eb4c985 1,9-10,15,20-21,23-25,27-45,48,52,56,64,68,72,76,80,84,88,92
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.spec.ts
+  s_a06f4ad743a95e::t_0decfa6f783854 3
+  s_a06f4ad743a95e::t_436f9606e6a692 5,11,24,26-29,31,42,45-46,50,53-55,60-61,64-65
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/product-form-images.spec.ts
+  s_a06f4ad743a95e::t_2a7c6df4ca0b09 3
+  s_a06f4ad743a95e::t_0363f8da5f00ac 5,11,34,36-38,40,48-49,55,58-61,63-65,72-73,80-81
+src/app/modules/admin/pages/shop/components/product-form/product-form.html
+  s_b62b237de4f894::t_d9ad4cd548faa1 26-28,30,38-40,42,47-49,51,56-57,59,64-66,68
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/services/product-attributes.service.ts
+  s_b62b237de4f894::t_6b7b66fcd05a7e 1-226
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-variations/models/product-variations-toast-texts.model.ts
+  s_b62b237de4f894::t_396652f71158ce 1-5
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/product-form-tags.spec.ts
+  s_a06f4ad743a95e::t_9513130f80c333 3
+  s_a06f4ad743a95e::t_5452911fa85f63 5,11,22,24-27,29,40,43-44,48,51-53,58-59,62-63
+src/app/modules/admin/pages/shop/components/product-form/product-form.spec.ts
+  s_a06f4ad743a95e::t_99cbc3f457d128 12,70,75-76,78-84,132-133,135,137,140,143,145
+src/app/modules/admin/pages/shop/pages/products-create/products-create.spec.ts
+  s_a06f4ad743a95e::t_9463d8e3370444 99-103,135,137-145,148,150-158,160-161,180,204,207-209
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/models/product-categories-toast-texts.model.ts
+  s_b62b237de4f894::t_1bea21eed22f61 1
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/product-form-categories.ts
+  s_b62b237de4f894::t_67b71e97a3d7c0 1,4-5,10,15-16,18-20,22-39,41-45,52
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/services/product-images.service.ts
+  s_b62b237de4f894::t_6808343ce9fab5 1-238
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/services/product-tags.service.ts
+  s_b62b237de4f894::t_97a9d2127d29f4 10,21,83-91,93-104,123-142
+  s_b62b237de4f894::t_5d286e18ca2b15 1-9,11-20,22-82,105-122,143-219
+  s_b62b237de4f894::t_75c12abca11931 92
+src/app/modules/admin/pages/shop/pages/products-create/products-create.html
+  s_b62b237de4f894::t_d53059f2525eb7 19,24-25
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.ts
+  s_b62b237de4f894::t_986ba7e88cc1a0 1,5-6,11,16-17,19-21,23-44,47,51,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "b61a94f1914475931c014c7024e1933ebc7e04ff",
+  "prompts": {},
+  "sessions": {
+    "s_a06f4ad743a95e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "974ea4a2-75ab-41cb-8689-3816474f03ac",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    },
+    "s_b62b237de4f894": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "821d7949-cf12-41f1-b3c6-1648e9f81673",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
