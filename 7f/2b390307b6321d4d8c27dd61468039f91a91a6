@@ -1,0 +1,54 @@
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.html
+  s_5b10223a4807fb::t_631cdf8e3677c1 6-21
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/product-form-images.spec.ts
+  s_5b10223a4807fb::t_e03cddba18a525 54-58,91-92
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/product-form-images.ts
+  s_5b10223a4807fb::t_bdab4cc6b05471 4,8,24
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-shared-attributes/product-form-shared-attributes.html
+  s_5b10223a4807fb::t_d7ba751cb021d0 1-36
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-variations/product-form-variations.ts
+  s_5b10223a4807fb::t_3cdbe4ed97c44f 13-14,18,140
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-shared-attributes/product-form-shared-attributes.spec.ts
+  s_5b10223a4807fb::t_c3bf79d46fc7f5 1-75
+  s_5b10223a4807fb::t_d646c89f92ea83 76-77
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-variations/product-form-variations.html
+  s_5b10223a4807fb::t_e6ddfbfc2101c5 112-128,134-143
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-variations/product-form-variations.spec.ts
+  s_5b10223a4807fb::t_25481b59aa8c3e 111
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-attribute-item.model.ts
+  s_5b10223a4807fb::t_41e16b2c3d568c 1-4
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-images/product-form-images.html
+  s_5b10223a4807fb::t_e1f826ce4acefd 19-28
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-shared-images/product-form-shared-images.scss
+  s_5b10223a4807fb::t_28326094a2d220 1-69
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-shared-images/product-form-shared-images.ts
+  s_5b10223a4807fb::t_c21c2689072424 1-102
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-shared-attributes/product-form-shared-attributes.scss
+  s_5b10223a4807fb::t_63ae27182f48bc 1-29
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-shared-images/product-form-shared-images.html
+  s_5b10223a4807fb::t_4507beec3bf676 1-62
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.ts
+  s_5b10223a4807fb::t_143a570151df5b 5,9
+src/app/modules/admin/pages/shop/components/product-form/models/product-form-image-list-item.model.ts
+  s_5b10223a4807fb::t_56f6cfffe89ba5 1-5
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-shared-attributes/product-form-shared-attributes.ts
+  s_5b10223a4807fb::t_bb4f32c7d2eab0 1-61
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-shared-images/product-form-shared-images.spec.ts
+  s_5b10223a4807fb::t_36773b54433d5e 1-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "7f2b390307b6321d4d8c27dd61468039f91a91a6",
+  "prompts": {},
+  "sessions": {
+    "s_5b10223a4807fb": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "f7941ab7-e497-416a-a037-e230bed767a1",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
