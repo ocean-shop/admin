@@ -1,0 +1,29 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.product-form-chip-list {
+  @apply mt-4 flex flex-wrap gap-2;
+}
+
+.product-form-chip-list-compact {
+  @apply mt-3;
+}
+
+.product-form-attribute-results {
+  @apply mt-2 flex max-h-48 flex-col gap-1 overflow-y-auto rounded-md border border-outline-variant bg-surface-container-lowest p-2;
+}
+
+.product-form-attribute-result {
+  @apply rounded px-3 py-2 text-left text-sm text-on-surface transition-colors hover:bg-surface-container;
+}
+
+.product-form-attribute-state {
+  @apply px-1 py-2 text-sm text-on-surface-variant;
+}
+
+.product-form-placeholder-chip {
+  @apply text-sm text-on-surface-variant;
+}

@@ -1,13 +1,13 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProductFormImageItem } from '../../models/product-form-image-item.model';
-import { ProductFormImages } from './product-form-images';
+import { ProductFormImageListItem } from '../../models/product-form-image-list-item.model';
+import { ProductFormSharedImages } from './product-form-shared-images';
 
-describe('ProductFormImages', () => {
-  let fixture: ComponentFixture<ProductFormImages>;
-  let component: ProductFormImages;
+describe('ProductFormSharedImages', () => {
+  let fixture: ComponentFixture<ProductFormSharedImages>;
+  let component: ProductFormSharedImages;
 
-  const images: ProductFormImageItem[] = [
+  const images: ProductFormImageListItem[] = [
     {
       id: 'img-1',
       name: 'product-image-1.jpg',
@@ -20,27 +20,20 @@ describe('ProductFormImages', () => {
     },
   ];
 
-  const texts = {
-    IMAGES_TITLE: 'Media & Files',
-    IMAGES_UPLOAD_LABEL: 'Upload',
-    IMAGES_UPLOAD_LOADING_LABEL: 'Uploading...',
-    IMAGES_DROPZONE_HINT: 'Drop files here or click to upload',
-    IMAGES_ASSIGNED_EMPTY: 'No images yet.',
-  } as any;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProductFormImages],
+      imports: [ProductFormSharedImages],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProductFormImages);
+    fixture = TestBed.createComponent(ProductFormSharedImages);
     component = fixture.componentInstance;
 
-    fixture.componentRef.setInput('texts', texts);
-    fixture.componentRef.setInput('sidebarDisabled', false);
+    fixture.componentRef.setInput('interactionDisabled', false);
     fixture.componentRef.setInput('images', images);
-    fixture.componentRef.setInput('isUploadLoading', false);
+    fixture.componentRef.setInput('dropzoneHint', 'Drop files here');
+    fixture.componentRef.setInput('emptyStateText', 'No images yet');
+    fixture.componentRef.setInput('allowDrop', true);
     fixture.detectChanges();
   });
 
@@ -51,11 +44,22 @@ describe('ProductFormImages', () => {
   it('emits filesSelected with image files only', () => {
     const emitSpy = vi.spyOn((component as any).filesSelected, 'emit');
     const imageFile = new File(['image'], 'one.jpg', { type: 'image/jpeg' });
-    const eventFiles = [imageFile];
+    const textFile = new File(['txt'], 'file.txt', { type: 'text/plain' });
+    const event = {
+      target: {
+        files: {
+          length: 2,
+          item: (index: number) => [imageFile, textFile][index] ?? null,
+          0: imageFile,
+          1: textFile,
+        },
+        value: 'x',
+      },
+    } as unknown as Event;
 
-    (component as any).onFilesSelected(eventFiles);
+    (component as any).onFileInputChange(event);
 
-    expect(emitSpy).toHaveBeenCalledWith(eventFiles);
+    expect(emitSpy).toHaveBeenCalledWith([imageFile]);
   });
 
   it('emits move and remove events', () => {
@@ -72,29 +76,27 @@ describe('ProductFormImages', () => {
     expect(removeSpy).toHaveBeenCalledWith('img-1');
   });
 
-  it('emits upload when images are present', () => {
-    const uploadSpy = vi.spyOn((component as any).upload, 'emit');
-
-    (component as any).onUpload();
-
-    expect(uploadSpy).toHaveBeenCalled();
-  });
-
-  it('does not emit actions when blocked', () => {
-    fixture.componentRef.setInput('sidebarDisabled', true);
+  it('does not emit actions when disabled', () => {
+    fixture.componentRef.setInput('interactionDisabled', true);
     fixture.detectChanges();
-
     const filesSelectedSpy = vi.spyOn((component as any).filesSelected, 'emit');
     const moveUpSpy = vi.spyOn((component as any).moveUp, 'emit');
-    const uploadSpy = vi.spyOn((component as any).upload, 'emit');
     const imageFile = new File(['image'], 'one.jpg', { type: 'image/jpeg' });
+    const event = {
+      target: {
+        files: {
+          length: 1,
+          item: () => imageFile,
+          0: imageFile,
+        },
+        value: 'x',
+      },
+    } as unknown as Event;
 
-    (component as any).onFilesSelected([imageFile]);
+    (component as any).onFileInputChange(event);
     (component as any).onMoveUp('img-1');
-    (component as any).onUpload();
 
     expect(filesSelectedSpy).not.toHaveBeenCalled();
     expect(moveUpSpy).not.toHaveBeenCalled();
-    expect(uploadSpy).not.toHaveBeenCalled();
   });
 });

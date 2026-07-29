@@ -109,113 +109,39 @@
 
     <section class="product-form-mini-section">
       <h4 class="product-form-mini-title">{{ texts().VARIATION_ATTRIBUTES_TITLE }}</h4>
-      <app-input
-        [id]="'variation-attribute-search-' + variation.localId"
-        [label]="texts().VARIATION_ATTRIBUTES_SEARCH_PLACEHOLDER"
-        [placeholder]="texts().VARIATION_ATTRIBUTES_SEARCH_PLACEHOLDER"
-        [value]="variation.attributeSearchValue"
-        [disabled]="sidebarDisabled()"
-        (valueChange)="onVariationAttributeSearchChange(variation.localId, $event)"
+      <app-product-form-shared-attributes
+        [searchInputId]="'variation-attribute-search-' + variation.localId"
+        [searchLabel]="texts().VARIATION_ATTRIBUTES_SEARCH_PLACEHOLDER"
+        [searchPlaceholder]="texts().VARIATION_ATTRIBUTES_SEARCH_PLACEHOLDER"
+        [searchValue]="variation.attributeSearchValue"
+        [interactionDisabled]="sidebarDisabled()"
+        [isSearchLoading]="variation.isAttributeSearchLoading"
+        [searchLoadingText]="texts().VARIATION_ATTRIBUTES_SEARCH_LOADING"
+        [searchEmptyText]="texts().VARIATION_ATTRIBUTES_SEARCH_EMPTY"
+        [assignedEmptyText]="texts().VARIATION_ATTRIBUTES_ASSIGNED_EMPTY"
+        removeAriaLabel="Remove variation attribute"
+        [searchResults]="variation.attributeSearchResults"
+        [assignedAttributes]="variation.attributes"
+        [compactLayout]="true"
+        (searchChange)="onVariationAttributeSearchChange(variation.localId, $event)"
+        (assign)="onVariationAttributeAssign(variation.localId, $event)"
+        (unassign)="onVariationAttributeUnassign(variation.localId, $event)"
       />
-
-      @if (!sidebarDisabled() && variation.attributeSearchValue.trim()) {
-      <div class="product-form-attribute-results">
-        @if (variation.isAttributeSearchLoading) {
-        <p class="product-form-attribute-state">
-          {{ texts().VARIATION_ATTRIBUTES_SEARCH_LOADING }}
-        </p>
-        } @else if (!variation.attributeSearchResults.length) {
-        <p class="product-form-attribute-state">{{ texts().VARIATION_ATTRIBUTES_SEARCH_EMPTY }}</p>
-        } @else { @for (attribute of variation.attributeSearchResults; track attribute.id) {
-        <button
-          type="button"
-          class="product-form-attribute-result"
-          (click)="onVariationAttributeAssign(variation.localId, attribute.id)"
-        >
-          {{ attribute.label }}
-        </button>
-        } }
-      </div>
-      }
-
-      <div class="product-form-chip-list">
-        @if (!variation.attributes.length) {
-        <span class="product-form-placeholder-chip"
-          >{{ texts().VARIATION_ATTRIBUTES_ASSIGNED_EMPTY }}</span
-        >
-        } @else { @for (attribute of variation.attributes; track attribute.id) {
-        <app-chip
-          [label]="attribute.label"
-          variant="attribute"
-          removeAriaLabel="Remove variation attribute"
-          [disabled]="sidebarDisabled()"
-          (remove)="onVariationAttributeUnassign(variation.localId, attribute.id)"
-        />
-        } }
-      </div>
     </section>
 
     <section class="product-form-mini-section">
       <h4 class="product-form-mini-title">{{ texts().VARIATION_IMAGES_TITLE }}</h4>
-      <input
-        #variationImageInput
-        type="file"
-        accept="image/*"
-        multiple
-        class="product-form-image-input"
-        [disabled]="sidebarDisabled()"
-        (change)="onVariationImageInputChange(variation.localId, $event)"
+      <app-product-form-shared-images
+        [interactionDisabled]="sidebarDisabled()"
+        [images]="variation.images"
+        [dropzoneHint]="texts().VARIATION_IMAGES_DROPZONE_HINT"
+        [emptyStateText]="texts().VARIATION_IMAGES_ASSIGNED_EMPTY"
+        [compactDropzone]="true"
+        (filesSelected)="onVariationImageFilesSelected(variation.localId, $event)"
+        (moveUp)="onVariationImageMoveUp(variation.localId, $event)"
+        (moveDown)="onVariationImageMoveDown(variation.localId, $event)"
+        (remove)="onVariationImageRemove(variation.localId, $event)"
       />
-
-      <button
-        type="button"
-        class="product-form-dropzone"
-        [disabled]="sidebarDisabled()"
-        (click)="variationImageInput.click()"
-      >
-        <span class="material-symbols-outlined">cloud_upload</span>
-        <p>{{ texts().VARIATION_IMAGES_DROPZONE_HINT }}</p>
-      </button>
-
-      <div class="product-form-images-list">
-        @if (!variation.images.length) {
-        <p class="product-form-images-empty">{{ texts().VARIATION_IMAGES_ASSIGNED_EMPTY }}</p>
-        } @else { @for (image of variation.images; track image.id; let imageIndex = $index) {
-        <div class="product-form-image-row">
-          <div class="product-form-image-row-content">
-            <img class="product-form-image-preview" [src]="image.imageDataUrl" [alt]="image.name" />
-            <div class="product-form-image-meta">
-              <span class="material-symbols-outlined">image</span>
-              <span class="product-form-image-name">{{ image.name }}</span>
-            </div>
-          </div>
-          <div class="product-form-image-actions">
-            <button
-              type="button"
-              [disabled]="sidebarDisabled() || imageIndex === 0"
-              (click)="onVariationImageMoveUp(variation.localId, image.id)"
-            >
-              <span class="material-symbols-outlined text-[18px]">keyboard_arrow_up</span>
-            </button>
-            <button
-              type="button"
-              [disabled]="sidebarDisabled() || imageIndex === variation.images.length - 1"
-              (click)="onVariationImageMoveDown(variation.localId, image.id)"
-            >
-              <span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
-            </button>
-            <button
-              type="button"
-              class="product-form-image-delete"
-              [disabled]="sidebarDisabled()"
-              (click)="onVariationImageRemove(variation.localId, image.id)"
-            >
-              <span class="material-symbols-outlined text-[18px]">delete</span>
-            </button>
-          </div>
-        </div>
-        } }
-      </div>
     </section>
 
     <button

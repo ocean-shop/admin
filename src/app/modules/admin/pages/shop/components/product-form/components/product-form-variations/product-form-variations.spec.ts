@@ -106,22 +106,9 @@ describe('ProductFormVariations', () => {
     const moveUpSpy = vi.spyOn((component as any).variationImageMoveUp, 'emit');
     const moveDownSpy = vi.spyOn((component as any).variationImageMoveDown, 'emit');
     const removeSpy = vi.spyOn((component as any).variationImageRemove, 'emit');
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
     const imageFile = new File(['x'], 'x.jpg', { type: 'image/jpeg' });
-    const textFile = new File(['x'], 'x.txt', { type: 'text/plain' });
-    Object.defineProperty(fileInput, 'files', {
-      value: {
-        0: imageFile,
-        1: textFile,
-        length: 2,
-        item: (index: number) => (index === 0 ? imageFile : textFile),
-      },
-    });
 
-    (component as any).onVariationImageInputChange('variation-1', {
-      target: fileInput,
-    } as unknown as Event);
+    (component as any).onVariationImageFilesSelected('variation-1', [imageFile]);
     (component as any).onVariationImageMoveUp('variation-1', 'img-1');
     (component as any).onVariationImageMoveDown('variation-1', 'img-1');
     (component as any).onVariationImageRemove('variation-1', 'img-1');

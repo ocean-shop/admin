@@ -1,13 +1,12 @@
 import { Component, input, output } from '@angular/core';
-import { Chip } from '@ui/chip/chip';
-import { Input } from '@ui/input/input';
 import { ProductFormAssignedAttribute } from '../../models/product-form-assigned-attribute.model';
 import { ProductFormAttributeOption } from '../../models/product-form-attribute-option.model';
 import { ProductFormTexts } from '../../models/product-form-texts.model';
+import { ProductFormSharedAttributes } from '../product-form-shared-attributes/product-form-shared-attributes';
 
 @Component({
   selector: 'app-product-form-attributes',
-  imports: [Chip, Input],
+  imports: [ProductFormSharedAttributes],
   templateUrl: './product-form-attributes.html',
   styleUrl: './product-form-attributes.scss',
 })

@@ -16,65 +16,15 @@
     </button>
   </div>
 
-  <input
-    #imageInput
-    type="file"
-    accept="image/*"
-    multiple
-    class="product-form-image-input"
-    [disabled]="sidebarDisabled() || isUploadLoading()"
-    (change)="onFileInputChange($event)"
+  <app-product-form-shared-images
+    [interactionDisabled]="sidebarDisabled() || isUploadLoading()"
+    [images]="images()"
+    [dropzoneHint]="texts().IMAGES_DROPZONE_HINT"
+    [emptyStateText]="texts().IMAGES_ASSIGNED_EMPTY"
+    [allowDrop]="true"
+    (filesSelected)="onFilesSelected($event)"
+    (moveUp)="onMoveUp($event)"
+    (moveDown)="onMoveDown($event)"
+    (remove)="onRemove($event)"
   />
-
-  <button
-    type="button"
-    class="product-form-dropzone"
-    [disabled]="sidebarDisabled() || isUploadLoading()"
-    (click)="imageInput.click()"
-    (drop)="onDrop($event)"
-    (dragover)="onDragOver($event)"
-  >
-    <span class="material-symbols-outlined">cloud_upload</span>
-    <p>{{ texts().IMAGES_DROPZONE_HINT }}</p>
-  </button>
-
-  <div class="product-form-images-list">
-    @if (!images().length) {
-    <p class="product-form-images-empty">{{ texts().IMAGES_ASSIGNED_EMPTY }}</p>
-    } @else { @for (image of images(); track image.id; let index = $index) {
-    <div class="product-form-image-row">
-      <div class="product-form-image-row-content">
-        <img class="product-form-image-preview" [src]="image.imageDataUrl" [alt]="image.name" />
-        <div class="product-form-image-meta">
-          <span class="material-symbols-outlined">image</span>
-          <span class="product-form-image-name">{{ image.name }}</span>
-        </div>
-      </div>
-      <div class="product-form-image-actions">
-        <button
-          type="button"
-          [disabled]="sidebarDisabled() || isUploadLoading() || index === 0"
-          (click)="onMoveUp(image.id)"
-        >
-          <span class="material-symbols-outlined text-[18px]">keyboard_arrow_up</span>
-        </button>
-        <button
-          type="button"
-          [disabled]="sidebarDisabled() || isUploadLoading() || index === images().length - 1"
-          (click)="onMoveDown(image.id)"
-        >
-          <span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
-        </button>
-        <button
-          type="button"
-          [disabled]="sidebarDisabled() || isUploadLoading()"
-          class="product-form-image-delete"
-          (click)="onRemove(image.id)"
-        >
-          <span class="material-symbols-outlined text-[18px]">delete</span>
-        </button>
-      </div>
-    </div>
-    } }
-  </div>
 </article>

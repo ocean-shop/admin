@@ -1,6 +1,5 @@
 import { Component, input, output } from '@angular/core';
 import { Checkbox } from '@ui/checkbox/checkbox';
-import { Chip } from '@ui/chip/chip';
 import { Input } from '@ui/input/input';
 import { ProductFormTexts } from '../../models/product-form-texts.model';
 import { ProductFormVariationAttributeSearchEvent } from '../../models/product-form-variation-attribute-search-event.model';
@@ -11,10 +10,12 @@ import { ProductFormVariationImageFilesEvent } from '../../models/product-form-v
 import { ProductFormVariationImageToggleEvent } from '../../models/product-form-variation-image-toggle-event.model';
 import { ProductFormVariationRemoveEvent } from '../../models/product-form-variation-remove-event.model';
 import { ProductFormVariation } from '../../models/product-form-variation.model';
+import { ProductFormSharedAttributes } from '../product-form-shared-attributes/product-form-shared-attributes';
+import { ProductFormSharedImages } from '../product-form-shared-images/product-form-shared-images';
 
 @Component({
   selector: 'app-product-form-variations',
-  imports: [Checkbox, Chip, Input],
+  imports: [Checkbox, Input, ProductFormSharedAttributes, ProductFormSharedImages],
   templateUrl: './product-form-variations.html',
   styleUrl: './product-form-variations.scss',
 })
@@ -136,14 +137,8 @@ export class ProductFormVariations {
     });
   }
 
-  protected onVariationImageInputChange(localId: string, event: Event): void {
-    const inputElement = event.target as HTMLInputElement | null;
+  protected onVariationImageFilesSelected(localId: string, files: File[]): void {
     const normalizedLocalId = localId.trim();
-    const files = this.extractImageFiles(inputElement?.files);
-    if (inputElement) {
-      inputElement.value = '';
-    }
-
     if (!normalizedLocalId || !files.length || this.sidebarDisabled()) {
       return;
     }
@@ -184,13 +179,5 @@ export class ProductFormVariations {
       localId: normalizedLocalId,
       imageId: normalizedImageId,
     });
-  }
-
-  private extractImageFiles(fileList: FileList | null | undefined): File[] {
-    if (!fileList?.length) {
-      return [];
-    }
-
-    return Array.from(fileList).filter((file) => file.type.startsWith('image/'));
   }
 }
