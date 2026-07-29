@@ -1,13 +1,14 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { PRODUCT_FORM_TEXTS } from '../../constants/product-form.constants';
+import { PRODUCTS_CREATE_TEXTS } from '../../../../pages/products-create/constants/products-create.constants';
 import { ProductFormVariation } from '../../models/product-form-variation.model';
+import { ProductVariationsService } from './services/product-variations.service';
 import { ProductFormVariations } from './product-form-variations';
 
 describe('ProductFormVariations', () => {
   let fixture: ComponentFixture<ProductFormVariations>;
   let component: ProductFormVariations;
+  let variationsService: ProductVariationsService;
   const variations: ProductFormVariation[] = [
     {
       localId: 'variation-1',
@@ -36,9 +37,13 @@ describe('ProductFormVariations', () => {
 
     fixture = TestBed.createComponent(ProductFormVariations);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('texts', PRODUCT_FORM_TEXTS);
+    variationsService = fixture.debugElement.injector.get(ProductVariationsService);
+    fixture.componentRef.setInput('texts', PRODUCTS_CREATE_TEXTS);
+    fixture.componentRef.setInput('toastTexts', PRODUCTS_CREATE_TEXTS);
+    fixture.componentRef.setInput('shopId', 'shop-1');
+    fixture.componentRef.setInput('productId', 'product-1');
     fixture.componentRef.setInput('sidebarDisabled', false);
-    fixture.componentRef.setInput('variations', variations);
+    fixture.componentRef.setInput('initialVariations', variations);
     fixture.detectChanges();
   });
 
@@ -48,33 +53,29 @@ describe('ProductFormVariations', () => {
 
   it('renders variation section title', () => {
     expect((fixture.nativeElement as HTMLElement).textContent).toContain(
-      PRODUCT_FORM_TEXTS.VARIATIONS_TITLE,
+      PRODUCTS_CREATE_TEXTS.VARIATIONS_TITLE,
     );
   });
 
-  it('emits add variation event', () => {
-    const emitSpy = vi.spyOn((component as any).variationAdd, 'emit');
-    const addButton = fixture.debugElement.query(By.css('.product-form-add-button'))
-      .nativeElement as HTMLButtonElement;
+  it('delegates add variation action to variations service', () => {
+    const addSpy = vi.spyOn(variationsService, 'onVariationAdd');
 
-    addButton.click();
+    (component as any).onVariationAdd();
 
-    expect(emitSpy).toHaveBeenCalled();
+    expect(addSpy).toHaveBeenCalled();
   });
 
-  it('emits save variation event', () => {
-    const emitSpy = vi.spyOn((component as any).variationCreate, 'emit');
-    const saveButton = fixture.debugElement.query(By.css('.product-form-submit-button'))
-      .nativeElement as HTMLButtonElement;
+  it('delegates save variation action to variations service', () => {
+    const saveSpy = vi.spyOn(variationsService, 'saveVariation');
 
-    saveButton.click();
+    (component as any).onVariationCreate('variation-1');
 
-    expect(emitSpy).toHaveBeenCalledWith({ localId: 'variation-1' });
+    expect(saveSpy).toHaveBeenCalledWith({ localId: 'variation-1' });
   });
 
-  it('emits variation field and remove events', () => {
-    const changeSpy = vi.spyOn((component as any).variationChange, 'emit');
-    const removeSpy = vi.spyOn((component as any).variationRemove, 'emit');
+  it('delegates variation field and remove actions to variations service', () => {
+    const changeSpy = vi.spyOn(variationsService, 'onVariationChange');
+    const removeSpy = vi.spyOn(variationsService, 'onVariationRemove');
 
     (component as any).onVariationFieldChange('variation-1', 'title', 'Новий title');
     (component as any).onVariationRemove('variation-1');
@@ -87,10 +88,10 @@ describe('ProductFormVariations', () => {
     expect(removeSpy).toHaveBeenCalledWith({ localId: 'variation-1' });
   });
 
-  it('emits attribute search and toggle events', () => {
-    const searchSpy = vi.spyOn((component as any).variationAttributeSearchChange, 'emit');
-    const assignSpy = vi.spyOn((component as any).variationAttributeAssign, 'emit');
-    const unassignSpy = vi.spyOn((component as any).variationAttributeUnassign, 'emit');
+  it('delegates attribute search and toggle actions to variations service', () => {
+    const searchSpy = vi.spyOn(variationsService, 'onVariationAttributeSearchChange');
+    const assignSpy = vi.spyOn(variationsService, 'onVariationAttributeAssign');
+    const unassignSpy = vi.spyOn(variationsService, 'onVariationAttributeUnassign');
 
     (component as any).onVariationAttributeSearchChange('variation-1', 'col');
     (component as any).onVariationAttributeAssign('variation-1', 'attr-1');
@@ -101,11 +102,11 @@ describe('ProductFormVariations', () => {
     expect(unassignSpy).toHaveBeenCalledWith({ localId: 'variation-1', attributeId: 'attr-1' });
   });
 
-  it('emits variation image events', () => {
-    const filesSpy = vi.spyOn((component as any).variationImageFilesSelected, 'emit');
-    const moveUpSpy = vi.spyOn((component as any).variationImageMoveUp, 'emit');
-    const moveDownSpy = vi.spyOn((component as any).variationImageMoveDown, 'emit');
-    const removeSpy = vi.spyOn((component as any).variationImageRemove, 'emit');
+  it('delegates variation image actions to variations service', () => {
+    const filesSpy = vi.spyOn(variationsService, 'onVariationImageFilesSelected');
+    const moveUpSpy = vi.spyOn(variationsService, 'onVariationImageMoveUp');
+    const moveDownSpy = vi.spyOn(variationsService, 'onVariationImageMoveDown');
+    const removeSpy = vi.spyOn(variationsService, 'onVariationImageRemove');
     const imageFile = new File(['x'], 'x.jpg', { type: 'image/jpeg' });
 
     (component as any).onVariationImageFilesSelected('variation-1', [imageFile]);
@@ -119,28 +120,7 @@ describe('ProductFormVariations', () => {
     expect(removeSpy).toHaveBeenCalledWith({ localId: 'variation-1', imageId: 'img-1' });
   });
 
-  it('blocks actions when sidebar is disabled', () => {
-    fixture.componentRef.setInput('sidebarDisabled', true);
-    fixture.detectChanges();
-    const addSpy = vi.spyOn((component as any).variationAdd, 'emit');
-    const createSpy = vi.spyOn((component as any).variationCreate, 'emit');
-    const removeSpy = vi.spyOn((component as any).variationRemove, 'emit');
-    const changeSpy = vi.spyOn((component as any).variationChange, 'emit');
-    const assignSpy = vi.spyOn((component as any).variationAttributeAssign, 'emit');
-    const imageSpy = vi.spyOn((component as any).variationImageMoveUp, 'emit');
-
-    (component as any).onVariationAdd();
-    (component as any).onVariationCreate('variation-1');
-    (component as any).onVariationRemove('variation-1');
-    (component as any).onVariationFieldChange('variation-1', 'title', 'x');
-    (component as any).onVariationAttributeAssign('variation-1', 'attr-1');
-    (component as any).onVariationImageMoveUp('variation-1', 'img-1');
-
-    expect(addSpy).not.toHaveBeenCalled();
-    expect(createSpy).not.toHaveBeenCalled();
-    expect(removeSpy).not.toHaveBeenCalled();
-    expect(changeSpy).not.toHaveBeenCalled();
-    expect(assignSpy).not.toHaveBeenCalled();
-    expect(imageSpy).not.toHaveBeenCalled();
+  it('seeds variations in service state', () => {
+    expect(variationsService.variations()).toEqual(variations);
   });
 });

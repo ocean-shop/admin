@@ -4,7 +4,7 @@
     {{ texts().CATEGORIES_TITLE }}
   </h2>
   <div class="product-form-static-scroll">
-    @for (category of categories(); track category.id) {
+    @for (category of categoryNodes(); track category.id) {
     <app-checkbox
       class="product-form-tree-row"
       [id]="'category-' + category.id"

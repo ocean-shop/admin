@@ -16,15 +16,6 @@ import { ProductType } from '../products/models/product-type.enum';
 import { ProductsService } from '../products/services/products.service';
 import { UpdateProductPayload } from '../products/models/update-product-payload.model';
 import { ProductForm } from '../../components/product-form/product-form';
-import { ProductFormCategoryToggleEvent } from '../../components/product-form/models/product-form-category-toggle-event.model';
-import { ProductFormVariationAttributeSearchEvent } from '../../components/product-form/models/product-form-variation-attribute-search-event.model';
-import { ProductFormVariationAttributeToggleEvent } from '../../components/product-form/models/product-form-variation-attribute-toggle-event.model';
-import { ProductFormVariationChangeEvent } from '../../components/product-form/models/product-form-variation-change-event.model';
-import { ProductFormVariationCreateEvent } from '../../components/product-form/models/product-form-variation-create-event.model';
-import { ProductFormVariationImageFilesEvent } from '../../components/product-form/models/product-form-variation-image-files-event.model';
-import { ProductFormVariationImageToggleEvent } from '../../components/product-form/models/product-form-variation-image-toggle-event.model';
-import { ProductFormVariationRemoveEvent } from '../../components/product-form/models/product-form-variation-remove-event.model';
-import { ProductEditorFacade } from '../../facades/product-editor.facade';
 import {
   buildCreateProductPayload,
   buildUpdateProductPayload,
@@ -37,13 +28,11 @@ import { CreateProductPayload } from '../products/models/create-product-payload.
 @Component({
   selector: 'app-products-create',
   imports: [Button, ProductForm],
-  providers: [ProductEditorFacade],
   templateUrl: './products-create.html',
   styleUrl: './products-create.scss',
 })
 export class ProductsCreate implements OnInit {
   private readonly productsService = inject(ProductsService);
-  private readonly productEditorFacade = inject(ProductEditorFacade);
   private readonly toasterService = inject(ToasterService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
@@ -55,20 +44,7 @@ export class ProductsCreate implements OnInit {
   protected readonly productTypeOptions: RadioGroupOption[] = PRODUCTS_TYPE_OPTIONS;
   protected readonly shopId = signal<string | null>(null);
   protected readonly isSubmitting = signal(false);
-  protected readonly isCategoriesLoading = this.productEditorFacade.isCategoriesLoading;
-  protected readonly isCategoryToggleLoading = this.productEditorFacade.isCategoryToggleLoading;
-  protected readonly isAttributeSearchLoading = this.productEditorFacade.isAttributeSearchLoading;
-  protected readonly isTagSearchLoading = this.productEditorFacade.isTagSearchLoading;
   protected readonly createdProductId = signal<string | null>(null);
-  protected readonly attributeSearchValue = this.productEditorFacade.attributeSearchValue;
-  protected readonly attributeSearchResults = this.productEditorFacade.attributeSearchResults;
-  protected readonly assignedAttributes = this.productEditorFacade.assignedAttributes;
-  protected readonly tagSearchValue = this.productEditorFacade.tagSearchValue;
-  protected readonly tagSearchResults = this.productEditorFacade.tagSearchResults;
-  protected readonly assignedTags = this.productEditorFacade.assignedTags;
-  protected readonly images = this.productEditorFacade.images;
-  protected readonly isImageUploadLoading = this.productEditorFacade.isImageUploadLoading;
-  protected readonly variations = this.productEditorFacade.variations;
 
   protected readonly productFormModel = signal<ProductFormModel>({
     ...PRODUCTS_CREATE_DEFAULT_FORM_VALUE,
@@ -79,24 +55,6 @@ export class ProductsCreate implements OnInit {
 
   protected readonly isFormValid = computed(() => this.productForm.name().valid());
   protected readonly isSidebarDisabled = computed(() => !this.createdProductId());
-  protected readonly categoryNodes = computed(() =>
-    this.productEditorFacade.buildCategoryNodes({
-      disabled:
-        this.isSidebarDisabled() ||
-        this.isSubmitting() ||
-        this.isCategoriesLoading() ||
-        this.isCategoryToggleLoading(),
-    }),
-  );
-
-  constructor() {
-    this.productEditorFacade.configure({
-      getShopId: () => this.shopId(),
-      getProductId: () => this.createdProductId(),
-      isSidebarEnabled: () => !this.isSidebarDisabled(),
-      texts: PRODUCTS_CREATE_TEXTS,
-    });
-  }
 
   ngOnInit(): void {
     this.watchShopId();
@@ -123,100 +81,6 @@ export class ProductsCreate implements OnInit {
     }));
   }
 
-  protected onCategoryToggle(event: ProductFormCategoryToggleEvent): void {
-    this.productEditorFacade.onCategoryToggle(event);
-  }
-
-  protected onAttributeSearchChange(value: string): void {
-    this.productEditorFacade.onAttributeSearchChange(value);
-  }
-
-  protected onAttributeAssign(attributeId: string): void {
-    this.productEditorFacade.onAttributeAssign(attributeId);
-  }
-
-  protected onAttributeUnassign(attributeId: string): void {
-    this.productEditorFacade.onAttributeUnassign(attributeId);
-  }
-
-  protected onTagSearchChange(value: string): void {
-    this.productEditorFacade.onTagSearchChange(value);
-  }
-
-  protected onTagAssign(tagId: string): void {
-    this.productEditorFacade.onTagAssign(tagId);
-  }
-
-  protected onTagUnassign(tagId: string): void {
-    this.productEditorFacade.onTagUnassign(tagId);
-  }
-
-  protected onImageFilesSelected(files: File[]): void {
-    this.productEditorFacade.onImageFilesSelected(files);
-  }
-
-  protected onImageMoveUp(imageId: string): void {
-    this.productEditorFacade.onImageMoveUp(imageId);
-  }
-
-  protected onImageMoveDown(imageId: string): void {
-    this.productEditorFacade.onImageMoveDown(imageId);
-  }
-
-  protected onImageRemove(imageId: string): void {
-    this.productEditorFacade.onImageRemove(imageId);
-  }
-
-  protected onImageUpload(): void {
-    this.productEditorFacade.uploadImages();
-  }
-
-  protected onVariationAdd(): void {
-    this.productEditorFacade.onVariationAdd();
-  }
-
-  protected onVariationCreate(event: ProductFormVariationCreateEvent): void {
-    this.productEditorFacade.saveVariation(event);
-  }
-
-  protected onVariationRemove(event: ProductFormVariationRemoveEvent): void {
-    this.productEditorFacade.onVariationRemove(event);
-  }
-
-  protected onVariationChange(event: ProductFormVariationChangeEvent): void {
-    this.productEditorFacade.onVariationChange(event);
-  }
-
-  protected onVariationAttributeSearchChange(
-    event: ProductFormVariationAttributeSearchEvent,
-  ): void {
-    this.productEditorFacade.onVariationAttributeSearchChange(event);
-  }
-
-  protected onVariationAttributeAssign(event: ProductFormVariationAttributeToggleEvent): void {
-    this.productEditorFacade.onVariationAttributeAssign(event);
-  }
-
-  protected onVariationAttributeUnassign(event: ProductFormVariationAttributeToggleEvent): void {
-    this.productEditorFacade.onVariationAttributeUnassign(event);
-  }
-
-  protected onVariationImageFilesSelected(event: ProductFormVariationImageFilesEvent): void {
-    this.productEditorFacade.onVariationImageFilesSelected(event);
-  }
-
-  protected onVariationImageMoveUp(event: ProductFormVariationImageToggleEvent): void {
-    this.productEditorFacade.onVariationImageMoveUp(event);
-  }
-
-  protected onVariationImageMoveDown(event: ProductFormVariationImageToggleEvent): void {
-    this.productEditorFacade.onVariationImageMoveDown(event);
-  }
-
-  protected onVariationImageRemove(event: ProductFormVariationImageToggleEvent): void {
-    this.productEditorFacade.onVariationImageRemove(event);
-  }
-
   private watchShopId(): void {
     this.activatedRoute.paramMap
       .pipe(
@@ -226,13 +90,6 @@ export class ProductsCreate implements OnInit {
       .subscribe((shopId) => {
         this.shopId.set(shopId);
         this.createdProductId.set(null);
-        this.productEditorFacade.resetState({ clearCategories: !shopId });
-
-        if (!shopId) {
-          return;
-        }
-
-        this.productEditorFacade.loadCategories();
       });
   }
 

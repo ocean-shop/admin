@@ -23,19 +23,11 @@
     } @if (shouldShowVariations()) {
     <app-product-form-variations
       [texts]="texts()"
+      [toastTexts]="toastTexts()"
+      [shopId]="shopId()"
+      [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"
-      [variations]="variations()"
-      (variationAdd)="onVariationAdd()"
-      (variationCreate)="onVariationCreate($event)"
-      (variationRemove)="onVariationRemove($event)"
-      (variationChange)="onVariationChange($event)"
-      (variationAttributeSearchChange)="onVariationAttributeSearchChange($event)"
-      (variationAttributeAssign)="onVariationAttributeAssign($event)"
-      (variationAttributeUnassign)="onVariationAttributeUnassign($event)"
-      (variationImageFilesSelected)="onVariationImageFilesSelected($event)"
-      (variationImageMoveUp)="onVariationImageMoveUp($event)"
-      (variationImageMoveDown)="onVariationImageMoveDown($event)"
-      (variationImageRemove)="onVariationImageRemove($event)"
+      [initialVariations]="initialVariations()"
     />
     }
   </section>
@@ -43,45 +35,37 @@
   <aside class="product-form-sidebar">
     <app-product-form-categories
       [texts]="texts()"
-      [categories]="categories()"
+      [toastTexts]="toastTexts()"
+      [shopId]="shopId()"
+      [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"
-      (categoryToggle)="onCategoryCheckedChange($event.categoryId, $event.checked)"
+      [initialSelectedCategoryIds]="initialSelectedCategoryIds()"
     />
 
     <app-product-form-tags
       [texts]="texts()"
+      [toastTexts]="toastTexts()"
+      [shopId]="shopId()"
+      [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"
-      [tagSearchValue]="tagSearchValue()"
-      [isTagSearchLoading]="isTagSearchLoading()"
-      [tagSearchResults]="tagSearchResults()"
-      [assignedTags]="assignedTags()"
-      (tagSearchChange)="onTagSearchChange($event)"
-      (tagAssign)="onTagAssign($event)"
-      (tagUnassign)="onTagUnassign($event)"
+      [initialAssignedTags]="initialAssignedTags()"
     />
 
     <app-product-form-images
       [texts]="texts()"
+      [toastTexts]="toastTexts()"
+      [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"
-      [images]="images()"
-      [isUploadLoading]="isImageUploadLoading()"
-      (filesSelected)="onImageFilesSelected($event)"
-      (moveUp)="onImageMoveUp($event)"
-      (moveDown)="onImageMoveDown($event)"
-      (remove)="onImageRemove($event)"
-      (upload)="onImageUpload()"
+      [initialImages]="initialImages()"
     />
 
     <app-product-form-attributes
       [texts]="texts()"
+      [toastTexts]="toastTexts()"
+      [shopId]="shopId()"
+      [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"
-      [attributeSearchValue]="attributeSearchValue()"
-      [isAttributeSearchLoading]="isAttributeSearchLoading()"
-      [attributeSearchResults]="attributeSearchResults()"
-      [assignedAttributes]="assignedAttributes()"
-      (attributeSearchChange)="onAttributeSearchChange($event)"
-      (attributeAssign)="onAttributeAssign($event)"
-      (attributeUnassign)="onAttributeUnassign($event)"
+      [initialAssignedAttributes]="initialAssignedAttributes()"
     />
   </aside>
 </div>

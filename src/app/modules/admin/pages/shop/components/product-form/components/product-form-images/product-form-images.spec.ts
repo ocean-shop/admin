@@ -1,11 +1,14 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PRODUCTS_CREATE_TEXTS } from '../../../../pages/products-create/constants/products-create.constants';
 import { ProductFormImageItem } from '../../models/product-form-image-item.model';
+import { ProductImagesService } from './services/product-images.service';
 import { ProductFormImages } from './product-form-images';
 
 describe('ProductFormImages', () => {
   let fixture: ComponentFixture<ProductFormImages>;
   let component: ProductFormImages;
+  let imagesService: ProductImagesService;
 
   const images: ProductFormImageItem[] = [
     {
@@ -20,14 +23,6 @@ describe('ProductFormImages', () => {
     },
   ];
 
-  const texts = {
-    IMAGES_TITLE: 'Media & Files',
-    IMAGES_UPLOAD_LABEL: 'Upload',
-    IMAGES_UPLOAD_LOADING_LABEL: 'Uploading...',
-    IMAGES_DROPZONE_HINT: 'Drop files here or click to upload',
-    IMAGES_ASSIGNED_EMPTY: 'No images yet.',
-  } as any;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProductFormImages],
@@ -36,11 +31,13 @@ describe('ProductFormImages', () => {
 
     fixture = TestBed.createComponent(ProductFormImages);
     component = fixture.componentInstance;
+    imagesService = fixture.debugElement.injector.get(ProductImagesService);
 
-    fixture.componentRef.setInput('texts', texts);
+    fixture.componentRef.setInput('texts', PRODUCTS_CREATE_TEXTS);
+    fixture.componentRef.setInput('toastTexts', PRODUCTS_CREATE_TEXTS);
+    fixture.componentRef.setInput('productId', 'product-1');
     fixture.componentRef.setInput('sidebarDisabled', false);
-    fixture.componentRef.setInput('images', images);
-    fixture.componentRef.setInput('isUploadLoading', false);
+    fixture.componentRef.setInput('initialImages', images);
     fixture.detectChanges();
   });
 
@@ -48,53 +45,39 @@ describe('ProductFormImages', () => {
     expect(component).toBeTruthy();
   });
 
-  it('emits filesSelected with image files only', () => {
-    const emitSpy = vi.spyOn((component as any).filesSelected, 'emit');
+  it('delegates selected files to images service', () => {
+    const filesSpy = vi.spyOn(imagesService, 'onImageFilesSelected');
     const imageFile = new File(['image'], 'one.jpg', { type: 'image/jpeg' });
     const eventFiles = [imageFile];
 
     (component as any).onFilesSelected(eventFiles);
 
-    expect(emitSpy).toHaveBeenCalledWith(eventFiles);
+    expect(filesSpy).toHaveBeenCalledWith(eventFiles);
   });
 
-  it('emits move and remove events', () => {
-    const moveUpSpy = vi.spyOn((component as any).moveUp, 'emit');
-    const moveDownSpy = vi.spyOn((component as any).moveDown, 'emit');
-    const removeSpy = vi.spyOn((component as any).remove, 'emit');
+  it('delegates move and remove actions to images service', () => {
+    const moveUpSpy = vi.spyOn(imagesService, 'onImageMoveUp');
+    const moveDownSpy = vi.spyOn(imagesService, 'onImageMoveDown');
+    const removeSpy = vi.spyOn(imagesService, 'onImageRemove');
 
-    (component as any).onMoveUp(' img-1 ');
-    (component as any).onMoveDown(' img-1 ');
-    (component as any).onRemove(' img-1 ');
+    (component as any).onMoveUp('img-1');
+    (component as any).onMoveDown('img-1');
+    (component as any).onRemove('img-1');
 
     expect(moveUpSpy).toHaveBeenCalledWith('img-1');
     expect(moveDownSpy).toHaveBeenCalledWith('img-1');
     expect(removeSpy).toHaveBeenCalledWith('img-1');
   });
 
-  it('emits upload when images are present', () => {
-    const uploadSpy = vi.spyOn((component as any).upload, 'emit');
+  it('delegates upload action to images service', () => {
+    const uploadSpy = vi.spyOn(imagesService, 'uploadImages');
 
     (component as any).onUpload();
 
     expect(uploadSpy).toHaveBeenCalled();
   });
 
-  it('does not emit actions when blocked', () => {
-    fixture.componentRef.setInput('sidebarDisabled', true);
-    fixture.detectChanges();
-
-    const filesSelectedSpy = vi.spyOn((component as any).filesSelected, 'emit');
-    const moveUpSpy = vi.spyOn((component as any).moveUp, 'emit');
-    const uploadSpy = vi.spyOn((component as any).upload, 'emit');
-    const imageFile = new File(['image'], 'one.jpg', { type: 'image/jpeg' });
-
-    (component as any).onFilesSelected([imageFile]);
-    (component as any).onMoveUp('img-1');
-    (component as any).onUpload();
-
-    expect(filesSelectedSpy).not.toHaveBeenCalled();
-    expect(moveUpSpy).not.toHaveBeenCalled();
-    expect(uploadSpy).not.toHaveBeenCalled();
+  it('seeds images in service state', () => {
+    expect(imagesService.images()).toEqual(images);
   });
 });

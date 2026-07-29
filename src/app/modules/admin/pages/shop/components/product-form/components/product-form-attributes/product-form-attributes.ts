@@ -1,54 +1,57 @@
-import { Component, input, output } from '@angular/core';
+import { Component, effect, inject, input, untracked } from '@angular/core';
 import { ProductFormAssignedAttribute } from '../../models/product-form-assigned-attribute.model';
-import { ProductFormAttributeOption } from '../../models/product-form-attribute-option.model';
 import { ProductFormTexts } from '../../models/product-form-texts.model';
 import { ProductFormSharedAttributes } from '../product-form-shared-attributes/product-form-shared-attributes';
+import { ProductAttributesToastTexts } from './models/product-attributes-toast-texts.model';
+import { ProductAttributesService } from './services/product-attributes.service';
 
 @Component({
   selector: 'app-product-form-attributes',
   imports: [ProductFormSharedAttributes],
+  providers: [ProductAttributesService],
   templateUrl: './product-form-attributes.html',
   styleUrl: './product-form-attributes.scss',
 })
 export class ProductFormAttributes {
-  readonly texts = input.required<ProductFormTexts>();
-  readonly sidebarDisabled = input<boolean>(false);
-  readonly attributeSearchValue = input<string>('');
-  readonly isAttributeSearchLoading = input<boolean>(false);
-  readonly attributeSearchResults = input<ProductFormAttributeOption[]>([]);
-  readonly assignedAttributes = input<ProductFormAssignedAttribute[]>([]);
+  private readonly attributesService = inject(ProductAttributesService);
 
-  readonly attributeSearchChange = output<string>();
-  readonly attributeAssign = output<string>();
-  readonly attributeUnassign = output<string>();
+  readonly texts = input.required<ProductFormTexts>();
+  readonly toastTexts = input.required<ProductAttributesToastTexts>();
+  readonly shopId = input<string | null>(null);
+  readonly productId = input<string | null>(null);
+  readonly sidebarDisabled = input<boolean>(false);
+  readonly initialAssignedAttributes = input<ProductFormAssignedAttribute[]>([]);
+
+  protected readonly attributeSearchValue = this.attributesService.attributeSearchValue;
+  protected readonly isAttributeSearchLoading = this.attributesService.isAttributeSearchLoading;
+  protected readonly attributeSearchResults = this.attributesService.attributeSearchResults;
+  protected readonly assignedAttributes = this.attributesService.assignedAttributes;
+
+  constructor() {
+    this.attributesService.configure(
+      {
+        getShopId: () => this.shopId(),
+        getProductId: () => this.productId(),
+        isSidebarEnabled: () => !this.sidebarDisabled(),
+      },
+      () => this.toastTexts(),
+    );
+
+    effect(() => {
+      const assignedAttributes = this.initialAssignedAttributes();
+      untracked(() => this.attributesService.setAssignedAttributes(assignedAttributes));
+    });
+  }
 
   protected onAttributeSearchChange(value: string): void {
-    this.attributeSearchChange.emit(value);
+    this.attributesService.onAttributeSearchChange(value);
   }
 
   protected onAttributeAssign(attributeId: string): void {
-    if (this.sidebarDisabled()) {
-      return;
-    }
-
-    const normalizedAttributeId = attributeId.trim();
-    if (!normalizedAttributeId) {
-      return;
-    }
-
-    this.attributeAssign.emit(normalizedAttributeId);
+    this.attributesService.onAttributeAssign(attributeId);
   }
 
   protected onAttributeUnassign(attributeId: string): void {
-    if (this.sidebarDisabled()) {
-      return;
-    }
-
-    const normalizedAttributeId = attributeId.trim();
-    if (!normalizedAttributeId) {
-      return;
-    }
-
-    this.attributeUnassign.emit(normalizedAttributeId);
+    this.attributesService.onAttributeUnassign(attributeId);
   }
 }

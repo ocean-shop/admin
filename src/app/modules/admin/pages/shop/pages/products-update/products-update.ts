@@ -6,26 +6,21 @@ import { finalize, map } from 'rxjs';
 import { Button } from '@ui/button/button';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { ProductFormCategoryToggleEvent } from '../../components/product-form/models/product-form-category-toggle-event.model';
-import { ProductFormVariationAttributeSearchEvent } from '../../components/product-form/models/product-form-variation-attribute-search-event.model';
-import { ProductFormVariationAttributeToggleEvent } from '../../components/product-form/models/product-form-variation-attribute-toggle-event.model';
-import { ProductFormVariationChangeEvent } from '../../components/product-form/models/product-form-variation-change-event.model';
-import { ProductFormVariationCreateEvent } from '../../components/product-form/models/product-form-variation-create-event.model';
-import { ProductFormVariationImageFilesEvent } from '../../components/product-form/models/product-form-variation-image-files-event.model';
-import { ProductFormVariationImageToggleEvent } from '../../components/product-form/models/product-form-variation-image-toggle-event.model';
-import { ProductFormVariationRemoveEvent } from '../../components/product-form/models/product-form-variation-remove-event.model';
 import {
   PRODUCT_FORM_DEFAULT_VALUE,
   PRODUCT_FORM_FIELD_IDS,
   PRODUCT_FORM_STATUS_OPTIONS,
 } from '../../components/product-form/constants/product-form.constants';
 import { ProductForm } from '../../components/product-form/product-form';
+import { ProductFormAssignedAttribute } from '../../components/product-form/models/product-form-assigned-attribute.model';
+import { ProductFormAssignedTag } from '../../components/product-form/models/product-form-assigned-tag.model';
+import { ProductFormImageItem } from '../../components/product-form/models/product-form-image-item.model';
 import { ProductFormModel } from '../../components/product-form/models/product-form.model';
+import { ProductFormVariation } from '../../components/product-form/models/product-form-variation.model';
 import { ProductType } from '../products/models/product-type.enum';
 import { UpdateProductPayload } from '../products/models/update-product-payload.model';
 import { ProductsService } from '../products/services/products.service';
 import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
-import { ProductEditorFacade } from '../../facades/product-editor.facade';
 import { buildUpdateProductPayload } from '../../helpers/product-form-payload.helper';
 import {
   extractProductAttributes,
@@ -41,13 +36,11 @@ import { PRODUCTS_TYPE_OPTIONS } from '../../constants/products.constants';
 @Component({
   selector: 'app-products-update',
   imports: [Button, ProductForm],
-  providers: [ProductEditorFacade],
   templateUrl: './products-update.html',
   styleUrl: './products-update.scss',
 })
 export class ProductsUpdate implements OnInit {
   private readonly productsService = inject(ProductsService);
-  private readonly productEditorFacade = inject(ProductEditorFacade);
   private readonly toasterService = inject(ToasterService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
@@ -62,19 +55,11 @@ export class ProductsUpdate implements OnInit {
   protected readonly productId = signal<string | null>(null);
   protected readonly isSubmitting = signal(false);
   protected readonly isLoadingProduct = signal(false);
-  protected readonly isCategoriesLoading = this.productEditorFacade.isCategoriesLoading;
-  protected readonly isCategoryToggleLoading = this.productEditorFacade.isCategoryToggleLoading;
-  protected readonly isAttributeSearchLoading = this.productEditorFacade.isAttributeSearchLoading;
-  protected readonly isTagSearchLoading = this.productEditorFacade.isTagSearchLoading;
-  protected readonly attributeSearchValue = this.productEditorFacade.attributeSearchValue;
-  protected readonly attributeSearchResults = this.productEditorFacade.attributeSearchResults;
-  protected readonly assignedAttributes = this.productEditorFacade.assignedAttributes;
-  protected readonly tagSearchValue = this.productEditorFacade.tagSearchValue;
-  protected readonly tagSearchResults = this.productEditorFacade.tagSearchResults;
-  protected readonly assignedTags = this.productEditorFacade.assignedTags;
-  protected readonly images = this.productEditorFacade.images;
-  protected readonly isImageUploadLoading = this.productEditorFacade.isImageUploadLoading;
-  protected readonly variations = this.productEditorFacade.variations;
+  protected readonly selectedCategoryIds = signal<Set<string>>(new Set());
+  protected readonly assignedAttributes = signal<ProductFormAssignedAttribute[]>([]);
+  protected readonly assignedTags = signal<ProductFormAssignedTag[]>([]);
+  protected readonly images = signal<ProductFormImageItem[]>([]);
+  protected readonly variations = signal<ProductFormVariation[]>([]);
   protected readonly productFormModel = signal<ProductFormModel>({
     ...PRODUCT_FORM_DEFAULT_VALUE,
   });
@@ -83,19 +68,6 @@ export class ProductsUpdate implements OnInit {
   });
 
   protected readonly isFormValid = computed(() => this.productForm.name().valid());
-  protected readonly categoryNodes = computed(() =>
-    this.productEditorFacade.buildCategoryNodes({
-      disabled: this.isCategoryToggleLoading() || this.isCategoriesLoading(),
-    }),
-  );
-
-  constructor() {
-    this.productEditorFacade.configure({
-      getShopId: () => this.shopId(),
-      getProductId: () => this.productId(),
-      texts: PRODUCTS_UPDATE_TEXTS,
-    });
-  }
 
   ngOnInit(): void {
     this.watchRouteContext();
@@ -139,100 +111,6 @@ export class ProductsUpdate implements OnInit {
     }));
   }
 
-  protected onCategoryToggle(event: ProductFormCategoryToggleEvent): void {
-    this.productEditorFacade.onCategoryToggle(event);
-  }
-
-  protected onAttributeSearchChange(value: string): void {
-    this.productEditorFacade.onAttributeSearchChange(value);
-  }
-
-  protected onAttributeAssign(attributeId: string): void {
-    this.productEditorFacade.onAttributeAssign(attributeId);
-  }
-
-  protected onAttributeUnassign(attributeId: string): void {
-    this.productEditorFacade.onAttributeUnassign(attributeId);
-  }
-
-  protected onTagSearchChange(value: string): void {
-    this.productEditorFacade.onTagSearchChange(value);
-  }
-
-  protected onTagAssign(tagId: string): void {
-    this.productEditorFacade.onTagAssign(tagId);
-  }
-
-  protected onTagUnassign(tagId: string): void {
-    this.productEditorFacade.onTagUnassign(tagId);
-  }
-
-  protected onImageFilesSelected(files: File[]): void {
-    this.productEditorFacade.onImageFilesSelected(files);
-  }
-
-  protected onImageMoveUp(imageId: string): void {
-    this.productEditorFacade.onImageMoveUp(imageId);
-  }
-
-  protected onImageMoveDown(imageId: string): void {
-    this.productEditorFacade.onImageMoveDown(imageId);
-  }
-
-  protected onImageRemove(imageId: string): void {
-    this.productEditorFacade.onImageRemove(imageId);
-  }
-
-  protected onImageUpload(): void {
-    this.productEditorFacade.uploadImages();
-  }
-
-  protected onVariationAdd(): void {
-    this.productEditorFacade.onVariationAdd();
-  }
-
-  protected onVariationCreate(event: ProductFormVariationCreateEvent): void {
-    this.productEditorFacade.saveVariation(event);
-  }
-
-  protected onVariationRemove(event: ProductFormVariationRemoveEvent): void {
-    this.productEditorFacade.onVariationRemove(event);
-  }
-
-  protected onVariationChange(event: ProductFormVariationChangeEvent): void {
-    this.productEditorFacade.onVariationChange(event);
-  }
-
-  protected onVariationAttributeSearchChange(
-    event: ProductFormVariationAttributeSearchEvent,
-  ): void {
-    this.productEditorFacade.onVariationAttributeSearchChange(event);
-  }
-
-  protected onVariationAttributeAssign(event: ProductFormVariationAttributeToggleEvent): void {
-    this.productEditorFacade.onVariationAttributeAssign(event);
-  }
-
-  protected onVariationAttributeUnassign(event: ProductFormVariationAttributeToggleEvent): void {
-    this.productEditorFacade.onVariationAttributeUnassign(event);
-  }
-
-  protected onVariationImageFilesSelected(event: ProductFormVariationImageFilesEvent): void {
-    this.productEditorFacade.onVariationImageFilesSelected(event);
-  }
-
-  protected onVariationImageMoveUp(event: ProductFormVariationImageToggleEvent): void {
-    this.productEditorFacade.onVariationImageMoveUp(event);
-  }
-
-  protected onVariationImageMoveDown(event: ProductFormVariationImageToggleEvent): void {
-    this.productEditorFacade.onVariationImageMoveDown(event);
-  }
-
-  protected onVariationImageRemove(event: ProductFormVariationImageToggleEvent): void {
-    this.productEditorFacade.onVariationImageRemove(event);
-  }
-
   private watchRouteContext(): void {
     this.activatedRoute.paramMap
       .pipe(
@@ -245,13 +123,12 @@ export class ProductsUpdate implements OnInit {
       .subscribe(({ shopId, productId }) => {
         this.shopId.set(shopId);
         this.productId.set(productId);
-        this.productEditorFacade.resetState({ clearCategories: !shopId || !productId });
+        this.resetSeeds();
 
         if (!shopId || !productId) {
           return;
         }
 
-        this.productEditorFacade.loadCategories();
         this.loadProduct(productId);
       });
   }
@@ -267,16 +144,16 @@ export class ProductsUpdate implements OnInit {
       .subscribe({
         next: (product) => {
           this.productFormModel.set(mapProductToFormModel(product));
-          this.productEditorFacade.selectedCategoryIds.set(extractProductCategoryIds(product));
-          this.productEditorFacade.images.set(extractProductImages(product));
-          this.productEditorFacade.variations.set(extractProductVariations(product));
-          this.productEditorFacade.assignedAttributes.set(
+          this.selectedCategoryIds.set(extractProductCategoryIds(product));
+          this.images.set(extractProductImages(product));
+          this.variations.set(extractProductVariations(product));
+          this.assignedAttributes.set(
             extractProductAttributes(product, {
               attributesFallbackLabel: PRODUCTS_UPDATE_TEXTS.ATTRIBUTES_TITLE,
               tagsFallbackLabel: PRODUCTS_UPDATE_TEXTS.TAGS_TITLE,
             }),
           );
-          this.productEditorFacade.assignedTags.set(
+          this.assignedTags.set(
             extractProductTags(product, {
               attributesFallbackLabel: PRODUCTS_UPDATE_TEXTS.ATTRIBUTES_TITLE,
               tagsFallbackLabel: PRODUCTS_UPDATE_TEXTS.TAGS_TITLE,
@@ -290,6 +167,14 @@ export class ProductsUpdate implements OnInit {
           );
         },
       });
+  }
+
+  private resetSeeds(): void {
+    this.selectedCategoryIds.set(new Set());
+    this.assignedAttributes.set([]);
+    this.assignedTags.set([]);
+    this.images.set([]);
+    this.variations.set([]);
   }
 
   private buildPayload(): UpdateProductPayload | null {

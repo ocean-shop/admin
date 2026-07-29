@@ -1,73 +1,59 @@
-import { Component, input, output } from '@angular/core';
+import { Component, effect, inject, input, untracked } from '@angular/core';
 import { Checkbox } from '@ui/checkbox/checkbox';
 import { Input } from '@ui/input/input';
 import { ProductFormTexts } from '../../models/product-form-texts.model';
-import { ProductFormVariationAttributeSearchEvent } from '../../models/product-form-variation-attribute-search-event.model';
-import { ProductFormVariationAttributeToggleEvent } from '../../models/product-form-variation-attribute-toggle-event.model';
 import { ProductFormVariationChangeEvent } from '../../models/product-form-variation-change-event.model';
-import { ProductFormVariationCreateEvent } from '../../models/product-form-variation-create-event.model';
-import { ProductFormVariationImageFilesEvent } from '../../models/product-form-variation-image-files-event.model';
-import { ProductFormVariationImageToggleEvent } from '../../models/product-form-variation-image-toggle-event.model';
-import { ProductFormVariationRemoveEvent } from '../../models/product-form-variation-remove-event.model';
 import { ProductFormVariation } from '../../models/product-form-variation.model';
 import { ProductFormSharedAttributes } from '../product-form-shared-attributes/product-form-shared-attributes';
 import { ProductFormSharedImages } from '../product-form-shared-images/product-form-shared-images';
+import { ProductVariationsToastTexts } from './models/product-variations-toast-texts.model';
+import { ProductVariationsService } from './services/product-variations.service';
 
 @Component({
   selector: 'app-product-form-variations',
   imports: [Checkbox, Input, ProductFormSharedAttributes, ProductFormSharedImages],
+  providers: [ProductVariationsService],
   templateUrl: './product-form-variations.html',
   styleUrl: './product-form-variations.scss',
 })
 export class ProductFormVariations {
-  readonly texts = input.required<ProductFormTexts>();
-  readonly sidebarDisabled = input<boolean>(false);
-  readonly variations = input<ProductFormVariation[]>([]);
+  private readonly variationsService = inject(ProductVariationsService);
 
-  readonly variationAdd = output<void>();
-  readonly variationCreate = output<ProductFormVariationCreateEvent>();
-  readonly variationRemove = output<ProductFormVariationRemoveEvent>();
-  readonly variationChange = output<ProductFormVariationChangeEvent>();
-  readonly variationAttributeSearchChange = output<ProductFormVariationAttributeSearchEvent>();
-  readonly variationAttributeAssign = output<ProductFormVariationAttributeToggleEvent>();
-  readonly variationAttributeUnassign = output<ProductFormVariationAttributeToggleEvent>();
-  readonly variationImageFilesSelected = output<ProductFormVariationImageFilesEvent>();
-  readonly variationImageMoveUp = output<ProductFormVariationImageToggleEvent>();
-  readonly variationImageMoveDown = output<ProductFormVariationImageToggleEvent>();
-  readonly variationImageRemove = output<ProductFormVariationImageToggleEvent>();
+  readonly texts = input.required<ProductFormTexts>();
+  readonly toastTexts = input.required<ProductVariationsToastTexts>();
+  readonly shopId = input<string | null>(null);
+  readonly productId = input<string | null>(null);
+  readonly sidebarDisabled = input<boolean>(false);
+  readonly initialVariations = input<ProductFormVariation[]>([]);
+
+  protected readonly variations = this.variationsService.variations;
+
+  constructor() {
+    this.variationsService.configure(
+      {
+        getShopId: () => this.shopId(),
+        getProductId: () => this.productId(),
+        isSidebarEnabled: () => !this.sidebarDisabled(),
+      },
+      () => this.toastTexts(),
+    );
+
+    effect(() => {
+      const initialVariations = this.initialVariations();
+      untracked(() => this.variationsService.setVariations(initialVariations));
+    });
+  }
 
   protected onVariationAdd(): void {
-    if (this.sidebarDisabled()) {
-      return;
-    }
-
-    this.variationAdd.emit();
+    this.variationsService.onVariationAdd();
   }
 
   protected onVariationCreate(localId: string): void {
-    if (this.sidebarDisabled()) {
-      return;
-    }
-
-    const normalizedLocalId = localId.trim();
-    if (!normalizedLocalId) {
-      return;
-    }
-
-    this.variationCreate.emit({ localId: normalizedLocalId });
+    this.variationsService.saveVariation({ localId });
   }
 
   protected onVariationRemove(localId: string): void {
-    if (this.sidebarDisabled()) {
-      return;
-    }
-
-    const normalizedLocalId = localId.trim();
-    if (!normalizedLocalId) {
-      return;
-    }
-
-    this.variationRemove.emit({ localId: normalizedLocalId });
+    this.variationsService.onVariationRemove({ localId });
   }
 
   protected onVariationFieldChange(
@@ -75,109 +61,34 @@ export class ProductFormVariations {
     field: ProductFormVariationChangeEvent['field'],
     value: string | boolean,
   ): void {
-    if (this.sidebarDisabled()) {
-      return;
-    }
-
-    const normalizedLocalId = localId.trim();
-    if (!normalizedLocalId) {
-      return;
-    }
-
-    this.variationChange.emit({
-      localId: normalizedLocalId,
-      field,
-      value,
-    });
+    this.variationsService.onVariationChange({ localId, field, value });
   }
 
   protected onVariationAttributeSearchChange(localId: string, value: string): void {
-    const normalizedLocalId = localId.trim();
-    if (!normalizedLocalId) {
-      return;
-    }
-
-    this.variationAttributeSearchChange.emit({
-      localId: normalizedLocalId,
-      value,
-    });
+    this.variationsService.onVariationAttributeSearchChange({ localId, value });
   }
 
   protected onVariationAttributeAssign(localId: string, attributeId: string): void {
-    if (this.sidebarDisabled()) {
-      return;
-    }
-
-    const normalizedLocalId = localId.trim();
-    const normalizedAttributeId = attributeId.trim();
-    if (!normalizedLocalId || !normalizedAttributeId) {
-      return;
-    }
-
-    this.variationAttributeAssign.emit({
-      localId: normalizedLocalId,
-      attributeId: normalizedAttributeId,
-    });
+    this.variationsService.onVariationAttributeAssign({ localId, attributeId });
   }
 
   protected onVariationAttributeUnassign(localId: string, attributeId: string): void {
-    if (this.sidebarDisabled()) {
-      return;
-    }
-
-    const normalizedLocalId = localId.trim();
-    const normalizedAttributeId = attributeId.trim();
-    if (!normalizedLocalId || !normalizedAttributeId) {
-      return;
-    }
-
-    this.variationAttributeUnassign.emit({
-      localId: normalizedLocalId,
-      attributeId: normalizedAttributeId,
-    });
+    this.variationsService.onVariationAttributeUnassign({ localId, attributeId });
   }
 
   protected onVariationImageFilesSelected(localId: string, files: File[]): void {
-    const normalizedLocalId = localId.trim();
-    if (!normalizedLocalId || !files.length || this.sidebarDisabled()) {
-      return;
-    }
-
-    this.variationImageFilesSelected.emit({ localId: normalizedLocalId, files });
+    this.variationsService.onVariationImageFilesSelected({ localId, files });
   }
 
   protected onVariationImageMoveUp(localId: string, imageId: string): void {
-    this.emitVariationImageAction(this.variationImageMoveUp, localId, imageId);
+    this.variationsService.onVariationImageMoveUp({ localId, imageId });
   }
 
   protected onVariationImageMoveDown(localId: string, imageId: string): void {
-    this.emitVariationImageAction(this.variationImageMoveDown, localId, imageId);
+    this.variationsService.onVariationImageMoveDown({ localId, imageId });
   }
 
   protected onVariationImageRemove(localId: string, imageId: string): void {
-    this.emitVariationImageAction(this.variationImageRemove, localId, imageId);
-  }
-
-  private emitVariationImageAction(
-    emitter: {
-      emit: (event: ProductFormVariationImageToggleEvent) => void;
-    },
-    localId: string,
-    imageId: string,
-  ): void {
-    if (this.sidebarDisabled()) {
-      return;
-    }
-
-    const normalizedLocalId = localId.trim();
-    const normalizedImageId = imageId.trim();
-    if (!normalizedLocalId || !normalizedImageId) {
-      return;
-    }
-
-    emitter.emit({
-      localId: normalizedLocalId,
-      imageId: normalizedImageId,
-    });
+    this.variationsService.onVariationImageRemove({ localId, imageId });
   }
 }
