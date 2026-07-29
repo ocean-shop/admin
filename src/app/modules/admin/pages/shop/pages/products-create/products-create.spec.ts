@@ -19,6 +19,8 @@ describe('ProductsCreate', () => {
   let mockProductsService: {
     createProduct: ReturnType<typeof vi.fn>;
     updateProduct: ReturnType<typeof vi.fn>;
+    createVariation: ReturnType<typeof vi.fn>;
+    updateVariation: ReturnType<typeof vi.fn>;
     toggleCategory: ReturnType<typeof vi.fn>;
     toggleAttribute: ReturnType<typeof vi.fn>;
     toggleTag: ReturnType<typeof vi.fn>;
@@ -42,6 +44,8 @@ describe('ProductsCreate', () => {
     mockProductsService = {
       createProduct: vi.fn().mockReturnValue(of({ id: 'product-1' })),
       updateProduct: vi.fn().mockReturnValue(of({ id: 'product-1' })),
+      createVariation: vi.fn().mockReturnValue(of({ variations: [{ id: 'variation-1' }] })),
+      updateVariation: vi.fn().mockReturnValue(of({ id: 'variation-1' })),
       toggleCategory: vi.fn().mockReturnValue(of({})),
       toggleAttribute: vi.fn().mockReturnValue(of({})),
       toggleTag: vi.fn().mockReturnValue(of({})),
@@ -336,6 +340,52 @@ describe('ProductsCreate', () => {
       available: true,
       price: 90,
       oldPrice: 100,
+    });
+  });
+
+  it('saves variation after product is created', () => {
+    (component as any).createdProductId.set('product-1');
+    (component as any).variations.set([
+      {
+        localId: 'variation-1',
+        id: null,
+        title: 'Синій M',
+        name: 'Синій / M',
+        price: '99.00',
+        oldPrice: '120.00',
+        sku: 'SKU-BL-M',
+        available: true,
+        isMain: false,
+        attributes: [
+          {
+            id: '11111111-1111-4111-8111-111111111111',
+            attributeTypeId: '11111111-1111-4111-8111-111111111111',
+            name: 'Колір',
+            value: 'Синій',
+            label: 'Колір: Синій',
+          },
+        ],
+        attributeSearchValue: '',
+        attributeSearchResults: [],
+        isAttributeSearchLoading: false,
+        images: [],
+        isSaving: false,
+      },
+    ]);
+
+    (component as any).onVariationCreate({ localId: 'variation-1' });
+
+    expect(mockProductsService.createVariation).toHaveBeenCalledWith('product-1', {
+      variation: 'product_variations',
+      title: 'Синій M',
+      name: 'Синій / M',
+      sku: 'SKU-BL-M',
+      price: 99,
+      oldPrice: 120,
+      available: true,
+      isDefault: false,
+      attributes: [{ attributeTypeId: '11111111-1111-4111-8111-111111111111' }],
+      images: [],
     });
   });
 });

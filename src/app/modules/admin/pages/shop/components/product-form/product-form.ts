@@ -8,6 +8,7 @@ import { ProductFormCategories } from './components/product-form-categories/prod
 import { ProductFormImages } from './components/product-form-images/product-form-images';
 import { ProductFormPricingInventory } from './components/product-form-pricing-inventory/product-form-pricing-inventory';
 import { ProductFormTags } from './components/product-form-tags/product-form-tags';
+import { ProductFormVariations } from './components/product-form-variations/product-form-variations';
 import { ProductFormAssignedAttribute } from './models/product-form-assigned-attribute.model';
 import { ProductFormImageItem } from './models/product-form-image-item.model';
 import { ProductFormAssignedTag } from './models/product-form-assigned-tag.model';
@@ -17,6 +18,14 @@ import { ProductFormCategoryNode } from './models/product-form-category-node.mod
 import { ProductFormCategoryToggleEvent } from './models/product-form-category-toggle-event.model';
 import { ProductFormFieldIds } from './models/product-form-field-ids.model';
 import { ProductFormTexts } from './models/product-form-texts.model';
+import { ProductFormVariationAttributeSearchEvent } from './models/product-form-variation-attribute-search-event.model';
+import { ProductFormVariationAttributeToggleEvent } from './models/product-form-variation-attribute-toggle-event.model';
+import { ProductFormVariationChangeEvent } from './models/product-form-variation-change-event.model';
+import { ProductFormVariationCreateEvent } from './models/product-form-variation-create-event.model';
+import { ProductFormVariationImageFilesEvent } from './models/product-form-variation-image-files-event.model';
+import { ProductFormVariationImageToggleEvent } from './models/product-form-variation-image-toggle-event.model';
+import { ProductFormVariationRemoveEvent } from './models/product-form-variation-remove-event.model';
+import { ProductFormVariation } from './models/product-form-variation.model';
 
 @Component({
   selector: 'app-product-form',
@@ -27,6 +36,7 @@ import { ProductFormTexts } from './models/product-form-texts.model';
     ProductFormImages,
     ProductFormPricingInventory,
     ProductFormTags,
+    ProductFormVariations,
   ],
   templateUrl: './product-form.html',
   styleUrl: './product-form.scss',
@@ -50,6 +60,7 @@ export class ProductForm {
   readonly assignedTags = input<ProductFormAssignedTag[]>([]);
   readonly images = input<ProductFormImageItem[]>([]);
   readonly isImageUploadLoading = input<boolean>(false);
+  readonly variations = input<ProductFormVariation[]>([]);
 
   readonly productTypeChange = output<ProductType>();
   readonly categoryToggle = output<ProductFormCategoryToggleEvent>();
@@ -64,8 +75,22 @@ export class ProductForm {
   readonly imageMoveDown = output<string>();
   readonly imageRemove = output<string>();
   readonly imageUpload = output<void>();
+  readonly variationAdd = output<void>();
+  readonly variationCreate = output<ProductFormVariationCreateEvent>();
+  readonly variationRemove = output<ProductFormVariationRemoveEvent>();
+  readonly variationChange = output<ProductFormVariationChangeEvent>();
+  readonly variationAttributeSearchChange = output<ProductFormVariationAttributeSearchEvent>();
+  readonly variationAttributeAssign = output<ProductFormVariationAttributeToggleEvent>();
+  readonly variationAttributeUnassign = output<ProductFormVariationAttributeToggleEvent>();
+  readonly variationImageFilesSelected = output<ProductFormVariationImageFilesEvent>();
+  readonly variationImageMoveUp = output<ProductFormVariationImageToggleEvent>();
+  readonly variationImageMoveDown = output<ProductFormVariationImageToggleEvent>();
+  readonly variationImageRemove = output<ProductFormVariationImageToggleEvent>();
   protected readonly shouldShowPricingInventory = computed(
     () => this.productForm().type().value() !== ProductType.Variable,
+  );
+  protected readonly shouldShowVariations = computed(
+    () => this.productForm().type().value() === ProductType.Variable,
   );
 
   protected onProductTypeOptionChange(value: string | number | boolean): void {
@@ -206,5 +231,87 @@ export class ProductForm {
     }
 
     this.imageUpload.emit();
+  }
+
+  protected onVariationAdd(): void {
+    this.variationAdd.emit();
+  }
+
+  protected onVariationCreate(event: ProductFormVariationCreateEvent): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.variationCreate.emit(event);
+  }
+
+  protected onVariationRemove(event: ProductFormVariationRemoveEvent): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.variationRemove.emit(event);
+  }
+
+  protected onVariationChange(event: ProductFormVariationChangeEvent): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.variationChange.emit(event);
+  }
+
+  protected onVariationAttributeSearchChange(
+    event: ProductFormVariationAttributeSearchEvent,
+  ): void {
+    this.variationAttributeSearchChange.emit(event);
+  }
+
+  protected onVariationAttributeAssign(event: ProductFormVariationAttributeToggleEvent): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.variationAttributeAssign.emit(event);
+  }
+
+  protected onVariationAttributeUnassign(event: ProductFormVariationAttributeToggleEvent): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.variationAttributeUnassign.emit(event);
+  }
+
+  protected onVariationImageFilesSelected(event: ProductFormVariationImageFilesEvent): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.variationImageFilesSelected.emit(event);
+  }
+
+  protected onVariationImageMoveUp(event: ProductFormVariationImageToggleEvent): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.variationImageMoveUp.emit(event);
+  }
+
+  protected onVariationImageMoveDown(event: ProductFormVariationImageToggleEvent): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.variationImageMoveDown.emit(event);
+  }
+
+  protected onVariationImageRemove(event: ProductFormVariationImageToggleEvent): void {
+    if (this.sidebarDisabled()) {
+      return;
+    }
+
+    this.variationImageRemove.emit(event);
   }
 }

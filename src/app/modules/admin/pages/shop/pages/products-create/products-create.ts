@@ -19,6 +19,13 @@ import { ProductsService } from '../products/services/products.service';
 import { UpdateProductPayload } from '../products/models/update-product-payload.model';
 import { ProductForm } from '../../components/product-form/product-form';
 import { ProductFormCategoryToggleEvent } from '../../components/product-form/models/product-form-category-toggle-event.model';
+import { ProductFormVariationAttributeSearchEvent } from '../../components/product-form/models/product-form-variation-attribute-search-event.model';
+import { ProductFormVariationAttributeToggleEvent } from '../../components/product-form/models/product-form-variation-attribute-toggle-event.model';
+import { ProductFormVariationChangeEvent } from '../../components/product-form/models/product-form-variation-change-event.model';
+import { ProductFormVariationCreateEvent } from '../../components/product-form/models/product-form-variation-create-event.model';
+import { ProductFormVariationImageFilesEvent } from '../../components/product-form/models/product-form-variation-image-files-event.model';
+import { ProductFormVariationImageToggleEvent } from '../../components/product-form/models/product-form-variation-image-toggle-event.model';
+import { ProductFormVariationRemoveEvent } from '../../components/product-form/models/product-form-variation-remove-event.model';
 import { ProductEditorFacade } from '../../facades/product-editor.facade';
 import {
   buildCreateProductPayload,
@@ -73,6 +80,7 @@ export class ProductsCreate implements OnInit {
   protected readonly assignedTags = this.productEditorFacade.assignedTags;
   protected readonly images = this.productEditorFacade.images;
   protected readonly isImageUploadLoading = this.productEditorFacade.isImageUploadLoading;
+  protected readonly variations = this.productEditorFacade.variations;
 
   protected readonly productFormModel = signal<ProductCreateFormModel>({
     ...PRODUCTS_CREATE_DEFAULT_FORM_VALUE,
@@ -174,6 +182,52 @@ export class ProductsCreate implements OnInit {
 
   protected onImageUpload(): void {
     this.productEditorFacade.uploadImages();
+  }
+
+  protected onVariationAdd(): void {
+    this.productEditorFacade.onVariationAdd();
+  }
+
+  protected onVariationCreate(event: ProductFormVariationCreateEvent): void {
+    this.productEditorFacade.saveVariation(event);
+  }
+
+  protected onVariationRemove(event: ProductFormVariationRemoveEvent): void {
+    this.productEditorFacade.onVariationRemove(event);
+  }
+
+  protected onVariationChange(event: ProductFormVariationChangeEvent): void {
+    this.productEditorFacade.onVariationChange(event);
+  }
+
+  protected onVariationAttributeSearchChange(
+    event: ProductFormVariationAttributeSearchEvent,
+  ): void {
+    this.productEditorFacade.onVariationAttributeSearchChange(event);
+  }
+
+  protected onVariationAttributeAssign(event: ProductFormVariationAttributeToggleEvent): void {
+    this.productEditorFacade.onVariationAttributeAssign(event);
+  }
+
+  protected onVariationAttributeUnassign(event: ProductFormVariationAttributeToggleEvent): void {
+    this.productEditorFacade.onVariationAttributeUnassign(event);
+  }
+
+  protected onVariationImageFilesSelected(event: ProductFormVariationImageFilesEvent): void {
+    this.productEditorFacade.onVariationImageFilesSelected(event);
+  }
+
+  protected onVariationImageMoveUp(event: ProductFormVariationImageToggleEvent): void {
+    this.productEditorFacade.onVariationImageMoveUp(event);
+  }
+
+  protected onVariationImageMoveDown(event: ProductFormVariationImageToggleEvent): void {
+    this.productEditorFacade.onVariationImageMoveDown(event);
+  }
+
+  protected onVariationImageRemove(event: ProductFormVariationImageToggleEvent): void {
+    this.productEditorFacade.onVariationImageRemove(event);
   }
 
   private watchShopId(): void {

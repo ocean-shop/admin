@@ -20,6 +20,23 @@
       [texts]="texts()"
       [fieldIds]="fieldIds()"
     />
+    } @if (shouldShowVariations()) {
+    <app-product-form-variations
+      [texts]="texts()"
+      [sidebarDisabled]="sidebarDisabled()"
+      [variations]="variations()"
+      (variationAdd)="onVariationAdd()"
+      (variationCreate)="onVariationCreate($event)"
+      (variationRemove)="onVariationRemove($event)"
+      (variationChange)="onVariationChange($event)"
+      (variationAttributeSearchChange)="onVariationAttributeSearchChange($event)"
+      (variationAttributeAssign)="onVariationAttributeAssign($event)"
+      (variationAttributeUnassign)="onVariationAttributeUnassign($event)"
+      (variationImageFilesSelected)="onVariationImageFilesSelected($event)"
+      (variationImageMoveUp)="onVariationImageMoveUp($event)"
+      (variationImageMoveDown)="onVariationImageMoveDown($event)"
+      (variationImageRemove)="onVariationImageRemove($event)"
+    />
     }
   </section>
 

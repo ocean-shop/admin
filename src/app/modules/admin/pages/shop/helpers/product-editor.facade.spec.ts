@@ -12,6 +12,8 @@ describe('ProductEditorFacade', () => {
   let facade: ProductEditorFacade;
   let mockProductsService: {
     getProductById: ReturnType<typeof vi.fn>;
+    createVariation: ReturnType<typeof vi.fn>;
+    updateVariation: ReturnType<typeof vi.fn>;
     toggleCategory: ReturnType<typeof vi.fn>;
     toggleAttribute: ReturnType<typeof vi.fn>;
     toggleTag: ReturnType<typeof vi.fn>;
@@ -51,6 +53,8 @@ describe('ProductEditorFacade', () => {
       toggleCategory: vi.fn().mockReturnValue(of({})),
       toggleAttribute: vi.fn().mockReturnValue(of({})),
       toggleTag: vi.fn().mockReturnValue(of({})),
+      createVariation: vi.fn().mockReturnValue(of({ variations: [{ id: 'variation-1' }] })),
+      updateVariation: vi.fn().mockReturnValue(of({ id: 'variation-1' })),
       assignImages: vi.fn().mockReturnValue(of({})),
       changeImageSort: vi.fn().mockReturnValue(of({})),
       removeImage: vi.fn().mockReturnValue(of({})),
@@ -108,6 +112,9 @@ describe('ProductEditorFacade', () => {
         IMAGES_ASSIGN_SUCCESS_TITLE: 'Зображення збережено',
         IMAGES_ASSIGN_ERROR_TITLE: 'Зображення не збережено',
         IMAGES_ASSIGN_ERROR_MESSAGE: 'Спробуйте ще раз',
+        VARIATION_SAVE_SUCCESS_TITLE: 'Варіацію збережено',
+        VARIATION_SAVE_ERROR_TITLE: 'Варіацію не збережено',
+        VARIATION_SAVE_ERROR_MESSAGE: 'Спробуйте ще раз',
       },
     });
   });
@@ -234,5 +241,142 @@ describe('ProductEditorFacade', () => {
       },
     ]);
     expect(mockToasterService.success).toHaveBeenCalledWith('Зображення збережено');
+  });
+
+  it('saves new variation and shows success toast', () => {
+    facade.variations.set([
+      {
+        localId: 'variation-1',
+        id: null,
+        title: 'Синій M',
+        name: 'Синій / M',
+        price: '99.00',
+        oldPrice: '120.00',
+        sku: 'SKU-BL-M',
+        available: true,
+        isMain: false,
+        attributes: [
+          {
+            id: '11111111-1111-4111-8111-111111111111',
+            attributeTypeId: '11111111-1111-4111-8111-111111111111',
+            name: 'Колір',
+            value: 'Синій',
+            label: 'Колір: Синій',
+          },
+        ],
+        attributeSearchValue: '',
+        attributeSearchResults: [],
+        isAttributeSearchLoading: false,
+        images: [],
+        isSaving: false,
+      },
+    ]);
+
+    facade.saveVariation({ localId: 'variation-1' });
+
+    expect(mockProductsService.createVariation).toHaveBeenCalledWith('product-1', {
+      variation: 'product_variations',
+      title: 'Синій M',
+      name: 'Синій / M',
+      sku: 'SKU-BL-M',
+      price: 99,
+      oldPrice: 120,
+      available: true,
+      isDefault: false,
+      attributes: [{ attributeTypeId: '11111111-1111-4111-8111-111111111111' }],
+      images: [],
+    });
+    expect(mockToasterService.success).toHaveBeenCalledWith('Варіацію збережено');
+  });
+
+  it('adds, updates and removes local variation state', () => {
+    facade.onVariationAdd();
+    const createdVariation = facade.variations()[0];
+
+    expect(createdVariation).toBeTruthy();
+
+    facade.onVariationChange({
+      localId: createdVariation.localId,
+      field: 'title',
+      value: 'Синій M',
+    });
+    expect(facade.variations()[0].title).toBe('Синій M');
+
+    facade.onVariationRemove({ localId: createdVariation.localId });
+    expect(facade.variations()).toHaveLength(0);
+  });
+
+  it('updates existing variation through update endpoint', () => {
+    facade.variations.set([
+      {
+        localId: 'variation-1',
+        id: 'variation-1',
+        title: 'Синій M',
+        name: 'Синій / M',
+        price: '99.00',
+        oldPrice: '120.00',
+        sku: 'SKU-BL-M',
+        available: true,
+        isMain: true,
+        attributes: [
+          {
+            id: '11111111-1111-4111-8111-111111111111',
+            attributeTypeId: '11111111-1111-4111-8111-111111111111',
+            name: 'Колір',
+            value: 'Синій',
+            label: 'Колір: Синій',
+          },
+        ],
+        attributeSearchValue: '',
+        attributeSearchResults: [],
+        isAttributeSearchLoading: false,
+        images: [],
+        isSaving: false,
+      },
+    ]);
+
+    facade.saveVariation({ localId: 'variation-1' });
+
+    expect(mockProductsService.updateVariation).toHaveBeenCalledWith('product-1', 'variation-1', {
+      title: 'Синій M',
+      name: 'Синій / M',
+      sku: 'SKU-BL-M',
+      price: 99,
+      oldPrice: 120,
+      available: true,
+      isDefault: true,
+      attributes: [{ attributeTypeId: '11111111-1111-4111-8111-111111111111' }],
+      images: [],
+    });
+  });
+
+  it('shows error toast when variation save fails', () => {
+    mockProductsService.createVariation.mockReturnValueOnce(throwError(() => new Error('Failed')));
+    facade.variations.set([
+      {
+        localId: 'variation-1',
+        id: null,
+        title: 'Синій M',
+        name: 'Синій / M',
+        price: '',
+        oldPrice: '',
+        sku: '',
+        available: true,
+        isMain: false,
+        attributes: [],
+        attributeSearchValue: '',
+        attributeSearchResults: [],
+        isAttributeSearchLoading: false,
+        images: [],
+        isSaving: false,
+      },
+    ]);
+
+    facade.saveVariation({ localId: 'variation-1' });
+
+    expect(mockToasterService.danger).toHaveBeenCalledWith(
+      'Варіацію не збережено',
+      'Спробуйте ще раз',
+    );
   });
 });

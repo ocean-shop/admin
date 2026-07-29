@@ -37,6 +37,7 @@
       [assignedTags]="assignedTags()"
       [images]="images()"
       [isImageUploadLoading]="isImageUploadLoading()"
+      [variations]="variations()"
       (productTypeChange)="onProductTypeChange($event)"
       (categoryToggle)="onCategoryToggle($event)"
       (attributeSearchChange)="onAttributeSearchChange($event)"
@@ -50,6 +51,17 @@
       (imageMoveDown)="onImageMoveDown($event)"
       (imageRemove)="onImageRemove($event)"
       (imageUpload)="onImageUpload()"
+      (variationAdd)="onVariationAdd()"
+      (variationCreate)="onVariationCreate($event)"
+      (variationRemove)="onVariationRemove($event)"
+      (variationChange)="onVariationChange($event)"
+      (variationAttributeSearchChange)="onVariationAttributeSearchChange($event)"
+      (variationAttributeAssign)="onVariationAttributeAssign($event)"
+      (variationAttributeUnassign)="onVariationAttributeUnassign($event)"
+      (variationImageFilesSelected)="onVariationImageFilesSelected($event)"
+      (variationImageMoveUp)="onVariationImageMoveUp($event)"
+      (variationImageMoveDown)="onVariationImageMoveDown($event)"
+      (variationImageRemove)="onVariationImageRemove($event)"
     />
   </form>
 </main>

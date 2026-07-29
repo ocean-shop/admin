@@ -17,6 +17,7 @@ import { ProductForm } from './product-form';
 import { ProductFormCategoryNode } from './models/product-form-category-node.model';
 import { ProductFormImageItem } from './models/product-form-image-item.model';
 import { ProductFormModel } from './models/product-form.model';
+import { ProductFormVariation } from './models/product-form-variation.model';
 import { ProductType } from '../../pages/products/models/product-type.enum';
 
 describe('ProductForm', () => {
@@ -60,6 +61,25 @@ describe('ProductForm', () => {
   const images: ProductFormImageItem[] = [
     { id: 'img-1', name: 'image-1.jpg', imageDataUrl: 'data:image/jpeg;base64,Zm9v' },
   ];
+  const variations: ProductFormVariation[] = [
+    {
+      localId: 'variation-1',
+      id: null,
+      title: 'Синій M',
+      name: 'Синій / M',
+      price: '99.00',
+      oldPrice: '120.00',
+      sku: 'SKU-1',
+      available: true,
+      isMain: false,
+      attributes: [],
+      attributeSearchValue: '',
+      attributeSearchResults: [],
+      isAttributeSearchLoading: false,
+      images: [],
+      isSaving: false,
+    },
+  ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -90,6 +110,7 @@ describe('ProductForm', () => {
     fixture.componentRef.setInput('assignedTags', assignedTags);
     fixture.componentRef.setInput('images', images);
     fixture.componentRef.setInput('isImageUploadLoading', false);
+    fixture.componentRef.setInput('variations', variations);
     fixture.detectChanges();
   });
 
@@ -121,9 +142,11 @@ describe('ProductForm', () => {
     const pricingInventorySection = fixture.debugElement.query(
       By.css('app-product-form-pricing-inventory'),
     );
+    const variationsSection = fixture.debugElement.query(By.css('app-product-form-variations'));
     const pageElement = fixture.nativeElement as HTMLElement;
 
     expect(pricingInventorySection).toBeNull();
+    expect(variationsSection).not.toBeNull();
     expect(pageElement.textContent).not.toContain(PRODUCT_FORM_TEXTS.PRICING_INVENTORY_TITLE);
   });
 

@@ -1,6 +1,7 @@
 import { ProductFormAssignedAttribute } from '../components/product-form/models/product-form-assigned-attribute.model';
 import { ProductFormAssignedTag } from '../components/product-form/models/product-form-assigned-tag.model';
 import { ProductFormImageItem } from '../components/product-form/models/product-form-image-item.model';
+import { ProductFormVariation } from '../components/product-form/models/product-form-variation.model';
 import { ProductFormModel } from '../components/product-form/models/product-form.model';
 import { ProductApiItem } from '../pages/products/models/product.model';
 import { ProductStatus } from '../pages/products/models/product-status.enum';
@@ -158,6 +159,145 @@ export const extractProductImages = (product: ProductApiItem): ProductFormImageI
         id: imageId,
         name: imageName,
         imageDataUrl: imageUrl,
+      },
+    ];
+  }, []);
+};
+
+export const extractProductVariations = (product: ProductApiItem): ProductFormVariation[] => {
+  const productVariations = product.variations ?? [];
+
+  return productVariations.reduce<ProductFormVariation[]>((accumulator, variation, index) => {
+    if (typeof variation === 'string') {
+      const variationId = variation.trim();
+      if (!variationId) {
+        return accumulator;
+      }
+
+      return [
+        ...accumulator,
+        {
+          localId: `variation-${variationId}`,
+          id: variationId,
+          title: '',
+          name: '',
+          price: '',
+          oldPrice: '',
+          sku: '',
+          available: true,
+          isMain: false,
+          attributes: [],
+          attributeSearchValue: '',
+          attributeSearchResults: [],
+          isAttributeSearchLoading: false,
+          images: [],
+          isSaving: false,
+        },
+      ];
+    }
+
+    const variationId = String(variation.id ?? '').trim();
+    const localId = variationId || `variation-${index}`;
+    const attributes = (variation.attributes ?? []).reduce<ProductFormVariation['attributes']>(
+      (attributeAccumulator, attribute, attributeIndex) => {
+        if (typeof attribute === 'string') {
+          const normalizedValue = attribute.trim();
+          if (!normalizedValue) {
+            return attributeAccumulator;
+          }
+
+          return [
+            ...attributeAccumulator,
+            {
+              id: normalizedValue,
+              attributeTypeId: normalizedValue,
+              name: normalizedValue,
+              value: '',
+              label: normalizedValue,
+            },
+          ];
+        }
+
+        const directId = String(attribute.id ?? '').trim();
+        const attributeTypeId = String(attribute.attributeTypeId ?? '').trim();
+        const nestedAttributeType = attribute.attributeType;
+        const nestedId = String(nestedAttributeType?.id ?? '').trim();
+        const resolvedAttributeTypeId = attributeTypeId || nestedId || directId;
+        const attributeId =
+          resolvedAttributeTypeId || `variation-attribute-${localId}-${attributeIndex}`;
+        const name = attribute.name?.trim() || nestedAttributeType?.name?.trim() || '';
+        const value = attribute.value?.trim() || nestedAttributeType?.value?.trim() || '';
+        if (!name && !value) {
+          return attributeAccumulator;
+        }
+
+        const label = value ? `${name}: ${value}` : name;
+        return [
+          ...attributeAccumulator,
+          {
+            id: attributeId,
+            attributeTypeId: resolvedAttributeTypeId,
+            name,
+            value,
+            label,
+          },
+        ];
+      },
+      [],
+    );
+    const images = (variation.images ?? []).reduce<ProductFormVariation['images']>(
+      (imageAccumulator, image, imageIndex) => {
+        if (typeof image === 'string') {
+          const imageUrl = image.trim();
+          if (!imageUrl) {
+            return imageAccumulator;
+          }
+
+          return [
+            ...imageAccumulator,
+            {
+              id: `variation-image-${localId}-${imageIndex}`,
+              name: `Image ${imageIndex + 1}`,
+              imageDataUrl: imageUrl,
+            },
+          ];
+        }
+
+        const imageUrl = image.image?.trim() || image.url?.trim() || image.src?.trim() || '';
+        if (!imageUrl) {
+          return imageAccumulator;
+        }
+
+        return [
+          ...imageAccumulator,
+          {
+            id: image.id?.trim() || `variation-image-${localId}-${imageIndex}`,
+            name: image.name?.trim() || image.title?.trim() || `Image ${imageIndex + 1}`,
+            imageDataUrl: imageUrl,
+          },
+        ];
+      },
+      [],
+    );
+
+    return [
+      ...accumulator,
+      {
+        localId,
+        id: variationId || null,
+        title: variation.title?.trim() ?? '',
+        name: variation.name?.trim() ?? '',
+        price: toProductPriceInput(variation.price),
+        oldPrice: toProductPriceInput(variation.oldPrice),
+        sku: variation.sku?.trim() ?? '',
+        available: variation.available ?? true,
+        isMain: variation.isDefault ?? false,
+        attributes,
+        attributeSearchValue: '',
+        attributeSearchResults: [],
+        isAttributeSearchLoading: false,
+        images,
+        isSaving: false,
       },
     ];
   }, []);

@@ -1,5 +1,6 @@
 import { ProductStatus } from './product-status.enum';
 import { ProductType } from './product-type.enum';
+import { ProductVariationApiItem } from './product-variation.model';
 
 export type ProductCategoryApiItem = {
   id?: string | null;
@@ -54,6 +55,7 @@ export type ProductApiItem = {
   attributeTypes?: (ProductAttributeApiItem | string)[] | null;
   tags?: (ProductTagApiItem | string)[] | null;
   images?: (ProductImageApiItem | string)[] | null;
+  variations?: (ProductVariationApiItem | string)[] | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 };

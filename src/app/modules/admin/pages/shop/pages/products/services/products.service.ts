@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AssignProductImagesPayload } from '../models/assign-product-images-payload.model';
 import { ChangeProductImageSortPayload } from '../models/change-product-image-sort-payload.model';
+import { CreateProductVariationPayload } from '../models/create-product-variation-payload.model';
 import { CreateProductPayload } from '../models/create-product-payload.model';
 import {
   ProductApiItem,
@@ -12,6 +13,7 @@ import {
 import { ToggleProductAttributePayload } from '../models/toggle-product-attribute-payload.model';
 import { ToggleProductCategoryPayload } from '../models/toggle-product-category-payload.model';
 import { ToggleProductTagPayload } from '../models/toggle-product-tag-payload.model';
+import { UpdateProductVariationPayload } from '../models/update-product-variation-payload.model';
 import { UpdateProductPayload } from '../models/update-product-payload.model';
 
 @Injectable({
@@ -53,6 +55,33 @@ export class ProductsService {
     return this.http.patch<ProductApiItem>(`${this.API_URL}/catalog/products/${id}`, payload, {
       withCredentials: true,
     });
+  }
+
+  createVariation(
+    productId: string,
+    payload: CreateProductVariationPayload,
+  ): Observable<ProductApiItem> {
+    return this.http.post<ProductApiItem>(
+      `${this.API_URL}/catalog/products/${productId}/variations`,
+      payload,
+      {
+        withCredentials: true,
+      },
+    );
+  }
+
+  updateVariation(
+    productId: string,
+    variationId: string,
+    payload: UpdateProductVariationPayload,
+  ): Observable<ProductApiItem> {
+    return this.http.patch<ProductApiItem>(
+      `${this.API_URL}/catalog/products/${productId}/variations/${variationId}`,
+      payload,
+      {
+        withCredentials: true,
+      },
+    );
   }
 
   assignCategory(productId: string, categoryId: string): Observable<void> {

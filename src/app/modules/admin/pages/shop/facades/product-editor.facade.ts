@@ -9,6 +9,14 @@ import { ProductFormCategoryNode } from '../components/product-form/models/produ
 import { ProductFormCategoryToggleEvent } from '../components/product-form/models/product-form-category-toggle-event.model';
 import { ProductFormImageItem } from '../components/product-form/models/product-form-image-item.model';
 import { ProductFormTagOption } from '../components/product-form/models/product-form-tag-option.model';
+import { ProductFormVariationAttributeSearchEvent } from '../components/product-form/models/product-form-variation-attribute-search-event.model';
+import { ProductFormVariationAttributeToggleEvent } from '../components/product-form/models/product-form-variation-attribute-toggle-event.model';
+import { ProductFormVariationChangeEvent } from '../components/product-form/models/product-form-variation-change-event.model';
+import { ProductFormVariationCreateEvent } from '../components/product-form/models/product-form-variation-create-event.model';
+import { ProductFormVariationImageFilesEvent } from '../components/product-form/models/product-form-variation-image-files-event.model';
+import { ProductFormVariationImageToggleEvent } from '../components/product-form/models/product-form-variation-image-toggle-event.model';
+import { ProductFormVariationRemoveEvent } from '../components/product-form/models/product-form-variation-remove-event.model';
+import { ProductFormVariation } from '../components/product-form/models/product-form-variation.model';
 import { extractCategoriesFromResponse } from '../helpers/categories-response.helper';
 import { extractProductImages } from '../helpers/product-api-mapping.helper';
 import {
@@ -16,6 +24,7 @@ import {
   updateSelectedCategoryIds,
 } from '../helpers/product-category-tree.helper';
 import { ProductEditorContext } from '../helpers/models/product-editor-context.model';
+import { parseProductPrice } from '../helpers/product-price.helper';
 import {
   mapAttributeSearchResults,
   mapTagSearchResults,
@@ -27,6 +36,8 @@ import {
 import { AttributesService } from '../pages/attributes/services/attributes.service';
 import { CategoryApiItem } from '../pages/categories/models/category.model';
 import { CategoriesService } from '../pages/categories/services/categories.service';
+import { CreateProductVariationPayload } from '../pages/products/models/create-product-variation-payload.model';
+import { UpdateProductVariationPayload } from '../pages/products/models/update-product-variation-payload.model';
 import { ProductsService } from '../pages/products/services/products.service';
 import { TagsService } from '../pages/tags/services/tags.service';
 
@@ -44,6 +55,9 @@ export class ProductEditorFacade {
   private attributeSearchRequestId = 0;
   private tagSearchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   private tagSearchRequestId = 0;
+  private variationAttributeSearchDebounceTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  private variationAttributeSearchRequestIds = new Map<string, number>();
+  private nextVariationId = 0;
 
   readonly isCategoriesLoading = signal(false);
   readonly isCategoryToggleLoading = signal(false);
@@ -61,11 +75,13 @@ export class ProductEditorFacade {
   readonly tagSearchResults = signal<ProductFormTagOption[]>([]);
   readonly assignedTags = signal<ProductFormAssignedTag[]>([]);
   readonly images = signal<ProductFormImageItem[]>([]);
+  readonly variations = signal<ProductFormVariation[]>([]);
 
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.clearAttributeSearchDebounce();
       this.clearTagSearchDebounce();
+      this.clearAllVariationAttributeSearchDebounces();
     });
   }
 
@@ -83,10 +99,14 @@ export class ProductEditorFacade {
     this.tagSearchValue.set('');
     this.tagSearchResults.set([]);
     this.isImageUploadLoading.set(false);
+    this.variations.set([]);
     this.clearAttributeSearchDebounce();
     this.clearTagSearchDebounce();
+    this.clearAllVariationAttributeSearchDebounces();
     this.attributeSearchRequestId = 0;
     this.tagSearchRequestId = 0;
+    this.variationAttributeSearchRequestIds.clear();
+    this.nextVariationId = 0;
     if (options?.clearCategories) {
       this.categoryItems.set([]);
     }
@@ -428,6 +448,265 @@ export class ProductEditorFacade {
       });
   }
 
+  onVariationAdd(): void {
+    if (!this.isSidebarEnabled()) {
+      return;
+    }
+
+    this.variations.update((currentVariations) => [
+      ...currentVariations,
+      this.createDefaultVariation(),
+    ]);
+  }
+
+  onVariationRemove(event: ProductFormVariationRemoveEvent): void {
+    if (!this.isSidebarEnabled()) {
+      return;
+    }
+
+    const normalizedLocalId = event.localId.trim();
+    if (!normalizedLocalId) {
+      return;
+    }
+
+    this.clearVariationAttributeSearchDebounce(normalizedLocalId);
+    this.variationAttributeSearchRequestIds.delete(normalizedLocalId);
+    this.variations.update((currentVariations) =>
+      currentVariations.filter((variation) => variation.localId !== normalizedLocalId),
+    );
+  }
+
+  onVariationChange(event: ProductFormVariationChangeEvent): void {
+    if (!this.isSidebarEnabled()) {
+      return;
+    }
+
+    const normalizedLocalId = event.localId.trim();
+    if (!normalizedLocalId) {
+      return;
+    }
+
+    this.variations.update((currentVariations) =>
+      currentVariations.map((variation) =>
+        variation.localId === normalizedLocalId
+          ? {
+              ...variation,
+              [event.field]: event.value,
+            }
+          : variation,
+      ),
+    );
+  }
+
+  onVariationAttributeSearchChange(event: ProductFormVariationAttributeSearchEvent): void {
+    const normalizedLocalId = event.localId.trim();
+    if (!normalizedLocalId) {
+      return;
+    }
+
+    const nextValue = event.value;
+    this.variations.update((currentVariations) =>
+      currentVariations.map((variation) =>
+        variation.localId === normalizedLocalId
+          ? {
+              ...variation,
+              attributeSearchValue: nextValue,
+            }
+          : variation,
+      ),
+    );
+
+    this.queueVariationAttributeSearch(normalizedLocalId);
+  }
+
+  onVariationAttributeAssign(event: ProductFormVariationAttributeToggleEvent): void {
+    if (!this.isSidebarEnabled()) {
+      return;
+    }
+
+    const normalizedLocalId = event.localId.trim();
+    const normalizedAttributeId = event.attributeId.trim();
+    if (!normalizedLocalId || !normalizedAttributeId) {
+      return;
+    }
+
+    this.variations.update((currentVariations) =>
+      currentVariations.map((variation) => {
+        if (variation.localId !== normalizedLocalId) {
+          return variation;
+        }
+
+        const selectedOption = variation.attributeSearchResults.find(
+          (option) => option.id === normalizedAttributeId,
+        );
+        if (!selectedOption) {
+          return variation;
+        }
+
+        const [namePart, ...valueParts] = selectedOption.label.split(':');
+        const name = namePart.trim();
+        const value = valueParts.join(':').trim() || selectedOption.label.trim();
+        const existingAttribute = variation.attributes.find(
+          (attribute) => attribute.id === normalizedAttributeId,
+        );
+        const nextAttribute = {
+          id: normalizedAttributeId,
+          attributeTypeId: normalizedAttributeId,
+          name: name || selectedOption.label.trim(),
+          value,
+          label: selectedOption.label,
+        };
+        const nextAttributes = existingAttribute
+          ? variation.attributes.map((attribute) =>
+              attribute.id === normalizedAttributeId ? nextAttribute : attribute,
+            )
+          : [...variation.attributes, nextAttribute];
+        return {
+          ...variation,
+          attributes: nextAttributes,
+          attributeSearchValue: '',
+          attributeSearchResults: [],
+        };
+      }),
+    );
+  }
+
+  onVariationAttributeUnassign(event: ProductFormVariationAttributeToggleEvent): void {
+    if (!this.isSidebarEnabled()) {
+      return;
+    }
+
+    const normalizedLocalId = event.localId.trim();
+    const normalizedAttributeId = event.attributeId.trim();
+    if (!normalizedLocalId || !normalizedAttributeId) {
+      return;
+    }
+
+    this.variations.update((currentVariations) =>
+      currentVariations.map((variation) =>
+        variation.localId === normalizedLocalId
+          ? {
+              ...variation,
+              attributes: variation.attributes.filter(
+                (attribute) => attribute.id !== normalizedAttributeId,
+              ),
+            }
+          : variation,
+      ),
+    );
+  }
+
+  onVariationImageFilesSelected(event: ProductFormVariationImageFilesEvent): void {
+    if (!this.isSidebarEnabled()) {
+      return;
+    }
+
+    const normalizedLocalId = event.localId.trim();
+    if (!normalizedLocalId) {
+      return;
+    }
+
+    const imageFiles = event.files.filter((file) => file.type.startsWith('image/'));
+    if (!imageFiles.length) {
+      return;
+    }
+
+    void this.appendVariationImageFiles(normalizedLocalId, imageFiles);
+  }
+
+  onVariationImageMoveUp(event: ProductFormVariationImageToggleEvent): void {
+    this.moveVariationImageByOffset(event, -1);
+  }
+
+  onVariationImageMoveDown(event: ProductFormVariationImageToggleEvent): void {
+    this.moveVariationImageByOffset(event, 1);
+  }
+
+  onVariationImageRemove(event: ProductFormVariationImageToggleEvent): void {
+    if (!this.isSidebarEnabled()) {
+      return;
+    }
+
+    const normalizedLocalId = event.localId.trim();
+    const normalizedImageId = event.imageId.trim();
+    if (!normalizedLocalId || !normalizedImageId) {
+      return;
+    }
+
+    this.variations.update((currentVariations) =>
+      currentVariations.map((variation) =>
+        variation.localId === normalizedLocalId
+          ? {
+              ...variation,
+              images: variation.images.filter((image) => image.id !== normalizedImageId),
+            }
+          : variation,
+      ),
+    );
+  }
+
+  saveVariation(event: ProductFormVariationCreateEvent): void {
+    if (!this.isSidebarEnabled()) {
+      return;
+    }
+
+    const productId = this.getProductId();
+    const normalizedLocalId = event.localId.trim();
+    if (!productId || !normalizedLocalId) {
+      return;
+    }
+
+    const targetVariation = this.variations().find(
+      (variation) => variation.localId === normalizedLocalId,
+    );
+    if (!targetVariation || targetVariation.isSaving) {
+      return;
+    }
+
+    this.setVariationSaving(normalizedLocalId, true);
+
+    const request$ = targetVariation.id
+      ? this.productsService.updateVariation(
+          productId,
+          targetVariation.id,
+          this.buildUpdateVariationPayload(targetVariation),
+        )
+      : this.productsService.createVariation(
+          productId,
+          this.buildCreateVariationPayload(targetVariation),
+        );
+
+    request$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.setVariationSaving(normalizedLocalId, false)),
+      )
+      .subscribe({
+        next: (product) => {
+          const savedVariation = this.findSavedVariation(product.variations ?? [], targetVariation);
+          const persistedId =
+            typeof savedVariation === 'string' ? savedVariation : savedVariation?.id;
+          this.variations.update((currentVariations) =>
+            currentVariations.map((variation) =>
+              variation.localId === normalizedLocalId
+                ? {
+                    ...variation,
+                    id: String(persistedId ?? '').trim() || variation.id,
+                  }
+                : variation,
+            ),
+          );
+          this.toasterService.success(this.requireContext().texts.VARIATION_SAVE_SUCCESS_TITLE);
+        },
+        error: () => {
+          this.toasterService.danger(
+            this.requireContext().texts.VARIATION_SAVE_ERROR_TITLE,
+            this.requireContext().texts.VARIATION_SAVE_ERROR_MESSAGE,
+          );
+        },
+      });
+  }
+
   private queueAttributeSearch(): void {
     this.clearAttributeSearchDebounce();
 
@@ -444,11 +723,53 @@ export class ProductEditorFacade {
     }, 300);
   }
 
+  private queueVariationAttributeSearch(localId: string): void {
+    this.clearVariationAttributeSearchDebounce(localId);
+
+    const shopId = this.getShopId();
+    const variation = this.variations().find((item) => item.localId === localId);
+    const searchName = variation?.attributeSearchValue.trim() ?? '';
+    if (!shopId || !variation || !searchName) {
+      this.variations.update((currentVariations) =>
+        currentVariations.map((item) =>
+          item.localId === localId
+            ? {
+                ...item,
+                isAttributeSearchLoading: false,
+                attributeSearchResults: [],
+              }
+            : item,
+        ),
+      );
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      this.loadVariationAttributeSearchResults(localId, shopId, searchName);
+    }, 300);
+    this.variationAttributeSearchDebounceTimers.set(localId, timer);
+  }
+
   private clearAttributeSearchDebounce(): void {
     if (this.attributeSearchDebounceTimer) {
       clearTimeout(this.attributeSearchDebounceTimer);
       this.attributeSearchDebounceTimer = null;
     }
+  }
+
+  private clearVariationAttributeSearchDebounce(localId: string): void {
+    const existingTimer = this.variationAttributeSearchDebounceTimers.get(localId);
+    if (!existingTimer) {
+      return;
+    }
+
+    clearTimeout(existingTimer);
+    this.variationAttributeSearchDebounceTimers.delete(localId);
+  }
+
+  private clearAllVariationAttributeSearchDebounces(): void {
+    this.variationAttributeSearchDebounceTimers.forEach((timer) => clearTimeout(timer));
+    this.variationAttributeSearchDebounceTimers.clear();
   }
 
   private queueTagSearch(): void {
@@ -509,6 +830,99 @@ export class ProductEditorFacade {
           }
 
           this.attributeSearchResults.set([]);
+        },
+      });
+  }
+
+  private loadVariationAttributeSearchResults(localId: string, shopId: string, name: string): void {
+    const requestId = (this.variationAttributeSearchRequestIds.get(localId) ?? 0) + 1;
+    this.variationAttributeSearchRequestIds.set(localId, requestId);
+    this.variations.update((currentVariations) =>
+      currentVariations.map((variation) =>
+        variation.localId === localId
+          ? {
+              ...variation,
+              isAttributeSearchLoading: true,
+            }
+          : variation,
+      ),
+    );
+
+    this.attributesService
+      .getAttributes({
+        page: 1,
+        limit: 20,
+        shopId,
+        name,
+      })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          if ((this.variationAttributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
+            return;
+          }
+
+          this.variations.update((currentVariations) =>
+            currentVariations.map((variation) =>
+              variation.localId === localId
+                ? {
+                    ...variation,
+                    isAttributeSearchLoading: false,
+                  }
+                : variation,
+            ),
+          );
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if ((this.variationAttributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
+            return;
+          }
+
+          this.variations.update((currentVariations) =>
+            currentVariations.map((variation) => {
+              if (variation.localId !== localId) {
+                return variation;
+              }
+
+              const assignedAttributeIds = new Set(variation.attributes.map((item) => item.id));
+              const attributeSearchResults = response.items.reduce<ProductFormAttributeOption[]>(
+                (accumulator, item) => {
+                  const id = String(item.id ?? '').trim();
+                  if (!id || assignedAttributeIds.has(id)) {
+                    return accumulator;
+                  }
+
+                  const labelName = item.name?.trim() || 'Атрибут';
+                  const labelValue = item.value?.trim() || '';
+                  const label = labelValue ? `${labelName}: ${labelValue}` : labelName;
+                  return [...accumulator, { id, label }];
+                },
+                [],
+              );
+              return {
+                ...variation,
+                attributeSearchResults,
+              };
+            }),
+          );
+        },
+        error: () => {
+          if ((this.variationAttributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
+            return;
+          }
+
+          this.variations.update((currentVariations) =>
+            currentVariations.map((variation) =>
+              variation.localId === localId
+                ? {
+                    ...variation,
+                    attributeSearchResults: [],
+                  }
+                : variation,
+            ),
+          );
         },
       });
   }
@@ -654,6 +1068,211 @@ export class ProductEditorFacade {
     return nextImages;
   }
 
+  private moveVariationImageByOffset(
+    event: ProductFormVariationImageToggleEvent,
+    offset: -1 | 1,
+  ): void {
+    if (!this.isSidebarEnabled()) {
+      return;
+    }
+
+    const normalizedLocalId = event.localId.trim();
+    const normalizedImageId = event.imageId.trim();
+    if (!normalizedLocalId || !normalizedImageId) {
+      return;
+    }
+
+    this.variations.update((currentVariations) =>
+      currentVariations.map((variation) => {
+        if (variation.localId !== normalizedLocalId) {
+          return variation;
+        }
+
+        const currentIndex = variation.images.findIndex((image) => image.id === normalizedImageId);
+        if (currentIndex < 0) {
+          return variation;
+        }
+
+        const targetIndex = currentIndex + offset;
+        if (targetIndex < 0 || targetIndex >= variation.images.length) {
+          return variation;
+        }
+
+        const nextImages = [...variation.images];
+        const currentItem = nextImages[currentIndex];
+        nextImages[currentIndex] = nextImages[targetIndex];
+        nextImages[targetIndex] = currentItem;
+        return {
+          ...variation,
+          images: nextImages,
+        };
+      }),
+    );
+  }
+
+  private createDefaultVariation(): ProductFormVariation {
+    this.nextVariationId += 1;
+    const localId = `variation-local-${Date.now()}-${this.nextVariationId}`;
+    return {
+      localId,
+      id: null,
+      title: '',
+      name: '',
+      price: '',
+      oldPrice: '',
+      sku: '',
+      available: true,
+      isMain: false,
+      attributes: [],
+      attributeSearchValue: '',
+      attributeSearchResults: [],
+      isAttributeSearchLoading: false,
+      images: [],
+      isSaving: false,
+    };
+  }
+
+  private setVariationSaving(localId: string, isSaving: boolean): void {
+    this.variations.update((currentVariations) =>
+      currentVariations.map((variation) =>
+        variation.localId === localId
+          ? {
+              ...variation,
+              isSaving,
+            }
+          : variation,
+      ),
+    );
+  }
+
+  private buildCreateVariationPayload(
+    variation: ProductFormVariation,
+  ): CreateProductVariationPayload {
+    return {
+      variation: 'product_variations',
+      ...this.buildVariationCommonPayload(variation),
+      attributes: variation.attributes
+        .map((attribute) => ({
+          attributeTypeId: attribute.attributeTypeId.trim(),
+        }))
+        .filter((attribute) => this.isUuid(attribute.attributeTypeId)),
+      images: variation.images.map((image, index) => ({
+        image: image.imageDataUrl,
+        sort: index,
+      })),
+    };
+  }
+
+  private buildUpdateVariationPayload(
+    variation: ProductFormVariation,
+  ): UpdateProductVariationPayload {
+    return {
+      ...this.buildVariationCommonPayload(variation),
+      attributes: variation.attributes
+        .map((attribute) => ({
+          attributeTypeId: attribute.attributeTypeId.trim(),
+        }))
+        .filter((attribute) => this.isUuid(attribute.attributeTypeId)),
+      images: variation.images.map((image, index) => ({
+        image: image.imageDataUrl,
+        sort: index,
+      })),
+    };
+  }
+
+  private buildVariationCommonPayload(
+    variation: ProductFormVariation,
+  ): Pick<
+    UpdateProductVariationPayload,
+    'title' | 'name' | 'sku' | 'price' | 'oldPrice' | 'available' | 'isDefault'
+  > {
+    const price = parseProductPrice(variation.price);
+    const oldPrice = parseProductPrice(variation.oldPrice);
+
+    return {
+      title: variation.title.trim() || undefined,
+      name: variation.name.trim() || undefined,
+      sku: variation.sku.trim() || undefined,
+      ...(price !== null ? { price } : {}),
+      oldPrice,
+      available: variation.available,
+      isDefault: variation.isMain,
+    };
+  }
+
+  private isUuid(value: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+  }
+
+  private findSavedVariation(
+    apiVariations: ({ id?: string | null; sku?: string | null } | string)[],
+    targetVariation: ProductFormVariation,
+  ): { id?: string | null; sku?: string | null } | string | null {
+    if (!apiVariations.length) {
+      return null;
+    }
+
+    const byId = apiVariations.find(
+      (variation) =>
+        typeof variation !== 'string' &&
+        targetVariation.id &&
+        String(variation.id ?? '').trim() === targetVariation.id,
+    );
+    if (byId) {
+      return byId;
+    }
+
+    const normalizedSku = targetVariation.sku.trim();
+    if (normalizedSku) {
+      const bySku = apiVariations.find((variation) => {
+        if (typeof variation === 'string') {
+          return false;
+        }
+
+        return String(variation.sku ?? '').trim() === normalizedSku;
+      });
+      if (bySku) {
+        return bySku;
+      }
+    }
+
+    const lastVariation = apiVariations[apiVariations.length - 1];
+    return lastVariation ?? null;
+  }
+
+  private async appendVariationImageFiles(localId: string, imageFiles: File[]): Promise<void> {
+    const mappedImages = await this.mapFilesToVariationImageItems(localId, imageFiles);
+    if (!mappedImages.length) {
+      return;
+    }
+
+    this.variations.update((currentVariations) =>
+      currentVariations.map((variation) =>
+        variation.localId === localId
+          ? {
+              ...variation,
+              images: [...variation.images, ...mappedImages],
+            }
+          : variation,
+      ),
+    );
+  }
+
+  private async mapFilesToVariationImageItems(
+    localId: string,
+    imageFiles: File[],
+  ): Promise<ProductFormVariation['images']> {
+    const mappedItems = await Promise.all(
+      imageFiles.map(async (file, index) => ({
+        id: this.createVariationImageId(localId, file, index),
+        name: file.name.trim() || `variation-image-${Date.now()}-${index + 1}`,
+        imageDataUrl: await this.readFileAsDataUrl(file),
+      })),
+    );
+
+    return mappedItems.filter((item) => item.imageDataUrl.startsWith('data:image/'));
+  }
+
   private readFileAsDataUrl(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -667,5 +1286,11 @@ export class ProductEditorFacade {
     const randomPart = Math.random().toString(36).slice(2, 8);
     const namePart = file.name.trim().replace(/\s+/g, '-').toLowerCase() || 'image';
     return `${namePart}-${Date.now()}-${index}-${randomPart}`;
+  }
+
+  private createVariationImageId(localId: string, file: File, index: number): string {
+    const randomPart = Math.random().toString(36).slice(2, 8);
+    const namePart = file.name.trim().replace(/\s+/g, '-').toLowerCase() || 'variation-image';
+    return `${localId}-${namePart}-${Date.now()}-${index}-${randomPart}`;
   }
 }

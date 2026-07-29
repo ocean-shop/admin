@@ -4,6 +4,7 @@ import {
   extractProductAttributes,
   extractProductImages,
   extractProductTags,
+  extractProductVariations,
   mapProductToFormModel,
 } from './product-api-mapping.helper';
 
@@ -86,6 +87,78 @@ describe('product-api-mapping.helper', () => {
         id: 'product-image-2-https://cdn.example.com/third.jpg',
         name: 'Third image',
         imageDataUrl: 'https://cdn.example.com/third.jpg',
+      },
+    ]);
+  });
+
+  it('extracts product variations from mixed shapes', () => {
+    expect(
+      extractProductVariations({
+        variations: [
+          {
+            id: 'variation-1',
+            title: 'Синій M',
+            name: 'Синій / M',
+            sku: 'SKU-1',
+            price: 99.5,
+            oldPrice: 120,
+            available: false,
+            isDefault: true,
+            attributes: [
+              {
+                id: 'attribute-link-1',
+                attributeTypeId: '11111111-1111-4111-8111-111111111111',
+                name: 'Колір',
+                value: 'Синій',
+              },
+            ],
+            images: [{ id: 'img-1', image: 'https://cdn.example.com/var-1.jpg', name: 'V1' }],
+          },
+          'variation-raw',
+        ],
+      }),
+    ).toEqual([
+      {
+        localId: 'variation-1',
+        id: 'variation-1',
+        title: 'Синій M',
+        name: 'Синій / M',
+        price: '99.50',
+        oldPrice: '120.00',
+        sku: 'SKU-1',
+        available: false,
+        isMain: true,
+        attributes: [
+          {
+            id: '11111111-1111-4111-8111-111111111111',
+            attributeTypeId: '11111111-1111-4111-8111-111111111111',
+            name: 'Колір',
+            value: 'Синій',
+            label: 'Колір: Синій',
+          },
+        ],
+        attributeSearchValue: '',
+        attributeSearchResults: [],
+        isAttributeSearchLoading: false,
+        images: [{ id: 'img-1', name: 'V1', imageDataUrl: 'https://cdn.example.com/var-1.jpg' }],
+        isSaving: false,
+      },
+      {
+        localId: 'variation-variation-raw',
+        id: 'variation-raw',
+        title: '',
+        name: '',
+        price: '',
+        oldPrice: '',
+        sku: '',
+        available: true,
+        isMain: false,
+        attributes: [],
+        attributeSearchValue: '',
+        attributeSearchResults: [],
+        isAttributeSearchLoading: false,
+        images: [],
+        isSaving: false,
       },
     ]);
   });

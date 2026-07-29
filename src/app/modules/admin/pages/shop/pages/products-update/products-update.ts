@@ -7,6 +7,13 @@ import { Button } from '@ui/button/button';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { ProductFormCategoryToggleEvent } from '../../components/product-form/models/product-form-category-toggle-event.model';
+import { ProductFormVariationAttributeSearchEvent } from '../../components/product-form/models/product-form-variation-attribute-search-event.model';
+import { ProductFormVariationAttributeToggleEvent } from '../../components/product-form/models/product-form-variation-attribute-toggle-event.model';
+import { ProductFormVariationChangeEvent } from '../../components/product-form/models/product-form-variation-change-event.model';
+import { ProductFormVariationCreateEvent } from '../../components/product-form/models/product-form-variation-create-event.model';
+import { ProductFormVariationImageFilesEvent } from '../../components/product-form/models/product-form-variation-image-files-event.model';
+import { ProductFormVariationImageToggleEvent } from '../../components/product-form/models/product-form-variation-image-toggle-event.model';
+import { ProductFormVariationRemoveEvent } from '../../components/product-form/models/product-form-variation-remove-event.model';
 import {
   PRODUCT_FORM_DEFAULT_VALUE,
   PRODUCT_FORM_FIELD_IDS,
@@ -25,6 +32,7 @@ import {
   extractProductCategoryIds,
   extractProductImages,
   extractProductTags,
+  extractProductVariations,
   mapProductToFormModel,
 } from '../../helpers/product-api-mapping.helper';
 import { ProductFormValues } from '../../helpers/models/product-form-values.model';
@@ -78,6 +86,7 @@ export class ProductsUpdate implements OnInit {
   protected readonly assignedTags = this.productEditorFacade.assignedTags;
   protected readonly images = this.productEditorFacade.images;
   protected readonly isImageUploadLoading = this.productEditorFacade.isImageUploadLoading;
+  protected readonly variations = this.productEditorFacade.variations;
   protected readonly productFormModel = signal<ProductFormModel>({
     ...PRODUCT_FORM_DEFAULT_VALUE,
   });
@@ -193,6 +202,52 @@ export class ProductsUpdate implements OnInit {
     this.productEditorFacade.uploadImages();
   }
 
+  protected onVariationAdd(): void {
+    this.productEditorFacade.onVariationAdd();
+  }
+
+  protected onVariationCreate(event: ProductFormVariationCreateEvent): void {
+    this.productEditorFacade.saveVariation(event);
+  }
+
+  protected onVariationRemove(event: ProductFormVariationRemoveEvent): void {
+    this.productEditorFacade.onVariationRemove(event);
+  }
+
+  protected onVariationChange(event: ProductFormVariationChangeEvent): void {
+    this.productEditorFacade.onVariationChange(event);
+  }
+
+  protected onVariationAttributeSearchChange(
+    event: ProductFormVariationAttributeSearchEvent,
+  ): void {
+    this.productEditorFacade.onVariationAttributeSearchChange(event);
+  }
+
+  protected onVariationAttributeAssign(event: ProductFormVariationAttributeToggleEvent): void {
+    this.productEditorFacade.onVariationAttributeAssign(event);
+  }
+
+  protected onVariationAttributeUnassign(event: ProductFormVariationAttributeToggleEvent): void {
+    this.productEditorFacade.onVariationAttributeUnassign(event);
+  }
+
+  protected onVariationImageFilesSelected(event: ProductFormVariationImageFilesEvent): void {
+    this.productEditorFacade.onVariationImageFilesSelected(event);
+  }
+
+  protected onVariationImageMoveUp(event: ProductFormVariationImageToggleEvent): void {
+    this.productEditorFacade.onVariationImageMoveUp(event);
+  }
+
+  protected onVariationImageMoveDown(event: ProductFormVariationImageToggleEvent): void {
+    this.productEditorFacade.onVariationImageMoveDown(event);
+  }
+
+  protected onVariationImageRemove(event: ProductFormVariationImageToggleEvent): void {
+    this.productEditorFacade.onVariationImageRemove(event);
+  }
+
   private watchRouteContext(): void {
     this.activatedRoute.paramMap
       .pipe(
@@ -229,6 +284,7 @@ export class ProductsUpdate implements OnInit {
           this.productFormModel.set(mapProductToFormModel(product));
           this.productEditorFacade.selectedCategoryIds.set(extractProductCategoryIds(product));
           this.productEditorFacade.images.set(extractProductImages(product));
+          this.productEditorFacade.variations.set(extractProductVariations(product));
           this.productEditorFacade.assignedAttributes.set(
             extractProductAttributes(product, {
               attributesFallbackLabel: PRODUCTS_UPDATE_TEXTS.ATTRIBUTES_TITLE,

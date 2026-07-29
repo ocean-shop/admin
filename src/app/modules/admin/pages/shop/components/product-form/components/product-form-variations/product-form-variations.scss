@@ -1,0 +1,149 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.product-form-card {
+  @apply rounded-lg border border-outline-variant bg-surface-container-lowest p-6 shadow-sm;
+}
+
+.product-form-card-disabled {
+  @apply opacity-70;
+}
+
+.product-form-card-header {
+  @apply mb-4 flex items-center justify-between border-b border-surface-container pb-2;
+}
+
+.product-form-card-title {
+  @apply text-lg font-semibold text-on-surface;
+}
+
+.product-form-add-button {
+  @apply rounded-sm bg-primary px-3 py-1 text-sm font-bold text-on-primary transition-all hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70;
+}
+
+.product-form-empty-state {
+  @apply rounded-sm border border-surface-dim bg-surface p-3 text-sm text-on-surface-variant;
+}
+
+.product-form-variation-card {
+  @apply mb-4 rounded-md border border-surface-dim bg-surface p-4;
+}
+
+.product-form-variation-header {
+  @apply mb-3 flex items-center justify-between;
+}
+
+.product-form-variation-title {
+  @apply text-base font-semibold text-on-surface;
+}
+
+.product-form-variation-remove {
+  @apply text-outline transition-colors hover:text-error disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.product-form-field-group {
+  @apply mb-4 flex flex-col gap-2;
+}
+
+.product-form-two-columns {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2;
+}
+
+.product-form-variation-checkboxes {
+  @apply justify-center gap-2;
+}
+
+.product-form-mini-section {
+  @apply mb-4 rounded-sm border border-surface-dim bg-surface-container-lowest p-3;
+}
+
+.product-form-mini-title {
+  @apply mb-2 text-sm font-semibold text-on-surface;
+}
+
+.product-form-chip-list {
+  @apply mt-3 flex flex-wrap gap-2;
+}
+
+.product-form-placeholder-chip {
+  @apply text-sm text-on-surface-variant;
+}
+
+.product-form-attribute-results {
+  @apply mt-2 flex max-h-48 flex-col gap-1 overflow-y-auto rounded-md border border-outline-variant bg-surface-container-lowest p-2;
+}
+
+.product-form-attribute-result {
+  @apply rounded px-3 py-2 text-left text-sm text-on-surface transition-colors hover:bg-surface-container;
+}
+
+.product-form-attribute-state {
+  @apply px-1 py-2 text-sm text-on-surface-variant;
+}
+
+.product-form-image-input {
+  @apply sr-only;
+}
+
+.product-form-dropzone {
+  @apply mb-3 flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-outline-variant bg-surface p-4 text-center transition-colors hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-70;
+}
+
+.product-form-dropzone .material-symbols-outlined {
+  @apply text-2xl text-outline;
+}
+
+.product-form-dropzone p {
+  @apply text-sm text-on-surface-variant;
+}
+
+.product-form-images-list {
+  @apply flex flex-col gap-2;
+}
+
+.product-form-images-empty {
+  @apply rounded-sm border border-surface-dim bg-surface p-3 text-sm text-on-surface-variant;
+}
+
+.product-form-image-row {
+  @apply flex min-h-20 items-center justify-between gap-3 rounded-sm border border-surface-dim bg-surface p-2;
+}
+
+.product-form-image-row-content {
+  @apply flex min-w-0 items-center gap-3;
+}
+
+.product-form-image-preview {
+  @apply h-14 w-14 rounded-sm object-cover;
+}
+
+.product-form-image-meta {
+  @apply flex min-w-0 items-center gap-2;
+}
+
+.product-form-image-meta .material-symbols-outlined {
+  @apply text-primary;
+}
+
+.product-form-image-name {
+  @apply truncate text-sm text-on-surface;
+}
+
+.product-form-image-actions {
+  @apply flex items-center gap-1;
+}
+
+.product-form-image-actions button {
+  @apply text-outline transition-colors hover:text-primary disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.product-form-image-delete {
+  @apply ml-1 hover:text-error;
+}
+
+.product-form-submit-button {
+  @apply w-full rounded-sm bg-primary px-3 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70;
+}

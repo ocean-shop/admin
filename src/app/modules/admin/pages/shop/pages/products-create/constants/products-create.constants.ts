@@ -35,6 +35,9 @@ export const PRODUCTS_CREATE_TEXTS = {
   IMAGES_ASSIGN_SUCCESS_TITLE: 'Зображення збережено',
   IMAGES_ASSIGN_ERROR_TITLE: 'Не вдалося зберегти зображення',
   IMAGES_ASSIGN_ERROR_MESSAGE: 'Спробуйте ще раз через кілька секунд.',
+  VARIATION_SAVE_SUCCESS_TITLE: 'Варіацію збережено',
+  VARIATION_SAVE_ERROR_TITLE: 'Не вдалося зберегти варіацію',
+  VARIATION_SAVE_ERROR_MESSAGE: 'Спробуйте ще раз через кілька секунд.',
 };
 
 export const PRODUCTS_CREATE_FIELD_IDS = PRODUCT_FORM_FIELD_IDS;
