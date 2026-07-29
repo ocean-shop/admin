@@ -7,7 +7,6 @@ import {
 
 export const PRODUCTS_CREATE_TEXTS = {
   PAGE_TITLE: 'Добавити новий товар',
-  PAGE_DESCRIPTION: 'Додайте нову позицію до прибережного каталогу.',
   CREATE_LABEL: 'Добавити товар',
   SHOP_ID_REQUIRED_MESSAGE:
     'Відкрийте коректний маршрут магазину (/admin/shop/:shopId/products/create), щоб створити товар.',

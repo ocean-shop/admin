@@ -12,8 +12,6 @@ import {
   PRODUCTS_CREATE_STATUS_OPTIONS,
   PRODUCTS_CREATE_TEXTS,
 } from './constants/products-create.constants';
-import { ProductCreateFormModel } from './models/product-create-form.model';
-import { CreateProductPayload } from '../products/models/create-product-payload.model';
 import { ProductType } from '../products/models/product-type.enum';
 import { ProductsService } from '../products/services/products.service';
 import { UpdateProductPayload } from '../products/models/update-product-payload.model';
@@ -32,6 +30,9 @@ import {
   buildUpdateProductPayload,
 } from '../../helpers/product-form-payload.helper';
 import { ProductFormValues } from '../../helpers/models/product-form-values.model';
+import { PRODUCTS_TYPE_OPTIONS } from '../../constants/products.constants';
+import { ProductFormModel } from '../../components/product-form/models/product-form.model';
+import { CreateProductPayload } from '../products/models/create-product-payload.model';
 
 @Component({
   selector: 'app-products-create',
@@ -51,26 +52,13 @@ export class ProductsCreate implements OnInit {
   protected readonly fieldIds = PRODUCTS_CREATE_FIELD_IDS;
   protected readonly statusOptions = PRODUCTS_CREATE_STATUS_OPTIONS;
   protected readonly productTypeSimple = ProductType.Simple;
-  protected readonly productTypeOptions: RadioGroupOption[] = [
-    {
-      id: PRODUCTS_CREATE_FIELD_IDS.TYPE_SIMPLE,
-      value: ProductType.Simple,
-      label: PRODUCTS_CREATE_TEXTS.PRODUCT_TYPE_SIMPLE_LABEL,
-    },
-    {
-      id: PRODUCTS_CREATE_FIELD_IDS.TYPE_VARIABLE,
-      value: ProductType.Variable,
-      label: PRODUCTS_CREATE_TEXTS.PRODUCT_TYPE_VARIABLE_LABEL,
-    },
-  ];
+  protected readonly productTypeOptions: RadioGroupOption[] = PRODUCTS_TYPE_OPTIONS;
   protected readonly shopId = signal<string | null>(null);
   protected readonly isSubmitting = signal(false);
   protected readonly isCategoriesLoading = this.productEditorFacade.isCategoriesLoading;
   protected readonly isCategoryToggleLoading = this.productEditorFacade.isCategoryToggleLoading;
   protected readonly isAttributeSearchLoading = this.productEditorFacade.isAttributeSearchLoading;
-  protected readonly isAttributeToggleLoading = this.productEditorFacade.isAttributeToggleLoading;
   protected readonly isTagSearchLoading = this.productEditorFacade.isTagSearchLoading;
-  protected readonly isTagToggleLoading = this.productEditorFacade.isTagToggleLoading;
   protected readonly createdProductId = signal<string | null>(null);
   protected readonly attributeSearchValue = this.productEditorFacade.attributeSearchValue;
   protected readonly attributeSearchResults = this.productEditorFacade.attributeSearchResults;
@@ -82,14 +70,13 @@ export class ProductsCreate implements OnInit {
   protected readonly isImageUploadLoading = this.productEditorFacade.isImageUploadLoading;
   protected readonly variations = this.productEditorFacade.variations;
 
-  protected readonly productFormModel = signal<ProductCreateFormModel>({
+  protected readonly productFormModel = signal<ProductFormModel>({
     ...PRODUCTS_CREATE_DEFAULT_FORM_VALUE,
   });
   protected readonly productForm = form(this.productFormModel, (schemaPath) => {
     required(schemaPath.name, { message: PRODUCTS_CREATE_TEXTS.PRODUCT_NAME_REQUIRED });
   });
 
-  protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
   protected readonly isFormValid = computed(() => this.productForm.name().valid());
   protected readonly isSidebarDisabled = computed(() => !this.createdProductId());
   protected readonly categoryNodes = computed(() =>

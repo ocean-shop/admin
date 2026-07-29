@@ -10,13 +10,9 @@
         type="submit"
         variant="create"
         [fullWidth]="false"
-        [disabled]="!isRouteContextReady() || !isFormValid() || isSubmitting() || isLoadingProduct()"
+        [disabled]="!isFormValid() || isSubmitting() || isLoadingProduct()"
       />
     </header>
-
-    @if (!isRouteContextReady()) {
-    <p class="products-update-warning">{{ textData.SHOP_CONTEXT_REQUIRED_MESSAGE }}</p>
-    }
 
     <app-product-form
       [productForm]="productForm"

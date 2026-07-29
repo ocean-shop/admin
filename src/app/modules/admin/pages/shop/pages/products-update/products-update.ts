@@ -36,6 +36,7 @@ import {
   mapProductToFormModel,
 } from '../../helpers/product-api-mapping.helper';
 import { ProductFormValues } from '../../helpers/models/product-form-values.model';
+import { PRODUCTS_TYPE_OPTIONS } from '../../constants/products.constants';
 
 @Component({
   selector: 'app-products-update',
@@ -55,18 +56,7 @@ export class ProductsUpdate implements OnInit {
   protected readonly fieldIds = PRODUCT_FORM_FIELD_IDS;
   protected readonly statusOptions = PRODUCT_FORM_STATUS_OPTIONS;
   protected readonly productTypeSimple = ProductType.Simple;
-  protected readonly productTypeOptions: RadioGroupOption[] = [
-    {
-      id: PRODUCT_FORM_FIELD_IDS.TYPE_SIMPLE,
-      value: ProductType.Simple,
-      label: PRODUCTS_UPDATE_TEXTS.PRODUCT_TYPE_SIMPLE_LABEL,
-    },
-    {
-      id: PRODUCT_FORM_FIELD_IDS.TYPE_VARIABLE,
-      value: ProductType.Variable,
-      label: PRODUCTS_UPDATE_TEXTS.PRODUCT_TYPE_VARIABLE_LABEL,
-    },
-  ];
+  protected readonly productTypeOptions: RadioGroupOption[] = PRODUCTS_TYPE_OPTIONS;
 
   protected readonly shopId = signal<string | null>(null);
   protected readonly productId = signal<string | null>(null);
@@ -75,9 +65,7 @@ export class ProductsUpdate implements OnInit {
   protected readonly isCategoriesLoading = this.productEditorFacade.isCategoriesLoading;
   protected readonly isCategoryToggleLoading = this.productEditorFacade.isCategoryToggleLoading;
   protected readonly isAttributeSearchLoading = this.productEditorFacade.isAttributeSearchLoading;
-  protected readonly isAttributeToggleLoading = this.productEditorFacade.isAttributeToggleLoading;
   protected readonly isTagSearchLoading = this.productEditorFacade.isTagSearchLoading;
-  protected readonly isTagToggleLoading = this.productEditorFacade.isTagToggleLoading;
   protected readonly attributeSearchValue = this.productEditorFacade.attributeSearchValue;
   protected readonly attributeSearchResults = this.productEditorFacade.attributeSearchResults;
   protected readonly assignedAttributes = this.productEditorFacade.assignedAttributes;
@@ -94,9 +82,6 @@ export class ProductsUpdate implements OnInit {
     required(schemaPath.name, { message: PRODUCTS_UPDATE_TEXTS.PRODUCT_NAME_REQUIRED });
   });
 
-  protected readonly isRouteContextReady = computed(
-    () => Boolean(this.shopId()) && Boolean(this.productId()),
-  );
   protected readonly isFormValid = computed(() => this.productForm.name().valid());
   protected readonly categoryNodes = computed(() =>
     this.productEditorFacade.buildCategoryNodes({
@@ -117,7 +102,7 @@ export class ProductsUpdate implements OnInit {
   }
 
   protected onSubmit(): void {
-    if (!this.isRouteContextReady() || !this.isFormValid() || this.isSubmitting()) {
+    if (!this.isFormValid() || this.isSubmitting()) {
       return;
     }
 

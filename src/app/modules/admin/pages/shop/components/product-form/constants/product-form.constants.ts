@@ -29,7 +29,8 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   TAGS_TITLE: 'Теги',
   CATEGORIES_SEARCH_PLACEHOLDER: 'Пошук категорій...',
   ATTRIBUTES_SEARCH_PLACEHOLDER: 'Пошук атрибутів...',
-  SIDEBAR_DISABLED_HINT: 'Спочатку створіть товар, щоб керувати категоріями, атрибутами та тегами.',
+  SIDEBAR_DISABLED_HINT:
+    'Спочатку створіть товар, щоб керувати категоріями, варіаціями, атрибутами та тегами.',
   ATTRIBUTES_SEARCH_LOADING: 'Завантаження атрибутів...',
   ATTRIBUTES_SEARCH_EMPTY: 'Атрибути не знайдено.',
   ATTRIBUTES_ASSIGNED_EMPTY: 'Ще немає призначених атрибутів.',
