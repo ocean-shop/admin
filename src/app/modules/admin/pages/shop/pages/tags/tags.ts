@@ -1,13 +1,19 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { finalize, map, Observable } from 'rxjs';
+import {
+  injectMutation,
+  injectQuery,
+  injectQueryClient,
+} from '@tanstack/angular-query-experimental';
+import { lastValueFrom, map } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Button } from '@ui/button/button';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
 import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { TAGS_CREATE_ICON, TAGS_PAGE_SIZE, TAGS_TEXTS } from './constants/tags.constants';
 import { TagFormModal } from './components/tag-form-modal/tag-form-modal';
 import { TagModalMode, TagModalModeEnum } from './models/tag-modal-mode.type';
@@ -26,6 +32,7 @@ export class Tags implements OnInit {
   private readonly toasterService = inject(ToasterService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly queryClient = injectQueryClient();
 
   protected readonly textData = TAGS_TEXTS;
   protected readonly createTagIcon = TAGS_CREATE_ICON;
@@ -34,19 +41,61 @@ export class Tags implements OnInit {
     { key: 'name', header: TAGS_TEXTS.TABLE_NAME_HEADER },
   ];
 
-  protected readonly isLoading = signal(true);
-  protected readonly hasError = signal(false);
-  protected readonly isActionLoading = signal(false);
-  protected readonly tags = signal<Tag[]>([]);
   protected readonly shopId = signal<string | null>(null);
   protected readonly currentPage = signal(1);
-  protected readonly totalItems = signal(0);
-  protected readonly totalPages = signal(1);
   protected readonly selectedTag = signal<Tag | null>(null);
   protected readonly modalMode = signal<TagModalMode>(null);
   protected readonly searchInput = signal('');
   protected readonly searchName = signal('');
 
+  protected readonly tagsQuery = injectQuery(() => {
+    const shopId = this.shopId();
+    const name = this.searchName();
+    const page = this.currentPage();
+    return {
+      queryKey: shopId
+        ? SHOP_QUERY_KEYS.tags(shopId, page, this.pageSize, name)
+        : ['shop', 'tags', 'missing-shop-id'],
+      enabled: Boolean(shopId),
+      queryFn: () =>
+        lastValueFrom(
+          this.tagsService.getTags({
+            page,
+            limit: this.pageSize,
+            shopId: shopId ?? '',
+            ...(name ? { name } : {}),
+          }),
+        ),
+    };
+  });
+
+  protected readonly createTagMutation = injectMutation(() => ({
+    mutationFn: (payload: CreateTagPayload) => lastValueFrom(this.tagsService.createTag(payload)),
+  }));
+
+  protected readonly deleteTagMutation = injectMutation(() => ({
+    mutationFn: (id: string) => lastValueFrom(this.tagsService.deleteTag(id)),
+  }));
+
+  protected readonly isLoading = computed(
+    () => this.tagsQuery.isPending() || this.tagsQuery.isFetching(),
+  );
+  protected readonly hasError = computed(() => this.tagsQuery.isError());
+  protected readonly isActionLoading = computed(
+    () => this.createTagMutation.isPending() || this.deleteTagMutation.isPending(),
+  );
+  protected readonly tags = computed<Tag[]>(() => {
+    const shopId = this.shopId();
+    if (!shopId) {
+      return [];
+    }
+
+    return (this.tagsQuery.data()?.items ?? []).map((item) => this.mapTag(item, shopId));
+  });
+  protected readonly totalItems = computed(() => Math.max(0, this.tagsQuery.data()?.total ?? 0));
+  protected readonly totalPages = computed(() =>
+    Math.max(1, this.tagsQuery.data()?.totalPages ?? 1),
+  );
   protected readonly hasTags = computed(() => this.tags().length > 0);
   protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
   protected readonly isCreateModalOpen = computed(
@@ -79,7 +128,6 @@ export class Tags implements OnInit {
 
     this.searchName.set(nextSearchName);
     this.currentPage.set(1);
-    this.loadTags();
   }
 
   protected onSearchReset(): void {
@@ -90,7 +138,6 @@ export class Tags implements OnInit {
 
     this.searchName.set('');
     this.currentPage.set(1);
-    this.loadTags();
   }
 
   protected onCreateTag(): void {
@@ -121,7 +168,6 @@ export class Tags implements OnInit {
     }
 
     this.currentPage.set(page);
-    this.loadTags();
   }
 
   protected onCloseModal(): void {
@@ -147,10 +193,7 @@ export class Tags implements OnInit {
       name: payload.name,
     };
 
-    this.executeMutation(
-      this.tagsService.createTag(createPayload),
-      TAGS_TEXTS.CREATE_SUCCESS_TITLE,
-    );
+    this.executeMutation(this.createTagMutation, createPayload, TAGS_TEXTS.CREATE_SUCCESS_TITLE);
   }
 
   protected onConfirmDelete(): void {
@@ -159,13 +202,14 @@ export class Tags implements OnInit {
       return;
     }
 
-    this.executeMutation(
-      this.tagsService.deleteTag(selectedTag.id),
-      TAGS_TEXTS.DELETE_SUCCESS_TITLE,
-    );
+    this.executeMutation(this.deleteTagMutation, selectedTag.id, TAGS_TEXTS.DELETE_SUCCESS_TITLE);
   }
 
   private watchShopId(): void {
+    const initialShopId = this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null;
+    this.shopId.set(initialShopId);
+    this.currentPage.set(1);
+
     this.activatedRoute.paramMap
       .pipe(
         map((params) => params.get('shopId')),
@@ -174,62 +218,32 @@ export class Tags implements OnInit {
       .subscribe((shopId) => {
         this.shopId.set(shopId);
         this.currentPage.set(1);
-        this.loadTags();
       });
   }
 
-  private loadTags(): void {
+  private executeMutation<T>(
+    mutation: { mutate: (payload: T, options?: { onSuccess?: () => void }) => void },
+    payload: T,
+    successTitle: string,
+  ): void {
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        this.toasterService.success(successTitle);
+        this.closeModal();
+        this.invalidateTags();
+      },
+    });
+  }
+
+  private invalidateTags(): void {
     const shopId = this.shopId();
     if (!shopId) {
-      this.tags.set([]);
-      this.totalItems.set(0);
-      this.totalPages.set(1);
-      this.isLoading.set(false);
       return;
     }
 
-    this.isLoading.set(true);
-    this.hasError.set(false);
-
-    this.tagsService
-      .getTags({
-        page: this.currentPage(),
-        limit: this.pageSize,
-        shopId,
-        ...(this.searchName() ? { name: this.searchName() } : {}),
-      })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoading.set(false)),
-      )
-      .subscribe({
-        next: (response) => {
-          this.tags.set(response.items.map((item) => this.mapTag(item, shopId)));
-          this.currentPage.set(Math.max(1, response.page));
-          this.totalItems.set(Math.max(0, response.total));
-          this.totalPages.set(Math.max(1, response.totalPages));
-        },
-        error: () => {
-          this.hasError.set(true);
-        },
-      });
-  }
-
-  private executeMutation(request$: Observable<unknown>, successTitle: string): void {
-    this.isActionLoading.set(true);
-
-    request$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isActionLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
-          this.toasterService.success(successTitle);
-          this.closeModal();
-          this.loadTags();
-        },
-      });
+    this.queryClient.invalidateQueries({
+      queryKey: ['shop', shopId, 'tags'],
+    });
   }
 
   private closeModal(): void {
@@ -245,18 +259,5 @@ export class Tags implements OnInit {
       ...(tag.createdAt?.trim() ? { createdAt: tag.createdAt } : {}),
       ...(tag.updatedAt?.trim() ? { updatedAt: tag.updatedAt } : {}),
     };
-  }
-
-  private formatDate(value?: string): string {
-    if (!value) {
-      return TAGS_TEXTS.UNKNOWN_DATE;
-    }
-
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return TAGS_TEXTS.UNKNOWN_DATE;
-    }
-
-    return date.toISOString().split('T')[0];
   }
 }

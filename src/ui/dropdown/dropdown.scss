@@ -45,7 +45,7 @@
 }
 
 .admin-dropdown-menu {
-  @apply absolute right-0 mt-xs w-40 bg-surface-container-lowest rounded-lg border border-outline-variant opacity-0 invisible transition-all duration-200 z-10;
+  @apply absolute right-0 mt-xs w-40 bg-surface-container-lowest rounded-lg border border-outline-variant opacity-0 invisible transition-all duration-200 z-30;
 }
 
 .admin-dropdown-container:not(.admin-dropdown-container-click):hover .admin-dropdown-menu {

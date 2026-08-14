@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of, throwError } from 'rxjs';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { AttributesService } from '../attributes/services/attributes.service';
 import { CategoriesService } from '../categories/services/categories.service';
 import { ProductStatus } from '../products/models/product-status.enum';
@@ -19,9 +20,6 @@ describe('ProductsCreate', () => {
   let mockProductsService: {
     createProduct: ReturnType<typeof vi.fn>;
     updateProduct: ReturnType<typeof vi.fn>;
-    toggleCategory: ReturnType<typeof vi.fn>;
-    toggleAttribute: ReturnType<typeof vi.fn>;
-    toggleTag: ReturnType<typeof vi.fn>;
   };
   let mockCategoriesService: {
     getCategories: ReturnType<typeof vi.fn>;
@@ -42,9 +40,6 @@ describe('ProductsCreate', () => {
     mockProductsService = {
       createProduct: vi.fn().mockReturnValue(of({ id: 'product-1' })),
       updateProduct: vi.fn().mockReturnValue(of({ id: 'product-1' })),
-      toggleCategory: vi.fn().mockReturnValue(of({})),
-      toggleAttribute: vi.fn().mockReturnValue(of({})),
-      toggleTag: vi.fn().mockReturnValue(of({})),
     };
     mockCategoriesService = {
       getCategories: vi.fn().mockReturnValue(of([])),
@@ -68,6 +63,7 @@ describe('ProductsCreate', () => {
       imports: [ProductsCreate],
       providers: [
         provideZonelessChangeDetection(),
+        ...provideTestQueryClient(),
         { provide: ProductsService, useValue: mockProductsService },
         { provide: AttributesService, useValue: mockAttributesService },
         { provide: TagsService, useValue: mockTagsService },
@@ -76,6 +72,7 @@ describe('ProductsCreate', () => {
         {
           provide: ActivatedRoute,
           useValue: {
+            snapshot: { paramMap: convertToParamMap({ shopId: 'shop-1' }) },
             paramMap: paramMap$.asObservable(),
           },
         },
@@ -84,6 +81,8 @@ describe('ProductsCreate', () => {
 
     fixture = TestBed.createComponent(ProductsCreate);
     component = fixture.componentInstance;
+    await fixture.whenStable();
+    fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
   });
@@ -102,7 +101,11 @@ describe('ProductsCreate', () => {
     );
   });
 
-  it('creates product and keeps user on page', () => {
+  it('keeps sidebar disabled before product creation', () => {
+    expect((component as any).isSidebarDisabled()).toBe(true);
+  });
+
+  it('creates product and stores created product id', async () => {
     (component as any).productFormModel.set({
       name: 'Coastal Linen Shirt',
       type: ProductType.Simple,
@@ -115,6 +118,7 @@ describe('ProductsCreate', () => {
     });
 
     (component as any).onSubmit();
+    await fixture.whenStable();
 
     expect(mockProductsService.createProduct).toHaveBeenCalledWith({
       shopId: 'shop-1',
@@ -134,144 +138,35 @@ describe('ProductsCreate', () => {
     expect((component as any).isSidebarDisabled()).toBe(false);
   });
 
-  it('keeps sidebar disabled before product creation', () => {
-    expect((component as any).isSidebarDisabled()).toBe(true);
-  });
-
-  it('toggles category assignment after product is created', () => {
+  it('updates existing product when created product already exists', async () => {
     (component as any).createdProductId.set('product-1');
-
-    (component as any).onCategoryToggle({ categoryId: 'cat-1', checked: true });
-
-    expect(mockProductsService.toggleCategory).toHaveBeenCalledWith('product-1', {
-      categoryId: 'cat-1',
-      assign: true,
+    (component as any).productFormModel.set({
+      name: 'Updated Coastal Shirt',
+      type: ProductType.Variable,
+      description: 'Updated',
+      price: '90',
+      oldPrice: '100',
+      sku: 'UPD-1',
+      status: ProductStatus.Active,
+      available: true,
     });
-  });
 
-  it('assigns attribute after product is created', () => {
-    (component as any).createdProductId.set('product-1');
-    (component as any).attributeSearchResults.set([{ id: 'attr-1', label: 'Колір: Синій' }]);
+    (component as any).onSubmit();
+    await fixture.whenStable();
 
-    (component as any).onAttributeAssign('attr-1');
-
-    expect(mockProductsService.toggleAttribute).toHaveBeenCalledWith('product-1', {
-      attributeTypeId: 'attr-1',
-      assign: true,
+    expect(mockProductsService.updateProduct).toHaveBeenCalledWith('product-1', {
+      name: 'Updated Coastal Shirt',
+      type: ProductType.Variable,
+      description: 'Updated',
+      sku: 'UPD-1',
+      status: ProductStatus.Active,
+      available: true,
+      price: 90,
+      oldPrice: 100,
     });
-  });
-
-  it('assigns tag after product is created', () => {
-    (component as any).createdProductId.set('product-1');
-    (component as any).tagSearchResults.set([{ id: 'tag-1', label: 'Літо' }]);
-
-    (component as any).onTagAssign('tag-1');
-
-    expect(mockProductsService.toggleTag).toHaveBeenCalledWith('product-1', {
-      tagId: 'tag-1',
-      assign: true,
-    });
-  });
-
-  it('does not assign tag when product is not created yet', () => {
-    (component as any).tagSearchResults.set([{ id: 'tag-1', label: 'Літо' }]);
-
-    (component as any).onTagAssign('tag-1');
-
-    expect(mockProductsService.toggleTag).not.toHaveBeenCalled();
-  });
-
-  it('does not assign tag when option is absent', () => {
-    (component as any).createdProductId.set('product-1');
-    (component as any).tagSearchResults.set([]);
-
-    (component as any).onTagAssign('tag-unknown');
-
-    expect(mockProductsService.toggleTag).not.toHaveBeenCalled();
-  });
-
-  it('shows error toast when tag assignment fails', () => {
-    mockProductsService.toggleTag.mockReturnValueOnce(throwError(() => new Error('Failed')));
-    (component as any).createdProductId.set('product-1');
-    (component as any).tagSearchResults.set([{ id: 'tag-1', label: 'Літо' }]);
-
-    (component as any).onTagAssign('tag-1');
-
-    expect(mockToasterService.danger).toHaveBeenCalledWith(
-      PRODUCTS_CREATE_TEXTS.TAG_ASSIGN_ERROR_TITLE,
-      PRODUCTS_CREATE_TEXTS.TAG_ASSIGN_ERROR_MESSAGE,
+    expect(mockToasterService.success).toHaveBeenCalledWith(
+      PRODUCTS_CREATE_TEXTS.UPDATE_SUCCESS_TITLE,
     );
-  });
-
-  it('unassigns tag and updates local assigned list', () => {
-    (component as any).createdProductId.set('product-1');
-    (component as any).assignedTags.set([
-      { id: 'tag-1', label: 'Літо' },
-      { id: 'tag-2', label: 'Льон' },
-    ]);
-
-    (component as any).onTagUnassign('tag-1');
-
-    expect(mockProductsService.toggleTag).toHaveBeenCalledWith('product-1', {
-      tagId: 'tag-1',
-      assign: false,
-    });
-    expect((component as any).assignedTags()).toEqual([{ id: 'tag-2', label: 'Льон' }]);
-  });
-
-  it('clears tag results when sidebar is disabled', () => {
-    (component as any).tagSearchResults.set([{ id: 'tag-1', label: 'Літо' }]);
-
-    (component as any).onTagSearchChange('summer');
-
-    expect((component as any).tagSearchResults()).toEqual([]);
-    expect(mockTagsService.getTags).not.toHaveBeenCalled();
-  });
-
-  it('loads tag search results with debounce and excludes already assigned tags', () => {
-    vi.useFakeTimers();
-    (component as any).createdProductId.set('product-1');
-    (component as any).assignedTags.set([{ id: 'tag-1', label: 'Літо' }]);
-    mockTagsService.getTags.mockReturnValueOnce(
-      of({
-        items: [
-          { id: 'tag-1', name: 'Літо' },
-          { id: 'tag-2', name: 'Льон' },
-          { id: '', name: 'broken' },
-          { id: 'tag-3', name: '' },
-        ],
-        total: 2,
-        page: 1,
-        limit: 20,
-        totalPages: 1,
-      }),
-    );
-
-    (component as any).onTagSearchChange('lin');
-    vi.advanceTimersByTime(300);
-
-    expect(mockTagsService.getTags).toHaveBeenCalledWith({
-      page: 1,
-      limit: 20,
-      shopId: 'shop-1',
-      name: 'lin',
-    });
-    expect((component as any).tagSearchResults()).toEqual([
-      { id: 'tag-2', label: 'Льон' },
-      { id: 'tag-3', label: 'Тег' },
-    ]);
-  });
-
-  it('handles tag search errors by resetting results', () => {
-    vi.useFakeTimers();
-    (component as any).createdProductId.set('product-1');
-    (component as any).tagSearchResults.set([{ id: 'tag-1', label: 'Літо' }]);
-    mockTagsService.getTags.mockReturnValueOnce(throwError(() => new Error('Failed')));
-
-    (component as any).onTagSearchChange('summer');
-    vi.advanceTimersByTime(300);
-
-    expect((component as any).tagSearchResults()).toEqual([]);
   });
 
   it('does not submit when name is empty', () => {
@@ -289,9 +184,10 @@ describe('ProductsCreate', () => {
     (component as any).onSubmit();
 
     expect(mockProductsService.createProduct).not.toHaveBeenCalled();
+    expect(mockProductsService.updateProduct).not.toHaveBeenCalled();
   });
 
-  it('shows error toast when create request fails', () => {
+  it('shows error toast when create request fails', async () => {
     mockProductsService.createProduct.mockReturnValueOnce(throwError(() => new Error('Failed')));
     (component as any).productFormModel.set({
       name: 'Coastal Hat',
@@ -305,6 +201,7 @@ describe('ProductsCreate', () => {
     });
 
     (component as any).onSubmit();
+    await fixture.whenStable();
 
     expect(mockToasterService.danger).toHaveBeenCalledWith(
       PRODUCTS_CREATE_TEXTS.CREATE_ERROR_TITLE,
@@ -312,30 +209,14 @@ describe('ProductsCreate', () => {
     );
   });
 
-  it('updates existing product on repeated submit', () => {
+  it('updates shop context and resets created product id on route change', async () => {
     (component as any).createdProductId.set('product-1');
-    (component as any).productFormModel.set({
-      name: 'Updated Coastal Shirt',
-      type: ProductType.Variable,
-      description: 'Updated',
-      price: '90',
-      oldPrice: '100',
-      sku: 'UPD-1',
-      status: ProductStatus.Active,
-      available: true,
-    });
 
-    (component as any).onSubmit();
+    paramMap$.next(convertToParamMap({ shopId: 'shop-2' }));
+    await fixture.whenStable();
+    fixture.detectChanges();
 
-    expect(mockProductsService.updateProduct).toHaveBeenCalledWith('product-1', {
-      name: 'Updated Coastal Shirt',
-      type: ProductType.Variable,
-      description: 'Updated',
-      sku: 'UPD-1',
-      status: ProductStatus.Active,
-      available: true,
-      price: 90,
-      oldPrice: 100,
-    });
+    expect((component as any).shopId()).toBe('shop-2');
+    expect((component as any).createdProductId()).toBeNull();
   });
 });

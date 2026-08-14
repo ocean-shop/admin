@@ -1,0 +1,23 @@
+<article class="product-form-card" [class.product-form-card-disabled]="sidebarDisabled()">
+  <h2 class="product-form-card-title product-form-card-title-icon">
+    <span class="material-symbols-outlined">list_alt</span>
+    {{ texts().ATTRIBUTES_TITLE }}
+  </h2>
+  <app-product-form-shared-attributes
+    searchInputId="attributes-search"
+    [searchLabel]="texts().ATTRIBUTES_SEARCH_PLACEHOLDER"
+    [searchPlaceholder]="texts().ATTRIBUTES_SEARCH_PLACEHOLDER"
+    [searchValue]="attributeSearchValue()"
+    [interactionDisabled]="sidebarDisabled()"
+    [isSearchLoading]="isAttributeSearchLoading()"
+    [searchLoadingText]="texts().ATTRIBUTES_SEARCH_LOADING"
+    [searchEmptyText]="texts().ATTRIBUTES_SEARCH_EMPTY"
+    [assignedEmptyText]="texts().ATTRIBUTES_ASSIGNED_EMPTY"
+    removeAriaLabel="Remove attribute"
+    [searchResults]="attributeSearchResults()"
+    [assignedAttributes]="assignedAttributes()"
+    (searchChange)="onAttributeSearchChange($event)"
+    (assign)="onAttributeAssign($event)"
+    (unassign)="onAttributeUnassign($event)"
+  />
+</article>

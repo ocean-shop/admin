@@ -2,104 +2,74 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { form, required } from '@angular/forms/signals';
-import { finalize, map } from 'rxjs';
+import { injectMutation, injectQueryClient } from '@tanstack/angular-query-experimental';
+import { lastValueFrom, map } from 'rxjs';
 import { Button } from '@ui/button/button';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import { PRODUCTS_TYPE_OPTIONS } from '../../constants/products.constants';
+import { ProductForm } from '../../components/product-form/product-form';
+import { ProductFormModel } from '../../components/product-form/models/product-form.model';
+import { ProductFormValues } from '../../helpers/models/product-form-values.model';
+import {
+  buildCreateProductPayload,
+  buildUpdateProductPayload,
+} from '../../helpers/product-form-payload.helper';
+import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import {
   PRODUCTS_CREATE_DEFAULT_FORM_VALUE,
   PRODUCTS_CREATE_FIELD_IDS,
   PRODUCTS_CREATE_STATUS_OPTIONS,
   PRODUCTS_CREATE_TEXTS,
 } from './constants/products-create.constants';
-import { ProductCreateFormModel } from './models/product-create-form.model';
-import { CreateProductPayload } from '../products/models/create-product-payload.model';
 import { ProductType } from '../products/models/product-type.enum';
-import { ProductsService } from '../products/services/products.service';
+import { CreateProductPayload } from '../products/models/create-product-payload.model';
 import { UpdateProductPayload } from '../products/models/update-product-payload.model';
-import { ProductForm } from '../../components/product-form/product-form';
-import { ProductFormCategoryToggleEvent } from '../../components/product-form/models/product-form-category-toggle-event.model';
-import { ProductEditorFacade } from '../../facades/product-editor.facade';
-import {
-  buildCreateProductPayload,
-  buildUpdateProductPayload,
-} from '../../helpers/product-form-payload.helper';
-import { ProductFormValues } from '../../helpers/models/product-form-values.model';
+import { ProductsService } from '../products/services/products.service';
 
 @Component({
   selector: 'app-products-create',
   imports: [Button, ProductForm],
-  providers: [ProductEditorFacade],
   templateUrl: './products-create.html',
   styleUrl: './products-create.scss',
 })
 export class ProductsCreate implements OnInit {
   private readonly productsService = inject(ProductsService);
-  private readonly productEditorFacade = inject(ProductEditorFacade);
   private readonly toasterService = inject(ToasterService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly queryClient = injectQueryClient();
 
   protected readonly textData = PRODUCTS_CREATE_TEXTS;
   protected readonly fieldIds = PRODUCTS_CREATE_FIELD_IDS;
   protected readonly statusOptions = PRODUCTS_CREATE_STATUS_OPTIONS;
   protected readonly productTypeSimple = ProductType.Simple;
-  protected readonly productTypeOptions: RadioGroupOption[] = [
-    {
-      id: PRODUCTS_CREATE_FIELD_IDS.TYPE_SIMPLE,
-      value: ProductType.Simple,
-      label: PRODUCTS_CREATE_TEXTS.PRODUCT_TYPE_SIMPLE_LABEL,
-    },
-    {
-      id: PRODUCTS_CREATE_FIELD_IDS.TYPE_VARIABLE,
-      value: ProductType.Variable,
-      label: PRODUCTS_CREATE_TEXTS.PRODUCT_TYPE_VARIABLE_LABEL,
-    },
-  ];
+  protected readonly productTypeOptions: RadioGroupOption[] = PRODUCTS_TYPE_OPTIONS;
   protected readonly shopId = signal<string | null>(null);
-  protected readonly isSubmitting = signal(false);
-  protected readonly isCategoriesLoading = this.productEditorFacade.isCategoriesLoading;
-  protected readonly isCategoryToggleLoading = this.productEditorFacade.isCategoryToggleLoading;
-  protected readonly isAttributeSearchLoading = this.productEditorFacade.isAttributeSearchLoading;
-  protected readonly isAttributeToggleLoading = this.productEditorFacade.isAttributeToggleLoading;
-  protected readonly isTagSearchLoading = this.productEditorFacade.isTagSearchLoading;
-  protected readonly isTagToggleLoading = this.productEditorFacade.isTagToggleLoading;
   protected readonly createdProductId = signal<string | null>(null);
-  protected readonly attributeSearchValue = this.productEditorFacade.attributeSearchValue;
-  protected readonly attributeSearchResults = this.productEditorFacade.attributeSearchResults;
-  protected readonly assignedAttributes = this.productEditorFacade.assignedAttributes;
-  protected readonly tagSearchValue = this.productEditorFacade.tagSearchValue;
-  protected readonly tagSearchResults = this.productEditorFacade.tagSearchResults;
-  protected readonly assignedTags = this.productEditorFacade.assignedTags;
 
-  protected readonly productFormModel = signal<ProductCreateFormModel>({
+  protected readonly createProductMutation = injectMutation(() => ({
+    mutationFn: (payload: CreateProductPayload) =>
+      lastValueFrom(this.productsService.createProduct(payload)),
+  }));
+
+  protected readonly updateProductMutation = injectMutation(() => ({
+    mutationFn: ({ productId, payload }: { productId: string; payload: UpdateProductPayload }) =>
+      lastValueFrom(this.productsService.updateProduct(productId, payload)),
+  }));
+
+  protected readonly isSubmitting = computed(
+    () => this.createProductMutation.isPending() || this.updateProductMutation.isPending(),
+  );
+  protected readonly productFormModel = signal<ProductFormModel>({
     ...PRODUCTS_CREATE_DEFAULT_FORM_VALUE,
   });
   protected readonly productForm = form(this.productFormModel, (schemaPath) => {
     required(schemaPath.name, { message: PRODUCTS_CREATE_TEXTS.PRODUCT_NAME_REQUIRED });
   });
 
-  protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
   protected readonly isFormValid = computed(() => this.productForm.name().valid());
   protected readonly isSidebarDisabled = computed(() => !this.createdProductId());
-  protected readonly categoryNodes = computed(() =>
-    this.productEditorFacade.buildCategoryNodes({
-      disabled:
-        this.isSidebarDisabled() ||
-        this.isSubmitting() ||
-        this.isCategoriesLoading() ||
-        this.isCategoryToggleLoading(),
-    }),
-  );
-
-  constructor() {
-    this.productEditorFacade.configure({
-      getShopId: () => this.shopId(),
-      getProductId: () => this.createdProductId(),
-      isSidebarEnabled: () => !this.isSidebarDisabled(),
-      texts: PRODUCTS_CREATE_TEXTS,
-    });
-  }
 
   ngOnInit(): void {
     this.watchShopId();
@@ -126,35 +96,11 @@ export class ProductsCreate implements OnInit {
     }));
   }
 
-  protected onCategoryToggle(event: ProductFormCategoryToggleEvent): void {
-    this.productEditorFacade.onCategoryToggle(event);
-  }
-
-  protected onAttributeSearchChange(value: string): void {
-    this.productEditorFacade.onAttributeSearchChange(value);
-  }
-
-  protected onAttributeAssign(attributeId: string): void {
-    this.productEditorFacade.onAttributeAssign(attributeId);
-  }
-
-  protected onAttributeUnassign(attributeId: string): void {
-    this.productEditorFacade.onAttributeUnassign(attributeId);
-  }
-
-  protected onTagSearchChange(value: string): void {
-    this.productEditorFacade.onTagSearchChange(value);
-  }
-
-  protected onTagAssign(tagId: string): void {
-    this.productEditorFacade.onTagAssign(tagId);
-  }
-
-  protected onTagUnassign(tagId: string): void {
-    this.productEditorFacade.onTagUnassign(tagId);
-  }
-
   private watchShopId(): void {
+    const initialShopId = this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null;
+    this.shopId.set(initialShopId);
+    this.createdProductId.set(null);
+
     this.activatedRoute.paramMap
       .pipe(
         map((params) => params.get('shopId')),
@@ -163,13 +109,6 @@ export class ProductsCreate implements OnInit {
       .subscribe((shopId) => {
         this.shopId.set(shopId);
         this.createdProductId.set(null);
-        this.productEditorFacade.resetState({ clearCategories: !shopId });
-
-        if (!shopId) {
-          return;
-        }
-
-        this.productEditorFacade.loadCategories();
       });
   }
 
@@ -179,34 +118,28 @@ export class ProductsCreate implements OnInit {
       return;
     }
 
-    this.isSubmitting.set(true);
-    this.productsService
-      .createProduct(payload)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isSubmitting.set(false)),
-      )
-      .subscribe({
-        next: (product) => {
-          const normalizedProductId = String(product.id ?? '').trim();
-          if (!normalizedProductId) {
-            this.toasterService.danger(
-              PRODUCTS_CREATE_TEXTS.CREATE_ERROR_TITLE,
-              PRODUCTS_CREATE_TEXTS.CREATE_ERROR_MESSAGE,
-            );
-            return;
-          }
-
-          this.createdProductId.set(normalizedProductId);
-          this.toasterService.success(PRODUCTS_CREATE_TEXTS.CREATE_SUCCESS_TITLE);
-        },
-        error: () => {
+    this.createProductMutation.mutate(payload, {
+      onSuccess: (product) => {
+        const normalizedProductId = String(product.id ?? '').trim();
+        if (!normalizedProductId) {
           this.toasterService.danger(
             PRODUCTS_CREATE_TEXTS.CREATE_ERROR_TITLE,
             PRODUCTS_CREATE_TEXTS.CREATE_ERROR_MESSAGE,
           );
-        },
-      });
+          return;
+        }
+
+        this.createdProductId.set(normalizedProductId);
+        this.toasterService.success(PRODUCTS_CREATE_TEXTS.CREATE_SUCCESS_TITLE);
+        this.invalidateProductQueries();
+      },
+      onError: () => {
+        this.toasterService.danger(
+          PRODUCTS_CREATE_TEXTS.CREATE_ERROR_TITLE,
+          PRODUCTS_CREATE_TEXTS.CREATE_ERROR_MESSAGE,
+        );
+      },
+    });
   }
 
   private submitProductUpdate(productId: string): void {
@@ -215,24 +148,41 @@ export class ProductsCreate implements OnInit {
       return;
     }
 
-    this.isSubmitting.set(true);
-    this.productsService
-      .updateProduct(productId, payload)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isSubmitting.set(false)),
-      )
-      .subscribe({
-        next: () => {
+    this.updateProductMutation.mutate(
+      { productId, payload },
+      {
+        onSuccess: () => {
           this.toasterService.success(PRODUCTS_CREATE_TEXTS.UPDATE_SUCCESS_TITLE);
+          this.invalidateProductQueries();
         },
-        error: () => {
+        onError: () => {
           this.toasterService.danger(
             PRODUCTS_CREATE_TEXTS.UPDATE_ERROR_TITLE,
             PRODUCTS_CREATE_TEXTS.UPDATE_ERROR_MESSAGE,
           );
         },
-      });
+      },
+    );
+  }
+
+  private invalidateProductQueries(): void {
+    const shopId = this.shopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.invalidateQueries({
+      queryKey: ['shop', shopId, 'products'],
+    });
+
+    const productId = this.createdProductId();
+    if (!productId) {
+      return;
+    }
+
+    this.queryClient.invalidateQueries({
+      queryKey: SHOP_QUERY_KEYS.productById(productId),
+    });
   }
 
   private buildCreatePayload(): CreateProductPayload | null {

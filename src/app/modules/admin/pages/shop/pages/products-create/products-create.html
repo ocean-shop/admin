@@ -3,46 +3,28 @@
     <header class="products-create-header">
       <div>
         <h1 class="products-create-title">{{ textData.PAGE_TITLE }}</h1>
-        <p class="products-create-description">{{ textData.PAGE_DESCRIPTION }}</p>
       </div>
       <app-button
         [label]="textData.CREATE_LABEL"
         type="submit"
         variant="create"
         [fullWidth]="false"
-        [disabled]="!isShopContextReady() || !isFormValid() || isSubmitting()"
+        [disabled]="!isFormValid() || isSubmitting()"
       />
     </header>
-
-    @if (!isShopContextReady()) {
-    <p class="products-create-warning">{{ textData.SHOP_ID_REQUIRED_MESSAGE }}</p>
-    }
 
     <app-product-form
       [productForm]="productForm"
       [texts]="textData"
+      [toastTexts]="textData"
       [fieldIds]="fieldIds"
       [statusOptions]="statusOptions"
       [productTypeOptions]="productTypeOptions"
       [productTypeSimple]="productTypeSimple"
+      [shopId]="shopId()"
+      [productId]="createdProductId()"
       [sidebarDisabled]="isSidebarDisabled()"
-      [categories]="categoryNodes()"
-      [attributeSearchValue]="attributeSearchValue()"
-      [isAttributeSearchLoading]="isAttributeSearchLoading()"
-      [attributeSearchResults]="attributeSearchResults()"
-      [assignedAttributes]="assignedAttributes()"
-      [tagSearchValue]="tagSearchValue()"
-      [isTagSearchLoading]="isTagSearchLoading()"
-      [tagSearchResults]="tagSearchResults()"
-      [assignedTags]="assignedTags()"
       (productTypeChange)="onProductTypeChange($event)"
-      (categoryToggle)="onCategoryToggle($event)"
-      (attributeSearchChange)="onAttributeSearchChange($event)"
-      (attributeAssign)="onAttributeAssign($event)"
-      (attributeUnassign)="onAttributeUnassign($event)"
-      (tagSearchChange)="onTagSearchChange($event)"
-      (tagAssign)="onTagAssign($event)"
-      (tagUnassign)="onTagUnassign($event)"
     />
   </form>
 </main>

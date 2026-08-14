@@ -1,0 +1,25 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.product-form-card {
+  @apply rounded-lg border border-outline-variant bg-surface-container-lowest p-6 shadow-sm;
+}
+
+.product-form-card-disabled {
+  @apply opacity-70;
+}
+
+.product-form-card-title {
+  @apply mb-4 border-b border-surface-container pb-2 text-lg font-semibold text-on-surface;
+}
+
+.product-form-card-title-icon {
+  @apply flex w-full items-center gap-2;
+}
+
+.product-form-card-title-icon .material-symbols-outlined {
+  @apply text-[20px] text-primary;
+}

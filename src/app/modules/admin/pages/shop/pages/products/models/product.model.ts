@@ -1,5 +1,6 @@
 import { ProductStatus } from './product-status.enum';
 import { ProductType } from './product-type.enum';
+import { ProductVariationApiItem } from './product-variation.model';
 
 export type ProductCategoryApiItem = {
   id?: string | null;
@@ -28,6 +29,15 @@ export type ProductTagApiItem = {
   } | null;
 };
 
+export type ProductImageApiItem = {
+  id?: string | null;
+  image?: string | null;
+  url?: string | null;
+  src?: string | null;
+  name?: string | null;
+  title?: string | null;
+};
+
 export type ProductApiItem = {
   id?: string | null;
   shopId?: string | null;
@@ -44,6 +54,8 @@ export type ProductApiItem = {
   attributes?: (ProductAttributeApiItem | string)[] | null;
   attributeTypes?: (ProductAttributeApiItem | string)[] | null;
   tags?: (ProductTagApiItem | string)[] | null;
+  images?: (ProductImageApiItem | string)[] | null;
+  variations?: (ProductVariationApiItem | string)[] | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 };

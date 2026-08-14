@@ -7,7 +7,6 @@ import {
 
 export const PRODUCTS_CREATE_TEXTS = {
   PAGE_TITLE: 'Добавити новий товар',
-  PAGE_DESCRIPTION: 'Додайте нову позицію до прибережного каталогу.',
   CREATE_LABEL: 'Добавити товар',
   SHOP_ID_REQUIRED_MESSAGE:
     'Відкрийте коректний маршрут магазину (/admin/shop/:shopId/products/create), щоб створити товар.',
@@ -32,6 +31,12 @@ export const PRODUCTS_CREATE_TEXTS = {
   TAG_UNASSIGN_SUCCESS_TITLE: 'Тег відв’язано',
   TAG_ASSIGN_ERROR_TITLE: 'Не вдалося оновити тег',
   TAG_ASSIGN_ERROR_MESSAGE: 'Спробуйте ще раз через кілька секунд.',
+  IMAGES_ASSIGN_SUCCESS_TITLE: 'Зображення збережено',
+  IMAGES_ASSIGN_ERROR_TITLE: 'Не вдалося зберегти зображення',
+  IMAGES_ASSIGN_ERROR_MESSAGE: 'Спробуйте ще раз через кілька секунд.',
+  VARIATION_SAVE_SUCCESS_TITLE: 'Варіацію збережено',
+  VARIATION_SAVE_ERROR_TITLE: 'Не вдалося зберегти варіацію',
+  VARIATION_SAVE_ERROR_MESSAGE: 'Спробуйте ще раз через кілька секунд.',
 };
 
 export const PRODUCTS_CREATE_FIELD_IDS = PRODUCT_FORM_FIELD_IDS;

@@ -1,0 +1,69 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.product-form-image-input {
+  @apply sr-only;
+}
+
+.product-form-dropzone {
+  @apply mb-4 flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-outline-variant bg-surface p-6 text-center transition-colors hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-70;
+}
+
+.product-form-dropzone-compact {
+  @apply mb-3 p-4;
+}
+
+.product-form-dropzone .material-symbols-outlined {
+  @apply text-2xl text-outline;
+}
+
+.product-form-dropzone p {
+  @apply text-sm text-on-surface-variant;
+}
+
+.product-form-images-list {
+  @apply flex flex-col gap-2;
+}
+
+.product-form-images-empty {
+  @apply rounded-sm border border-surface-dim bg-surface p-3 text-sm text-on-surface-variant;
+}
+
+.product-form-image-row {
+  @apply flex min-h-20 items-center justify-between gap-3 rounded-sm border border-surface-dim bg-surface p-2;
+}
+
+.product-form-image-row-content {
+  @apply flex min-w-0 items-center gap-3;
+}
+
+.product-form-image-preview {
+  @apply h-14 w-14 rounded-sm object-cover;
+}
+
+.product-form-image-meta {
+  @apply flex min-w-0 items-center gap-2;
+}
+
+.product-form-image-meta .material-symbols-outlined {
+  @apply text-primary;
+}
+
+.product-form-image-name {
+  @apply truncate text-sm text-on-surface;
+}
+
+.product-form-image-actions {
+  @apply flex items-center gap-1;
+}
+
+.product-form-image-actions button {
+  @apply text-outline transition-colors hover:text-primary disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.product-form-image-delete {
+  @apply ml-1 hover:text-error;
+}

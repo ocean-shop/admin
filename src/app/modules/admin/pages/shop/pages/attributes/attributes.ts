@@ -1,13 +1,19 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { finalize, map, Observable } from 'rxjs';
+import {
+  injectMutation,
+  injectQuery,
+  injectQueryClient,
+} from '@tanstack/angular-query-experimental';
+import { lastValueFrom, map } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Button } from '@ui/button/button';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
 import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import {
   ATTRIBUTES_CREATE_ICON,
   ATTRIBUTES_PAGE_SIZE,
@@ -33,6 +39,7 @@ export class Attributes implements OnInit {
   private readonly toasterService = inject(ToasterService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly queryClient = injectQueryClient();
 
   protected readonly textData = ATTRIBUTES_TEXTS;
   protected readonly createAttributeIcon = ATTRIBUTES_CREATE_ICON;
@@ -42,19 +49,66 @@ export class Attributes implements OnInit {
     { key: 'value', header: ATTRIBUTES_TEXTS.TABLE_VALUE_HEADER },
   ];
 
-  protected readonly isLoading = signal(true);
-  protected readonly hasError = signal(false);
-  protected readonly isActionLoading = signal(false);
-  protected readonly attributes = signal<Attribute[]>([]);
   protected readonly shopId = signal<string | null>(null);
   protected readonly currentPage = signal(1);
-  protected readonly totalItems = signal(0);
-  protected readonly totalPages = signal(1);
   protected readonly selectedAttribute = signal<Attribute | null>(null);
   protected readonly modalMode = signal<AttributeModalMode>(null);
   protected readonly searchInput = signal('');
   protected readonly searchName = signal('');
 
+  protected readonly attributesQuery = injectQuery(() => {
+    const shopId = this.shopId();
+    const name = this.searchName();
+    const page = this.currentPage();
+    return {
+      queryKey: shopId
+        ? SHOP_QUERY_KEYS.attributes(shopId, page, this.pageSize, name)
+        : ['shop', 'attributes', 'missing-shop-id'],
+      enabled: Boolean(shopId),
+      queryFn: () =>
+        lastValueFrom(
+          this.attributesService.getAttributes({
+            page,
+            limit: this.pageSize,
+            shopId: shopId ?? '',
+            ...(name ? { name } : {}),
+          }),
+        ),
+    };
+  });
+
+  protected readonly createAttributeMutation = injectMutation(() => ({
+    mutationFn: (payload: CreateAttributePayload) =>
+      lastValueFrom(this.attributesService.createAttribute(payload)),
+  }));
+
+  protected readonly deleteAttributeMutation = injectMutation(() => ({
+    mutationFn: (id: string) => lastValueFrom(this.attributesService.deleteAttribute(id)),
+  }));
+
+  protected readonly isLoading = computed(
+    () => this.attributesQuery.isPending() || this.attributesQuery.isFetching(),
+  );
+  protected readonly hasError = computed(() => this.attributesQuery.isError());
+  protected readonly isActionLoading = computed(
+    () => this.createAttributeMutation.isPending() || this.deleteAttributeMutation.isPending(),
+  );
+  protected readonly attributes = computed<Attribute[]>(() => {
+    const shopId = this.shopId();
+    if (!shopId) {
+      return [];
+    }
+
+    return (this.attributesQuery.data()?.items ?? []).map((item) =>
+      this.mapAttribute(item, shopId),
+    );
+  });
+  protected readonly totalItems = computed(() =>
+    Math.max(0, this.attributesQuery.data()?.total ?? 0),
+  );
+  protected readonly totalPages = computed(() =>
+    Math.max(1, this.attributesQuery.data()?.totalPages ?? 1),
+  );
   protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
   protected readonly isCreateModalOpen = computed(
     () => this.modalMode() === AttributeModalModeEnum.Create,
@@ -87,7 +141,6 @@ export class Attributes implements OnInit {
 
     this.searchName.set(nextSearchName);
     this.currentPage.set(1);
-    this.loadAttributes();
   }
 
   protected onSearchReset(): void {
@@ -98,7 +151,6 @@ export class Attributes implements OnInit {
 
     this.searchName.set('');
     this.currentPage.set(1);
-    this.loadAttributes();
   }
 
   protected onCreateAttribute(): void {
@@ -129,7 +181,6 @@ export class Attributes implements OnInit {
     }
 
     this.currentPage.set(page);
-    this.loadAttributes();
   }
 
   protected onCloseModal(): void {
@@ -157,7 +208,8 @@ export class Attributes implements OnInit {
     };
 
     this.executeMutation(
-      this.attributesService.createAttribute(createPayload),
+      this.createAttributeMutation,
+      createPayload,
       ATTRIBUTES_TEXTS.CREATE_SUCCESS_TITLE,
     );
   }
@@ -169,12 +221,17 @@ export class Attributes implements OnInit {
     }
 
     this.executeMutation(
-      this.attributesService.deleteAttribute(selectedAttribute.id),
+      this.deleteAttributeMutation,
+      selectedAttribute.id,
       ATTRIBUTES_TEXTS.DELETE_SUCCESS_TITLE,
     );
   }
 
   private watchShopId(): void {
+    const initialShopId = this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null;
+    this.shopId.set(initialShopId);
+    this.currentPage.set(1);
+
     this.activatedRoute.paramMap
       .pipe(
         map((params) => params.get('shopId')),
@@ -183,62 +240,32 @@ export class Attributes implements OnInit {
       .subscribe((shopId) => {
         this.shopId.set(shopId);
         this.currentPage.set(1);
-        this.loadAttributes();
       });
   }
 
-  private loadAttributes(): void {
+  private executeMutation<T>(
+    mutation: { mutate: (payload: T, options?: { onSuccess?: () => void }) => void },
+    payload: T,
+    successTitle: string,
+  ): void {
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        this.toasterService.success(successTitle);
+        this.closeModal();
+        this.invalidateAttributes();
+      },
+    });
+  }
+
+  private invalidateAttributes(): void {
     const shopId = this.shopId();
     if (!shopId) {
-      this.attributes.set([]);
-      this.totalItems.set(0);
-      this.totalPages.set(1);
-      this.isLoading.set(false);
       return;
     }
 
-    this.isLoading.set(true);
-    this.hasError.set(false);
-
-    this.attributesService
-      .getAttributes({
-        page: this.currentPage(),
-        limit: this.pageSize,
-        shopId,
-        ...(this.searchName() ? { name: this.searchName() } : {}),
-      })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoading.set(false)),
-      )
-      .subscribe({
-        next: (response) => {
-          this.attributes.set(response.items.map((item) => this.mapAttribute(item, shopId)));
-          this.currentPage.set(Math.max(1, response.page));
-          this.totalItems.set(Math.max(0, response.total));
-          this.totalPages.set(Math.max(1, response.totalPages));
-        },
-        error: () => {
-          this.hasError.set(true);
-        },
-      });
-  }
-
-  private executeMutation(request$: Observable<unknown>, successTitle: string): void {
-    this.isActionLoading.set(true);
-
-    request$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isActionLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
-          this.toasterService.success(successTitle);
-          this.closeModal();
-          this.loadAttributes();
-        },
-      });
+    this.queryClient.invalidateQueries({
+      queryKey: ['shop', shopId, 'attributes'],
+    });
   }
 
   private closeModal(): void {

@@ -1,0 +1,158 @@
+<article class="product-form-card" [class.product-form-card-disabled]="sidebarDisabled()">
+  <div class="product-form-card-header">
+    <h2 class="product-form-card-title">{{ texts().VARIATIONS_TITLE }}</h2>
+    <button
+      type="button"
+      class="product-form-add-button"
+      [disabled]="sidebarDisabled()"
+      (click)="onVariationAdd()"
+    >
+      {{ texts().VARIATION_ADD_BUTTON_LABEL }}
+    </button>
+  </div>
+
+  @if (!variations().length) {
+  <p class="product-form-empty-state">{{ texts().VARIATIONS_EMPTY }}</p>
+  } @else { @for (variation of variations(); track variation.localId; let index = $index) {
+  <section class="product-form-variation-card">
+    <header class="product-form-variation-header">
+      <h3 class="product-form-variation-title">
+        {{ texts().VARIATION_CARD_TITLE }} #{{ index + 1 }}
+      </h3>
+      <button
+        type="button"
+        class="product-form-variation-remove"
+        [disabled]="sidebarDisabled()"
+        (click)="onVariationRemove(variation.localId)"
+      >
+        <span class="material-symbols-outlined text-[18px]">delete</span>
+      </button>
+    </header>
+
+    <div class="product-form-field-group">
+      <app-input
+        [id]="'variation-title-' + variation.localId"
+        [label]="texts().VARIATION_TITLE_LABEL"
+        [placeholder]="texts().VARIATION_TITLE_PLACEHOLDER"
+        [value]="variation.title"
+        [disabled]="sidebarDisabled()"
+        (valueChange)="onVariationFieldChange(variation.localId, 'title', $event)"
+      />
+    </div>
+
+    <div class="product-form-field-group">
+      <app-input
+        [id]="'variation-name-' + variation.localId"
+        [label]="texts().VARIATION_NAME_LABEL"
+        [placeholder]="texts().VARIATION_NAME_PLACEHOLDER"
+        [value]="variation.name"
+        [disabled]="sidebarDisabled()"
+        (valueChange)="onVariationFieldChange(variation.localId, 'name', $event)"
+      />
+    </div>
+
+    <div class="product-form-two-columns">
+      <div class="product-form-field-group">
+        <app-input
+          [id]="'variation-price-' + variation.localId"
+          [label]="texts().VARIATION_PRICE_LABEL"
+          [placeholder]="texts().VARIATION_PRICE_PLACEHOLDER"
+          type="number"
+          [value]="variation.price"
+          [disabled]="sidebarDisabled()"
+          (valueChange)="onVariationFieldChange(variation.localId, 'price', $event)"
+        />
+      </div>
+
+      <div class="product-form-field-group">
+        <app-input
+          [id]="'variation-old-price-' + variation.localId"
+          [label]="texts().VARIATION_OLD_PRICE_LABEL"
+          [placeholder]="texts().VARIATION_OLD_PRICE_PLACEHOLDER"
+          type="number"
+          [value]="variation.oldPrice"
+          [disabled]="sidebarDisabled()"
+          (valueChange)="onVariationFieldChange(variation.localId, 'oldPrice', $event)"
+        />
+      </div>
+    </div>
+
+    <div class="product-form-two-columns">
+      <div class="product-form-field-group">
+        <app-input
+          [id]="'variation-sku-' + variation.localId"
+          [label]="texts().VARIATION_SKU_LABEL"
+          [placeholder]="texts().VARIATION_SKU_PLACEHOLDER"
+          [value]="variation.sku"
+          [disabled]="sidebarDisabled()"
+          (valueChange)="onVariationFieldChange(variation.localId, 'sku', $event)"
+        />
+      </div>
+
+      <div class="product-form-field-group product-form-variation-checkboxes">
+        <app-checkbox
+          [id]="'variation-available-' + variation.localId"
+          [label]="texts().VARIATION_AVAILABLE_LABEL"
+          [checked]="variation.available"
+          [disabled]="sidebarDisabled()"
+          (checkedChange)="onVariationFieldChange(variation.localId, 'available', $event)"
+        />
+        <app-checkbox
+          [id]="'variation-main-' + variation.localId"
+          [label]="texts().VARIATION_IS_MAIN_LABEL"
+          [checked]="variation.isMain"
+          [disabled]="sidebarDisabled()"
+          (checkedChange)="onVariationFieldChange(variation.localId, 'isMain', $event)"
+        />
+      </div>
+    </div>
+
+    <section class="product-form-mini-section">
+      <h4 class="product-form-mini-title">{{ texts().VARIATION_ATTRIBUTES_TITLE }}</h4>
+      <app-product-form-shared-attributes
+        [searchInputId]="'variation-attribute-search-' + variation.localId"
+        [searchLabel]="texts().VARIATION_ATTRIBUTES_SEARCH_PLACEHOLDER"
+        [searchPlaceholder]="texts().VARIATION_ATTRIBUTES_SEARCH_PLACEHOLDER"
+        [searchValue]="variation.attributeSearchValue"
+        [interactionDisabled]="sidebarDisabled()"
+        [isSearchLoading]="variation.isAttributeSearchLoading"
+        [searchLoadingText]="texts().VARIATION_ATTRIBUTES_SEARCH_LOADING"
+        [searchEmptyText]="texts().VARIATION_ATTRIBUTES_SEARCH_EMPTY"
+        [assignedEmptyText]="texts().VARIATION_ATTRIBUTES_ASSIGNED_EMPTY"
+        removeAriaLabel="Remove variation attribute"
+        [searchResults]="variation.attributeSearchResults"
+        [assignedAttributes]="variation.attributes"
+        [compactLayout]="true"
+        (searchChange)="onVariationAttributeSearchChange(variation.localId, $event)"
+        (assign)="onVariationAttributeAssign(variation.localId, $event)"
+        (unassign)="onVariationAttributeUnassign(variation.localId, $event)"
+      />
+    </section>
+
+    <section class="product-form-mini-section">
+      <h4 class="product-form-mini-title">{{ texts().VARIATION_IMAGES_TITLE }}</h4>
+      <app-product-form-shared-images
+        [interactionDisabled]="sidebarDisabled()"
+        [images]="variation.images"
+        [dropzoneHint]="texts().VARIATION_IMAGES_DROPZONE_HINT"
+        [emptyStateText]="texts().VARIATION_IMAGES_ASSIGNED_EMPTY"
+        [compactDropzone]="true"
+        (filesSelected)="onVariationImageFilesSelected(variation.localId, $event)"
+        (moveUp)="onVariationImageMoveUp(variation.localId, $event)"
+        (moveDown)="onVariationImageMoveDown(variation.localId, $event)"
+        (remove)="onVariationImageRemove(variation.localId, $event)"
+      />
+    </section>
+
+    <button
+      type="button"
+      class="product-form-submit-button"
+      [disabled]="sidebarDisabled() || variation.isSaving"
+      (click)="onVariationCreate(variation.localId)"
+    >
+      {{ variation.isSaving ? texts().VARIATION_CREATE_LOADING_BUTTON_LABEL : variation.id ?
+      texts().VARIATION_UPDATE_BUTTON_LABEL : texts().VARIATION_CREATE_BUTTON_LABEL }}
+    </button>
+  </section>
+  } }
+</article>

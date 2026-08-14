@@ -1,0 +1,37 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.product-form-card {
+  @apply rounded-lg border border-outline-variant bg-surface-container-lowest p-6 shadow-sm;
+}
+
+.product-form-card-disabled {
+  @apply opacity-70;
+}
+
+.product-form-card-header {
+  @apply mb-4 flex items-center justify-between border-b border-surface-container pb-2;
+}
+
+.product-form-card-title {
+  @apply text-lg font-semibold text-on-surface;
+}
+
+.product-form-card-title-icon {
+  @apply inline-flex items-center gap-2;
+}
+
+.product-form-card-title-icon .material-symbols-outlined {
+  @apply text-[20px] text-primary;
+}
+
+.product-form-card-title-no-divider {
+  @apply m-0 border-none p-0;
+}
+
+.product-form-upload-button {
+  @apply rounded-sm bg-primary px-3 py-1 text-sm font-bold text-on-primary transition-all hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70;
+}

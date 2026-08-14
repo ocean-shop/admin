@@ -10,39 +10,27 @@
         type="submit"
         variant="create"
         [fullWidth]="false"
-        [disabled]="!isRouteContextReady() || !isFormValid() || isSubmitting() || isLoadingProduct()"
+        [disabled]="!isFormValid() || isSubmitting() || isLoadingProduct()"
       />
     </header>
-
-    @if (!isRouteContextReady()) {
-    <p class="products-update-warning">{{ textData.SHOP_CONTEXT_REQUIRED_MESSAGE }}</p>
-    }
 
     <app-product-form
       [productForm]="productForm"
       [texts]="textData"
+      [toastTexts]="textData"
       [fieldIds]="fieldIds"
       [statusOptions]="statusOptions"
       [productTypeOptions]="productTypeOptions"
       [productTypeSimple]="productTypeSimple"
+      [shopId]="shopId()"
+      [productId]="productId()"
       [sidebarDisabled]="false"
-      [categories]="categoryNodes()"
-      [attributeSearchValue]="attributeSearchValue()"
-      [isAttributeSearchLoading]="isAttributeSearchLoading()"
-      [attributeSearchResults]="attributeSearchResults()"
-      [assignedAttributes]="assignedAttributes()"
-      [tagSearchValue]="tagSearchValue()"
-      [isTagSearchLoading]="isTagSearchLoading()"
-      [tagSearchResults]="tagSearchResults()"
-      [assignedTags]="assignedTags()"
+      [initialSelectedCategoryIds]="selectedCategoryIds()"
+      [initialAssignedAttributes]="assignedAttributes()"
+      [initialAssignedTags]="assignedTags()"
+      [initialImages]="images()"
+      [initialVariations]="variations()"
       (productTypeChange)="onProductTypeChange($event)"
-      (categoryToggle)="onCategoryToggle($event)"
-      (attributeSearchChange)="onAttributeSearchChange($event)"
-      (attributeAssign)="onAttributeAssign($event)"
-      (attributeUnassign)="onAttributeUnassign($event)"
-      (tagSearchChange)="onTagSearchChange($event)"
-      (tagAssign)="onTagAssign($event)"
-      (tagUnassign)="onTagUnassign($event)"
     />
   </form>
 </main>

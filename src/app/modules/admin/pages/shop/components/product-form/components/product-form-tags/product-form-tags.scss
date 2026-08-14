@@ -1,0 +1,45 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.product-form-card {
+  @apply rounded-lg border border-outline-variant bg-surface-container-lowest p-6 shadow-sm;
+}
+
+.product-form-card-disabled {
+  @apply opacity-70;
+}
+
+.product-form-card-title {
+  @apply mb-4 border-b border-surface-container pb-2 text-lg font-semibold text-on-surface;
+}
+
+.product-form-card-title-icon {
+  @apply flex w-full items-center gap-2;
+}
+
+.product-form-card-title-icon .material-symbols-outlined {
+  @apply text-[20px] text-primary;
+}
+
+.product-form-tag-list {
+  @apply mt-4 flex flex-wrap gap-2;
+}
+
+.product-form-attribute-results {
+  @apply mt-2 flex max-h-48 flex-col gap-1 overflow-y-auto rounded-md border border-outline-variant bg-surface-container-lowest p-2;
+}
+
+.product-form-attribute-result {
+  @apply rounded px-3 py-2 text-left text-sm text-on-surface transition-colors hover:bg-surface-container;
+}
+
+.product-form-attribute-state {
+  @apply px-1 py-2 text-sm text-on-surface-variant;
+}
+
+.product-form-placeholder-chip {
+  @apply text-sm text-on-surface-variant;
+}

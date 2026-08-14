@@ -1,0 +1,30 @@
+<article class="product-form-card" [class.product-form-card-disabled]="sidebarDisabled()">
+  <div class="product-form-card-header">
+    <h2
+      class="product-form-card-title product-form-card-title-icon product-form-card-title-no-divider"
+    >
+      <span class="material-symbols-outlined">perm_media</span>
+      {{ texts().IMAGES_TITLE }}
+    </h2>
+    <button
+      type="button"
+      class="product-form-upload-button"
+      [disabled]="sidebarDisabled() || isUploadLoading() || !images().length"
+      (click)="onUpload()"
+    >
+      {{ isUploadLoading() ? texts().IMAGES_UPLOAD_LOADING_LABEL : texts().IMAGES_UPLOAD_LABEL }}
+    </button>
+  </div>
+
+  <app-product-form-shared-images
+    [interactionDisabled]="sidebarDisabled() || isUploadLoading()"
+    [images]="images()"
+    [dropzoneHint]="texts().IMAGES_DROPZONE_HINT"
+    [emptyStateText]="texts().IMAGES_ASSIGNED_EMPTY"
+    [allowDrop]="true"
+    (filesSelected)="onFilesSelected($event)"
+    (moveUp)="onMoveUp($event)"
+    (moveDown)="onMoveDown($event)"
+    (remove)="onRemove($event)"
+  />
+</article>

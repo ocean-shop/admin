@@ -1,14 +1,19 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { finalize, map, Observable } from 'rxjs';
+import {
+  injectMutation,
+  injectQuery,
+  injectQueryClient,
+} from '@tanstack/angular-query-experimental';
+import { lastValueFrom, map } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Modal } from '@ui/modal/modal';
-import { CategoryFormModal } from './components/category-form-modal/category-form-modal';
-import { CATEGORIES_CREATE_ICON, CATEGORIES_TEXTS } from './constants/categories.constants';
+import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { buildTree } from '../../helpers/tree.helper';
 import { TreeNode } from '../../models/tree-node.model';
-import { CategorySortDirection } from './models/change-category-sort.model';
+import { CategoryFormModal } from './components/category-form-modal/category-form-modal';
+import { CATEGORIES_CREATE_ICON, CATEGORIES_TEXTS } from './constants/categories.constants';
 import { CategoryModalMode, CategoryModalModeEnum } from './models/category-modal-mode.type';
 import {
   CategoriesApiResponse,
@@ -22,6 +27,7 @@ import {
   UpdateCategoryPayload,
 } from './models/category-payload.model';
 import { CategoryTreeNode, VisibleCategoryNode } from './models/category-tree.model';
+import { CategorySortDirection } from './models/change-category-sort.model';
 import { CategoriesService } from './services/categories.service';
 
 @Component({
@@ -35,21 +41,78 @@ export class Categories implements OnInit {
   private readonly toasterService = inject(ToasterService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly queryClient = injectQueryClient();
 
   protected readonly textData = CATEGORIES_TEXTS;
   protected readonly createIcon = CATEGORIES_CREATE_ICON;
-
-  protected readonly isLoading = signal(true);
-  protected readonly hasError = signal(false);
-  protected readonly isActionLoading = signal(false);
-  protected readonly categories = signal<Category[]>([]);
   protected readonly expandedCategoryIds = signal<Set<string>>(new Set());
   protected readonly selectedCategory = signal<Category | null>(null);
   protected readonly selectedParentCategory = signal<Category | null>(null);
   protected readonly modalMode = signal<CategoryModalMode>(null);
   protected readonly shopId = signal<string | null>(null);
-  protected readonly stats = signal<CategoriesStats>({});
+  private readonly editCategoryId = signal<string | null>(null);
 
+  protected readonly categoriesQuery = injectQuery(() => {
+    const shopId = this.shopId();
+    return {
+      queryKey: shopId
+        ? SHOP_QUERY_KEYS.categories(shopId)
+        : ['shop', 'categories', 'missing-shop-id'],
+      enabled: Boolean(shopId),
+      queryFn: () => lastValueFrom(this.categoriesService.getCategories(shopId ?? '')),
+    };
+  });
+
+  protected readonly editCategoryQuery = injectQuery(() => {
+    const categoryId = this.editCategoryId();
+    return {
+      queryKey: categoryId
+        ? ['shop', 'categories', 'detail', categoryId]
+        : ['shop', 'categories', 'detail', 'missing-id'],
+      enabled: Boolean(categoryId),
+      queryFn: () => lastValueFrom(this.categoriesService.getCategoryById(categoryId ?? '')),
+    };
+  });
+
+  protected readonly createCategoryMutation = injectMutation(() => ({
+    mutationFn: (payload: CreateCategoryPayload) =>
+      lastValueFrom(this.categoriesService.createCategory(payload)),
+  }));
+
+  protected readonly updateCategoryMutation = injectMutation(() => ({
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateCategoryPayload }) =>
+      lastValueFrom(this.categoriesService.updateCategory(id, payload)),
+  }));
+
+  protected readonly deleteCategoryMutation = injectMutation(() => ({
+    mutationFn: (id: string) => lastValueFrom(this.categoriesService.deleteCategory(id)),
+  }));
+
+  protected readonly changeSortMutation = injectMutation(() => ({
+    mutationFn: ({ id, direction }: { id: string; direction: CategorySortDirection }) =>
+      lastValueFrom(this.categoriesService.changeCategorySort(id, { direction })),
+  }));
+
+  protected readonly isLoading = computed(
+    () => this.categoriesQuery.isPending() || this.categoriesQuery.isFetching(),
+  );
+  protected readonly hasError = computed(() => this.categoriesQuery.isError());
+  protected readonly isActionLoading = computed(
+    () =>
+      (Boolean(this.editCategoryId()) && this.editCategoryQuery.isPending()) ||
+      this.createCategoryMutation.isPending() ||
+      this.updateCategoryMutation.isPending() ||
+      this.deleteCategoryMutation.isPending() ||
+      this.changeSortMutation.isPending(),
+  );
+  protected readonly categories = computed<Category[]>(() =>
+    this.extractCategories(this.categoriesQuery.data() ?? []).map((category) =>
+      this.mapCategory(category),
+    ),
+  );
+  protected readonly stats = computed<CategoriesStats>(() =>
+    this.resolveStats(this.categoriesQuery.data() ?? []),
+  );
   protected readonly hasCategories = computed(() => this.categories().length > 0);
   protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
   protected readonly hasVisibleStats = computed(() => {
@@ -73,6 +136,26 @@ export class Categories implements OnInit {
   protected readonly isDeleteModalOpen = computed(
     () => this.modalMode() === CategoryModalModeEnum.Delete,
   );
+
+  constructor() {
+    effect(() => {
+      const category = this.editCategoryQuery.data();
+      const categoryId = this.editCategoryId();
+      if (!category || !categoryId) {
+        return;
+      }
+
+      const mapped = this.mapCategory(category);
+      this.selectedCategory.set(mapped);
+      this.selectedParentCategory.set(
+        mapped.parentId
+          ? (this.categories().find((item) => item.id === mapped.parentId) ?? null)
+          : null,
+      );
+      this.modalMode.set(CategoryModalModeEnum.Update);
+      this.editCategoryId.set(null);
+    });
+  }
 
   ngOnInit(): void {
     this.watchShopId();
@@ -103,25 +186,7 @@ export class Categories implements OnInit {
       return;
     }
 
-    this.isActionLoading.set(true);
-    this.categoriesService
-      .getCategoryById(node.category.id)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isActionLoading.set(false)),
-      )
-      .subscribe({
-        next: (response) => {
-          const category = this.mapCategory(response);
-          this.selectedCategory.set(category);
-          this.selectedParentCategory.set(
-            category.parentId
-              ? (this.categories().find((item) => item.id === category.parentId) ?? null)
-              : null,
-          );
-          this.modalMode.set(CategoryModalModeEnum.Update);
-        },
-      });
+    this.editCategoryId.set(node.category.id);
   }
 
   protected onDeleteCategory(node: VisibleCategoryNode): void {
@@ -174,7 +239,8 @@ export class Categories implements OnInit {
         ...(payload.parentId ? { parentId: payload.parentId } : {}),
       };
       this.executeMutation(
-        this.categoriesService.createCategory(createPayload),
+        this.createCategoryMutation,
+        createPayload,
         CATEGORIES_TEXTS.CREATE_SUCCESS_TITLE,
       );
     }
@@ -192,7 +258,8 @@ export class Categories implements OnInit {
       ...(payload.parentId ? { parentId: payload.parentId } : {}),
     };
     this.executeMutation(
-      this.categoriesService.updateCategory(selectedCategory.id, updatePayload),
+      this.updateCategoryMutation,
+      { id: selectedCategory.id, payload: updatePayload },
       CATEGORIES_TEXTS.UPDATE_SUCCESS_TITLE,
     );
   }
@@ -204,7 +271,8 @@ export class Categories implements OnInit {
     }
 
     this.executeMutation(
-      this.categoriesService.deleteCategory(selectedCategory.id),
+      this.deleteCategoryMutation,
+      selectedCategory.id,
       CATEGORIES_TEXTS.DELETE_SUCCESS_TITLE,
     );
   }
@@ -215,22 +283,22 @@ export class Categories implements OnInit {
       return;
     }
 
-    this.isActionLoading.set(true);
-    this.categoriesService
-      .changeCategorySort(node.category.id, { direction })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isActionLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
+    this.changeSortMutation.mutate(
+      { id: node.category.id, direction },
+      {
+        onSuccess: () => {
           this.toasterService.success(CATEGORIES_TEXTS.SORT_SUCCESS_TITLE);
-          this.loadCategories({ preserveExpanded: true });
+          this.invalidateCategories();
         },
-      });
+      },
+    );
   }
 
   private watchShopId(): void {
+    const initialShopId = this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null;
+    this.shopId.set(initialShopId);
+    this.initializeExpandedNodes();
+
     this.activatedRoute.paramMap
       .pipe(
         map((params) => params.get('shopId')),
@@ -238,66 +306,35 @@ export class Categories implements OnInit {
       )
       .subscribe((shopId) => {
         this.shopId.set(shopId);
-        if (!shopId) {
-          this.categories.set([]);
-          this.stats.set({});
-          this.initializeExpandedNodes();
-          this.isLoading.set(false);
-          return;
-        }
-
-        this.loadCategories();
+        this.initializeExpandedNodes();
       });
   }
 
-  private loadCategories(options?: { preserveExpanded?: boolean }): void {
-    const currentShopId = this.shopId();
-    if (!currentShopId) {
-      this.isLoading.set(false);
+  private executeMutation<T>(
+    mutation: {
+      mutate: (payload: T, options?: { onSuccess?: () => void }) => void;
+    },
+    payload: T,
+    successTitle: string,
+  ): void {
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        this.toasterService.success(successTitle);
+        this.closeModal();
+        this.invalidateCategories();
+      },
+    });
+  }
+
+  private invalidateCategories(): void {
+    const shopId = this.shopId();
+    if (!shopId) {
       return;
     }
 
-    this.isLoading.set(true);
-    this.hasError.set(false);
-
-    this.categoriesService
-      .getCategories(currentShopId)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoading.set(false)),
-      )
-      .subscribe({
-        next: (response) => {
-          const categories = this.extractCategories(response).map((category) =>
-            this.mapCategory(category),
-          );
-          this.categories.set(categories);
-          this.stats.set(this.resolveStats(response));
-          if (!options?.preserveExpanded) {
-            this.initializeExpandedNodes();
-          }
-        },
-        error: () => {
-          this.hasError.set(true);
-        },
-      });
-  }
-
-  private executeMutation(request$: Observable<unknown>, successTitle: string): void {
-    this.isActionLoading.set(true);
-
-    request$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isActionLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
-          this.toasterService.success(successTitle);
-          this.closeModal();
-          this.loadCategories();
-        },
-      });
+    this.queryClient.invalidateQueries({
+      queryKey: SHOP_QUERY_KEYS.categories(shopId),
+    });
   }
 
   private closeModal(): void {

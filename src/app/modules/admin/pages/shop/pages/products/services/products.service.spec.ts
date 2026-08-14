@@ -125,6 +125,46 @@ describe('ProductsService', () => {
     req.flush({ id: 'product-1', ...payload });
   });
 
+  it('creates product variation with payload', () => {
+    const payload = {
+      variation: 'product_variations' as const,
+      attributes: [{ attributeTypeId: '11111111-1111-4111-8111-111111111111' }],
+      images: [{ image: 'data:image/jpeg;base64,Zm9v', sort: 0 }],
+    };
+
+    service.createVariation('product-1', payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/variations');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({ id: 'variation-1' });
+  });
+
+  it('updates product variation with payload', () => {
+    const payload = {
+      title: 'Синій M',
+      name: 'Синій / M',
+      sku: 'SKU-BLUE-M',
+      price: 99.99,
+      oldPrice: 109.99,
+      available: true,
+      isDefault: false,
+      attributes: [{ attributeTypeId: '11111111-1111-4111-8111-111111111111' }],
+      images: [{ image: 'data:image/jpeg;base64,Zm9v', sort: 0 }],
+    };
+
+    service.updateVariation('product-1', 'variation-1', payload).subscribe();
+
+    const req = httpMock.expectOne(
+      'http://localhost:3000/catalog/products/product-1/variations/variation-1',
+    );
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({ id: 'variation-1' });
+  });
+
   it('assigns category to product', () => {
     service.assignCategory('product-1', 'category-1').subscribe();
 
@@ -165,6 +205,42 @@ describe('ProductsService', () => {
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
+    req.flush({});
+  });
+
+  it('assigns product images with sort order', () => {
+    const payload = {
+      images: [
+        { image: 'data:image/jpeg;base64,Zm9v', sort: 0 },
+        { image: 'data:image/jpeg;base64,YmFy', sort: 1 },
+      ],
+    };
+    service.assignImages('product-1', payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/images');
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({});
+  });
+
+  it('changes image sort direction', () => {
+    const payload = { direction: 'up' as const };
+    service.changeImageSort('image-1', payload).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/images/image-1/sort');
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush({});
+  });
+
+  it('removes image by id', () => {
+    service.removeImage('image-2').subscribe();
+
+    const req = httpMock.expectOne('http://localhost:3000/catalog/images/image-2');
+    expect(req.request.method).toBe('DELETE');
+    expect(req.request.withCredentials).toBe(true);
     req.flush({});
   });
 

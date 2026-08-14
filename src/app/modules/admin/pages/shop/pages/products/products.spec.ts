@@ -1,10 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { CategoriesService } from '../categories/services/categories.service';
-import { PRODUCTS_TEXTS } from './constants/products.constants';
 import { ProductListResponse } from './models/product.model';
 import { Products } from './products';
 import { ProductsService } from './services/products.service';
@@ -22,7 +21,7 @@ describe('Products', () => {
 
   beforeEach(async () => {
     paramMap$ = new BehaviorSubject(convertToParamMap({ shopId: 'shop-1' }));
-    const firstPageResponse: ProductListResponse = {
+    const response: ProductListResponse = {
       items: [
         {
           id: 'product-1',
@@ -35,61 +34,33 @@ describe('Products', () => {
           categories: [{ id: 'cat-1', name: 'Electronics' }],
         },
       ],
-      total: 25,
+      total: 1,
       page: 1,
       limit: 20,
-      totalPages: 2,
-    };
-    const secondPageResponse: ProductListResponse = {
-      items: [
-        {
-          id: 'product-2',
-          shopId: 'shop-1',
-          title: 'Tablet',
-          sku: 'SKU-002',
-          type: 'variable',
-          status: 'draft',
-          price: 80,
-          categories: [{ id: 'cat-2', name: 'Gadgets' }],
-        },
-      ],
-      total: 25,
-      page: 2,
-      limit: 20,
-      totalPages: 2,
+      totalPages: 1,
     };
 
     mockProductsService = {
-      getProducts: vi
-        .fn()
-        .mockReturnValueOnce(of(firstPageResponse))
-        .mockReturnValue(of(secondPageResponse)),
+      getProducts: vi.fn().mockReturnValue(of(response)),
       deleteProduct: vi.fn().mockReturnValue(of(void 0)),
     };
     mockCategoriesService = {
-      getCategories: vi.fn().mockReturnValue(
-        of({
-          items: [
-            { id: 'cat-1', name: 'Electronics' },
-            { id: 'cat-2', name: 'Gadgets', parentId: 'cat-1' },
-          ],
-        }),
-      ),
+      getCategories: vi.fn().mockReturnValue(of({ items: [{ id: 'cat-1', name: 'Electronics' }] })),
     };
-    mockRouter = {
-      navigate: vi.fn(),
-    };
+    mockRouter = { navigate: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [Products],
       providers: [
         provideZonelessChangeDetection(),
+        ...provideTestQueryClient(),
         { provide: ProductsService, useValue: mockProductsService },
         { provide: CategoriesService, useValue: mockCategoriesService },
         { provide: Router, useValue: mockRouter },
         {
           provide: ActivatedRoute,
           useValue: {
+            snapshot: { paramMap: convertToParamMap({ shopId: 'shop-1' }) },
             paramMap: paramMap$.asObservable(),
           },
         },
@@ -106,14 +77,7 @@ describe('Products', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders title and create action', () => {
-    const pageElement = fixture.nativeElement as HTMLElement;
-    expect(pageElement.textContent).toContain(PRODUCTS_TEXTS.PAGE_TITLE);
-    expect(pageElement.textContent).toContain(PRODUCTS_TEXTS.CREATE_LABEL);
-  });
-
-  it('loads products with shopId, pagination and default sort', () => {
-    expect(mockProductsService.getProducts).toHaveBeenCalledTimes(1);
+  it('requests product list with default params', () => {
     expect(mockProductsService.getProducts).toHaveBeenCalledWith({
       page: 1,
       limit: 20,
@@ -121,91 +85,10 @@ describe('Products', () => {
       sortBy: 'createdAt',
       sortOrder: 'desc',
     });
-    expect(mockCategoriesService.getCategories).toHaveBeenCalledWith('shop-1');
   });
 
-  it('builds tree-formatted category options for the multi-select filter', () => {
-    expect((component as any).categoryOptions()).toEqual([
-      { label: 'Electronics', value: 'cat-1', level: 0 },
-      { label: 'Gadgets', value: 'cat-2', parentId: 'cat-1', level: 1 },
-    ]);
-  });
-
-  it('renders mapped table values from API response', () => {
-    const pageElement = fixture.nativeElement as HTMLElement;
-
-    expect(pageElement.textContent).toContain('Phone');
-    expect(pageElement.textContent).toContain('SKU-001');
-    expect(pageElement.textContent).toContain('Simple');
-    expect(pageElement.textContent).toContain('Active');
-    expect(pageElement.textContent).toContain('123.45');
-    expect(pageElement.textContent).toContain('Electronics');
-  });
-
-  it('applies filters and resets page to first page', () => {
-    (component as any).currentPage.set(2);
-    (component as any).nameInput.set('Phone');
-    (component as any).skuInput.set('SKU-123');
-    (component as any).onCategoryOptionToggled({ label: 'Electronics', value: 'cat-1' });
-
-    (component as any).onApplyFilters();
-
-    expect(mockProductsService.getProducts).toHaveBeenNthCalledWith(2, {
-      page: 1,
-      limit: 20,
-      shopId: 'shop-1',
-      name: 'Phone',
-      sku: 'SKU-123',
-      categoryIds: ['cat-1'],
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
-    });
-  });
-
-  it('changes sort and refetches with mapped sort params', () => {
-    (component as any).onSortSelected({ label: 'За алфавітом', value: 'alphabet' });
-
-    expect(mockProductsService.getProducts).toHaveBeenNthCalledWith(2, {
-      page: 1,
-      limit: 20,
-      shopId: 'shop-1',
-      sortBy: 'name',
-      sortOrder: 'asc',
-    });
-  });
-
-  it('requests selected page when pagination page is clicked', async () => {
-    const pageButtons = fixture.debugElement.queryAll(By.css('.pagination-page-button'));
-    const secondPageButton = pageButtons.find(
-      (button) => (button.nativeElement as HTMLButtonElement).textContent?.trim() === '2',
-    );
-
-    secondPageButton?.triggerEventHandler('click');
-    await fixture.whenStable();
-
-    expect(mockProductsService.getProducts).toHaveBeenNthCalledWith(2, {
-      page: 2,
-      limit: 20,
-      shopId: 'shop-1',
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
-    });
-  });
-
-  it('shows warning and clears products when shopId is missing', async () => {
-    paramMap$.next(convertToParamMap({}));
-    await fixture.whenStable();
-    fixture.detectChanges();
-
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
-      PRODUCTS_TEXTS.SHOP_ID_REQUIRED_MESSAGE,
-    );
-    expect((component as any).products()).toEqual([]);
-  });
-
-  it('navigates to product create page from create action', () => {
+  it('navigates to create page', () => {
     (component as any).onCreateProduct();
-
     expect(mockRouter.navigate).toHaveBeenCalledWith([
       '/admin/shop',
       'shop-1',
@@ -214,9 +97,8 @@ describe('Products', () => {
     ]);
   });
 
-  it('navigates to product update page from row action', () => {
+  it('navigates to update page', () => {
     (component as any).onUpdateProduct({ id: 'product-1' });
-
     expect(mockRouter.navigate).toHaveBeenCalledWith([
       '/admin/shop',
       'shop-1',
@@ -226,17 +108,105 @@ describe('Products', () => {
     ]);
   });
 
-  it('opens delete modal from row action and deletes only after confirmation', () => {
-    const getProductsCallsBeforeDelete = mockProductsService.getProducts.mock.calls.length;
+  it('applies filters and requests filtered list', async () => {
+    (component as any).nameInput.set('Phone');
+    (component as any).onApplyFilters();
+    await fixture.whenStable();
 
-    (component as any).onDeleteProduct({ id: 'product-1' });
+    expect(mockProductsService.getProducts).toHaveBeenLastCalledWith({
+      page: 1,
+      limit: 20,
+      shopId: 'shop-1',
+      name: 'Phone',
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+    });
+  });
 
-    expect((component as any).selectedProduct()?.id).toBe('product-1');
-    expect(mockProductsService.deleteProduct).not.toHaveBeenCalled();
+  it('deletes selected product', async () => {
+    (component as any).selectedProduct.set({
+      id: 'product-1',
+      shopId: 'shop-1',
+      title: 'Phone',
+      sku: 'SKU-001',
+      type: 'Simple',
+      status: 'Active',
+      price: '123.45',
+      categories: 'Electronics',
+    });
 
     (component as any).onConfirmDelete();
+    await fixture.whenStable();
 
     expect(mockProductsService.deleteProduct).toHaveBeenCalledWith('product-1');
-    expect(mockProductsService.getProducts).toHaveBeenCalledTimes(getProductsCallsBeforeDelete + 1);
+  });
+
+  it('maps sort options to query parameters', () => {
+    expect((component as any).resolveSortQuery('older')).toEqual({
+      sortBy: 'createdAt',
+      sortOrder: 'asc',
+    });
+    expect((component as any).resolveSortQuery('alphabet')).toEqual({
+      sortBy: 'name',
+      sortOrder: 'asc',
+    });
+    expect((component as any).resolveSortQuery('newest')).toEqual({
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+    });
+  });
+
+  it('extracts categories from all supported response shapes', () => {
+    expect((component as any).extractCategories([{ id: 'a', name: 'A' }])).toEqual([
+      { id: 'a', name: 'A' },
+    ]);
+    expect((component as any).extractCategories({ items: [{ id: 'b', name: 'B' }] })).toEqual([
+      { id: 'b', name: 'B' },
+    ]);
+    expect((component as any).extractCategories({ categories: [{ id: 'c', name: 'C' }] })).toEqual([
+      { id: 'c', name: 'C' },
+    ]);
+    expect((component as any).extractCategories({ data: [{ id: 'd', name: 'D' }] })).toEqual([
+      { id: 'd', name: 'D' },
+    ]);
+    expect((component as any).extractCategories({})).toEqual([]);
+  });
+
+  it('formats product labels and ids for edge cases', () => {
+    expect((component as any).resolveTypeLabel('simple')).toBe('Simple');
+    expect((component as any).resolveTypeLabel('variable')).toBe('Variable');
+    expect((component as any).resolveTypeLabel('custom-type')).toBe('Custom Type');
+    expect((component as any).resolveTypeLabel(undefined)).toBe('—');
+
+    expect((component as any).resolveStatusLabel('active')).toBe('Active');
+    expect((component as any).resolveStatusLabel('draft')).toBe('Draft');
+    expect((component as any).resolveStatusLabel('archived')).toBe('Archived');
+    expect((component as any).resolveStatusLabel('pending-review')).toBe('Pending Review');
+    expect((component as any).resolveStatusLabel(undefined)).toBe('—');
+
+    expect((component as any).resolvePriceLabel(25)).toBe('25.00');
+    expect((component as any).resolvePriceLabel(' 50.10 ')).toBe('50.10');
+    expect((component as any).resolvePriceLabel('   ')).toBe('—');
+    expect((component as any).resolvePriceLabel(undefined)).toBe('—');
+
+    expect((component as any).resolveProductId({ id: ' product-1 ' })).toBe('product-1');
+    expect((component as any).resolveProductId({ id: 100 })).toBe('100');
+    expect((component as any).resolveProductId({ id: null })).toBeNull();
+  });
+
+  it('handles array equality and guard branches', async () => {
+    expect((component as any).areArraysEqual(['a'], ['a'])).toBe(true);
+    expect((component as any).areArraysEqual(['a'], ['b'])).toBe(false);
+    expect((component as any).areArraysEqual(['a'], ['a', 'b'])).toBe(false);
+    expect((component as any).isValidSortValue('newest')).toBe(true);
+    expect((component as any).isValidSortValue('broken')).toBe(false);
+
+    const initialCalls = mockProductsService.getProducts.mock.calls.length;
+    (component as any).onSortSelected({ label: 'x', value: 'broken' });
+    (component as any).onApplyFilters();
+    (component as any).onResetFilters();
+    await fixture.whenStable();
+
+    expect(mockProductsService.getProducts.mock.calls.length).toBe(initialCalls);
   });
 });

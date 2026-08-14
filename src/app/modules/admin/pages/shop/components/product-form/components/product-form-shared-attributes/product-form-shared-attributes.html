@@ -1,0 +1,36 @@
+<app-input
+  [id]="searchInputId()"
+  [label]="searchLabel()"
+  [placeholder]="searchPlaceholder()"
+  [disabled]="interactionDisabled()"
+  [value]="searchValue()"
+  (valueChange)="onSearchChange($event)"
+/>
+
+@if (!interactionDisabled() && searchValue().trim()) {
+<div class="product-form-attribute-results">
+  @if (isSearchLoading()) {
+  <p class="product-form-attribute-state">{{ searchLoadingText() }}</p>
+  } @else if (!searchResults().length) {
+  <p class="product-form-attribute-state">{{ searchEmptyText() }}</p>
+  } @else { @for (attribute of searchResults(); track attribute.id) {
+  <button type="button" class="product-form-attribute-result" (click)="onAssign(attribute.id)">
+    {{ attribute.label }}
+  </button>
+  } }
+</div>
+}
+
+<div class="product-form-chip-list" [class.product-form-chip-list-compact]="compactLayout()">
+  @if (!assignedAttributes().length) {
+  <span class="product-form-placeholder-chip">{{ assignedEmptyText() }}</span>
+  } @else { @for (attribute of assignedAttributes(); track attribute.id) {
+  <app-chip
+    [label]="attribute.label"
+    variant="attribute"
+    [removeAriaLabel]="removeAriaLabel()"
+    [disabled]="interactionDisabled()"
+    (remove)="onUnassign(attribute.id)"
+  />
+  } }
+</div>
