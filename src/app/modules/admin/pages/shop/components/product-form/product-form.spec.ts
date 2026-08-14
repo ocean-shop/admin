@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { form } from '@angular/forms/signals';
 import { By } from '@angular/platform-browser';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import {
   PRODUCT_FORM_DEFAULT_VALUE,
   PRODUCT_FORM_FIELD_IDS,
@@ -57,7 +58,7 @@ describe('ProductForm', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProductForm],
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(), ...provideTestQueryClient()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductForm);

@@ -1,5 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { PRODUCTS_CREATE_TEXTS } from '../../../../pages/products-create/constants/products-create.constants';
 import { ProductFormAssignedTag } from '../../models/product-form-assigned-tag.model';
 import { ProductTagsService } from './services/product-tags.service';
@@ -14,7 +15,7 @@ describe('ProductFormTags', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProductFormTags],
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(), ...provideTestQueryClient()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductFormTags);

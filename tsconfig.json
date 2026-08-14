@@ -5,7 +5,8 @@
   "compilerOptions": {
     "paths": {
       "@ui/*": ["./src/ui/*"],
-      "@core/*": ["./src/app/core/*"]
+      "@core/*": ["./src/app/core/*"],
+      "@testing/*": ["./src/testing/*"]
     },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

@@ -1,7 +1,8 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { injectMutation, injectQueryClient } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import { SHOP_QUERY_KEYS } from '../../../../../constants/shop-query-keys.constants';
 import { parseProductPrice } from '../../../../../helpers/product-price.helper';
 import { AttributesService } from '../../../../../pages/attributes/services/attributes.service';
 import { CreateProductVariationPayload } from '../../../../../pages/products/models/create-product-variation-payload.model';
@@ -25,6 +26,7 @@ const VARIATION_ATTRIBUTE_SEARCH_DEBOUNCE_MS = 300;
 export class ProductVariationsService {
   private readonly productsService = inject(ProductsService);
   private readonly attributesService = inject(AttributesService);
+  private readonly queryClient = injectQueryClient();
   private readonly toasterService = inject(ToasterService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -37,6 +39,30 @@ export class ProductVariationsService {
   private nextVariationId = 0;
 
   readonly variations = signal<ProductFormVariation[]>([]);
+
+  private readonly saveVariationMutation = injectMutation(() => ({
+    mutationFn: ({
+      productId,
+      variation,
+    }: {
+      productId: string;
+      variation: ProductFormVariation;
+    }) =>
+      variation.id
+        ? lastValueFrom(
+            this.productsService.updateVariation(
+              productId,
+              variation.id,
+              this.buildUpdateVariationPayload(variation),
+            ),
+          )
+        : lastValueFrom(
+            this.productsService.createVariation(
+              productId,
+              this.buildCreateVariationPayload(variation),
+            ),
+          ),
+  }));
 
   constructor() {
     this.destroyRef.onDestroy(() => this.clearAllAttributeSearchDebounces());
@@ -274,24 +300,10 @@ export class ProductVariationsService {
 
     this.setVariationSaving(normalizedLocalId, true);
 
-    const request$ = targetVariation.id
-      ? this.productsService.updateVariation(
-          productId,
-          targetVariation.id,
-          this.buildUpdateVariationPayload(targetVariation),
-        )
-      : this.productsService.createVariation(
-          productId,
-          this.buildCreateVariationPayload(targetVariation),
-        );
-
-    request$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.setVariationSaving(normalizedLocalId, false)),
-      )
-      .subscribe({
-        next: (product) => {
+    this.saveVariationMutation.mutate(
+      { productId, variation: targetVariation },
+      {
+        onSuccess: (product) => {
           const savedVariation = this.findSavedVariation(product.variations ?? [], targetVariation);
           const persistedId =
             typeof savedVariation === 'string' ? savedVariation : savedVariation?.id;
@@ -307,13 +319,17 @@ export class ProductVariationsService {
           );
           this.toasterService.success(this.getToastTexts().VARIATION_SAVE_SUCCESS_TITLE);
         },
-        error: () => {
+        onError: () => {
           this.toasterService.danger(
             this.getToastTexts().VARIATION_SAVE_ERROR_TITLE,
             this.getToastTexts().VARIATION_SAVE_ERROR_MESSAGE,
           );
         },
-      });
+        onSettled: () => {
+          this.setVariationSaving(normalizedLocalId, false);
+        },
+      },
+    );
   }
 
   private queueAttributeSearch(localId: string): void {
@@ -372,77 +388,76 @@ export class ProductVariationsService {
       ),
     );
 
-    this.attributesService
-      .getAttributes({ page: 1, limit: 20, shopId, name })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => {
-          if ((this.attributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
-            return;
-          }
+    this.queryClient
+      .fetchQuery({
+        queryKey: SHOP_QUERY_KEYS.attributesSearch(shopId, name),
+        queryFn: () =>
+          lastValueFrom(this.attributesService.getAttributes({ page: 1, limit: 20, shopId, name })),
+      })
+      .then((response) => {
+        if ((this.attributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
+          return;
+        }
 
-          this.variations.update((currentVariations) =>
-            currentVariations.map((variation) =>
-              variation.localId === localId
-                ? {
-                    ...variation,
-                    isAttributeSearchLoading: false,
-                  }
-                : variation,
-            ),
-          );
-        }),
-      )
-      .subscribe({
-        next: (response) => {
-          if ((this.attributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
-            return;
-          }
+        this.variations.update((currentVariations) =>
+          currentVariations.map((variation) => {
+            if (variation.localId !== localId) {
+              return variation;
+            }
 
-          this.variations.update((currentVariations) =>
-            currentVariations.map((variation) => {
-              if (variation.localId !== localId) {
-                return variation;
-              }
+            const assignedAttributeIds = new Set(variation.attributes.map((item) => item.id));
+            const attributeSearchResults = response.items.reduce<ProductFormAttributeOption[]>(
+              (accumulator, item) => {
+                const id = String(item.id ?? '').trim();
+                if (!id || assignedAttributeIds.has(id)) {
+                  return accumulator;
+                }
 
-              const assignedAttributeIds = new Set(variation.attributes.map((item) => item.id));
-              const attributeSearchResults = response.items.reduce<ProductFormAttributeOption[]>(
-                (accumulator, item) => {
-                  const id = String(item.id ?? '').trim();
-                  if (!id || assignedAttributeIds.has(id)) {
-                    return accumulator;
-                  }
+                const labelName = item.name?.trim() || 'Атрибут';
+                const labelValue = item.value?.trim() || '';
+                const label = labelValue ? `${labelName}: ${labelValue}` : labelName;
+                return [...accumulator, { id, label }];
+              },
+              [],
+            );
+            return {
+              ...variation,
+              attributeSearchResults,
+            };
+          }),
+        );
+      })
+      .catch(() => {
+        if ((this.attributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
+          return;
+        }
 
-                  const labelName = item.name?.trim() || 'Атрибут';
-                  const labelValue = item.value?.trim() || '';
-                  const label = labelValue ? `${labelName}: ${labelValue}` : labelName;
-                  return [...accumulator, { id, label }];
-                },
-                [],
-              );
-              return {
-                ...variation,
-                attributeSearchResults,
-              };
-            }),
-          );
-        },
-        error: () => {
-          if ((this.attributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
-            return;
-          }
+        this.variations.update((currentVariations) =>
+          currentVariations.map((variation) =>
+            variation.localId === localId
+              ? {
+                  ...variation,
+                  attributeSearchResults: [],
+                }
+              : variation,
+          ),
+        );
+      })
+      .finally(() => {
+        if ((this.attributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
+          return;
+        }
 
-          this.variations.update((currentVariations) =>
-            currentVariations.map((variation) =>
-              variation.localId === localId
-                ? {
-                    ...variation,
-                    attributeSearchResults: [],
-                  }
-                : variation,
-            ),
-          );
-        },
+        this.variations.update((currentVariations) =>
+          currentVariations.map((variation) =>
+            variation.localId === localId
+              ? {
+                  ...variation,
+                  isAttributeSearchLoading: false,
+                }
+              : variation,
+          ),
+        );
       });
   }
 

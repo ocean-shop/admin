@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of, throwError } from 'rxjs';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { AttributesService } from '../attributes/services/attributes.service';
 import { CategoriesService } from '../categories/services/categories.service';
 import { ProductStatus } from '../products/models/product-status.enum';
@@ -62,6 +63,7 @@ describe('ProductsCreate', () => {
       imports: [ProductsCreate],
       providers: [
         provideZonelessChangeDetection(),
+        ...provideTestQueryClient(),
         { provide: ProductsService, useValue: mockProductsService },
         { provide: AttributesService, useValue: mockAttributesService },
         { provide: TagsService, useValue: mockTagsService },
@@ -70,6 +72,7 @@ describe('ProductsCreate', () => {
         {
           provide: ActivatedRoute,
           useValue: {
+            snapshot: { paramMap: convertToParamMap({ shopId: 'shop-1' }) },
             paramMap: paramMap$.asObservable(),
           },
         },
@@ -78,6 +81,8 @@ describe('ProductsCreate', () => {
 
     fixture = TestBed.createComponent(ProductsCreate);
     component = fixture.componentInstance;
+    await fixture.whenStable();
+    fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
   });
@@ -100,7 +105,7 @@ describe('ProductsCreate', () => {
     expect((component as any).isSidebarDisabled()).toBe(true);
   });
 
-  it('creates product and stores created product id', () => {
+  it('creates product and stores created product id', async () => {
     (component as any).productFormModel.set({
       name: 'Coastal Linen Shirt',
       type: ProductType.Simple,
@@ -113,6 +118,7 @@ describe('ProductsCreate', () => {
     });
 
     (component as any).onSubmit();
+    await fixture.whenStable();
 
     expect(mockProductsService.createProduct).toHaveBeenCalledWith({
       shopId: 'shop-1',
@@ -132,7 +138,7 @@ describe('ProductsCreate', () => {
     expect((component as any).isSidebarDisabled()).toBe(false);
   });
 
-  it('updates existing product when created product already exists', () => {
+  it('updates existing product when created product already exists', async () => {
     (component as any).createdProductId.set('product-1');
     (component as any).productFormModel.set({
       name: 'Updated Coastal Shirt',
@@ -146,6 +152,7 @@ describe('ProductsCreate', () => {
     });
 
     (component as any).onSubmit();
+    await fixture.whenStable();
 
     expect(mockProductsService.updateProduct).toHaveBeenCalledWith('product-1', {
       name: 'Updated Coastal Shirt',
@@ -180,7 +187,7 @@ describe('ProductsCreate', () => {
     expect(mockProductsService.updateProduct).not.toHaveBeenCalled();
   });
 
-  it('shows error toast when create request fails', () => {
+  it('shows error toast when create request fails', async () => {
     mockProductsService.createProduct.mockReturnValueOnce(throwError(() => new Error('Failed')));
     (component as any).productFormModel.set({
       name: 'Coastal Hat',
@@ -194,6 +201,7 @@ describe('ProductsCreate', () => {
     });
 
     (component as any).onSubmit();
+    await fixture.whenStable();
 
     expect(mockToasterService.danger).toHaveBeenCalledWith(
       PRODUCTS_CREATE_TEXTS.CREATE_ERROR_TITLE,

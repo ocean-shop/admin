@@ -1,19 +1,25 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { finalize, map } from 'rxjs';
-import { CategoriesApiResponse, CategoryApiItem } from '../categories/models/category.model';
-import { CategoriesService } from '../categories/services/categories.service';
-import { buildTree, flattenTree } from '../../helpers/tree.helper';
+import {
+  injectMutation,
+  injectQuery,
+  injectQueryClient,
+} from '@tanstack/angular-query-experimental';
+import { lastValueFrom, map } from 'rxjs';
 import { Button } from '@ui/button/button';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
-import { MultiSelectDropdown } from '@ui/multi-select-dropdown/multi-select-dropdown';
-import { DropdownTreeOption } from '@ui/multi-select-dropdown/models/dropdown-tree-option.type';
 import { Modal } from '@ui/modal/modal';
+import { DropdownTreeOption } from '@ui/multi-select-dropdown/models/dropdown-tree-option.type';
+import { MultiSelectDropdown } from '@ui/multi-select-dropdown/multi-select-dropdown';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
 import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
+import { buildTree, flattenTree } from '../../helpers/tree.helper';
+import { CategoriesApiResponse, CategoryApiItem } from '../categories/models/category.model';
+import { CategoriesService } from '../categories/services/categories.service';
 import {
   PRODUCTS_CREATE_ICON,
   PRODUCTS_NAME_FILTER_ID,
@@ -40,6 +46,7 @@ export class Products implements OnInit {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly queryClient = injectQueryClient();
 
   protected readonly textData = PRODUCTS_TEXTS;
   protected readonly createProductIcon = PRODUCTS_CREATE_ICON;
@@ -56,17 +63,9 @@ export class Products implements OnInit {
     { key: 'categories', header: PRODUCTS_TEXTS.TABLE_CATEGORIES_HEADER },
   ];
 
-  protected readonly isLoading = signal(true);
-  protected readonly isCategoriesLoading = signal(true);
-  protected readonly hasError = signal(false);
-  protected readonly isActionLoading = signal(false);
-  protected readonly products = signal<Product[]>([]);
   protected readonly selectedProduct = signal<Product | null>(null);
-  protected readonly categoryOptions = signal<DropdownTreeOption[]>([]);
   protected readonly shopId = signal<string | null>(null);
   protected readonly currentPage = signal(1);
-  protected readonly totalItems = signal(0);
-  protected readonly totalPages = signal(1);
   protected readonly selectedSort = signal<ProductSortValue>('newest');
   protected readonly nameInput = signal('');
   protected readonly skuInput = signal('');
@@ -75,6 +74,80 @@ export class Products implements OnInit {
   protected readonly skuFilter = signal('');
   protected readonly categoryIdsFilter = signal<string[]>([]);
 
+  protected readonly productsQuery = injectQuery(() => {
+    const shopId = this.shopId();
+    const categoryIds = this.categoryIdsFilter();
+    const query: ProductListQueryParams = {
+      page: this.currentPage(),
+      limit: this.pageSize,
+      shopId: shopId ?? '',
+      ...this.resolveSortQuery(this.selectedSort()),
+      ...(this.nameFilter() ? { name: this.nameFilter() } : {}),
+      ...(this.skuFilter() ? { sku: this.skuFilter() } : {}),
+      ...(categoryIds.length ? { categoryIds } : {}),
+    };
+
+    return {
+      queryKey: shopId
+        ? SHOP_QUERY_KEYS.products(
+            shopId,
+            query.page,
+            query.limit,
+            this.selectedSort(),
+            this.nameFilter(),
+            this.skuFilter(),
+            categoryIds,
+          )
+        : ['shop', 'products', 'missing-shop-id'],
+      enabled: Boolean(shopId),
+      queryFn: () => lastValueFrom(this.productsService.getProducts(query)),
+    };
+  });
+
+  protected readonly categoriesQuery = injectQuery(() => {
+    const shopId = this.shopId();
+    return {
+      queryKey: shopId
+        ? SHOP_QUERY_KEYS.categories(shopId)
+        : ['shop', 'categories', 'missing-shop-id'],
+      enabled: Boolean(shopId),
+      queryFn: () => lastValueFrom(this.categoriesService.getCategories(shopId ?? '')),
+    };
+  });
+
+  protected readonly deleteProductMutation = injectMutation(() => ({
+    mutationFn: (productId: string) => lastValueFrom(this.productsService.deleteProduct(productId)),
+  }));
+
+  protected readonly isLoading = computed(
+    () => this.productsQuery.isPending() || this.productsQuery.isFetching(),
+  );
+  protected readonly isCategoriesLoading = computed(
+    () => this.categoriesQuery.isPending() || this.categoriesQuery.isFetching(),
+  );
+  protected readonly hasError = computed(
+    () => this.productsQuery.isError() || this.deleteProductMutation.isError(),
+  );
+  protected readonly isActionLoading = computed(() => this.deleteProductMutation.isPending());
+  protected readonly products = computed<Product[]>(() => {
+    const shopId = this.shopId();
+    const items = this.productsQuery.data()?.items ?? [];
+    if (!shopId) {
+      return [];
+    }
+
+    return items.map((item) => this.mapProduct(item, shopId));
+  });
+  protected readonly categoryOptions = computed<DropdownTreeOption[]>(() => {
+    const categories = this.extractCategories(this.categoriesQuery.data() ?? []);
+    return this.buildCategoryTreeOptions(categories);
+  });
+  protected readonly totalItems = computed(() =>
+    Math.max(0, this.productsQuery.data()?.total ?? 0),
+  );
+  protected readonly totalPages = computed(() =>
+    Math.max(1, this.productsQuery.data()?.totalPages ?? 1),
+  );
   protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
   protected readonly isDeleteModalOpen = computed(() => Boolean(this.selectedProduct()));
   protected readonly productRows = computed<TableRowData[]>(() =>
@@ -120,7 +193,6 @@ export class Products implements OnInit {
 
     this.selectedSort.set(option.value);
     this.currentPage.set(1);
-    this.loadProducts();
   }
 
   protected onApplyFilters(): void {
@@ -140,7 +212,6 @@ export class Products implements OnInit {
     this.skuFilter.set(nextSkuFilter);
     this.categoryIdsFilter.set(nextCategoryFilter);
     this.currentPage.set(1);
-    this.loadProducts();
   }
 
   protected onResetFilters(): void {
@@ -160,7 +231,6 @@ export class Products implements OnInit {
     this.skuFilter.set('');
     this.categoryIdsFilter.set([]);
     this.currentPage.set(1);
-    this.loadProducts();
   }
 
   protected onCreateProduct(): void {
@@ -197,7 +267,7 @@ export class Products implements OnInit {
   }
 
   protected onCloseDeleteModal(): void {
-    if (this.isActionLoading()) {
+    if (this.deleteProductMutation.isPending()) {
       return;
     }
 
@@ -206,26 +276,23 @@ export class Products implements OnInit {
 
   protected onConfirmDelete(): void {
     const selectedProduct = this.selectedProduct();
-    if (!selectedProduct || this.isActionLoading()) {
+    if (!selectedProduct || this.deleteProductMutation.isPending()) {
       return;
     }
 
-    this.isActionLoading.set(true);
-    this.productsService
-      .deleteProduct(selectedProduct.id)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isActionLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
-          this.selectedProduct.set(null);
-          this.loadProducts();
-        },
-        error: () => {
-          this.hasError.set(true);
-        },
-      });
+    this.deleteProductMutation.mutate(selectedProduct.id, {
+      onSuccess: () => {
+        const shopId = this.shopId();
+        this.selectedProduct.set(null);
+        if (!shopId) {
+          return;
+        }
+
+        this.queryClient.invalidateQueries({
+          queryKey: ['shop', shopId, 'products'],
+        });
+      },
+    });
   }
 
   protected onPageChange(page: number): void {
@@ -234,10 +301,13 @@ export class Products implements OnInit {
     }
 
     this.currentPage.set(page);
-    this.loadProducts();
   }
 
   private watchShopId(): void {
+    const initialShopId = this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null;
+    this.shopId.set(initialShopId);
+    this.currentPage.set(1);
+
     this.activatedRoute.paramMap
       .pipe(
         map((params) => params.get('shopId')),
@@ -246,79 +316,6 @@ export class Products implements OnInit {
       .subscribe((shopId) => {
         this.shopId.set(shopId);
         this.currentPage.set(1);
-        this.loadCategoryOptions();
-        this.loadProducts();
-      });
-  }
-
-  private loadCategoryOptions(): void {
-    const shopId = this.shopId();
-    if (!shopId) {
-      this.categoryOptions.set([]);
-      this.isCategoriesLoading.set(false);
-      return;
-    }
-
-    this.isCategoriesLoading.set(true);
-    this.categoriesService
-      .getCategories(shopId)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isCategoriesLoading.set(false)),
-      )
-      .subscribe({
-        next: (response) => {
-          this.categoryOptions.set(this.buildCategoryTreeOptions(this.extractCategories(response)));
-        },
-        error: () => {
-          this.categoryOptions.set([]);
-        },
-      });
-  }
-
-  private loadProducts(): void {
-    const shopId = this.shopId();
-    if (!shopId) {
-      this.products.set([]);
-      this.totalItems.set(0);
-      this.totalPages.set(1);
-      this.isLoading.set(false);
-      return;
-    }
-
-    this.isLoading.set(true);
-    this.hasError.set(false);
-
-    const sortQuery = this.resolveSortQuery(this.selectedSort());
-    const query: ProductListQueryParams = {
-      page: this.currentPage(),
-      limit: this.pageSize,
-      shopId,
-      ...sortQuery,
-      ...(this.nameFilter() ? { name: this.nameFilter() } : {}),
-      ...(this.skuFilter() ? { sku: this.skuFilter() } : {}),
-      ...(this.categoryIdsFilter().length ? { categoryIds: this.categoryIdsFilter() } : {}),
-    };
-
-    this.productsService
-      .getProducts(query)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoading.set(false)),
-      )
-      .subscribe({
-        next: (response) => {
-          this.products.set(response.items.map((item) => this.mapProduct(item, shopId)));
-          this.currentPage.set(Math.max(1, response.page));
-          this.totalItems.set(Math.max(0, response.total));
-          this.totalPages.set(Math.max(1, response.totalPages));
-        },
-        error: () => {
-          this.hasError.set(true);
-          this.products.set([]);
-          this.totalItems.set(0);
-          this.totalPages.set(1);
-        },
       });
   }
 

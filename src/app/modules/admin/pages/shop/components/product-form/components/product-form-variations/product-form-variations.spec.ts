@@ -1,5 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { PRODUCTS_CREATE_TEXTS } from '../../../../pages/products-create/constants/products-create.constants';
 import { ProductFormVariation } from '../../models/product-form-variation.model';
 import { ProductVariationsService } from './services/product-variations.service';
@@ -32,7 +33,7 @@ describe('ProductFormVariations', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProductFormVariations],
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(), ...provideTestQueryClient()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductFormVariations);

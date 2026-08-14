@@ -1,7 +1,8 @@
-import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { injectMutation, injectQueryClient } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import { SHOP_QUERY_KEYS } from '../../../../../constants/shop-query-keys.constants';
 import { extractCategoriesFromResponse } from '../../../../../helpers/categories-response.helper';
 import {
   buildProductCategoryTreeNodes,
@@ -19,8 +20,18 @@ import { ProductCategoriesToastTexts } from '../models/product-categories-toast-
 export class ProductCategoriesService {
   private readonly productsService = inject(ProductsService);
   private readonly categoriesService = inject(CategoriesService);
+  private readonly queryClient = injectQueryClient();
   private readonly toasterService = inject(ToasterService);
-  private readonly destroyRef = inject(DestroyRef);
+
+  private readonly toggleCategoryMutation = injectMutation(() => ({
+    mutationFn: (payload: { productId: string; categoryId: string; assign: boolean }) =>
+      lastValueFrom(
+        this.productsService.toggleCategory(payload.productId, {
+          categoryId: payload.categoryId,
+          assign: payload.assign,
+        }),
+      ),
+  }));
 
   private context: ProductFormEditorContext | null = null;
   private getToastTexts: () => ProductCategoriesToastTexts = () => {
@@ -58,23 +69,23 @@ export class ProductCategoriesService {
     }
 
     this.isCategoriesLoading.set(true);
-    this.categoriesService
-      .getCategories(shopId)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isCategoriesLoading.set(false)),
-      )
-      .subscribe({
-        next: (response) => {
-          this.categoryItems.set(extractCategoriesFromResponse(response));
-        },
-        error: () => {
-          this.categoryItems.set([]);
-          this.toasterService.danger(
-            this.getToastTexts().CATEGORIES_LOAD_ERROR_TITLE,
-            this.getToastTexts().CATEGORIES_LOAD_ERROR_MESSAGE,
-          );
-        },
+    this.queryClient
+      .fetchQuery({
+        queryKey: SHOP_QUERY_KEYS.categories(shopId),
+        queryFn: () => lastValueFrom(this.categoriesService.getCategories(shopId)),
+      })
+      .then((response) => {
+        this.categoryItems.set(extractCategoriesFromResponse(response));
+      })
+      .catch(() => {
+        this.categoryItems.set([]);
+        this.toasterService.danger(
+          this.getToastTexts().CATEGORIES_LOAD_ERROR_TITLE,
+          this.getToastTexts().CATEGORIES_LOAD_ERROR_MESSAGE,
+        );
+      })
+      .finally(() => {
+        this.isCategoriesLoading.set(false);
       });
   }
 
@@ -98,21 +109,17 @@ export class ProductCategoriesService {
     );
 
     this.isCategoryToggleLoading.set(true);
-    this.productsService
-      .toggleCategory(productId, { categoryId, assign: event.checked })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isCategoryToggleLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
+    this.toggleCategoryMutation.mutate(
+      { productId, categoryId, assign: event.checked },
+      {
+        onSuccess: () => {
           this.toasterService.success(
             event.checked
               ? this.getToastTexts().CATEGORY_ASSIGN_SUCCESS_TITLE
               : this.getToastTexts().CATEGORY_UNASSIGN_SUCCESS_TITLE,
           );
         },
-        error: () => {
+        onError: () => {
           this.selectedCategoryIds.update((currentValue) =>
             updateSelectedCategoryIds(currentValue, categoryId, !event.checked),
           );
@@ -121,7 +128,11 @@ export class ProductCategoriesService {
             this.getToastTexts().CATEGORY_ASSIGN_ERROR_MESSAGE,
           );
         },
-      });
+        onSettled: () => {
+          this.isCategoryToggleLoading.set(false);
+        },
+      },
+    );
   }
 
   private getShopId(): string | null {

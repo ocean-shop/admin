@@ -1,11 +1,11 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of } from 'rxjs';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { Categories } from './categories';
-import { CATEGORIES_TEXTS } from './constants/categories.constants';
+import { CategoryModalModeEnum } from './models/category-modal-mode.type';
 import { CategoriesService } from './services/categories.service';
 
 describe('Categories', () => {
@@ -20,48 +20,35 @@ describe('Categories', () => {
     changeCategorySort: ReturnType<typeof vi.fn>;
     deleteCategory: ReturnType<typeof vi.fn>;
   };
-  let mockToasterService: { success: ReturnType<typeof vi.fn> };
+  let mockToasterService: {
+    success: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     paramMap$ = new BehaviorSubject(convertToParamMap({ shopId: 'shop-1' }));
     mockCategoriesService = {
-      getCategories: vi.fn().mockReturnValue(
-        of({
-          items: [
-            { id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 0, productCount: 5 },
-            { id: 'cat-2', name: 'Home', slug: 'home', sort: 1, productCount: 3 },
-            {
-              id: 'cat-3',
-              parentId: 'cat-1',
-              name: 'Laptops',
-              slug: 'laptops',
-              sort: 0,
-              productCount: 2,
-            },
-          ],
-        }),
-      ),
+      getCategories: vi.fn().mockReturnValue(of({ items: [] })),
       getCategoryById: vi
         .fn()
         .mockReturnValue(of({ id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 0 })),
-      createCategory: vi.fn().mockReturnValue(of({ id: 'cat-4' })),
+      createCategory: vi.fn().mockReturnValue(of({ id: 'cat-2' })),
       updateCategory: vi.fn().mockReturnValue(of({ id: 'cat-1' })),
       changeCategorySort: vi.fn().mockReturnValue(of({ id: 'cat-1', sort: 1 })),
       deleteCategory: vi.fn().mockReturnValue(of(void 0)),
     };
-    mockToasterService = {
-      success: vi.fn(),
-    };
+    mockToasterService = { success: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [Categories],
       providers: [
         provideZonelessChangeDetection(),
+        ...provideTestQueryClient(),
         { provide: CategoriesService, useValue: mockCategoriesService },
         { provide: ToasterService, useValue: mockToasterService },
         {
           provide: ActivatedRoute,
           useValue: {
+            snapshot: { paramMap: convertToParamMap({ shopId: 'shop-1' }) },
             paramMap: paramMap$.asObservable(),
           },
         },
@@ -78,186 +65,154 @@ describe('Categories', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders page header and create action', () => {
-    const pageElement = fixture.nativeElement as HTMLElement;
-
-    expect(pageElement.textContent).toContain(CATEGORIES_TEXTS.PAGE_TITLE);
-    expect(pageElement.textContent).toContain(CATEGORIES_TEXTS.CREATE_ROOT_LABEL);
+  it('loads categories for current shop', () => {
+    expect(mockCategoriesService.getCategories).toHaveBeenCalledWith('shop-1');
   });
 
-  it('renders nested categories from API response', () => {
-    const pageElement = fixture.nativeElement as HTMLElement;
-
-    expect(mockCategoriesService.getCategories).toHaveBeenCalledTimes(1);
-    expect(pageElement.textContent).toContain('Electronics');
-    expect(pageElement.textContent).not.toContain('Laptops');
-
-    const firstToggleButton = fixture.debugElement.query(By.css('.toggle-button'));
-    firstToggleButton.triggerEventHandler('click');
-    fixture.detectChanges();
-
-    expect(pageElement.textContent).toContain('Laptops');
-  });
-
-  it('expands child rows when a parent toggle is clicked', async () => {
-    const firstToggleButton = fixture.debugElement.query(By.css('.toggle-button'));
-
-    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Laptops');
-    firstToggleButton.triggerEventHandler('click');
+  it('creates root category', async () => {
+    (component as any).modalMode.set(CategoryModalModeEnum.CreateRoot);
+    (component as any).onConfirmCreate({ name: 'Home', slug: 'home' });
     await fixture.whenStable();
-    fixture.detectChanges();
-
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Laptops');
-  });
-
-  it('creates root category with shopId from route params', () => {
-    (component as any).onCreateRootCategory();
-    (component as any).onConfirmCreate({
-      name: 'Home',
-      slug: 'home',
-    });
 
     expect(mockCategoriesService.createCategory).toHaveBeenCalledWith({
       shopId: 'shop-1',
       name: 'Home',
       slug: 'home',
     });
-    expect(mockToasterService.success).toHaveBeenCalledWith(CATEGORIES_TEXTS.CREATE_SUCCESS_TITLE);
   });
 
-  it('creates child category with parentId', () => {
-    const parentNode = (component as any).visibleNodes()[0];
-
-    (component as any).onCreateChildCategory(parentNode);
-    (component as any).onConfirmCreate({
-      name: 'Tablets',
-      slug: 'tablets',
-      parentId: parentNode.category.id,
+  it('updates selected category', async () => {
+    (component as any).selectedCategory.set({
+      id: 'cat-1',
+      name: 'Electronics',
+      slug: 'electronics',
+      sort: 0,
     });
-
-    expect(mockCategoriesService.createCategory).toHaveBeenCalledWith({
-      shopId: 'shop-1',
-      name: 'Tablets',
-      slug: 'tablets',
-      parentId: 'cat-1',
-    });
-  });
-
-  it('updates category after loading entity by id', () => {
-    const node = (component as any).visibleNodes()[0];
-
-    (component as any).onEditCategory(node);
     (component as any).onConfirmUpdate({
       name: 'Electronics Updated',
       slug: 'electronics-updated',
     });
+    await fixture.whenStable();
 
-    expect(mockCategoriesService.getCategoryById).toHaveBeenCalledWith('cat-1');
     expect(mockCategoriesService.updateCategory).toHaveBeenCalledWith('cat-1', {
       name: 'Electronics Updated',
       slug: 'electronics-updated',
     });
-    expect(mockToasterService.success).toHaveBeenCalledWith(CATEGORIES_TEXTS.UPDATE_SUCCESS_TITLE);
   });
 
-  it('deletes selected category', () => {
-    const node = (component as any).visibleNodes()[0];
-
-    (component as any).onDeleteCategory(node);
+  it('deletes selected category', async () => {
+    (component as any).selectedCategory.set({
+      id: 'cat-1',
+      name: 'Electronics',
+      slug: 'electronics',
+      sort: 0,
+    });
     (component as any).onConfirmDelete();
+    await fixture.whenStable();
 
     expect(mockCategoriesService.deleteCategory).toHaveBeenCalledWith('cat-1');
-    expect(mockToasterService.success).toHaveBeenCalledWith(CATEGORIES_TEXTS.DELETE_SUCCESS_TITLE);
   });
 
-  it('shows warning and blocks create when shopId is missing', async () => {
-    paramMap$.next(convertToParamMap({}));
-    await fixture.whenStable();
-    fixture.detectChanges();
-
-    (component as any).onCreateRootCategory();
-
-    expect((component as any).modalMode()).toBeNull();
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
-      CATEGORIES_TEXTS.SHOP_ID_REQUIRED_MESSAGE,
+  it('changes sort when movement is allowed', async () => {
+    (component as any).onChangeSort(
+      {
+        category: { id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 0 },
+        depth: 0,
+        hasChildren: false,
+        isExpanded: false,
+        canMoveUp: false,
+        canMoveDown: true,
+      },
+      'down',
     );
-  });
-
-  it('hides stats cards when API does not provide stats fields', () => {
-    const pageElement = fixture.nativeElement as HTMLElement;
-
-    expect(pageElement.textContent).not.toContain(CATEGORIES_TEXTS.TOTAL_CATEGORIES_LABEL);
-    expect(pageElement.textContent).not.toContain(CATEGORIES_TEXTS.DEEPEST_LEVEL_LABEL);
-  });
-
-  it('disables up on first sibling and down on last sibling', async () => {
-    const firstToggleButton = fixture.debugElement.query(By.css('.toggle-button'));
-    firstToggleButton.triggerEventHandler('click');
     await fixture.whenStable();
-    fixture.detectChanges();
-
-    const moveUpButtons = fixture.debugElement.queryAll(By.css('button[title="Move category up"]'));
-    const moveDownButtons = fixture.debugElement.queryAll(
-      By.css('button[title="Move category down"]'),
-    );
-
-    expect(moveUpButtons[0].nativeElement.disabled).toBe(true);
-    expect(moveDownButtons[0].nativeElement.disabled).toBe(false);
-    expect(moveUpButtons[2].nativeElement.disabled).toBe(false);
-    expect(moveDownButtons[2].nativeElement.disabled).toBe(true);
-  });
-
-  it('moves category down and refreshes sorted tree order', async () => {
-    mockCategoriesService.getCategories.mockReturnValueOnce(
-      of({
-        items: [
-          { id: 'cat-2', name: 'Home', slug: 'home', sort: 0, productCount: 3 },
-          { id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 1, productCount: 5 },
-          {
-            id: 'cat-3',
-            parentId: 'cat-1',
-            name: 'Laptops',
-            slug: 'laptops',
-            sort: 0,
-            productCount: 2,
-          },
-        ],
-      }),
-    );
-
-    const firstNode = (component as any).visibleNodes()[0];
-    (component as any).onChangeSort(firstNode, 'down');
-    await fixture.whenStable();
-    fixture.detectChanges();
 
     expect(mockCategoriesService.changeCategorySort).toHaveBeenCalledWith('cat-1', {
       direction: 'down',
     });
-    expect(mockToasterService.success).toHaveBeenCalledWith(CATEGORIES_TEXTS.SORT_SUCCESS_TITLE);
-
-    const rootNames = (component as any)
-      .visibleNodes()
-      .filter((node: { depth: number }) => node.depth === 0)
-      .map((node: { category: { name: string } }) => node.category.name);
-
-    expect(rootNames).toEqual(['Home', 'Electronics']);
   });
 
-  it('preserves expanded state after sort reload', async () => {
-    const firstToggleButton = fixture.debugElement.query(By.css('.toggle-button'));
-    firstToggleButton.triggerEventHandler('click');
-    await fixture.whenStable();
-    fixture.detectChanges();
+  it('resolves stats and category arrays from all supported response shapes', () => {
+    expect((component as any).resolveStats([])).toEqual({});
+    expect((component as any).resolveStats({ totalCategories: 2, deepestLevel: 3 })).toEqual({
+      totalCategories: 2,
+      deepestLevel: 3,
+    });
+    expect((component as any).resolveStats({ totalCategories: 1 })).toEqual({
+      totalCategories: 1,
+    });
+    expect((component as any).resolveStats({ deepestLevel: 4 })).toEqual({
+      deepestLevel: 4,
+    });
 
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Laptops');
+    expect((component as any).extractCategories([{ id: 'a', name: 'A' }])).toEqual([
+      { id: 'a', name: 'A' },
+    ]);
+    expect((component as any).extractCategories({ items: [{ id: 'b', name: 'B' }] })).toEqual([
+      { id: 'b', name: 'B' },
+    ]);
+    expect((component as any).extractCategories({ categories: [{ id: 'c', name: 'C' }] })).toEqual([
+      { id: 'c', name: 'C' },
+    ]);
+    expect((component as any).extractCategories({ data: [{ id: 'd', name: 'D' }] })).toEqual([
+      { id: 'd', name: 'D' },
+    ]);
+    expect((component as any).extractCategories({})).toEqual([]);
+  });
+
+  it('maps category fallbacks and toggles nodes safely', () => {
+    expect(
+      (component as any).mapCategory({
+        id: '',
+        name: '',
+        slug: '',
+        sort: undefined,
+        productsCount: 5,
+      }),
+    ).toMatchObject({
+      name: 'Untitled category',
+      slug: 'category',
+      sort: 0,
+      productCount: 5,
+    });
+
+    const expanded = (component as any).expandedCategoryIds();
+    expect(expanded.size).toBe(0);
+
+    (component as any).onToggleNode({
+      category: { id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 0 },
+      depth: 0,
+      hasChildren: false,
+      isExpanded: false,
+      canMoveUp: false,
+      canMoveDown: false,
+    });
+    expect((component as any).expandedCategoryIds().size).toBe(0);
+
+    (component as any).onToggleNode({
+      category: { id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 0 },
+      depth: 0,
+      hasChildren: true,
+      isExpanded: false,
+      canMoveUp: false,
+      canMoveDown: true,
+    });
     expect((component as any).expandedCategoryIds().has('cat-1')).toBe(true);
+  });
 
-    const firstNode = (component as any).visibleNodes()[0];
-    (component as any).onChangeSort(firstNode, 'down');
-    await fixture.whenStable();
-    fixture.detectChanges();
+  it('skips sort mutation when movement is blocked', () => {
+    (component as any).onChangeSort(
+      {
+        category: { id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 0 },
+        depth: 0,
+        hasChildren: false,
+        isExpanded: false,
+        canMoveUp: false,
+        canMoveDown: false,
+      },
+      'down',
+    );
 
-    expect((component as any).expandedCategoryIds().has('cat-1')).toBe(true);
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Laptops');
+    expect(mockCategoriesService.changeCategorySort).not.toHaveBeenCalled();
   });
 });

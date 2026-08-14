@@ -1,7 +1,8 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { injectMutation, injectQueryClient } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import { SHOP_QUERY_KEYS } from '../../../../../constants/shop-query-keys.constants';
 import {
   mapTagSearchResults,
   removeAssignedTag,
@@ -20,8 +21,19 @@ const TAG_SEARCH_DEBOUNCE_MS = 300;
 export class ProductTagsService {
   private readonly productsService = inject(ProductsService);
   private readonly tagsService = inject(TagsService);
+  private readonly queryClient = injectQueryClient();
   private readonly toasterService = inject(ToasterService);
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly toggleTagMutation = injectMutation(() => ({
+    mutationFn: (payload: { productId: string; tagId: string; assign: boolean }) =>
+      lastValueFrom(
+        this.productsService.toggleTag(payload.productId, {
+          tagId: payload.tagId,
+          assign: payload.assign,
+        }),
+      ),
+  }));
 
   private context: ProductFormEditorContext | null = null;
   private getToastTexts: () => ProductTagsToastTexts = () => {
@@ -80,14 +92,10 @@ export class ProductTagsService {
     }
 
     this.isTagToggleLoading.set(true);
-    this.productsService
-      .toggleTag(productId, { tagId: normalizedTagId, assign: true })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isTagToggleLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
+    this.toggleTagMutation.mutate(
+      { productId, tagId: normalizedTagId, assign: true },
+      {
+        onSuccess: () => {
           this.assignedTags.update((currentValue) =>
             upsertAssignedTag(currentValue, selectedOption),
           );
@@ -95,13 +103,17 @@ export class ProductTagsService {
           this.tagSearchResults.set([]);
           this.toasterService.success(this.getToastTexts().TAG_ASSIGN_SUCCESS_TITLE);
         },
-        error: () => {
+        onError: () => {
           this.toasterService.danger(
             this.getToastTexts().TAG_ASSIGN_ERROR_TITLE,
             this.getToastTexts().TAG_ASSIGN_ERROR_MESSAGE,
           );
         },
-      });
+        onSettled: () => {
+          this.isTagToggleLoading.set(false);
+        },
+      },
+    );
   }
 
   onTagUnassign(tagId: string): void {
@@ -120,26 +132,26 @@ export class ProductTagsService {
     }
 
     this.isTagToggleLoading.set(true);
-    this.productsService
-      .toggleTag(productId, { tagId: normalizedTagId, assign: false })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isTagToggleLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
+    this.toggleTagMutation.mutate(
+      { productId, tagId: normalizedTagId, assign: false },
+      {
+        onSuccess: () => {
           this.assignedTags.update((currentValue) =>
             removeAssignedTag(currentValue, normalizedTagId),
           );
           this.toasterService.success(this.getToastTexts().TAG_UNASSIGN_SUCCESS_TITLE);
         },
-        error: () => {
+        onError: () => {
           this.toasterService.danger(
             this.getToastTexts().TAG_ASSIGN_ERROR_TITLE,
             this.getToastTexts().TAG_ASSIGN_ERROR_MESSAGE,
           );
         },
-      });
+        onSettled: () => {
+          this.isTagToggleLoading.set(false);
+        },
+      },
+    );
   }
 
   private queueTagSearch(): void {
@@ -169,31 +181,30 @@ export class ProductTagsService {
     const requestId = ++this.searchRequestId;
     this.isTagSearchLoading.set(true);
 
-    this.tagsService
-      .getTags({ page: 1, limit: 20, shopId, name })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => {
-          if (requestId === this.searchRequestId) {
-            this.isTagSearchLoading.set(false);
-          }
-        }),
-      )
-      .subscribe({
-        next: (response) => {
-          if (requestId !== this.searchRequestId) {
-            return;
-          }
+    this.queryClient
+      .fetchQuery({
+        queryKey: SHOP_QUERY_KEYS.tagsSearch(shopId, name),
+        queryFn: () =>
+          lastValueFrom(this.tagsService.getTags({ page: 1, limit: 20, shopId, name })),
+      })
+      .then((response) => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
 
-          this.tagSearchResults.set(mapTagSearchResults(response.items, this.assignedTags()));
-        },
-        error: () => {
-          if (requestId !== this.searchRequestId) {
-            return;
-          }
+        this.tagSearchResults.set(mapTagSearchResults(response.items, this.assignedTags()));
+      })
+      .catch(() => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
 
-          this.tagSearchResults.set([]);
-        },
+        this.tagSearchResults.set([]);
+      })
+      .finally(() => {
+        if (requestId === this.searchRequestId) {
+          this.isTagSearchLoading.set(false);
+        }
       });
   }
 

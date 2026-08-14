@@ -1,7 +1,8 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { injectMutation, injectQueryClient } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import { SHOP_QUERY_KEYS } from '../../../../../constants/shop-query-keys.constants';
 import {
   mapAttributeSearchResults,
   removeAssignedAttribute,
@@ -20,8 +21,19 @@ const ATTRIBUTE_SEARCH_DEBOUNCE_MS = 300;
 export class ProductAttributesService {
   private readonly productsService = inject(ProductsService);
   private readonly attributesService = inject(AttributesService);
+  private readonly queryClient = injectQueryClient();
   private readonly toasterService = inject(ToasterService);
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly toggleAttributeMutation = injectMutation(() => ({
+    mutationFn: (payload: { productId: string; attributeTypeId: string; assign: boolean }) =>
+      lastValueFrom(
+        this.productsService.toggleAttribute(payload.productId, {
+          attributeTypeId: payload.attributeTypeId,
+          assign: payload.assign,
+        }),
+      ),
+  }));
 
   private context: ProductFormEditorContext | null = null;
   private getToastTexts: () => ProductAttributesToastTexts = () => {
@@ -85,14 +97,10 @@ export class ProductAttributesService {
     }
 
     this.isAttributeToggleLoading.set(true);
-    this.productsService
-      .toggleAttribute(productId, { attributeTypeId: normalizedAttributeId, assign: true })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isAttributeToggleLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
+    this.toggleAttributeMutation.mutate(
+      { productId, attributeTypeId: normalizedAttributeId, assign: true },
+      {
+        onSuccess: () => {
           this.assignedAttributes.update((currentValue) =>
             upsertAssignedAttribute(currentValue, selectedOption),
           );
@@ -100,13 +108,17 @@ export class ProductAttributesService {
           this.attributeSearchResults.set([]);
           this.toasterService.success(this.getToastTexts().ATTRIBUTE_ASSIGN_SUCCESS_TITLE);
         },
-        error: () => {
+        onError: () => {
           this.toasterService.danger(
             this.getToastTexts().ATTRIBUTE_ASSIGN_ERROR_TITLE,
             this.getToastTexts().ATTRIBUTE_ASSIGN_ERROR_MESSAGE,
           );
         },
-      });
+        onSettled: () => {
+          this.isAttributeToggleLoading.set(false);
+        },
+      },
+    );
   }
 
   onAttributeUnassign(attributeId: string): void {
@@ -125,26 +137,26 @@ export class ProductAttributesService {
     }
 
     this.isAttributeToggleLoading.set(true);
-    this.productsService
-      .toggleAttribute(productId, { attributeTypeId: normalizedAttributeId, assign: false })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isAttributeToggleLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
+    this.toggleAttributeMutation.mutate(
+      { productId, attributeTypeId: normalizedAttributeId, assign: false },
+      {
+        onSuccess: () => {
           this.assignedAttributes.update((currentValue) =>
             removeAssignedAttribute(currentValue, normalizedAttributeId),
           );
           this.toasterService.success(this.getToastTexts().ATTRIBUTE_UNASSIGN_SUCCESS_TITLE);
         },
-        error: () => {
+        onError: () => {
           this.toasterService.danger(
             this.getToastTexts().ATTRIBUTE_ASSIGN_ERROR_TITLE,
             this.getToastTexts().ATTRIBUTE_ASSIGN_ERROR_MESSAGE,
           );
         },
-      });
+        onSettled: () => {
+          this.isAttributeToggleLoading.set(false);
+        },
+      },
+    );
   }
 
   private queueAttributeSearch(): void {
@@ -174,33 +186,32 @@ export class ProductAttributesService {
     const requestId = ++this.searchRequestId;
     this.isAttributeSearchLoading.set(true);
 
-    this.attributesService
-      .getAttributes({ page: 1, limit: 20, shopId, name })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => {
-          if (requestId === this.searchRequestId) {
-            this.isAttributeSearchLoading.set(false);
-          }
-        }),
-      )
-      .subscribe({
-        next: (response) => {
-          if (requestId !== this.searchRequestId) {
-            return;
-          }
+    this.queryClient
+      .fetchQuery({
+        queryKey: SHOP_QUERY_KEYS.attributesSearch(shopId, name),
+        queryFn: () =>
+          lastValueFrom(this.attributesService.getAttributes({ page: 1, limit: 20, shopId, name })),
+      })
+      .then((response) => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
 
-          this.attributeSearchResults.set(
-            mapAttributeSearchResults(response.items, this.assignedAttributes()),
-          );
-        },
-        error: () => {
-          if (requestId !== this.searchRequestId) {
-            return;
-          }
+        this.attributeSearchResults.set(
+          mapAttributeSearchResults(response.items, this.assignedAttributes()),
+        );
+      })
+      .catch(() => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
 
-          this.attributeSearchResults.set([]);
-        },
+        this.attributeSearchResults.set([]);
+      })
+      .finally(() => {
+        if (requestId === this.searchRequestId) {
+          this.isAttributeSearchLoading.set(false);
+        }
       });
   }
 
