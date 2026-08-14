@@ -1,0 +1,122 @@
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/services/product-tags.service.ts
+  s_843aec4092301a::t_70c1d3cc79d3a3 5
+  s_843aec4092301a::t_ca51015c67f67a 2-3,24,28-37,95-98,106,112-116,135-138,144,150-154,184-207
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-variations/product-form-variations.spec.ts
+  s_843aec4092301a::t_324e6699ea5849 36
+  s_843aec4092301a::t_cc7ca429b21bb6 3
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/services/product-attributes.service.ts
+  s_843aec4092301a::t_6c7d71a69ac365 5
+  s_843aec4092301a::t_4f791e1ac9a52f 2-3,24,28-37,100-103,111,117-121,140-143,149,155-159,189-214
+src/app/modules/admin/pages/shop/constants/shop-query-keys.constants.ts
+  s_843aec4092301a::t_ac590d847a0e14 1-22
+src/app/modules/admin/pages/shop/pages/categories/categories.ts
+  s_843aec4092301a::t_9e2d33c922954f 298
+  s_843aec4092301a::t_83785d0ef82d81 4-8,12,15-16,30,44,53-75,77-101,103-109,111-115,140-159,189,242-243,261-262,274-275,286-289,291,293-294,309,313-326,329-333,335-337
+  h_eee5bfb8805eb8 9,110
+  s_843aec4092301a::t_257889e827239d 299-301
+  s_843aec4092301a::t_acd1ee8dba8d49 1
+  s_843aec4092301a::t_c6209e6809b60b 102
+tsconfig.json
+  s_843aec4092301a::t_a49044b0d67444 8-9
+src/app/modules/admin/pages/shop/pages/products/products.ts
+  s_843aec4092301a::t_9aba51d57219ad 4-9,14-15,19-22,49,77-150,270,279,283-295,307-308,310
+  s_843aec4092301a::t_d2f52300721184 309
+src/app/modules/admin/pages/shop/pages/products-update/products-update.ts
+  s_843aec4092301a::t_9d23ebfba88540 5-10,14-15,26,35-40,53,75-94,97-133,149-152,154,156,162-163,176-177,193-205
+  s_843aec4092301a::t_fed7cb41b74169 174-175
+  s_843aec4092301a::t_1727f53c706d69 1
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-variations/services/product-variations.service.ts
+  s_843aec4092301a::t_c10ad81243f88d 2-3,29,43-66,303-306,322,328-332,391-400,402-406,408-433,435-449,451-460
+  s_843aec4092301a::t_e95a2a1502edf8 5
+src/app/modules/admin/pages/shop/helpers/tree.helper.spec.ts
+  s_843aec4092301a::t_2cc7a9ef35a17e 54-120
+src/app/modules/admin/pages/shop/pages/tags/tags.ts
+  s_843aec4092301a::t_ef07c2e35c1ac5 205
+  s_843aec4092301a::t_24cdf89e0a43af 4-9,16,35,51-98,196,209-212,224-238,244-246
+src/app/modules/admin/pages/shop/pages/tags/tags.spec.ts
+  s_843aec4092301a::t_9e082d260287ee 64-65,84,89
+  s_843aec4092301a::t_f402f02a15f140 87
+  s_843aec4092301a::t_b2143494f1f54d 94-129
+  s_843aec4092301a::t_d755c07084f316 1-32,35-52,54-63,66-83,85-86,88,90-93,130
+  s_843aec4092301a::t_dab286486b2f5c 53
+  s_843aec4092301a::t_607e60a1e17fb1 33-34
+  s_843aec4092301a::t_4cdeff42942fe4 131-132
+package.json
+  s_843aec4092301a::t_5b663b275db464 25
+src/app/modules/admin/pages/shop/pages/products-create/products-create.ts
+  s_843aec4092301a::t_e85980c9fb76bb 41
+  s_843aec4092301a::t_5e0a8c39f9c0ed 5-6,10-18,27-28,51-63,121-124,129-142,151-154,156,158,164-185
+  s_843aec4092301a::t_80c0c8d121dc91 100
+  s_843aec4092301a::t_3b278c44a2e129 101-103
+src/testing/query-client-test.provider.ts
+  s_843aec4092301a::t_49c62c5b2926b0 1-18
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/services/product-categories.service.ts
+  s_843aec4092301a::t_e5af95dce971ad 5
+  s_843aec4092301a::t_da2c4dbf3ae0b8 1,75
+  s_843aec4092301a::t_3ced5440d14c69 2-3,23,25-34,72-74,76-88,112-115,122,131-135
+src/app/modules/admin/pages/shop/pages/attributes/attributes.spec.ts
+  s_843aec4092301a::t_48983d78db5366 1-54,56-65,68-87,89-90,97,99-106,150
+  s_843aec4092301a::t_5a63163c3b6e10 55
+  s_843aec4092301a::t_7a4b58fe4bfc9f 66-67,88,98
+  s_843aec4092301a::t_1be64da904e751 91-96
+  s_843aec4092301a::t_3835dd9a69003b 107-149
+src/app/modules/admin/pages/shop/components/product-form/product-form.spec.ts
+  s_843aec4092301a::t_b85ec899f6b893 61
+  s_843aec4092301a::t_3c280def5fe992 6
+src/app/modules/admin/pages/shop/pages/attributes/attributes.ts
+  s_843aec4092301a::t_7112db39e4af2e 232-234
+  s_843aec4092301a::t_1d769c5f5b3185 231
+  s_843aec4092301a::t_f96328310d3609 4-8,16,42,59-102,104-106,108-111,211-212,224-225,246-260,266-268
+  h_eee5bfb8805eb8 9,103,107
+src/app/modules/admin/pages/shop/pages/products-update/products-update.spec.ts
+  s_843aec4092301a::t_5cfdb9e5af8f32 6,35,37-41,56,62,79,83-84,97,131-133,146
+src/app/modules/admin/pages/shop/pages/categories/categories.spec.ts
+  s_843aec4092301a::t_038c84f52de941 216
+  s_843aec4092301a::t_279614e00e5c4d 135-146,148-160,163-177,179-199,201,203-214
+  s_843aec4092301a::t_88671e96014a8c 6,8,23-25,30,34,39,45,51,68-69,72-74,84-89,95,103-109,113,116-126,133
+src/app/modules/admin/pages/shop/pages/products/products.spec.ts
+  s_843aec4092301a::t_6fb0c9fcff147a 5,24,37,40,44,48,50,56,63,80,90-95,100-108,111,114,116,126-128,130-135,138,141-142
+  s_843aec4092301a::t_9a538addb7d82e 143-153,159-161,163-170,172,175-195,197-202,204-208,210
+  s_843aec4092301a::t_faf92b9d825393 96
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-tags/product-form-tags.spec.ts
+  s_843aec4092301a::t_deb4afb6989014 18
+  s_843aec4092301a::t_ae2074f265b621 3
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-attributes/product-form-attributes.spec.ts
+  s_843aec4092301a::t_b563a1133e965e 20
+  s_843aec4092301a::t_2a098cc502f2ac 3
+src/app/modules/admin/pages/shop/pages/products-create/products-create.spec.ts
+  s_843aec4092301a::t_b94537ba20402b 6
+  s_843aec4092301a::t_856dad9229f82d 86-87,108,121,141,155,190,204
+  s_843aec4092301a::t_11ebb6cbe1271d 66
+  s_843aec4092301a::t_44ff0b243ddf90 75
+src/app/modules/admin/pages/shop/components/product-form/components/product-form-categories/product-form-categories.spec.ts
+  s_843aec4092301a::t_13b5ea3cfa1220 3
+  s_843aec4092301a::t_128e3a02d6a3f4 16
+src/app/app.config.ts
+  s_843aec4092301a::t_d86942b7373d30 9-10,18-31,37
+src/app/modules/admin/pages/shop/helpers/product-search-results.helper.spec.ts
+  s_843aec4092301a::t_8859e2b3094539 1-92
+package-lock.json
+  s_843aec4092301a::t_901075edaf3636 18,4270-4310
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "ee00694479df4afbd7a050b192a71b1a027c20e4",
+  "prompts": {},
+  "humans": {
+    "h_eee5bfb8805eb8": {
+      "author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  },
+  "sessions": {
+    "s_843aec4092301a": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "bc7c9ba9-82a4-4db9-8d10-ef21251ddee1",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
