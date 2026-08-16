@@ -1,0 +1,113 @@
+<main class="orders-page">
+  <div class="orders-container">
+    <header class="orders-header">
+      <div>
+        <h1 class="orders-title">{{ textData.PAGE_TITLE }}</h1>
+        <p class="orders-description">{{ textData.PAGE_DESCRIPTION }}</p>
+      </div>
+    </header>
+
+    @if (!isShopContextReady()) {
+    <p class="orders-state orders-state-warning">{{ textData.SHOP_ID_REQUIRED_MESSAGE }}</p>
+    }
+
+    <form class="orders-filters" (submit)="$event.preventDefault(); onApplyFilters()">
+      <div class="orders-filters-left">
+        <div class="orders-filter-field">
+          <label class="orders-filter-label" [attr.for]="orderNumberFilterId"
+            >{{ textData.ORDER_NUMBER_FILTER_LABEL }}</label
+          >
+          <input
+            [id]="orderNumberFilterId"
+            class="orders-filter-input"
+            type="text"
+            [value]="orderNumberInput()"
+            [placeholder]="textData.ORDER_NUMBER_FILTER_PLACEHOLDER"
+            [disabled]="!isShopContextReady() || isLoading()"
+            (input)="onOrderNumberInput($event)"
+          />
+        </div>
+      </div>
+
+      <div class="orders-filters-right">
+        <div class="orders-sort-block">
+          <span class="orders-filter-label">{{ textData.SORT_LABEL }}</span>
+          <app-dropdown
+            triggerMode="click"
+            variant="bordered"
+            icon="swap_vert"
+            [options]="sortOptions"
+            [value]="selectedSort()"
+            (optionSelected)="onSortSelected($event)"
+          />
+        </div>
+
+        <div class="orders-filter-actions">
+          <button
+            class="orders-filter-button"
+            type="submit"
+            [disabled]="!isShopContextReady() || isLoading()"
+          >
+            {{ textData.FILTER_APPLY_LABEL }}
+          </button>
+          <button
+            class="orders-filter-reset"
+            type="button"
+            [disabled]="!isShopContextReady() || isLoading()"
+            (click)="onResetFilters()"
+          >
+            {{ textData.FILTER_RESET_LABEL }}
+          </button>
+        </div>
+      </div>
+    </form>
+
+    @if (hasError()) {
+    <p class="orders-state">{{ textData.LOAD_ERROR_MESSAGE }}</p>
+    }
+
+    <app-table
+      [columns]="tableColumns"
+      [rows]="orderRows()"
+      [loading]="isLoading()"
+      [loadingText]="textData.TABLE_LOADING_TEXT"
+      [emptyText]="textData.EMPTY_STATE"
+      [updateEnabled]="true"
+      [updateLabel]="textData.TABLE_SHOW_LABEL"
+      [deleteEnabled]="true"
+      [deleteLabel]="textData.TABLE_DELETE_LABEL"
+      [actionsLabel]="textData.TABLE_ACTIONS_LABEL"
+      (updateRow)="onShowOrder($event)"
+      (deleteRow)="onDeleteOrder($event)"
+    />
+
+    <app-modal
+      [isOpen]="isDeleteModalOpen()"
+      [title]="textData.MODAL_DELETE_TITLE"
+      [confirmLabel]="textData.MODAL_DELETE_CONFIRM_LABEL"
+      [confirmLoading]="isActionLoading()"
+      [confirmDisabled]="isActionLoading()"
+      [isDanger]="true"
+      (closed)="onCloseDeleteModal()"
+      (confirmed)="onConfirmDelete()"
+    >
+      <p class="orders-delete-message">
+        {{ textData.MODAL_DELETE_MESSAGE }}
+        <strong>#{{ selectedOrder()?.orderNumber }}</strong>{{ textData.MODAL_DELETE_MESSAGE_SUFFIX
+        }}
+      </p>
+    </app-modal>
+
+    @if (totalItems() > pageSize) {
+    <app-pagination
+      class="orders-pagination"
+      [currentPage]="currentPage()"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems()"
+      [totalPages]="totalPages()"
+      [label]="textData.PAGINATION_LABEL"
+      (pageChange)="onPageChange($event)"
+    />
+    }
+  </div>
+</main>

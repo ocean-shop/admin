@@ -1,0 +1,116 @@
+<main class="order-details-page">
+  <div class="order-details-container">
+    <header class="order-details-header">
+      <div>
+        <h1 class="order-details-title">{{ textData.DETAILS_TITLE }}</h1>
+        <p class="order-details-description">{{ textData.DETAILS_DESCRIPTION }}</p>
+      </div>
+    </header>
+
+    @if (hasError()) {
+    <p class="order-details-state">{{ textData.ORDER_DETAILS_LOAD_ERROR }}</p>
+    } @if (!isLoading() && order(); as orderData) {
+    <section class="order-details-layout">
+      <div class="order-details-main-content">
+        <section class="order-details-card">
+          <h2 class="order-details-card-title">{{ textData.GENERAL_INFO_TITLE }}</h2>
+          <dl class="order-details-info-list">
+            @for (row of orderInfoRows(); track row.label) {
+            <div class="order-details-info-item">
+              <dt class="order-details-info-key">{{ row.label }}</dt>
+              <dd class="order-details-info-value">{{ row.value }}</dd>
+            </div>
+            }
+          </dl>
+        </section>
+
+        <section class="order-details-card">
+          <h2 class="order-details-card-title">{{ textData.PRODUCTS_TITLE }}</h2>
+          <app-table
+            [columns]="itemColumns"
+            [rows]="orderItemRows()"
+            [loading]="false"
+            emptyText="Товари замовлення відсутні."
+          />
+        </section>
+
+        <section class="order-details-card">
+          <h2 class="order-details-card-title">{{ textData.USER_TITLE }}</h2>
+          <dl class="order-details-info-list">
+            @for (row of userInfoRows(); track row.label) {
+            <div class="order-details-info-item">
+              <dt class="order-details-info-key">{{ row.label }}</dt>
+              <dd class="order-details-info-value">{{ row.value }}</dd>
+            </div>
+            }
+          </dl>
+        </section>
+
+        @if (extraDataRows().length) {
+        <section class="order-details-card">
+          <h2 class="order-details-card-title">{{ textData.EXTRA_DATA_TITLE }}</h2>
+          <dl class="order-details-info-list">
+            @for (row of extraDataRows(); track row.label) {
+            <div class="order-details-info-item">
+              <dt class="order-details-info-key">{{ row.label }}</dt>
+              <dd class="order-details-info-value order-details-info-value-json">
+                {{ row.value }}
+              </dd>
+            </div>
+            }
+          </dl>
+        </section>
+        }
+      </div>
+
+      <aside class="order-details-side-content">
+        <section class="order-details-status-grid">
+          <article class="order-details-card">
+            <h2 class="order-details-card-title">{{ textData.PAYMENT_STATUS_LABEL }}</h2>
+            <div class="order-details-status-actions">
+              <app-dropdown
+                triggerMode="click"
+                variant="bordered"
+                icon="credit_card"
+                [options]="paymentStatusOptions"
+                [value]="paymentStatusValue()"
+                (optionSelected)="onPaymentStatusSelected($event)"
+              />
+              <app-button
+                [label]="textData.SAVE_PAYMENT_STATUS_LABEL"
+                [fullWidth]="false"
+                [disabled]="!canSavePaymentStatus() || isPaymentUpdating()"
+                variant="primary"
+                (click)="onSavePaymentStatus()"
+              />
+            </div>
+          </article>
+
+          <article class="order-details-card">
+            <h2 class="order-details-card-title">{{ textData.ORDER_STATUS_LABEL }}</h2>
+            <div class="order-details-status-actions">
+              <app-dropdown
+                triggerMode="click"
+                variant="bordered"
+                icon="sync"
+                [options]="statusOptions"
+                [value]="statusValue()"
+                (optionSelected)="onStatusSelected($event)"
+              />
+              <app-button
+                [label]="textData.SAVE_STATUS_LABEL"
+                [fullWidth]="false"
+                [disabled]="!canSaveStatus() || isStatusUpdating()"
+                variant="primary"
+                (click)="onSaveStatus()"
+              />
+            </div>
+          </article>
+        </section>
+      </aside>
+    </section>
+    } @else if (isLoading()) {
+    <p class="order-details-state">{{ textData.TABLE_LOADING_TEXT }}</p>
+    }
+  </div>
+</main>

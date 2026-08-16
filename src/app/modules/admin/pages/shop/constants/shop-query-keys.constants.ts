@@ -19,4 +19,12 @@ export const SHOP_QUERY_KEYS = {
   tags: (shopId: string, page: number, limit: number, name: string) =>
     ['shop', shopId, 'tags', page, limit, name] as const,
   tagsSearch: (shopId: string, name: string) => ['shop', shopId, 'tags', 'search', name] as const,
+  orders: (
+    shopId: string,
+    page: number,
+    limit: number,
+    sort: 'newest' | 'older',
+    orderNumber: string,
+  ) => ['shop', shopId, 'orders', page, limit, sort, orderNumber] as const,
+  orderById: (orderId: string) => ['shop', 'orders', orderId] as const,
 };
