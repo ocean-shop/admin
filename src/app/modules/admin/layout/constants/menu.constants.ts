@@ -17,7 +17,7 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
   { icon: 'label', label: 'Аттрибути', route: '/admin/shop/:shopId/attributes' },
   { icon: 'tags', label: 'Теги', route: '/admin/shop/:shopId/tags' },
   { icon: 'inventory', label: 'Продукти', route: '/admin/shop/:shopId/products' },
-  { icon: 'receipt', label: 'Замовлення', route: '/admin/orders' },
+  { icon: 'receipt', label: 'Замовлення', route: '/admin/shop/:shopId/orders' },
   { icon: 'settings', label: 'Налаштування', route: '/admin/shop/settings' },
 ];
 

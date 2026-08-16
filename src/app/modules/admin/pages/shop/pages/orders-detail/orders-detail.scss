@@ -1,0 +1,89 @@
+@reference "../../../../../../../styles.scss";
+
+.order-details-page {
+  @apply ml-[50px] pt-8 min-h-screen;
+}
+
+.order-details-container {
+  @apply max-w-[1440px] mx-auto p-8 flex flex-col gap-6;
+}
+
+.order-details-header {
+  @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+}
+
+.order-details-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight;
+}
+
+.order-details-description {
+  @apply text-sm text-on-surface-variant mt-1;
+}
+
+.order-details-layout {
+  @apply grid gap-6 xl:grid-cols-12;
+}
+
+.order-details-main-content {
+  @apply flex flex-col gap-6 xl:col-span-8;
+}
+
+.order-details-side-content {
+  @apply xl:col-span-4;
+}
+
+.order-details-status-grid {
+  @apply grid gap-4;
+}
+
+.order-details-card {
+  @apply rounded-2xl border border-outline-variant bg-surface-container-low p-5 flex flex-col gap-4;
+}
+
+.order-details-card-title {
+  @apply text-lg font-semibold text-on-surface;
+}
+
+.order-details-status-actions {
+  @apply flex flex-row items-stretch gap-3;
+}
+
+.order-details-status-actions app-dropdown {
+  @apply w-[230px] shrink-0;
+}
+
+.order-details-status-actions app-button {
+  @apply shrink-0;
+}
+
+.order-details-status-actions ::ng-deep .admin-dropdown-trigger-bordered {
+  @apply w-full h-11 text-body-md;
+}
+
+.order-details-status-actions ::ng-deep .admin-btn {
+  @apply h-11 px-4 py-0 text-body-md font-medium whitespace-nowrap;
+}
+
+.order-details-info-list {
+  @apply grid gap-3 sm:grid-cols-2;
+}
+
+.order-details-info-item {
+  @apply flex flex-col gap-1;
+}
+
+.order-details-info-key {
+  @apply text-xs uppercase tracking-wide text-on-surface-variant;
+}
+
+.order-details-info-value {
+  @apply text-sm text-on-surface break-words;
+}
+
+.order-details-info-value-json {
+  @apply font-mono text-xs;
+}
+
+.order-details-state {
+  @apply text-sm text-on-surface-variant;
+}

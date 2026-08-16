@@ -1,0 +1,77 @@
+@reference "../../../../../../../styles.scss";
+
+.orders-page {
+  @apply ml-[50px] pt-8 min-h-screen;
+}
+
+.orders-container {
+  @apply max-w-[1440px] mx-auto p-8 flex flex-col gap-6;
+}
+
+.orders-header {
+  @apply flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center;
+}
+
+.orders-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight;
+}
+
+.orders-description {
+  @apply text-sm text-on-surface-variant mt-1;
+}
+
+.orders-filters {
+  @apply flex flex-col gap-4 xl:flex-row xl:flex-wrap xl:items-end;
+}
+
+.orders-filters-left {
+  @apply grid gap-4 md:grid-cols-2 xl:flex xl:flex-wrap xl:items-end;
+}
+
+.orders-filter-field {
+  @apply flex flex-col gap-2 xl:min-w-[220px];
+}
+
+.orders-filter-label {
+  @apply text-sm font-semibold text-on-surface;
+}
+
+.orders-filter-input {
+  @apply h-11 px-4 rounded-lg border border-outline-variant bg-surface text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary;
+}
+
+.orders-filters-right {
+  @apply flex flex-col gap-4 sm:flex-row sm:items-end;
+}
+
+.orders-sort-block {
+  @apply flex flex-col gap-2 min-w-[220px];
+}
+
+.orders-filter-actions {
+  @apply flex gap-2;
+}
+
+.orders-filter-button {
+  @apply h-11 px-4 rounded-lg bg-primary text-on-primary font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.orders-filter-reset {
+  @apply h-11 px-4 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.orders-pagination {
+  @apply w-full;
+}
+
+.orders-state {
+  @apply text-sm text-on-surface-variant;
+}
+
+.orders-state-warning {
+  @apply text-error;
+}
+
+.orders-delete-message {
+  @apply text-sm text-on-surface;
+}

@@ -36,4 +36,9 @@ export class ShopDetail {
     this.shopId() || ':shopId',
     'products',
   ]);
+  protected readonly ordersRoute = computed(() => [
+    '/admin/shop',
+    this.shopId() || ':shopId',
+    'orders',
+  ]);
 }

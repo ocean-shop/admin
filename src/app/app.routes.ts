@@ -66,6 +66,18 @@ export const routes: Routes = [
           import('./modules/admin/pages/shop/pages/products/products').then((m) => m.Products),
       },
       {
+        path: 'shop/:shopId/orders',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/orders/orders').then((m) => m.Orders),
+      },
+      {
+        path: 'shop/:shopId/orders/:orderId',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/orders-detail/orders-detail').then(
+            (m) => m.OrdersDetail,
+          ),
+      },
+      {
         path: 'shop/:shopId/products/create',
         loadComponent: () =>
           import('./modules/admin/pages/shop/pages/products-create/products-create').then(
