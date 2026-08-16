@@ -1,0 +1,111 @@
+src/app/modules/admin/pages/shop/pages/orders-detail/orders-detail.spec.ts
+  h_eee5bfb8805eb8 107
+  s_3ed0c6027a511a::t_5f34d458ca1983 25-29,92,103-104,111,123
+  s_3ed0c6027a511a::t_28fe6e2f49c3ae 1-24,30-91,93-102,105-106,108-110,112-122,124-144
+src/app/app.routes.ts
+  s_3ed0c6027a511a::t_fc46393169d7ad 69-79
+  s_3ed0c6027a511a::t_8512689a46325e 68
+src/app/modules/admin/pages/shop/pages/orders/orders.scss
+  s_3ed0c6027a511a::t_3e30ff7321754c 23-62
+  s_3ed0c6027a511a::t_f09f4da61c9f50 1-22,63-77
+src/app/modules/admin/pages/shop/pages/orders-detail/orders-detail.html
+  h_eee5bfb8805eb8 79,100
+  s_1aa2ad3356a140::t_d41f85bfe0a0db 13-25,27-33,35,37-47,49-60,62,64-78,80-99,101-108,110
+  s_1aa2ad3356a140::t_1e795f3f1004a3 34
+  s_3ed0c6027a511a::t_2cd073ad9035d0 1-12,26,36,48,61,63,109,111-114
+  s_3ed0c6027a511a::t_b85dadbf929263 115-116
+src/app/modules/admin/pages/shop/pages/orders/models/update-order-status-payload.model.ts
+  s_3ed0c6027a511a::t_f3411ef788b9a6 1-5
+src/app/modules/admin/pages/shop/shop-detail.ts
+  s_3ed0c6027a511a::t_e3ea71a704c6ee 39-40
+  s_3ed0c6027a511a::t_116b523b03af29 41-43
+src/app/modules/admin/pages/shop/pages/orders/models/order.model.ts
+  s_3ed0c6027a511a::t_0bb1d2fcf84c9c 64-66
+  s_3ed0c6027a511a::t_f1664fbbc7a689 1-3,20-23,26-63,67-77
+  h_eee5bfb8805eb8 4-19,24-25
+src/app/modules/admin/pages/shop/models/order.models.ts
+  h_eee5bfb8805eb8 1-4
+src/app/modules/admin/pages/shop/pages/orders/models/order-status.enum.ts
+  s_3ed0c6027a511a::t_2913b4d5ee53f5 1-6
+src/app/modules/admin/pages/shop/shop-detail.html
+  s_3ed0c6027a511a::t_5c68c467426a54 73-88
+src/app/modules/admin/pages/shop/pages/orders/orders.ts
+  s_3ed0c6027a511a::t_6c90ca812da9bf 1-9,12-16,23,25-28,30-41,44-51,55-56,60-63,65-68,71-74,76-145,180-242,253-320,325-326
+  s_3ed0c6027a511a::t_168ba04095cc3d 10-11,17-22,24,29,42-43,57-59,64,69-70,75,146-179,243-252,321-324
+  s_3ed0c6027a511a::t_5c8f5fd7a15bca 52-54
+src/app/modules/admin/pages/shop/pages/orders/orders.spec.ts
+  s_3ed0c6027a511a::t_368aae8de430c1 19-23,70,87-88,125
+  s_3ed0c6027a511a::t_ca4ea7040bc112 82-83,131-160
+  s_3ed0c6027a511a::t_aa9aa042ff371e 1-18,24-69,71-81,84-86,89-101,103-124,126-130,161-163
+  s_3ed0c6027a511a::t_4017e5f0e37f1e 102
+src/app/modules/admin/pages/shop/pages/orders/models/order-sort-value.type.ts
+  s_3ed0c6027a511a::t_cfc7ca6afc0bc3 1
+src/app/modules/admin/pages/shop/pages/orders/models/order-payment-status.enum.ts
+  s_3ed0c6027a511a::t_601f2a927342fd 1-4
+src/app/modules/admin/pages/shop/pages/orders/services/orders.service.ts
+  s_3ed0c6027a511a::t_da8bb9e29a9b6c 22-24
+  s_3ed0c6027a511a::t_82ccb051fdb5f6 1-21,25-55
+src/app/modules/admin/pages/shop/pages/orders/constants/orders.constants.ts
+  s_3ed0c6027a511a::t_5f2e753d69986a 1-7,13-51,59-70
+  s_3ed0c6027a511a::t_90ceb85af4237e 8-12,53-58
+  h_eee5bfb8805eb8 52
+src/app/modules/admin/pages/shop/pages/orders-detail/orders-detail.ts
+  s_3ed0c6027a511a::t_9630a59883b0ff 47-52
+  h_eee5bfb8805eb8 26-27,45,99,128-132,142,145
+  s_3ed0c6027a511a::t_9211c741847dfc 16
+  s_3ed0c6027a511a::t_0596c8926740b7 1-15,17-25,28-44,46,53-98,100-127,133-141,143-144,146-439
+src/app/modules/admin/layout/constants/menu.constants.ts
+  s_3ed0c6027a511a::t_65d26bc9427ddc 20
+src/app/modules/admin/pages/shop/pages/orders/orders.html
+  s_3ed0c6027a511a::t_38c5913b434fce 12-65
+  s_3ed0c6027a511a::t_be7fd8b747c6a9 1-11,66-113
+src/app/modules/admin/pages/shop/pages/orders-detail/orders-detail.scss
+  s_1aa2ad3356a140::t_34036ce0798eb2 32
+  s_1aa2ad3356a140::t_825a619bfdbb29 52
+  s_1aa2ad3356a140::t_9de62dfe75c11a 60
+  s_1aa2ad3356a140::t_bc3481a16a77cd 23-27,29-31,33-34,36
+  s_3ed0c6027a511a::t_34ca02c362dc06 1-22,35,37-47,65-89
+  s_1aa2ad3356a140::t_0905f267dd8d24 48-51,53-59,61-64
+  s_1aa2ad3356a140::t_9f3386d9898b5f 28
+src/app/modules/admin/pages/shop/pages/orders/services/orders.service.spec.ts
+  s_3ed0c6027a511a::t_1738fd5903eb40 1-42,63-112
+  s_3ed0c6027a511a::t_e366e67efddd1b 43-62
+src/ui/button/button.scss
+  h_eee5bfb8805eb8 8
+src/app/modules/admin/pages/shop/pages/orders/models/update-order-payment-status-payload.model.ts
+  s_3ed0c6027a511a::t_e21ab406421e28 1-5
+src/app/modules/admin/pages/shop/constants/shop-query-keys.constants.ts
+  s_3ed0c6027a511a::t_87aff0c83b13fb 22-28
+  s_3ed0c6027a511a::t_535119a23655e4 29
+src/app/modules/admin/pages/shop/constants/order.constants.ts
+  h_eee5bfb8805eb8 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "09178aae131a7ab7772425e7eccbfe36214dce0c",
+  "prompts": {},
+  "humans": {
+    "h_eee5bfb8805eb8": {
+      "author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  },
+  "sessions": {
+    "s_1aa2ad3356a140": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2382b7d6-a8bb-4bf1-8b92-1adda11ba820",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    },
+    "s_3ed0c6027a511a": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "b236d3a0-f38b-42c3-b4e5-f429736ee4f6",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
