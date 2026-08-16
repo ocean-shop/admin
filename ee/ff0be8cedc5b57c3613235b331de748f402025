@@ -1,0 +1,23 @@
+src/app/pages/login/services/login.service.spec.ts
+  s_47d0ac0f83d49a::t_66a39a87dbd323 1-62
+src/app/modules/admin/pages/shop/helpers/categories-response.helper.spec.ts
+  s_47d0ac0f83d49a::t_8242bf575aa705 1-44
+src/app/core/services/auth/auth.service.spec.ts
+  s_47d0ac0f83d49a::t_e2e0c956736a35 4,77-141
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "eeff0be8cedc5b57c3613235b331de748f402025",
+  "prompts": {},
+  "sessions": {
+    "s_47d0ac0f83d49a": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2f23b066-496a-4405-aba0-51ceb0a2c9ac",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
