@@ -1,0 +1,109 @@
+<main class="users-page">
+  <div class="users-container">
+    <header class="users-header">
+      <div>
+        <h1 class="users-title">{{ textData.PAGE_TITLE }}</h1>
+        <p class="users-description">{{ textData.PAGE_DESCRIPTION }}</p>
+      </div>
+    </header>
+
+    @if (!isShopContextReady()) {
+    <p class="users-state users-state-warning">{{ textData.SHOP_ID_REQUIRED_MESSAGE }}</p>
+    }
+
+    <form class="users-filters" (submit)="$event.preventDefault(); onApplyFilters()">
+      <div class="users-filters-left">
+        <div class="users-filter-field">
+          <label class="users-filter-label" [attr.for]="emailFilterId"
+            >{{ textData.EMAIL_FILTER_LABEL }}</label
+          >
+          <input
+            [id]="emailFilterId"
+            class="users-filter-input"
+            type="text"
+            [value]="emailInput()"
+            [placeholder]="textData.EMAIL_FILTER_PLACEHOLDER"
+            [disabled]="!isShopContextReady() || isLoading()"
+            (input)="onEmailInput($event)"
+          />
+        </div>
+
+        <div class="users-filter-field">
+          <label class="users-filter-label" [attr.for]="phoneFilterId"
+            >{{ textData.PHONE_FILTER_LABEL }}</label
+          >
+          <input
+            [id]="phoneFilterId"
+            class="users-filter-input"
+            type="text"
+            [value]="phoneNumberInput()"
+            [placeholder]="textData.PHONE_FILTER_PLACEHOLDER"
+            [disabled]="!isShopContextReady() || isLoading()"
+            (input)="onPhoneNumberInput($event)"
+          />
+        </div>
+      </div>
+
+      <div class="users-filters-right">
+        <div class="users-sort-block">
+          <span class="users-filter-label">{{ textData.SORT_LABEL }}</span>
+          <app-dropdown
+            triggerMode="click"
+            variant="bordered"
+            icon="swap_vert"
+            [options]="sortOptions"
+            [value]="selectedSort()"
+            (optionSelected)="onSortSelected($event)"
+          />
+        </div>
+
+        <div class="users-filter-actions">
+          <button
+            class="users-filter-button"
+            type="submit"
+            [disabled]="!isShopContextReady() || isLoading()"
+          >
+            {{ textData.FILTER_APPLY_LABEL }}
+          </button>
+          <button
+            class="users-filter-reset"
+            type="button"
+            [disabled]="!isShopContextReady() || isLoading()"
+            (click)="onResetFilters()"
+          >
+            {{ textData.FILTER_RESET_LABEL }}
+          </button>
+        </div>
+      </div>
+    </form>
+
+    @if (hasError()) {
+    <p class="users-state">{{ textData.LOAD_ERROR_MESSAGE }}</p>
+    }
+
+    <app-table
+      [columns]="tableColumns"
+      [rows]="userRows()"
+      [loading]="isLoading()"
+      [loadingText]="textData.TABLE_LOADING_TEXT"
+      [emptyText]="textData.EMPTY_STATE"
+      [updateEnabled]="true"
+      [updateIcon]="'visibility'"
+      [updateLabel]="textData.TABLE_SHOW_LABEL"
+      [actionsLabel]="textData.TABLE_ACTIONS_LABEL"
+      (updateRow)="onShowUser($event)"
+    />
+
+    @if (totalItems() > pageSize) {
+    <app-pagination
+      class="users-pagination"
+      [currentPage]="currentPage()"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems()"
+      [totalPages]="totalPages()"
+      [label]="textData.PAGINATION_LABEL"
+      (pageChange)="onPageChange($event)"
+    />
+    }
+  </div>
+</main>

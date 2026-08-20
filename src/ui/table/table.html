@@ -45,7 +45,7 @@
                 [attr.aria-label]="updateLabel()"
                 (click)="onUpdate(row)"
               >
-                <span class="material-symbols-outlined">edit</span>
+                <span class="material-symbols-outlined">{{ updateIcon() }}</span>
               </button>
               } @if (deleteEnabled()) {
               <button

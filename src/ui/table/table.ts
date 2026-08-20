@@ -17,6 +17,7 @@ export class Table {
   readonly rowIdKey = input<string>('id');
   readonly updateEnabled = input<boolean>(false);
   readonly updateLabel = input<string>('Update');
+  readonly updateIcon = input<string>('edit');
   readonly deleteEnabled = input<boolean>(false);
   readonly deleteLabel = input<string>('Delete');
   readonly actionsLabel = input<string>('');
