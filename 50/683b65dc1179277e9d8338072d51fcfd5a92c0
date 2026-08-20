@@ -1,0 +1,73 @@
+src/app/modules/admin/pages/shop/constants/shop-query-keys.constants.ts
+  s_764f057fd63b33::t_1afb24f62de2b3 2,31-39
+src/app/modules/admin/pages/shop/pages/users-detail/users-detail.scss
+  s_764f057fd63b33::t_e549d90980695d 1-57
+src/app/modules/admin/pages/shop/pages/users/services/users.service.ts
+  h_eee5bfb8805eb8 14,28
+  s_764f057fd63b33::t_2bd5dca8c8f0b3 1-13,15-27,29-32
+src/app/modules/admin/pages/shop/models/detail-info-row.model.ts
+  s_764f057fd63b33::t_05b8e8ec4c7c8b 1-4
+src/app/modules/admin/pages/shop/pages/users/constants/users.constants.ts
+  h_eee5bfb8805eb8 29-31
+  s_764f057fd63b33::t_112e0cdc9190ad 26-28,32-33
+  s_764f057fd63b33::t_646f88d346f6d1 1-25,34-50
+src/app/modules/admin/pages/shop/pages/users/users.scss
+  s_764f057fd63b33::t_4018c235a865b6 1-73
+src/app/modules/admin/pages/shop/pages/users/users.html
+  s_764f057fd63b33::t_98cb3303c5b49e 1-90,92-109
+  s_764f057fd63b33::t_df617adcaecedf 91
+src/ui/table/table.ts
+  s_764f057fd63b33::t_267f8e666d4ae5 20
+src/app/modules/admin/pages/shop/constants/user.constants.ts
+  s_764f057fd63b33::t_f388fa94248fa6 1-13
+src/app/modules/admin/pages/shop/pages/users-detail/users-detail.html
+  s_764f057fd63b33::t_e2c71f409a3ba1 1-70
+src/app/modules/admin/pages/shop/pages/users/models/user-sort-value.type.ts
+  s_764f057fd63b33::t_505717fe28f913 1
+src/app/modules/admin/layout/constants/menu.constants.ts
+  h_eee5bfb8805eb8 21
+src/app/modules/admin/pages/shop/pages/users-detail/users-detail.ts
+  s_764f057fd63b33::t_610e3744f68eaf 132-137
+  s_764f057fd63b33::t_183011f2bb1539 1-15,17-51,53-131,138-203
+  s_764f057fd63b33::t_334f650eaeebda 16
+  s_764f057fd63b33::t_4ef8d3cf5e4d6b 52
+src/app/modules/admin/pages/shop/pages/users/models/user.model.ts
+  s_764f057fd63b33::t_07e23d3cf5d32b 1-65
+src/app/app.routes.ts
+  s_764f057fd63b33::t_83675c3599d77d 73-77,85-91
+src/app/modules/admin/pages/shop/pages/users/users.ts
+  s_764f057fd63b33::t_cd7773130ffda0 1-82,84-88,90-252
+  s_764f057fd63b33::t_26370cca8805e4 83
+  s_764f057fd63b33::t_d90ea41b3131c8 89
+src/app/modules/admin/pages/shop/pages/users/services/users.service.spec.ts
+  s_764f057fd63b33::t_26c430e8284918 32,53,64
+  s_764f057fd63b33::t_c98673fc865f1a 1-31,33-52,54-63,65-69
+src/app/modules/admin/pages/shop/pages/users-detail/users-detail.spec.ts
+  s_764f057fd63b33::t_cd40dd2265a5a2 1-83
+src/ui/table/table.html
+  s_764f057fd63b33::t_1c701ba1a41291 48
+src/app/modules/admin/pages/shop/pages/users/users.spec.ts
+  s_764f057fd63b33::t_5c4a79b50f586e 1-92,94-135
+  s_764f057fd63b33::t_0c4b1deff1af16 93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "50683b65dc1179277e9d8338072d51fcfd5a92c0",
+  "prompts": {},
+  "humans": {
+    "h_eee5bfb8805eb8": {
+      "author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  },
+  "sessions": {
+    "s_764f057fd63b33": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "56760be2-a88e-444a-8f76-671e50170e9c",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
