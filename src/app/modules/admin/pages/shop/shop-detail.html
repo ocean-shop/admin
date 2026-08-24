@@ -7,6 +7,10 @@
     </p>
   </header>
 
+  @if (shopId()) {
+  <app-shop-statistics [shopId]="shopId()" />
+  }
+
   <div class="shop-detail-cards">
     <article class="shop-detail-card">
       <div class="shop-detail-card-icon-wrapper">

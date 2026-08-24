@@ -37,4 +37,5 @@ export const SHOP_QUERY_KEYS = {
     phoneNumber: string,
   ) => ['shop', shopId, 'users', page, limit, sort, email, phoneNumber] as const,
   userById: (userId: string) => ['shop', 'users', userId] as const,
+  statistic: (shopId: string) => ['shop', shopId, 'statistic'] as const,
 };

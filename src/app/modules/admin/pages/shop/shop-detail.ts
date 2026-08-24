@@ -5,11 +5,12 @@ import { map } from 'rxjs';
 import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
 import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
+import { ShopStatistics } from './components/shop-statistics/shop-statistics';
 import { buildShopBreadcrumb } from './constants/shop-breadcrumbs.constants';
 
 @Component({
   selector: 'app-shop',
-  imports: [RouterLink, Breadcrumbs],
+  imports: [RouterLink, Breadcrumbs, ShopStatistics],
   templateUrl: './shop-detail.html',
   styleUrl: './shop-detail.scss',
 })
