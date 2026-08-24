@@ -9,8 +9,15 @@ import {
 } from '@tanstack/angular-query-experimental';
 import { lastValueFrom, map } from 'rxjs';
 import { Button } from '@ui/button/button';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import {
+  buildShopBreadcrumb,
+  buildShopSectionBreadcrumb,
+} from '../../constants/shop-breadcrumbs.constants';
 import { PRODUCTS_TYPE_OPTIONS } from '../../constants/products.constants';
 import { ProductForm } from '../../components/product-form/product-form';
 import {
@@ -35,13 +42,14 @@ import {
 import { buildUpdateProductPayload } from '../../helpers/product-form-payload.helper';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
+import { PRODUCTS_TEXTS } from '../products/constants/products.constants';
 import { ProductType } from '../products/models/product-type.enum';
 import { UpdateProductPayload } from '../products/models/update-product-payload.model';
 import { ProductsService } from '../products/services/products.service';
 
 @Component({
   selector: 'app-products-update',
-  imports: [Button, ProductForm],
+  imports: [Button, ProductForm, Breadcrumbs],
   templateUrl: './products-update.html',
   styleUrl: './products-update.scss',
 })
@@ -57,6 +65,12 @@ export class ProductsUpdate implements OnInit {
   protected readonly statusOptions = PRODUCT_FORM_STATUS_OPTIONS;
   protected readonly productTypeSimple = ProductType.Simple;
   protected readonly productTypeOptions: RadioGroupOption[] = PRODUCTS_TYPE_OPTIONS;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    buildShopSectionBreadcrumb(this.shopId(), 'products', PRODUCTS_TEXTS.PAGE_TITLE),
+    { label: this.textData.PAGE_TITLE },
+  ]);
 
   protected readonly shopId = signal<string | null>(null);
   protected readonly productId = signal<string | null>(null);

@@ -1,0 +1,9 @@
+<nav class="mb-2 flex items-center gap-2 text-label-md text-outline" aria-label="Breadcrumb">
+  @for (item of breadcrumbs(); track item.label; let isLast = $last) { @if (!isLast && item.href) {
+  <a class="transition-colors hover:text-primary" [routerLink]="item.href">{{ item.label }}</a>
+  } @else {
+  <span [class.font-medium]="isLast" [class.text-on-surface]="isLast">{{ item.label }}</span>
+  } @if (!isLast) {
+  <span class="material-symbols-outlined text-sm">{{ separatorIcon }}</span>
+  } }
+</nav>

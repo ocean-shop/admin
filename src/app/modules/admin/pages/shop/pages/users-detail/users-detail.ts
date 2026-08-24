@@ -3,8 +3,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom, map } from 'rxjs';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Table } from '@ui/table/table';
 import { TableRowData } from '@ui/table/models/table-column.model';
+import {
+  buildShopBreadcrumb,
+  buildShopSectionBreadcrumb,
+} from '../../constants/shop-breadcrumbs.constants';
 import { USER_OTP_COLUMNS, USER_SESSION_COLUMNS } from '../../constants/user.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { DetailInfoRow } from '../../models/detail-info-row.model';
@@ -19,7 +26,7 @@ import { UsersService } from '../users/services/users.service';
 
 @Component({
   selector: 'app-users-detail',
-  imports: [Table],
+  imports: [Table, Breadcrumbs],
   templateUrl: './users-detail.html',
   styleUrl: './users-detail.scss',
 })
@@ -31,6 +38,12 @@ export class UsersDetail implements OnInit {
   protected readonly textData = USERS_TEXTS;
   protected readonly otpColumns = USER_OTP_COLUMNS;
   protected readonly sessionColumns = USER_SESSION_COLUMNS;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    buildShopSectionBreadcrumb(this.shopId(), 'users', this.textData.PAGE_TITLE),
+    { label: this.textData.DETAILS_TITLE },
+  ]);
 
   protected readonly shopId = signal<string | null>(
     this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null,

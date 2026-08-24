@@ -2,6 +2,7 @@
   <div class="order-details-container">
     <header class="order-details-header">
       <div>
+        <app-breadcrumbs [items]="breadcrumbItems()" />
         <h1 class="order-details-title">{{ textData.DETAILS_TITLE }}</h1>
         <p class="order-details-description">{{ textData.DETAILS_DESCRIPTION }}</p>
       </div>

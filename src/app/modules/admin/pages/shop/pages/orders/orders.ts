@@ -7,12 +7,16 @@ import {
   injectQueryClient,
 } from '@tanstack/angular-query-experimental';
 import { lastValueFrom, map } from 'rxjs';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
 import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import {
   ORDERS_NUMBER_FILTER_ID,
@@ -26,7 +30,7 @@ import { OrdersService } from './services/orders.service';
 
 @Component({
   selector: 'app-orders',
-  imports: [Dropdown, Table, Pagination, Modal],
+  imports: [Dropdown, Table, Pagination, Modal, Breadcrumbs],
   templateUrl: './orders.html',
   styleUrl: './orders.scss',
 })
@@ -38,6 +42,11 @@ export class Orders implements OnInit {
   private readonly queryClient = injectQueryClient();
 
   protected readonly textData = ORDERS_TEXTS;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    { label: this.textData.PAGE_TITLE },
+  ]);
   protected readonly pageSize = ORDERS_PAGE_SIZE;
   protected readonly sortOptions = ORDERS_SORT_OPTIONS;
   protected readonly orderNumberFilterId = ORDERS_NUMBER_FILTER_ID;

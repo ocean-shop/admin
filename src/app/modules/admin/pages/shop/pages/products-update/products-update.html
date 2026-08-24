@@ -2,6 +2,7 @@
   <form class="products-update-container" (submit)="$event.preventDefault(); onSubmit()">
     <header class="products-update-header">
       <div>
+        <app-breadcrumbs [items]="breadcrumbItems()" />
         <h1 class="products-update-title">{{ textData.PAGE_TITLE }}</h1>
         <p class="products-update-description">{{ textData.PAGE_DESCRIPTION }}</p>
       </div>

@@ -9,10 +9,14 @@ import {
 import { lastValueFrom, map } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Button } from '@ui/button/button';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
 import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { TAGS_CREATE_ICON, TAGS_PAGE_SIZE, TAGS_TEXTS } from './constants/tags.constants';
 import { TagFormModal } from './components/tag-form-modal/tag-form-modal';
@@ -23,7 +27,7 @@ import { TagsService } from './services/tags.service';
 
 @Component({
   selector: 'app-tags',
-  imports: [Button, Table, Pagination, Modal, TagFormModal],
+  imports: [Button, Table, Pagination, Modal, TagFormModal, Breadcrumbs],
   templateUrl: './tags.html',
   styleUrl: './tags.scss',
 })
@@ -36,6 +40,11 @@ export class Tags implements OnInit {
 
   protected readonly textData = TAGS_TEXTS;
   protected readonly createTagIcon = TAGS_CREATE_ICON;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    { label: this.textData.PAGE_TITLE },
+  ]);
   protected readonly pageSize = TAGS_PAGE_SIZE;
   protected readonly tableColumns: TableColumn[] = [
     { key: 'name', header: TAGS_TEXTS.TABLE_NAME_HEADER },

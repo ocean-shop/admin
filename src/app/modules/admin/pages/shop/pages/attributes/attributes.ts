@@ -9,10 +9,14 @@ import {
 import { lastValueFrom, map } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Button } from '@ui/button/button';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
 import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import {
   ATTRIBUTES_CREATE_ICON,
@@ -30,7 +34,7 @@ import { AttributesService } from './services/attributes.service';
 
 @Component({
   selector: 'app-attributes',
-  imports: [Button, Table, Pagination, Modal, AttributeFormModal],
+  imports: [Button, Table, Pagination, Modal, AttributeFormModal, Breadcrumbs],
   templateUrl: './attributes.html',
   styleUrl: './attributes.scss',
 })
@@ -43,6 +47,11 @@ export class Attributes implements OnInit {
 
   protected readonly textData = ATTRIBUTES_TEXTS;
   protected readonly createAttributeIcon = ATTRIBUTES_CREATE_ICON;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    { label: this.textData.PAGE_TITLE },
+  ]);
   protected readonly pageSize = ATTRIBUTES_PAGE_SIZE;
   protected readonly tableColumns: TableColumn[] = [
     { key: 'name', header: ATTRIBUTES_TEXTS.TABLE_NAME_HEADER },

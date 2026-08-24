@@ -3,6 +3,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom, map } from 'rxjs';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
+import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { Pagination } from '@ui/pagination/pagination';
@@ -23,7 +27,7 @@ import { UsersService } from './services/users.service';
 
 @Component({
   selector: 'app-users',
-  imports: [Dropdown, Table, Pagination],
+  imports: [Dropdown, Table, Pagination, Breadcrumbs],
   templateUrl: './users.html',
   styleUrl: './users.scss',
 })
@@ -34,6 +38,11 @@ export class Users implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly textData = USERS_TEXTS;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    { label: this.textData.PAGE_TITLE },
+  ]);
   protected readonly pageSize = USERS_PAGE_SIZE;
   protected readonly sortOptions = USERS_SORT_OPTIONS;
   protected readonly emailFilterId = USERS_EMAIL_FILTER_ID;

@@ -2,6 +2,7 @@
   <div class="users-detail-container">
     <header class="users-detail-header">
       <div>
+        <app-breadcrumbs [items]="breadcrumbItems()" />
         <h1 class="users-detail-title">{{ textData.DETAILS_TITLE }}</h1>
         <p class="users-detail-description">{{ textData.DETAILS_DESCRIPTION }}</p>
       </div>

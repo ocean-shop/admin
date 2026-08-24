@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
+import { USERS_TEXTS } from './constants/users.constants';
 import { UserListResponse } from './models/user.model';
 import { Users } from './users';
 import { UsersService } from './services/users.service';
@@ -68,6 +69,14 @@ describe('Users', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('renders breadcrumbs for shop page', () => {
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('nav[aria-label="Breadcrumb"]')).toBeTruthy();
+    expect(element.textContent).toContain('Dashboard');
+    expect(element.textContent).toContain(USERS_TEXTS.PAGE_TITLE);
   });
 
   it('requests users list with default params', () => {
