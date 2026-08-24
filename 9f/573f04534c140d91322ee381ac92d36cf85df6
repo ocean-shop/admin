@@ -1,0 +1,47 @@
+src/app/modules/admin/pages/shop/shop-detail.html
+  s_45b26dc5bc518e::t_8167f51f8c4fce 10-13
+src/app/modules/admin/pages/shop/constants/shop-query-keys.constants.ts
+  s_45b26dc5bc518e::t_31f4ba7cc0a370 40
+src/app/modules/admin/pages/shop/services/shop-statistic.service.ts
+  h_eee5bfb8805eb8 14
+  s_45b26dc5bc518e::t_216455b75f78b3 1-13,15-19
+package.json
+  s_45b26dc5bc518e::t_4faac635b21dec 26
+src/app/modules/admin/pages/shop/models/shop-statistic.model.ts
+  s_45b26dc5bc518e::t_31c999e24ba859 1-12
+src/app/modules/admin/pages/shop/components/shop-statistics/shop-statistics.ts
+  s_45b26dc5bc518e::t_a9a4a815f45584 1-11,13-179
+  s_45b26dc5bc518e::t_4eb5f3566c3c54 12
+src/app/modules/admin/pages/shop/components/shop-statistics/shop-statistics.scss
+  s_45b26dc5bc518e::t_5d1cf8bb093f93 1
+  s_45b26dc5bc518e::t_44f6689a7151ff 2-29
+src/app/modules/admin/pages/shop/shop-detail.ts
+  s_45b26dc5bc518e::t_d20589858decb5 8,13
+src/app/modules/admin/pages/shop/constants/shop-statistics.constants.ts
+  s_45b26dc5bc518e::t_ce64f97406a9cd 1-17
+src/app/modules/admin/pages/shop/components/shop-statistics/shop-statistics.html
+  s_45b26dc5bc518e::t_0451e2891c2f98 1-16
+package-lock.json
+  s_45b26dc5bc518e::t_656e4cd13ef53d 19,7175-7192
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "9f573f04534c140d91322ee381ac92d36cf85df6",
+  "prompts": {},
+  "humans": {
+    "h_eee5bfb8805eb8": {
+      "author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  },
+  "sessions": {
+    "s_45b26dc5bc518e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "b058849b-df3e-47eb-a805-b1153fa8f625",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "tkuku <taras.kukuliak@aravo.com>"
+    }
+  }
+}
