@@ -8,7 +8,7 @@ import { ShopStatistic } from '../models/shop-statistic.model';
 })
 export class ShopStatisticService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getStatistic(shopId: string): Observable<ShopStatistic> {
     return this.http.get<ShopStatistic>(`${this.API_URL}/statistic/shop`, {

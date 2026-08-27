@@ -9,7 +9,7 @@ import { TagApiItem, TagListQueryParams, TagListResponse } from '../models/tag.m
 })
 export class TagsService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getTags(query: TagListQueryParams): Observable<TagListResponse> {
     return this.http.get<TagListResponse>(`${this.API_URL}/catalog/tags`, {

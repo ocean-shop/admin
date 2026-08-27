@@ -10,7 +10,7 @@ import { CreateCategoryPayload, UpdateCategoryPayload } from '../models/category
 })
 export class CategoriesService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getCategories(shopId: string): Observable<CategoriesApiResponse | CategoryApiItem[]> {
     return this.http.get<CategoriesApiResponse | CategoryApiItem[]>(

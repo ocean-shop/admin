@@ -6,6 +6,7 @@ import { OrderStatus } from '../models/order-status.enum';
 import { OrdersService } from './orders.service';
 
 describe('OrdersService', () => {
+  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: OrdersService;
   let httpMock: HttpTestingController;
 
@@ -31,7 +32,7 @@ describe('OrdersService', () => {
       })
       .subscribe();
 
-    const req = httpMock.expectOne((request) => request.url === 'http://localhost:3000/orders');
+    const req = httpMock.expectOne((request) => request.url === `${API_URL}/orders`);
     expect(req.request.method).toBe('GET');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.params.get('page')).toBe('2');
@@ -52,7 +53,7 @@ describe('OrdersService', () => {
       })
       .subscribe();
 
-    const req = httpMock.expectOne((request) => request.url === 'http://localhost:3000/orders');
+    const req = httpMock.expectOne((request) => request.url === `${API_URL}/orders`);
     expect(req.request.method).toBe('GET');
     expect(req.request.params.get('orderNumber')).toBe('1001');
     expect(req.request.params.get('sortBy')).toBe('createdAt');
@@ -63,7 +64,7 @@ describe('OrdersService', () => {
   it('requests single order by id', () => {
     service.getOrderById('order-1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/orders/order-1');
+    const req = httpMock.expectOne(`${API_URL}/orders/order-1`);
     expect(req.request.method).toBe('GET');
     expect(req.request.withCredentials).toBe(true);
     req.flush({ id: 'order-1' });
@@ -72,7 +73,7 @@ describe('OrdersService', () => {
   it('deletes order by id', () => {
     service.deleteOrder('order-1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/orders/order-1');
+    const req = httpMock.expectOne(`${API_URL}/orders/order-1`);
     expect(req.request.method).toBe('DELETE');
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
@@ -85,7 +86,7 @@ describe('OrdersService', () => {
       })
       .subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/orders/order-1/payment-status');
+    const req = httpMock.expectOne(`${API_URL}/orders/order-1/payment-status`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual({
@@ -101,7 +102,7 @@ describe('OrdersService', () => {
       })
       .subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/orders/order-1/status');
+    const req = httpMock.expectOne(`${API_URL}/orders/order-1/status`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual({

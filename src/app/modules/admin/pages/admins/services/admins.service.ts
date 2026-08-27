@@ -9,7 +9,7 @@ import { AdminCreatePayload, AdminUpdatePayload } from '../models/admin-payload.
 })
 export class AdminsService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getAdmins(query: AdminsQueryParams): Observable<AdminsApiResponse | AdminApiItem[]> {
     return this.http.get<AdminsApiResponse | AdminApiItem[]>(`${this.API_URL}/user/admins`, {

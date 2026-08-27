@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
+  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: UsersService;
   let httpMock: HttpTestingController;
 
@@ -29,7 +30,7 @@ describe('UsersService', () => {
       })
       .subscribe();
 
-    const req = httpMock.expectOne((request) => request.url === 'http://localhost:3000/user/users');
+    const req = httpMock.expectOne((request) => request.url === `${API_URL}/user/users`);
     expect(req.request.method).toBe('GET');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.params.get('page')).toBe('2');
@@ -50,7 +51,7 @@ describe('UsersService', () => {
       })
       .subscribe();
 
-    const req = httpMock.expectOne((request) => request.url === 'http://localhost:3000/user/users');
+    const req = httpMock.expectOne((request) => request.url === `${API_URL}/user/users`);
     expect(req.request.method).toBe('GET');
     expect(req.request.params.get('email')).toBe('john@example.com');
     expect(req.request.params.get('phoneNumber')).toBe('+380991112233');
@@ -61,7 +62,7 @@ describe('UsersService', () => {
   it('requests single user by id', () => {
     service.getUserById('user-1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/user/users/user-1');
+    const req = httpMock.expectOne(`${API_URL}/user/users/user-1`);
     expect(req.request.method).toBe('GET');
     expect(req.request.withCredentials).toBe(true);
     req.flush({ id: 'user-1' });

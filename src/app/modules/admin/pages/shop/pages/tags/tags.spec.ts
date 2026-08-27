@@ -85,7 +85,7 @@ describe('Tags', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.querySelector('nav[aria-label="Breadcrumb"]')).toBeTruthy();
-    expect(element.textContent).toContain('Dashboard');
+    expect(element.textContent).toContain('Головна');
     expect(element.textContent).toContain(TAGS_TEXTS.PAGE_TITLE);
   });
 

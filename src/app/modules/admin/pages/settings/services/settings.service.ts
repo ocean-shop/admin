@@ -8,7 +8,7 @@ import { SettingsData, SettingsUpdateData } from '../models/settings.model';
 })
 export class SettingsService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getUserSettings(userId: string | null): Observable<SettingsData> {
     return this.http.get<SettingsData>(`${this.API_URL}/user/settings/${userId}`, {

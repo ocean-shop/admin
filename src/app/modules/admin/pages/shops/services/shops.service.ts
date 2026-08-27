@@ -9,7 +9,7 @@ import { ShopCreatePayload, ShopUpdatePayload } from '../models/shop-payload.mod
 })
 export class ShopsService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getShops(query: ShopsQueryParams): Observable<ShopsApiResponse | ShopApiItem[]> {
     return this.http.get<ShopsApiResponse | ShopApiItem[]>(`${this.API_URL}/catalog/shops`, {

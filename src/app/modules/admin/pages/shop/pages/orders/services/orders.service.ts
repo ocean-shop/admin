@@ -10,7 +10,7 @@ import { UpdateOrderStatusPayload } from '../models/update-order-status-payload.
 })
 export class OrdersService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getOrders(query: OrderListQueryParams): Observable<OrderListResponse> {
     return this.http.get<OrderListResponse>(`${this.API_URL}/orders`, {

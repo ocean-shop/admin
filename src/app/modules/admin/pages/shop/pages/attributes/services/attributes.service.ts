@@ -13,7 +13,7 @@ import {
 })
 export class AttributesService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getAttributes(query: AttributeListQueryParams): Observable<AttributeListResponse> {
     return this.http.get<AttributeListResponse>(`${this.API_URL}/catalog/attributes`, {

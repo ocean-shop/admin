@@ -21,7 +21,7 @@ import { UpdateProductPayload } from '../models/update-product-payload.model';
 })
 export class ProductsService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getProducts(query: ProductListQueryParams): Observable<ProductListResponse> {
     return this.http.get<ProductListResponse>(`${this.API_URL}/catalog/products`, {

@@ -8,7 +8,7 @@ import { UserApiItem, UserListQueryParams, UserListResponse } from '../models/us
 })
 export class UsersService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getUsers(query: UserListQueryParams): Observable<UserListResponse> {
     return this.http.get<UserListResponse>(`${this.API_URL}/user/users`, {

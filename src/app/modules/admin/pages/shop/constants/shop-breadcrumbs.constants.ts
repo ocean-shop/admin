@@ -3,7 +3,7 @@ import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
 const SHOPS_ROUTE = '/admin/shops';
 const SHOP_ROUTE_PREFIX = '/admin/shop';
 
-export const SHOP_BREADCRUMB_LABEL = 'Shop';
+export const SHOP_BREADCRUMB_LABEL = 'Магазин';
 
 export function buildShopBreadcrumb(shopId: string | null): BreadcrumbItem {
   const normalizedShopId = shopId?.trim();

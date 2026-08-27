@@ -5,6 +5,7 @@ import { CreateCategoryPayload, UpdateCategoryPayload } from '../models/category
 import { CategoriesService } from './categories.service';
 
 describe('CategoriesService', () => {
+  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: CategoriesService;
   let httpMock: HttpTestingController;
 
@@ -24,7 +25,7 @@ describe('CategoriesService', () => {
   it('requests categories list with credentials', () => {
     service.getCategories('123').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/categories?shopId=123');
+    const req = httpMock.expectOne(`${API_URL}/catalog/categories?shopId=123`);
     expect(req.request.method).toBe('GET');
     expect(req.request.withCredentials).toBe(true);
     req.flush([]);
@@ -33,7 +34,7 @@ describe('CategoriesService', () => {
   it('requests a single category by id', () => {
     service.getCategoryById('category-1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/categories/category-1');
+    const req = httpMock.expectOne(`${API_URL}/catalog/categories/category-1`);
     expect(req.request.method).toBe('GET');
     expect(req.request.withCredentials).toBe(true);
     req.flush({ id: 'category-1' });
@@ -48,7 +49,7 @@ describe('CategoriesService', () => {
 
     service.createCategory(payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/categories');
+    const req = httpMock.expectOne(`${API_URL}/catalog/categories`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -63,7 +64,7 @@ describe('CategoriesService', () => {
 
     service.updateCategory('category-1', payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/categories/category-1');
+    const req = httpMock.expectOne(`${API_URL}/catalog/categories/category-1`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -73,7 +74,7 @@ describe('CategoriesService', () => {
   it('deletes a category', () => {
     service.deleteCategory('category-1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/categories/category-1');
+    const req = httpMock.expectOne(`${API_URL}/catalog/categories/category-1`);
     expect(req.request.method).toBe('DELETE');
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
@@ -82,7 +83,7 @@ describe('CategoriesService', () => {
   it('changes category sort with credentials', () => {
     service.changeCategorySort('category-1', { direction: 'up' }).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/categories/category-1/sort');
+    const req = httpMock.expectOne(`${API_URL}/catalog/categories/category-1/sort`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual({ direction: 'up' });

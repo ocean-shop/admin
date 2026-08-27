@@ -6,6 +6,7 @@ import { ProductType } from '../models/product-type.enum';
 import { ProductsService } from './products.service';
 
 describe('ProductsService', () => {
+  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: ProductsService;
   let httpMock: HttpTestingController;
 
@@ -36,9 +37,7 @@ describe('ProductsService', () => {
       })
       .subscribe();
 
-    const req = httpMock.expectOne(
-      (request) => request.url === 'http://localhost:3000/catalog/products',
-    );
+    const req = httpMock.expectOne((request) => request.url === `${API_URL}/catalog/products`);
     expect(req.request.method).toBe('GET');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.params.get('page')).toBe('2');
@@ -61,9 +60,7 @@ describe('ProductsService', () => {
       })
       .subscribe();
 
-    const req = httpMock.expectOne(
-      (request) => request.url === 'http://localhost:3000/catalog/products',
-    );
+    const req = httpMock.expectOne((request) => request.url === `${API_URL}/catalog/products`);
     expect(req.request.method).toBe('GET');
     expect(req.request.params.has('name')).toBe(false);
     expect(req.request.params.has('sku')).toBe(false);
@@ -76,7 +73,7 @@ describe('ProductsService', () => {
   it('requests single product by id', () => {
     service.getProductById('product-1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1`);
     expect(req.request.method).toBe('GET');
     expect(req.request.withCredentials).toBe(true);
     req.flush({ id: 'product-1' });
@@ -97,7 +94,7 @@ describe('ProductsService', () => {
 
     service.createProduct(payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -118,7 +115,7 @@ describe('ProductsService', () => {
 
     service.updateProduct('product-1', payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -134,7 +131,7 @@ describe('ProductsService', () => {
 
     service.createVariation('product-1', payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/variations');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1/variations`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -156,9 +153,7 @@ describe('ProductsService', () => {
 
     service.updateVariation('product-1', 'variation-1', payload).subscribe();
 
-    const req = httpMock.expectOne(
-      'http://localhost:3000/catalog/products/product-1/variations/variation-1',
-    );
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1/variations/variation-1`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -168,7 +163,7 @@ describe('ProductsService', () => {
   it('assigns category to product', () => {
     service.assignCategory('product-1', 'category-1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/categories');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1/categories`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual({ categoryId: 'category-1', assign: true });
@@ -179,7 +174,7 @@ describe('ProductsService', () => {
     const payload = { categoryId: 'category-2', assign: false };
     service.toggleCategory('product-1', payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/categories');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1/categories`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -190,7 +185,7 @@ describe('ProductsService', () => {
     const payload = { attributeTypeId: 'attribute-2', assign: false };
     service.toggleAttribute('product-1', payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/attributes');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1/attributes`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -201,7 +196,7 @@ describe('ProductsService', () => {
     const payload = { tagId: 'tag-2', assign: false };
     service.toggleTag('product-1', payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/tags');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1/tags`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -217,7 +212,7 @@ describe('ProductsService', () => {
     };
     service.assignImages('product-1', payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1/images');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1/images`);
     expect(req.request.method).toBe('PUT');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -228,7 +223,7 @@ describe('ProductsService', () => {
     const payload = { direction: 'up' as const };
     service.changeImageSort('image-1', payload).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/images/image-1/sort');
+    const req = httpMock.expectOne(`${API_URL}/catalog/images/image-1/sort`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.withCredentials).toBe(true);
     expect(req.request.body).toEqual(payload);
@@ -238,7 +233,7 @@ describe('ProductsService', () => {
   it('removes image by id', () => {
     service.removeImage('image-2').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/images/image-2');
+    const req = httpMock.expectOne(`${API_URL}/catalog/images/image-2`);
     expect(req.request.method).toBe('DELETE');
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
@@ -247,7 +242,7 @@ describe('ProductsService', () => {
   it('deletes product by id', () => {
     service.deleteProduct('product-1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3000/catalog/products/product-1');
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1`);
     expect(req.request.method).toBe('DELETE');
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
