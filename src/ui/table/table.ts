@@ -1,12 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { TableCellAlign, TableColumn, TableRowData } from './models/table-column.model';
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.html',
   styleUrl: './table.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class Table {
   readonly columns = input.required<TableColumn[]>();

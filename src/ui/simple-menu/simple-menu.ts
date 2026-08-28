@@ -1,12 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { SimpleMenuDivider, SimpleMenuEntry, SimpleMenuItem } from './models/simple-menu.type';
 
 @Component({
   selector: 'app-simple-menu',
-  imports: [],
   templateUrl: './simple-menu.html',
   styleUrl: './simple-menu.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SimpleMenu {
   items = input.required<SimpleMenuEntry[]>();

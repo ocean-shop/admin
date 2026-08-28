@@ -12,7 +12,6 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
   selector: 'app-toaster',
   templateUrl: './toaster.html',
   styleUrl: './toaster.scss',
-  standalone: true,
 })
 export class Toaster {
   private toasterService = inject(ToasterService);

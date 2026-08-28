@@ -2,12 +2,9 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, finalize, of, shareReplay, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
+import { RefreshResponse } from '@core/models/auth.model';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AUTH_STORAGE_KEYS, SESSION_HINT_KEY } from '../../constants/auth.constant';
-
-type RefreshResponse = {
-  accessToken: string;
-};
 
 @Injectable({
   providedIn: 'root',
@@ -15,10 +12,11 @@ type RefreshResponse = {
 export class AuthService {
   private http = inject(HttpClient);
   private localStorageService = inject(LocalStorageService);
-  private readonly API_URL = 'http://localhost:3000';
+
+  private readonly API_URL = 'https://api-production-1765.up.railway.app';
+  private refreshInFlight: Observable<RefreshResponse> | null = null;
 
   private accessTokenSignal = signal<string | null>(null);
-  private refreshInFlight: Observable<RefreshResponse> | null = null;
 
   public isAuthenticated = computed(() => !!this.accessTokenSignal());
 

@@ -1,4 +1,4 @@
-export interface BreadcrumbItem {
+export type BreadcrumbItem = {
   label: string;
   href?: string;
-}
+};

@@ -1,18 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { FormField } from '@angular/forms/signals';
-
-let nextCheckboxId = 0;
 
 @Component({
   selector: 'app-checkbox',
   imports: [FormField],
   templateUrl: './checkbox.html',
   styleUrl: './checkbox.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class Checkbox {
-  private readonly generatedId = `admin-checkbox-${nextCheckboxId++}`;
+  private static nextCheckboxId = 0;
+  private readonly generatedId = `admin-checkbox-${Checkbox.nextCheckboxId++}`;
 
   readonly id = input<string>('');
   readonly label = input.required<string>();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output, computed } from '@angular/core';
+import { Component, input, output, computed } from '@angular/core';
 import { FormField } from '@angular/forms/signals';
 import { InputType } from './models/input.type';
 
@@ -7,8 +7,6 @@ import { InputType } from './models/input.type';
   imports: [FormField],
   templateUrl: './input.html',
   styleUrl: './input.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class Input {
   id = input.required<string>();

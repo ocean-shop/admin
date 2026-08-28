@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { FormField } from '@angular/forms/signals';
 
 @Component({
@@ -6,8 +6,6 @@ import { FormField } from '@angular/forms/signals';
   imports: [FormField],
   templateUrl: './textarea.html',
   styleUrl: './textarea.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class Textarea {
   id = input.required<string>();

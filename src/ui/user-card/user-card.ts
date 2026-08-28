@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { EntityCard } from '@ui/entity-card/entity-card';
 import { UserCardData } from './models/user-card.model';
 
@@ -7,8 +7,6 @@ import { UserCardData } from './models/user-card.model';
   imports: [EntityCard],
   templateUrl: './user-card.html',
   styleUrl: './user-card.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class UserCard {
   readonly user = input.required<UserCardData>();

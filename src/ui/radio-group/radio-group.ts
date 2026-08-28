@@ -1,13 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { RadioGroupOption } from './models/radio-group-option.model';
 
 @Component({
   selector: 'app-radio-group',
-  imports: [],
   templateUrl: './radio-group.html',
   styleUrl: './radio-group.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class RadioGroup {
   readonly name = input.required<string>();

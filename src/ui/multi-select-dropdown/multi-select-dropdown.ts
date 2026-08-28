@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  HostListener,
-  computed,
-  input,
-  model,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, HostListener, computed, input, model, output, signal } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { DropdownTriggerMode } from '@ui/dropdown/models/dropdown-trigger-mode.type';
@@ -17,11 +8,8 @@ import { MultiSelectOptionVariant } from '@ui/multi-select-dropdown/models/multi
 
 @Component({
   selector: 'app-multi-select-dropdown',
-  imports: [],
   templateUrl: './multi-select-dropdown.html',
   styleUrl: './multi-select-dropdown.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class MultiSelectDropdown implements FormValueControl<string[]> {
   readonly value = model<string[]>([]);

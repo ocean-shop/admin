@@ -1,9 +1,9 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { ToasterService } from '../services/toaster/toaster.service';
 import { AuthService } from '../services/auth/auth.service';
-import { Router } from '@angular/router';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toasterService = inject(ToasterService);
@@ -33,7 +33,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.status >= 400 && error.status < 600) {
         if (!req.url.includes('/refresh') && !req.url.includes('/logout')) {
-          const message = error.error?.message || error.message || 'An unexpected error occurred';
+          const message =
+            error.error?.message || error.message || 'Сталася непередбачувана помилка';
           toasterService.danger(`Error ${error.status}`, message);
         }
       }

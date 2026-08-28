@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  HostListener,
-  computed,
-  input,
-  model,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, HostListener, computed, input, model, output, signal } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
 import { DropdownOption } from './models/dropdown.type';
 import { DropdownTriggerMode } from './models/dropdown-trigger-mode.type';
@@ -15,11 +6,8 @@ import { DropdownVariant } from './models/dropdown-variant.type';
 
 @Component({
   selector: 'app-dropdown',
-  imports: [],
   templateUrl: './dropdown.html',
   styleUrl: './dropdown.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class Dropdown implements FormValueControl<string> {
   readonly value = model<string>('');

@@ -6,6 +6,7 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
+  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: AuthService;
   let httpMock: HttpTestingController;
   let localStorageService: LocalStorageService;
@@ -57,7 +58,7 @@ describe('AuthService', () => {
       expect(removeItemSpy).toHaveBeenCalledWith(key);
     }
 
-    const req = httpMock.expectOne('http://localhost:3000/user/auth/logout');
+    const req = httpMock.expectOne(`${API_URL}/user/auth/logout`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
@@ -68,7 +69,7 @@ describe('AuthService', () => {
 
     expect(() => {
       service.logout();
-      const req = httpMock.expectOne('http://localhost:3000/user/auth/logout');
+      const req = httpMock.expectOne(`${API_URL}/user/auth/logout`);
       req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
     }).not.toThrow();
 
@@ -112,7 +113,7 @@ describe('AuthService', () => {
       secondResult = result;
     });
 
-    const req = httpMock.expectOne('http://localhost:3000/user/auth/refresh');
+    const req = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     req.flush({ accessToken: 'refreshed-token' });
@@ -130,11 +131,11 @@ describe('AuthService', () => {
       },
     });
 
-    const firstReq = httpMock.expectOne('http://localhost:3000/user/auth/refresh');
+    const firstReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
     firstReq.flush('failure', { status: 500, statusText: 'Server Error' });
 
     service.refreshToken().subscribe();
-    const secondReq = httpMock.expectOne('http://localhost:3000/user/auth/refresh');
+    const secondReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
     secondReq.flush({ accessToken: 'new-token' });
 
     expect(service.getAccessToken()).toBe('new-token');
