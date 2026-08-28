@@ -7,12 +7,11 @@ import { ChipVariant } from './models/chip-variant.type';
   styleUrl: './chip.scss',
 })
 export class Chip {
-  readonly label = input.required<string>();
-  readonly removeAriaLabel = input.required<string>();
-  readonly variant = input<ChipVariant>('attribute');
-  readonly disabled = input<boolean>(false);
-
-  readonly remove = output<void>();
+  public readonly label = input.required<string>();
+  public readonly removeAriaLabel = input.required<string>();
+  public readonly variant = input<ChipVariant>('attribute');
+  public readonly disabled = input<boolean>(false);
+  public readonly remove = output<void>();
 
   protected onRemoveClick(): void {
     if (this.disabled()) {

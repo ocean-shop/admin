@@ -10,15 +10,13 @@ import { DropdownVariant } from './models/dropdown-variant.type';
   styleUrl: './dropdown.scss',
 })
 export class Dropdown implements FormValueControl<string> {
-  readonly value = model<string>('');
-
-  label = input<string>();
-  icon = input<string>();
-  options = input.required<DropdownOption[]>();
-  triggerMode = input<DropdownTriggerMode>('hover');
-  variant = input<DropdownVariant>('default');
-
-  optionSelected = output<DropdownOption>();
+  public readonly value = model<string>('');
+  public readonly label = input<string>();
+  public readonly icon = input<string>();
+  public readonly options = input.required<DropdownOption[]>();
+  public readonly triggerMode = input<DropdownTriggerMode>('hover');
+  public readonly variant = input<DropdownVariant>('default');
+  public readonly optionSelected = output<DropdownOption>();
 
   protected readonly isOpen = signal(false);
 

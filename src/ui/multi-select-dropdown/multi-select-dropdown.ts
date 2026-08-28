@@ -12,16 +12,14 @@ import { MultiSelectOptionVariant } from '@ui/multi-select-dropdown/models/multi
   styleUrl: './multi-select-dropdown.scss',
 })
 export class MultiSelectDropdown implements FormValueControl<string[]> {
-  readonly value = model<string[]>([]);
-
-  readonly label = input<string>('Select options');
-  readonly icon = input<string>();
-  readonly options = input.required<(DropdownOption | DropdownTreeOption)[]>();
-  readonly triggerMode = input<DropdownTriggerMode>('click');
-  readonly variant = input<DropdownVariant>('default');
-  readonly optionVariant = input<MultiSelectOptionVariant>('basic');
-
-  readonly optionToggled = output<DropdownOption>();
+  public readonly value = model<string[]>([]);
+  public readonly label = input<string>('Select options');
+  public readonly icon = input<string>();
+  public readonly options = input.required<(DropdownOption | DropdownTreeOption)[]>();
+  public readonly triggerMode = input<DropdownTriggerMode>('click');
+  public readonly variant = input<DropdownVariant>('default');
+  public readonly optionVariant = input<MultiSelectOptionVariant>('basic');
+  public readonly optionToggled = output<DropdownOption>();
 
   protected readonly isOpen = signal(false);
   protected readonly displayOptions = computed<DropdownTreeOption[]>(() =>
@@ -77,6 +75,17 @@ export class MultiSelectDropdown implements FormValueControl<string[]> {
     return this.value().includes(value);
   }
 
+  protected resolveOptionPadding(option: DropdownTreeOption): number {
+    return 16 + option.level * 16;
+  }
+
+  @HostListener('document:click')
+  protected closeMenu(): void {
+    if (this.triggerMode() === 'click') {
+      this.isOpen.set(false);
+    }
+  }
+
   private normalizeOptions(
     options: (DropdownOption | DropdownTreeOption)[],
     optionVariant: MultiSelectOptionVariant,
@@ -94,22 +103,11 @@ export class MultiSelectDropdown implements FormValueControl<string[]> {
     }));
   }
 
-  protected resolveOptionPadding(option: DropdownTreeOption): number {
-    return 16 + option.level * 16;
-  }
-
   private resolveOptionLevel(option: DropdownOption | DropdownTreeOption): number {
     if ('level' in option && typeof option.level === 'number' && option.level >= 0) {
       return option.level;
     }
 
     return 0;
-  }
-
-  @HostListener('document:click')
-  protected closeMenu(): void {
-    if (this.triggerMode() === 'click') {
-      this.isOpen.set(false);
-    }
   }
 }

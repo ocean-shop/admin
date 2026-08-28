@@ -9,7 +9,7 @@ import { UserCardData } from './models/user-card.model';
   styleUrl: './user-card.scss',
 })
 export class UserCard {
-  readonly user = input.required<UserCardData>();
+  public readonly user = input.required<UserCardData>();
   protected readonly entity = computed(() => ({
     id: this.user().id ?? crypto.randomUUID(),
     title: this.user().name,
@@ -18,6 +18,6 @@ export class UserCard {
     badge: this.user().role,
   }));
 
-  readonly edit = output<void>();
-  readonly removed = output<void>();
+  public readonly edit = output<void>();
+  public readonly removed = output<void>();
 }

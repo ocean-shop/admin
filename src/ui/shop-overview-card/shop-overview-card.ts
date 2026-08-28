@@ -7,8 +7,8 @@ import { ShopOverviewCardData } from './models/shop-overview-card.model';
   styleUrl: './shop-overview-card.scss',
 })
 export class ShopOverviewCard {
-  readonly card = input.required<ShopOverviewCardData>();
-  readonly manageStore = output<string>();
+  public readonly card = input.required<ShopOverviewCardData>();
+  public readonly manageStore = output<string>();
 
   protected onManageStore(): void {
     this.manageStore.emit(this.card().shopId);

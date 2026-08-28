@@ -14,26 +14,26 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
   styleUrl: './toaster.scss',
 })
 export class Toaster {
-  private toasterService = inject(ToasterService);
+  public readonly toasts = inject(ToasterService).toasts;
 
-  toasts = this.toasterService.toasts;
-
-  getIcon(type: ToastType): string {
+  public getIcon(type: ToastType): string {
     return TOAST_ICONS[type] ?? DEFAULT_TOAST_ICON;
   }
 
-  getIconFill(type: ToastType): string {
+  public getIconFill(type: ToastType): string {
     return TOAST_ICON_FILLS[type] ?? DEFAULT_TOAST_ICON_FILL;
   }
 
-  close(id: string): void {
+  public close(id: string): void {
     this.toasterService.remove(id);
   }
 
-  handleAction(id: string, action?: () => void): void {
+  public handleAction(id: string, action?: () => void): void {
     if (action) {
       action();
     }
     this.close(id);
   }
+
+  private readonly toasterService = inject(ToasterService);
 }

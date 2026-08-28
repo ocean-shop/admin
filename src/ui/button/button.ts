@@ -8,11 +8,11 @@ import { ButtonVariant } from './models/button-variant.type';
   styleUrl: './button.scss',
 })
 export class Button {
-  readonly label = input.required<string>();
-  readonly icon = input<string>();
-  readonly type = input<ButtonType>('button');
-  readonly disabled = input<boolean>(false);
-  readonly iconLeading = input<boolean>(false);
-  readonly fullWidth = input<boolean>(true);
-  readonly variant = input<ButtonVariant>('primary');
+  public readonly label = input.required<string>();
+  public readonly icon = input<string>();
+  public readonly type = input<ButtonType>('button');
+  public readonly disabled = input<boolean>(false);
+  public readonly iconLeading = input<boolean>(false);
+  public readonly fullWidth = input<boolean>(true);
+  public readonly variant = input<ButtonVariant>('primary');
 }

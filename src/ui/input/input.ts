@@ -9,21 +9,18 @@ import { InputType } from './models/input.type';
   styleUrl: './input.scss',
 })
 export class Input {
-  id = input.required<string>();
-  type = input<InputType>('text');
-  placeholder = input<string>('');
-  label = input<string>('');
-  icon = input<string>('');
-  value = input<string>('');
-  disabled = input<boolean>(false);
-
-  control = input<any>();
-
-  focusEvent = output<FocusEvent>();
-  blurEvent = output<FocusEvent>();
-  valueChange = output<string>();
-
-  errorMessage = computed(() => {
+  public readonly id = input.required<string>();
+  public readonly type = input<InputType>('text');
+  public readonly placeholder = input<string>('');
+  public readonly label = input<string>('');
+  public readonly icon = input<string>('');
+  public readonly value = input<string>('');
+  public readonly disabled = input<boolean>(false);
+  public readonly control = input<any>();
+  public readonly focusEvent = output<FocusEvent>();
+  public readonly blurEvent = output<FocusEvent>();
+  public readonly valueChange = output<string>();
+  public readonly errorMessage = computed(() => {
     const fieldFn = this.control();
     if (!fieldFn) return '';
 

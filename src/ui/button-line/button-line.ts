@@ -7,6 +7,6 @@ import { ButtonType } from '../button/models/button.type';
   styleUrl: './button-line.scss',
 })
 export class ButtonLine {
-  label = input.required<string>();
-  type = input<ButtonType>('button');
+  public readonly label = input.required<string>();
+  public readonly type = input<ButtonType>('button');
 }

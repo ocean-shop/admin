@@ -7,21 +7,20 @@ import { TableCellAlign, TableColumn, TableRowData } from './models/table-column
   styleUrl: './table.scss',
 })
 export class Table {
-  readonly columns = input.required<TableColumn[]>();
-  readonly rows = input.required<TableRowData[]>();
-  readonly loading = input<boolean>(false);
-  readonly loadingText = input<string>('Loading...');
-  readonly emptyText = input<string>('No records found.');
-  readonly rowIdKey = input<string>('id');
-  readonly updateEnabled = input<boolean>(false);
-  readonly updateLabel = input<string>('Update');
-  readonly updateIcon = input<string>('edit');
-  readonly deleteEnabled = input<boolean>(false);
-  readonly deleteLabel = input<string>('Delete');
-  readonly actionsLabel = input<string>('');
-
-  readonly updateRow = output<TableRowData>();
-  readonly deleteRow = output<TableRowData>();
+  public readonly columns = input.required<TableColumn[]>();
+  public readonly rows = input.required<TableRowData[]>();
+  public readonly loading = input<boolean>(false);
+  public readonly loadingText = input<string>('Loading...');
+  public readonly emptyText = input<string>('No records found.');
+  public readonly rowIdKey = input<string>('id');
+  public readonly updateEnabled = input<boolean>(false);
+  public readonly updateLabel = input<string>('Update');
+  public readonly updateIcon = input<string>('edit');
+  public readonly deleteEnabled = input<boolean>(false);
+  public readonly deleteLabel = input<string>('Delete');
+  public readonly actionsLabel = input<string>('');
+  public readonly updateRow = output<TableRowData>();
+  public readonly deleteRow = output<TableRowData>();
 
   protected resolveCellValue(row: TableRowData, column: TableColumn): string {
     const value = row[column.key];

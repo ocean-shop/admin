@@ -9,7 +9,7 @@ import { BreadcrumbItem } from './models/breadcrumb-item.model';
   templateUrl: './breadcrumbs.html',
 })
 export class Breadcrumbs {
-  readonly items = input.required<BreadcrumbItem[]>();
+  public readonly items = input.required<BreadcrumbItem[]>();
   protected readonly separatorIcon = BREADCRUMBS_SEPARATOR_ICON;
   protected readonly breadcrumbs = computed(() => this.items());
 }

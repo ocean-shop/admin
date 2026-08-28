@@ -9,11 +9,10 @@ import { EntityCardData } from './models/entity-card.model';
   standalone: true,
 })
 export class EntityCard {
-  readonly entity = input.required<EntityCardData>();
-  readonly icon = input<string>('person');
-
-  readonly edit = output<void>();
-  readonly removed = output<void>();
+  public readonly entity = input.required<EntityCardData>();
+  public readonly icon = input<string>('person');
+  public readonly edit = output<void>();
+  public readonly removed = output<void>();
 
   protected onEdit(): void {
     this.edit.emit();

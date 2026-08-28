@@ -7,13 +7,12 @@ import { RadioGroupOption } from './models/radio-group-option.model';
   styleUrl: './radio-group.scss',
 })
 export class RadioGroup {
-  readonly name = input.required<string>();
-  readonly label = input<string>('');
-  readonly options = input.required<RadioGroupOption[]>();
-  readonly selectedValue = input<string | number | boolean | null>(null);
-  readonly disabled = input<boolean>(false);
-
-  readonly valueChange = output<string | number | boolean>();
+  public readonly name = input.required<string>();
+  public readonly label = input<string>('');
+  public readonly options = input.required<RadioGroupOption[]>();
+  public readonly selectedValue = input<string | number | boolean | null>(null);
+  public readonly disabled = input<boolean>(false);
+  public readonly valueChange = output<string | number | boolean>();
 
   protected onOptionChange(value: string | number | boolean): void {
     this.valueChange.emit(value);

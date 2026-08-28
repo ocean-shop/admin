@@ -7,15 +7,14 @@ import { SimpleMenuDivider, SimpleMenuEntry, SimpleMenuItem } from './models/sim
   styleUrl: './simple-menu.scss',
 })
 export class SimpleMenu {
-  items = input.required<SimpleMenuEntry[]>();
+  public readonly items = input.required<SimpleMenuEntry[]>();
+  public readonly itemSelected = output<SimpleMenuItem>();
 
-  itemSelected = output<SimpleMenuItem>();
-
-  isDivider(entry: SimpleMenuEntry): entry is SimpleMenuDivider {
+  protected isDivider(entry: SimpleMenuEntry): entry is SimpleMenuDivider {
     return 'type' in entry && entry.type === 'divider';
   }
 
-  selectItem(item: SimpleMenuItem, event: Event) {
+  protected selectItem(item: SimpleMenuItem, event: Event): void {
     event.preventDefault();
     this.itemSelected.emit(item);
   }
