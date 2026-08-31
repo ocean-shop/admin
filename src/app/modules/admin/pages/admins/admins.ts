@@ -10,6 +10,7 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
 import { ShopApiItem, ShopsApiResponse } from '../shops/models/shop.model';
 import { ShopsService } from '../shops/services/shops.service';
 import { Admin, AdminApiItem, AdminsApiResponse, AdminsPagination } from './models/admin.model';
+import { AdminsMappedResponse } from './models/admins-mapped-response.model';
 import { AdminCreatePayload } from './models/admin-payload.model';
 import { AdminModalMode, AdminModalModeEnum } from './models/admin-modal-mode.type';
 import { AdminFormModal } from './components/admin-form-modal/admin-form-modal';
@@ -19,6 +20,7 @@ import {
   ADMINS_CREATE_ICON,
   ADMINS_PAGE_SIZE,
   ADMINS_ROLE_OPTIONS,
+  ADMINS_SHOPS_OPTIONS_PAGE_SIZE,
 } from './constants/admins.constants';
 
 @Component({
@@ -32,8 +34,6 @@ export class Admins implements OnInit {
   private readonly shopsService = inject(ShopsService);
   private readonly toasterService = inject(ToasterService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly SHOPS_OPTIONS_PAGE_SIZE = 100;
-
   protected readonly title = ADMINS_TEXTS.PAGE_TITLE;
   protected readonly createAdminLabel = ADMINS_TEXTS.CREATE_LABEL;
   protected readonly createAdminIcon = ADMINS_CREATE_ICON;
@@ -212,10 +212,7 @@ export class Admins implements OnInit {
       });
   }
 
-  private mapAdminsResponse(response: AdminsApiResponse | AdminApiItem[]): {
-    admins: Admin[];
-    pagination: AdminsPagination;
-  } {
+  private mapAdminsResponse(response: AdminsApiResponse | AdminApiItem[]): AdminsMappedResponse {
     const admins = Array.isArray(response)
       ? response
       : (response.items ?? response.admins ?? response.data ?? []);
@@ -273,7 +270,7 @@ export class Admins implements OnInit {
     this.shopsService
       .getShops({
         page: 1,
-        limit: this.SHOPS_OPTIONS_PAGE_SIZE,
+        limit: ADMINS_SHOPS_OPTIONS_PAGE_SIZE,
       })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -290,7 +287,7 @@ export class Admins implements OnInit {
           const requests = Array.from({ length: totalPages - 1 }, (_, index) =>
             this.shopsService.getShops({
               page: index + 2,
-              limit: this.SHOPS_OPTIONS_PAGE_SIZE,
+              limit: ADMINS_SHOPS_OPTIONS_PAGE_SIZE,
             }),
           );
 

@@ -3,9 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, switchMap } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { extractProductImages } from '../../../../../helpers/product-api-mapping.helper';
+import { ChangeProductImageSortPayload } from '../../../../../pages/products/models/change-product-image-sort-payload.model';
 import { ProductsService } from '../../../../../pages/products/services/products.service';
 import { ProductFormEditorContext } from '../../../models/product-form-editor-context.model';
 import { ProductFormImageItem } from '../../../models/product-form-image-item.model';
+import { ImageSortOffset } from '../models/image-sort-offset.type';
 import { ProductImagesToastTexts } from '../models/product-images-toast-texts.model';
 
 @Injectable()
@@ -145,7 +147,11 @@ export class ProductImagesService {
     return mappedItems.filter((item) => item.imageDataUrl.startsWith('data:image/'));
   }
 
-  private changeImageSort(imageId: string, direction: 'up' | 'down', offset: -1 | 1): void {
+  private changeImageSort(
+    imageId: string,
+    direction: ChangeProductImageSortPayload['direction'],
+    offset: ImageSortOffset,
+  ): void {
     if (!this.isSidebarEnabled() || this.isImageUploadLoading()) {
       return;
     }
@@ -180,7 +186,7 @@ export class ProductImagesService {
   private moveImageByOffset(
     images: ProductFormImageItem[],
     imageId: string,
-    offset: -1 | 1,
+    offset: ImageSortOffset,
   ): ProductFormImageItem[] {
     const normalizedImageId = imageId.trim();
     if (!normalizedImageId) {

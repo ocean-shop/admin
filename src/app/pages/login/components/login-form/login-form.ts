@@ -13,26 +13,26 @@ import { IDENTITY_PATTERN, LOGIN_TEXTS } from '../../constants/login.constants';
   standalone: true,
 })
 export class LoginForm {
-  submitEvent = output<string>();
-  isLoading = input<boolean>(false);
+  public readonly submitEvent = output<string>();
+  public readonly isLoading = input<boolean>(false);
   protected readonly texts = LOGIN_TEXTS.loginForm;
 
-  loginModel = signal<LoginData>({
+  public readonly loginModel = signal<LoginData>({
     identity: '',
   });
 
-  loginForm = form(this.loginModel, (schemaPath) => {
+  public readonly loginForm = form(this.loginModel, (schemaPath) => {
     required(schemaPath.identity, { message: this.texts.requiredMessage });
     pattern(schemaPath.identity, IDENTITY_PATTERN, {
       message: this.texts.invalidMessage,
     });
   });
 
-  isFormValid = computed(() => {
+  public readonly isFormValid = computed(() => {
     return this.loginForm.identity().valid();
   });
 
-  onSubmit() {
+  public onSubmit(): void {
     if (this.isFormValid() && !this.isLoading()) {
       this.submitEvent.emit(this.loginForm.identity().value()!);
     }

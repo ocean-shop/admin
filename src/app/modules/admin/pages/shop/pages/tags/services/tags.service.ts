@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { API_URL } from '@core/constants/api.constant';
 import { CreateTagPayload } from '../models/tag-payload.model';
 import { TagApiItem, TagListQueryParams, TagListResponse } from '../models/tag.model';
 
@@ -9,10 +10,9 @@ import { TagApiItem, TagListQueryParams, TagListResponse } from '../models/tag.m
 })
 export class TagsService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getTags(query: TagListQueryParams): Observable<TagListResponse> {
-    return this.http.get<TagListResponse>(`${this.API_URL}/catalog/tags`, {
+    return this.http.get<TagListResponse>(`${API_URL}/catalog/tags`, {
       withCredentials: true,
       params: {
         page: query.page,
@@ -24,13 +24,13 @@ export class TagsService {
   }
 
   createTag(payload: CreateTagPayload): Observable<TagApiItem> {
-    return this.http.post<TagApiItem>(`${this.API_URL}/catalog/tags`, payload, {
+    return this.http.post<TagApiItem>(`${API_URL}/catalog/tags`, payload, {
       withCredentials: true,
     });
   }
 
   deleteTag(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/catalog/tags/${id}`, {
+    return this.http.delete<void>(`${API_URL}/catalog/tags/${id}`, {
       withCredentials: true,
     });
   }

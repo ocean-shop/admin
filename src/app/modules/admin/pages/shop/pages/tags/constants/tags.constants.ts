@@ -1,3 +1,5 @@
+import { TableColumn } from '@ui/table/models/table-column.model';
+
 export const TAGS_TEXTS = {
   PAGE_TITLE: 'Керування тегами',
   PAGE_DESCRIPTION:
@@ -33,3 +35,7 @@ export const TAGS_TEXTS = {
 export const TAGS_CREATE_ICON = 'add';
 export const TAGS_PAGE_SIZE = 20;
 export const TAGS_NAME_FIELD_ID = 'tag-name';
+export const TAGS_DEFAULT_NAME = 'Untitled tag';
+export const TAGS_TABLE_COLUMNS: TableColumn[] = [
+  { key: 'name', header: TAGS_TEXTS.TABLE_NAME_HEADER },
+];

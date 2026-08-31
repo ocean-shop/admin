@@ -7,3 +7,6 @@ export const SETTINGS_LANGUAGE_OPTIONS: DropdownOption[] = [
 ];
 
 export const DEFAULT_LANGUAGE = 'en';
+
+export const SETTINGS_REQUIRED_LANGUAGE_MESSAGE = "Поле мова є обов'язкове";
+export const SETTINGS_UPDATED_SUCCESS_MESSAGE = 'Налаштування змінено';

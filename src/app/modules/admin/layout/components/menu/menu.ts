@@ -5,7 +5,6 @@ import { filter, map, startWith } from 'rxjs';
 import { AuthService } from '@core/services/auth/auth.service';
 import { LayoutService } from '../../services/layout.service';
 import {
-  ADMIN_HOME_ROUTE,
   ADMIN_PRIMARY_ROUTES,
   ADMIN_MENU_FOOTER_ITEMS,
   ADMIN_MENU_ITEMS,
@@ -24,7 +23,6 @@ export class Menu {
   private readonly authService = inject(AuthService);
 
   protected readonly layoutService = inject(LayoutService);
-  protected readonly adminHomeRoute = ADMIN_HOME_ROUTE;
   protected readonly menuItems = ADMIN_MENU_ITEMS;
   protected readonly menuFooterItems = ADMIN_MENU_FOOTER_ITEMS;
   private readonly primaryRoutes = ADMIN_PRIMARY_ROUTES;

@@ -40,4 +40,4 @@ export const ADMINS_ROLE_OPTIONS: DropdownOption[] = [
 ];
 
 export const ADMINS_IDENTITY_FIELD_ID = 'admin-identity';
-export const ADMINS_SHOPS_FIELD_ID = 'admin-shops';
+export const ADMINS_SHOPS_OPTIONS_PAGE_SIZE = 100;

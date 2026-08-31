@@ -15,6 +15,7 @@ import {
   ADMINS_IDENTITY_PATTERN,
 } from '../../constants/admins.constants';
 import { AdminModalModeEnum } from '../../models/admin-modal-mode.type';
+import { AdminFormModalMode } from '../../models/admin-form-modal-mode.type';
 
 @Component({
   selector: 'app-admin-form-modal',
@@ -25,7 +26,7 @@ import { AdminModalModeEnum } from '../../models/admin-modal-mode.type';
 })
 export class AdminFormModal {
   readonly isOpen = input.required<boolean>();
-  readonly mode = input.required<'create' | 'update'>();
+  readonly mode = input.required<AdminFormModalMode>();
   readonly admin = input<Admin | null>(null);
   readonly roleOptions = input.required<DropdownOption[]>();
   readonly shopOptions = input.required<DropdownOption[]>();

@@ -100,3 +100,10 @@ export const PRODUCT_FORM_DEFAULT_VALUE: ProductFormModel = {
   status: ProductStatus.Draft,
   available: true,
 };
+
+export const PRODUCT_FORM_SEARCH_DEBOUNCE_MS = 300;
+export const PRODUCT_FORM_SEARCH_QUERY_PAGE = 1;
+export const PRODUCT_FORM_SEARCH_QUERY_LIMIT = 20;
+export const PRODUCT_FORM_DEFAULT_VARIATION_ATTRIBUTE_LABEL = 'Атрибут';
+export const PRODUCT_FORM_UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

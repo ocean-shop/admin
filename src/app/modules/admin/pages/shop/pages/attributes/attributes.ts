@@ -15,12 +15,15 @@ import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
-import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { TableRowData } from '@ui/table/models/table-column.model';
 import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import {
   ATTRIBUTES_CREATE_ICON,
+  ATTRIBUTES_DEFAULT_NAME,
+  ATTRIBUTES_DEFAULT_VALUE,
   ATTRIBUTES_PAGE_SIZE,
+  ATTRIBUTES_TABLE_COLUMNS,
   ATTRIBUTES_TEXTS,
 } from './constants/attributes.constants';
 import { AttributeFormModal } from './components/attribute-form-modal/attribute-form-modal';
@@ -53,10 +56,7 @@ export class Attributes implements OnInit {
     { label: this.textData.PAGE_TITLE },
   ]);
   protected readonly pageSize = ATTRIBUTES_PAGE_SIZE;
-  protected readonly tableColumns: TableColumn[] = [
-    { key: 'name', header: ATTRIBUTES_TEXTS.TABLE_NAME_HEADER },
-    { key: 'value', header: ATTRIBUTES_TEXTS.TABLE_VALUE_HEADER },
-  ];
+  protected readonly tableColumns = ATTRIBUTES_TABLE_COLUMNS;
 
   protected readonly shopId = signal<string | null>(null);
   protected readonly currentPage = signal(1);
@@ -286,8 +286,8 @@ export class Attributes implements OnInit {
     return {
       id: attribute.id?.trim() || crypto.randomUUID(),
       shopId: attribute.shopId?.trim() || fallbackShopId,
-      name: attribute.name?.trim() || 'Untitled attribute',
-      value: attribute.value?.trim() || 'No value',
+      name: attribute.name?.trim() || ATTRIBUTES_DEFAULT_NAME,
+      value: attribute.value?.trim() || ATTRIBUTES_DEFAULT_VALUE,
       ...(attribute.createdAt?.trim() ? { createdAt: attribute.createdAt } : {}),
       ...(attribute.updatedAt?.trim() ? { updatedAt: attribute.updatedAt } : {}),
     };

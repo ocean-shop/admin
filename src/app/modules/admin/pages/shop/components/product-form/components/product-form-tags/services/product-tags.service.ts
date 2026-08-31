@@ -4,6 +4,11 @@ import { lastValueFrom } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { SHOP_QUERY_KEYS } from '../../../../../constants/shop-query-keys.constants';
 import {
+  PRODUCT_FORM_SEARCH_DEBOUNCE_MS,
+  PRODUCT_FORM_SEARCH_QUERY_LIMIT,
+  PRODUCT_FORM_SEARCH_QUERY_PAGE,
+} from '../../../constants/product-form.constants';
+import {
   mapTagSearchResults,
   removeAssignedTag,
   upsertAssignedTag,
@@ -13,9 +18,8 @@ import { TagsService } from '../../../../../pages/tags/services/tags.service';
 import { ProductFormAssignedTag } from '../../../models/product-form-assigned-tag.model';
 import { ProductFormEditorContext } from '../../../models/product-form-editor-context.model';
 import { ProductFormTagOption } from '../../../models/product-form-tag-option.model';
+import { ProductToggleTagMutationPayload } from '../models/product-toggle-tag-mutation-payload.model';
 import { ProductTagsToastTexts } from '../models/product-tags-toast-texts.model';
-
-const TAG_SEARCH_DEBOUNCE_MS = 300;
 
 @Injectable()
 export class ProductTagsService {
@@ -26,7 +30,7 @@ export class ProductTagsService {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly toggleTagMutation = injectMutation(() => ({
-    mutationFn: (payload: { productId: string; tagId: string; assign: boolean }) =>
+    mutationFn: (payload: ProductToggleTagMutationPayload) =>
       lastValueFrom(
         this.productsService.toggleTag(payload.productId, {
           tagId: payload.tagId,
@@ -167,7 +171,7 @@ export class ProductTagsService {
 
     this.searchDebounceTimer = setTimeout(() => {
       this.loadTagSearchResults(shopId, searchName);
-    }, TAG_SEARCH_DEBOUNCE_MS);
+    }, PRODUCT_FORM_SEARCH_DEBOUNCE_MS);
   }
 
   private clearSearchDebounce(): void {
@@ -185,7 +189,14 @@ export class ProductTagsService {
       .fetchQuery({
         queryKey: SHOP_QUERY_KEYS.tagsSearch(shopId, name),
         queryFn: () =>
-          lastValueFrom(this.tagsService.getTags({ page: 1, limit: 20, shopId, name })),
+          lastValueFrom(
+            this.tagsService.getTags({
+              page: PRODUCT_FORM_SEARCH_QUERY_PAGE,
+              limit: PRODUCT_FORM_SEARCH_QUERY_LIMIT,
+              shopId,
+              name,
+            }),
+          ),
       })
       .then((response) => {
         if (requestId !== this.searchRequestId) {

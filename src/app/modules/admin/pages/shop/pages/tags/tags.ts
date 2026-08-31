@@ -15,10 +15,16 @@ import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
-import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { TableRowData } from '@ui/table/models/table-column.model';
 import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { TAGS_CREATE_ICON, TAGS_PAGE_SIZE, TAGS_TEXTS } from './constants/tags.constants';
+import {
+  TAGS_CREATE_ICON,
+  TAGS_DEFAULT_NAME,
+  TAGS_PAGE_SIZE,
+  TAGS_TABLE_COLUMNS,
+  TAGS_TEXTS,
+} from './constants/tags.constants';
 import { TagFormModal } from './components/tag-form-modal/tag-form-modal';
 import { TagModalMode, TagModalModeEnum } from './models/tag-modal-mode.type';
 import { CreateTagPayload, TagFormSubmitPayload } from './models/tag-payload.model';
@@ -46,9 +52,7 @@ export class Tags implements OnInit {
     { label: this.textData.PAGE_TITLE },
   ]);
   protected readonly pageSize = TAGS_PAGE_SIZE;
-  protected readonly tableColumns: TableColumn[] = [
-    { key: 'name', header: TAGS_TEXTS.TABLE_NAME_HEADER },
-  ];
+  protected readonly tableColumns = TAGS_TABLE_COLUMNS;
 
   protected readonly shopId = signal<string | null>(null);
   protected readonly currentPage = signal(1);
@@ -264,7 +268,7 @@ export class Tags implements OnInit {
     return {
       id: tag.id?.trim() || crypto.randomUUID(),
       shopId: tag.shopId?.trim() || fallbackShopId,
-      name: tag.name?.trim() || 'Untitled tag',
+      name: tag.name?.trim() || TAGS_DEFAULT_NAME,
       ...(tag.createdAt?.trim() ? { createdAt: tag.createdAt } : {}),
       ...(tag.updatedAt?.trim() ? { updatedAt: tag.updatedAt } : {}),
     };

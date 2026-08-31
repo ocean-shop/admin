@@ -14,6 +14,7 @@ import { ProductsService } from '../../../../../pages/products/services/products
 import { ProductFormCategoryNode } from '../../../models/product-form-category-node.model';
 import { ProductFormCategoryToggleEvent } from '../../../models/product-form-category-toggle-event.model';
 import { ProductFormEditorContext } from '../../../models/product-form-editor-context.model';
+import { ProductToggleCategoryMutationPayload } from '../models/product-toggle-category-mutation-payload.model';
 import { ProductCategoriesToastTexts } from '../models/product-categories-toast-texts.model';
 
 @Injectable()
@@ -24,7 +25,7 @@ export class ProductCategoriesService {
   private readonly toasterService = inject(ToasterService);
 
   private readonly toggleCategoryMutation = injectMutation(() => ({
-    mutationFn: (payload: { productId: string; categoryId: string; assign: boolean }) =>
+    mutationFn: (payload: ProductToggleCategoryMutationPayload) =>
       lastValueFrom(
         this.productsService.toggleCategory(payload.productId, {
           categoryId: payload.categoryId,

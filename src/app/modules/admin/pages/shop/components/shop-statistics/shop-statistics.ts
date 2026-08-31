@@ -16,15 +16,8 @@ import {
   SHOP_STATISTICS_SERIES_COLORS,
   SHOP_STATISTICS_TEXTS,
 } from '../../constants/shop-statistics.constants';
-import { MonthlyStatistic, ShopStatistic } from '../../models/shop-statistic.model';
+import { ChartData, MonthlyStatistic, ShopStatistic } from '../../models/shop-statistic.model';
 import { ShopStatisticService } from '../../services/shop-statistic.service';
-
-type ChartData = {
-  categories: string[];
-  orders: number[];
-  products: number[];
-  users: number[];
-};
 
 @Component({
   selector: 'app-shop-statistics',

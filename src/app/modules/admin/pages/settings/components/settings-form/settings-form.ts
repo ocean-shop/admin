@@ -7,7 +7,12 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
 import { AuthService } from '@core/services/auth/auth.service';
 import { SettingsData, SettingsUpdateData } from '../../models/settings.model';
 import { SettingsService } from '../../services/settings.service';
-import { DEFAULT_LANGUAGE, SETTINGS_LANGUAGE_OPTIONS } from '../../constants/settings.constants';
+import {
+  DEFAULT_LANGUAGE,
+  SETTINGS_LANGUAGE_OPTIONS,
+  SETTINGS_REQUIRED_LANGUAGE_MESSAGE,
+  SETTINGS_UPDATED_SUCCESS_MESSAGE,
+} from '../../constants/settings.constants';
 
 @Component({
   selector: 'app-settings-form',
@@ -31,7 +36,7 @@ export class SettingsForm implements OnInit {
   private readonly userId = signal<string | null>('');
 
   protected readonly settingsForm = form(this.settingsModel, (schemaPath) => {
-    required(schemaPath.language, { message: "Поле мова є обов'язкове" });
+    required(schemaPath.language, { message: SETTINGS_REQUIRED_LANGUAGE_MESSAGE });
   });
 
   protected readonly isFormValid = computed(() => this.settingsForm.language().valid());
@@ -58,7 +63,7 @@ export class SettingsForm implements OnInit {
         next: (settings) => {
           this.isLoading.set(false);
           this.applyLanguage(settings?.language);
-          this.toasterService.success('Налаштування змінено');
+          this.toasterService.success(SETTINGS_UPDATED_SUCCESS_MESSAGE);
         },
       });
   }
