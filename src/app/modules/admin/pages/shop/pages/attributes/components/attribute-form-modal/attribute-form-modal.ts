@@ -74,6 +74,6 @@ export class AttributeFormModal {
   }
 
   private resetForm(): void {
-    this.attributeFormModel.set({ name: '', value: '' });
+    this.attributeForm().reset({ name: '', value: '' });
   }
 }

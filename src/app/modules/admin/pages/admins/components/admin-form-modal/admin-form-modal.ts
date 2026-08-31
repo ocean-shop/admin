@@ -75,6 +75,13 @@ export class AdminFormModal {
         this.resetAdminForm();
       }
     });
+
+    effect(() => {
+      const isOpen = this.isOpen();
+      if (!isOpen) {
+        this.resetAdminForm();
+      }
+    });
   }
 
   protected onClose(): void {
@@ -141,7 +148,7 @@ export class AdminFormModal {
   }
 
   private resetAdminForm(): void {
-    this.adminFormModel.set({
+    this.adminForm().reset({
       identity: '',
       role: ADMINS_DEFAULT_ROLE_VALUE,
       shopIds: [],

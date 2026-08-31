@@ -74,6 +74,13 @@ export class ShopsFormModal {
         this.resetShopForm();
       }
     });
+
+    effect(() => {
+      const isOpen = this.isOpen();
+      if (!isOpen) {
+        this.resetShopForm();
+      }
+    });
   }
 
   protected onClose(): void {
@@ -122,7 +129,7 @@ export class ShopsFormModal {
   }
 
   private resetShopForm(): void {
-    this.shopFormModel.set({
+    this.shopForm().reset({
       name: '',
       description: '',
       url: '',

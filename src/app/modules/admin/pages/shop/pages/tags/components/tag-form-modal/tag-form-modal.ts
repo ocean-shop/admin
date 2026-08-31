@@ -62,6 +62,6 @@ export class TagFormModal {
   }
 
   private resetForm(): void {
-    this.tagFormModel.set({ name: '' });
+    this.tagForm().reset({ name: '' });
   }
 }
