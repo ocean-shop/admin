@@ -246,7 +246,7 @@ export class Shops implements OnInit {
 
   private resolveUpdatedBadge(created: string): string {
     return created && created !== SHOPS_TEXTS.DEFAULT_UPDATED
-      ? `Created: ${new Date(created).toISOString().split('T')[0]}`
+      ? `Створено: ${new Date(created).toISOString().split('T')[0]}`
       : '';
   }
 }

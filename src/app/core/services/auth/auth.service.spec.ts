@@ -1,7 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AUTH_STORAGE_KEYS, SESSION_HINT_KEY } from '../../constants/auth.constant';
+import {
+  ACCESS_TOKEN_KEY,
+  AUTH_STORAGE_KEYS,
+  SESSION_HINT_KEY,
+} from '../../constants/auth.constant';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AuthService } from './auth.service';
 
@@ -98,6 +102,7 @@ describe('AuthService', () => {
     service.handleAuthSuccess('token-value');
 
     expect(service.getAccessToken()).toBe('token-value');
+    expect(localStorageService.getItem(ACCESS_TOKEN_KEY)).toBe('token-value');
     expect(localStorageService.getItem(SESSION_HINT_KEY)).toBe(true);
     expect(service.hasSessionHint()).toBe(true);
   });

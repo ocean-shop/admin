@@ -4,7 +4,11 @@ import { Observable, catchError, finalize, of, shareReplay, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { RefreshResponse } from '@core/models/auth.model';
 import { LocalStorageService } from '../local-storage/local-storage.service';
-import { AUTH_STORAGE_KEYS, SESSION_HINT_KEY } from '../../constants/auth.constant';
+import {
+  ACCESS_TOKEN_KEY,
+  AUTH_STORAGE_KEYS,
+  SESSION_HINT_KEY,
+} from '../../constants/auth.constant';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +20,7 @@ export class AuthService {
   private readonly API_URL = 'https://api-production-1765.up.railway.app';
   private refreshInFlight: Observable<RefreshResponse> | null = null;
 
-  private accessTokenSignal = signal<string | null>(null);
+  private accessTokenSignal = signal<string | null>(this.getStoredAccessToken());
 
   public isAuthenticated = computed(() => !!this.accessTokenSignal());
 
@@ -44,6 +48,7 @@ export class AuthService {
 
   handleAuthSuccess(token: string): void {
     this.setAccessToken(token);
+    this.localStorageService.setItem(ACCESS_TOKEN_KEY, token);
     this.localStorageService.setItem(SESSION_HINT_KEY, true);
   }
 
@@ -56,6 +61,10 @@ export class AuthService {
     for (const key of AUTH_STORAGE_KEYS) {
       this.localStorageService.removeItem(key);
     }
+  }
+
+  private getStoredAccessToken(): string | null {
+    return this.localStorageService.getItem<string>(ACCESS_TOKEN_KEY);
   }
 
   refreshToken(): Observable<RefreshResponse> {
