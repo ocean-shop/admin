@@ -4,6 +4,7 @@ import { PRODUCTS_CREATE_TEXTS } from '../../../../pages/products-create/constan
 import { ProductFormImageItem } from '../../models/product-form-image-item.model';
 import { ProductImagesService } from './services/product-images.service';
 import { ProductFormImages } from './product-form-images';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
 
 describe('ProductFormImages', () => {
   let fixture: ComponentFixture<ProductFormImages>;
@@ -26,7 +27,7 @@ describe('ProductFormImages', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProductFormImages],
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(), ...provideTestQueryClient()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductFormImages);

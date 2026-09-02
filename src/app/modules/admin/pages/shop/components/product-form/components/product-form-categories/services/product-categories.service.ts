@@ -114,6 +114,7 @@ export class ProductCategoriesService {
       { productId, categoryId, assign: event.checked },
       {
         onSuccess: () => {
+          this.invalidateProductQueries(productId);
           this.toasterService.success(
             event.checked
               ? this.getToastTexts().CATEGORY_ASSIGN_SUCCESS_TITLE
@@ -142,6 +143,21 @@ export class ProductCategoriesService {
 
   private getProductId(): string | null {
     return this.requireContext().getProductId()?.trim() || null;
+  }
+
+  private invalidateProductQueries(productId: string): void {
+    this.queryClient.invalidateQueries({
+      queryKey: SHOP_QUERY_KEYS.productById(productId),
+    });
+
+    const shopId = this.getShopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.invalidateQueries({
+      queryKey: ['shop', shopId, 'products'],
+    });
   }
 
   private isSidebarEnabled(): boolean {

@@ -32,7 +32,7 @@ import {
   AttributeFormSubmitPayload,
   CreateAttributePayload,
 } from './models/attribute-payload.model';
-import { Attribute, AttributeApiItem } from './models/attribute.model';
+import { Attribute, AttributeApiItem, AttributeListResponse } from './models/attribute.model';
 import { AttributesService } from './services/attributes.service';
 
 @Component({
@@ -95,9 +95,7 @@ export class Attributes implements OnInit {
     mutationFn: (id: string) => lastValueFrom(this.attributesService.deleteAttribute(id)),
   }));
 
-  protected readonly isLoading = computed(
-    () => this.attributesQuery.isPending() || this.attributesQuery.isFetching(),
-  );
+  protected readonly isLoading = computed(() => this.attributesQuery.isPending());
   protected readonly hasError = computed(() => this.attributesQuery.isError());
   protected readonly isActionLoading = computed(
     () => this.createAttributeMutation.isPending() || this.deleteAttributeMutation.isPending(),
@@ -216,11 +214,14 @@ export class Attributes implements OnInit {
       value: payload.value,
     };
 
-    this.executeMutation(
-      this.createAttributeMutation,
-      createPayload,
-      ATTRIBUTES_TEXTS.CREATE_SUCCESS_TITLE,
-    );
+    this.createAttributeMutation.mutate(createPayload, {
+      onSuccess: (createdAttribute) => {
+        this.toasterService.success(ATTRIBUTES_TEXTS.CREATE_SUCCESS_TITLE);
+        this.closeModal();
+        this.insertCreatedAttribute(createdAttribute);
+        this.refetchAttributesInBackground();
+      },
+    });
   }
 
   protected onConfirmDelete(): void {
@@ -229,11 +230,15 @@ export class Attributes implements OnInit {
       return;
     }
 
-    this.executeMutation(
-      this.deleteAttributeMutation,
-      selectedAttribute.id,
-      ATTRIBUTES_TEXTS.DELETE_SUCCESS_TITLE,
-    );
+    this.deleteAttributeMutation.mutate(selectedAttribute.id, {
+      onSuccess: () => {
+        this.toasterService.success(ATTRIBUTES_TEXTS.DELETE_SUCCESS_TITLE);
+        this.closeModal();
+        this.removeDeletedAttribute(selectedAttribute.id);
+        this.adjustPageAfterDelete();
+        this.refetchAttributesInBackground();
+      },
+    });
   }
 
   private watchShopId(): void {
@@ -252,21 +257,7 @@ export class Attributes implements OnInit {
       });
   }
 
-  private executeMutation<T>(
-    mutation: { mutate: (payload: T, options?: { onSuccess?: () => void }) => void },
-    payload: T,
-    successTitle: string,
-  ): void {
-    mutation.mutate(payload, {
-      onSuccess: () => {
-        this.toasterService.success(successTitle);
-        this.closeModal();
-        this.invalidateAttributes();
-      },
-    });
-  }
-
-  private invalidateAttributes(): void {
+  private refetchAttributesInBackground(): void {
     const shopId = this.shopId();
     if (!shopId) {
       return;
@@ -275,6 +266,80 @@ export class Attributes implements OnInit {
     this.queryClient.invalidateQueries({
       queryKey: ['shop', shopId, 'attributes'],
     });
+  }
+
+  private insertCreatedAttribute(createdAttribute: AttributeApiItem): void {
+    const shopId = this.shopId();
+    if (!shopId) {
+      return;
+    }
+
+    const normalizedSearchName = this.searchName().trim().toLowerCase();
+    const mappedAttribute = this.mapAttribute(createdAttribute, shopId);
+    const matchesSearch =
+      !normalizedSearchName || mappedAttribute.name.toLowerCase().includes(normalizedSearchName);
+    if (!matchesSearch) {
+      return;
+    }
+
+    this.queryClient.setQueryData<AttributeListResponse>(
+      this.resolveCurrentQueryKey(shopId),
+      (currentData) => {
+        if (!currentData) {
+          return currentData;
+        }
+
+        const nextItems = [mappedAttribute, ...currentData.items].slice(0, currentData.limit);
+        const nextTotal = currentData.total + 1;
+        return {
+          ...currentData,
+          items: nextItems,
+          total: nextTotal,
+          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
+        };
+      },
+    );
+  }
+
+  private removeDeletedAttribute(attributeId: string): void {
+    const shopId = this.shopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.setQueryData<AttributeListResponse>(
+      this.resolveCurrentQueryKey(shopId),
+      (currentData) => {
+        if (!currentData) {
+          return currentData;
+        }
+
+        const nextItems = currentData.items.filter((attribute) => attribute.id !== attributeId);
+        if (nextItems.length === currentData.items.length) {
+          return currentData;
+        }
+
+        const nextTotal = Math.max(0, currentData.total - 1);
+        return {
+          ...currentData,
+          items: nextItems,
+          total: nextTotal,
+          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
+        };
+      },
+    );
+  }
+
+  private adjustPageAfterDelete(): void {
+    if (this.currentPage() <= this.totalPages()) {
+      return;
+    }
+
+    this.currentPage.set(this.totalPages());
+  }
+
+  private resolveCurrentQueryKey(shopId: string) {
+    return SHOP_QUERY_KEYS.attributes(shopId, this.currentPage(), this.pageSize, this.searchName());
   }
 
   private closeModal(): void {

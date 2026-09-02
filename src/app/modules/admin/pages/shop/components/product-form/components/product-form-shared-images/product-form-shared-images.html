@@ -22,6 +22,7 @@
 </button>
 
 <div class="product-form-images-list">
+  <p class="product-form-images-list-sub">{{imageSubTitle()}}</p>
   @if (!images().length) {
   <p class="product-form-images-empty">{{ emptyStateText() }}</p>
   } @else { @for (image of images(); track image.id; let index = $index) {

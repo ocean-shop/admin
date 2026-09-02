@@ -7,6 +7,7 @@ import { ProductFormEditorContext } from '../../../models/product-form-editor-co
 import { ProductFormImageItem } from '../../../models/product-form-image-item.model';
 import { ProductImagesToastTexts } from '../models/product-images-toast-texts.model';
 import { ProductImagesService } from './product-images.service';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
 
 const flushPromises = async (): Promise<void> => {
   await Promise.resolve();
@@ -61,6 +62,7 @@ describe('ProductImagesService', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
+        ...provideTestQueryClient(),
         ProductImagesService,
         { provide: ProductsService, useValue: mockProductsService },
         { provide: ToasterService, useValue: mockToasterService },

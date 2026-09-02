@@ -1,11 +1,11 @@
 @reference "../../../../../../../styles.scss";
 
 .orders-page {
-  @apply ml-[50px] min-h-screen;
+  @apply min-h-screen;
 }
 
 .orders-container {
-  @apply max-w-[1440px] mx-auto p-8 flex flex-col gap-6;
+  @apply max-w-[1440px] mx-auto py-8 lg:px-8 flex flex-col gap-6;
 }
 
 .orders-header {

@@ -39,6 +39,7 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   TAGS_SEARCH_EMPTY: 'Теги не знайдено.',
   TAGS_ASSIGNED_EMPTY: 'Ще немає призначених тегів.',
   IMAGES_TITLE: 'Медіа та файли',
+  IMAGES_SUBTITLE: 'Перше зображення буде головним',
   IMAGES_UPLOAD_LABEL: 'Завантажити',
   IMAGES_UPLOAD_LOADING_LABEL: 'Завантаження...',
   IMAGES_DROPZONE_HINT: 'Перетягніть зображення сюди або натисніть для вибору',

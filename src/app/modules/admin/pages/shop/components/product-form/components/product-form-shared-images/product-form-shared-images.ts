@@ -11,6 +11,7 @@ export class ProductFormSharedImages {
   readonly images = input<ProductFormImageListItem[]>([]);
   readonly dropzoneHint = input.required<string>();
   readonly emptyStateText = input.required<string>();
+  readonly imageSubTitle = input.required<string>();
   readonly allowDrop = input<boolean>(false);
   readonly compactDropzone = input<boolean>(false);
 

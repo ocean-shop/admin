@@ -28,7 +28,7 @@ import {
 import { TagFormModal } from './components/tag-form-modal/tag-form-modal';
 import { TagModalMode, TagModalModeEnum } from './models/tag-modal-mode.type';
 import { CreateTagPayload, TagFormSubmitPayload } from './models/tag-payload.model';
-import { Tag, TagApiItem } from './models/tag.model';
+import { Tag, TagApiItem, TagListResponse } from './models/tag.model';
 import { TagsService } from './services/tags.service';
 
 @Component({
@@ -90,9 +90,7 @@ export class Tags implements OnInit {
     mutationFn: (id: string) => lastValueFrom(this.tagsService.deleteTag(id)),
   }));
 
-  protected readonly isLoading = computed(
-    () => this.tagsQuery.isPending() || this.tagsQuery.isFetching(),
-  );
+  protected readonly isLoading = computed(() => this.tagsQuery.isPending());
   protected readonly hasError = computed(() => this.tagsQuery.isError());
   protected readonly isActionLoading = computed(
     () => this.createTagMutation.isPending() || this.deleteTagMutation.isPending(),
@@ -206,7 +204,14 @@ export class Tags implements OnInit {
       name: payload.name,
     };
 
-    this.executeMutation(this.createTagMutation, createPayload, TAGS_TEXTS.CREATE_SUCCESS_TITLE);
+    this.createTagMutation.mutate(createPayload, {
+      onSuccess: (createdTag) => {
+        this.toasterService.success(TAGS_TEXTS.CREATE_SUCCESS_TITLE);
+        this.closeModal();
+        this.insertCreatedTag(createdTag);
+        this.refetchTagsInBackground();
+      },
+    });
   }
 
   protected onConfirmDelete(): void {
@@ -215,7 +220,15 @@ export class Tags implements OnInit {
       return;
     }
 
-    this.executeMutation(this.deleteTagMutation, selectedTag.id, TAGS_TEXTS.DELETE_SUCCESS_TITLE);
+    this.deleteTagMutation.mutate(selectedTag.id, {
+      onSuccess: () => {
+        this.toasterService.success(TAGS_TEXTS.DELETE_SUCCESS_TITLE);
+        this.closeModal();
+        this.removeDeletedTag(selectedTag.id);
+        this.adjustPageAfterDelete();
+        this.refetchTagsInBackground();
+      },
+    });
   }
 
   private watchShopId(): void {
@@ -234,21 +247,7 @@ export class Tags implements OnInit {
       });
   }
 
-  private executeMutation<T>(
-    mutation: { mutate: (payload: T, options?: { onSuccess?: () => void }) => void },
-    payload: T,
-    successTitle: string,
-  ): void {
-    mutation.mutate(payload, {
-      onSuccess: () => {
-        this.toasterService.success(successTitle);
-        this.closeModal();
-        this.invalidateTags();
-      },
-    });
-  }
-
-  private invalidateTags(): void {
+  private refetchTagsInBackground(): void {
     const shopId = this.shopId();
     if (!shopId) {
       return;
@@ -257,6 +256,80 @@ export class Tags implements OnInit {
     this.queryClient.invalidateQueries({
       queryKey: ['shop', shopId, 'tags'],
     });
+  }
+
+  private insertCreatedTag(createdTag: TagApiItem): void {
+    const shopId = this.shopId();
+    if (!shopId) {
+      return;
+    }
+
+    const normalizedSearchName = this.searchName().trim().toLowerCase();
+    const mappedTag = this.mapTag(createdTag, shopId);
+    const matchesSearch =
+      !normalizedSearchName || mappedTag.name.toLowerCase().includes(normalizedSearchName);
+    if (!matchesSearch) {
+      return;
+    }
+
+    this.queryClient.setQueryData<TagListResponse>(
+      this.resolveCurrentQueryKey(shopId),
+      (currentData) => {
+        if (!currentData) {
+          return currentData;
+        }
+
+        const nextItems = [mappedTag, ...currentData.items].slice(0, currentData.limit);
+        const nextTotal = currentData.total + 1;
+        return {
+          ...currentData,
+          items: nextItems,
+          total: nextTotal,
+          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
+        };
+      },
+    );
+  }
+
+  private removeDeletedTag(tagId: string): void {
+    const shopId = this.shopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.setQueryData<TagListResponse>(
+      this.resolveCurrentQueryKey(shopId),
+      (currentData) => {
+        if (!currentData) {
+          return currentData;
+        }
+
+        const nextItems = currentData.items.filter((tag) => tag.id !== tagId);
+        if (nextItems.length === currentData.items.length) {
+          return currentData;
+        }
+
+        const nextTotal = Math.max(0, currentData.total - 1);
+        return {
+          ...currentData,
+          items: nextItems,
+          total: nextTotal,
+          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
+        };
+      },
+    );
+  }
+
+  private adjustPageAfterDelete(): void {
+    if (this.currentPage() <= this.totalPages()) {
+      return;
+    }
+
+    this.currentPage.set(this.totalPages());
+  }
+
+  private resolveCurrentQueryKey(shopId: string) {
+    return SHOP_QUERY_KEYS.tags(shopId, this.currentPage(), this.pageSize, this.searchName());
   }
 
   private closeModal(): void {

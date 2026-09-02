@@ -8,10 +8,11 @@
         <p class="products-description">{{ textData.PAGE_DESCRIPTION }}</p>
       </div>
       <app-button
+        class="create-action-button"
         [label]="textData.CREATE_LABEL"
         [icon]="createProductIcon"
         [iconLeading]="true"
-        [fullWidth]="false"
+        [fullWidth]="true"
         [disabled]="!isShopContextReady()"
         variant="create"
         type="button"

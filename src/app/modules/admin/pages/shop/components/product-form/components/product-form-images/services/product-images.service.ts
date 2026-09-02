@@ -1,7 +1,9 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { injectQueryClient } from '@tanstack/angular-query-experimental';
 import { finalize, switchMap } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import { SHOP_QUERY_KEYS } from '../../../../../constants/shop-query-keys.constants';
 import { extractProductImages } from '../../../../../helpers/product-api-mapping.helper';
 import { ChangeProductImageSortPayload } from '../../../../../pages/products/models/change-product-image-sort-payload.model';
 import { ProductsService } from '../../../../../pages/products/services/products.service';
@@ -13,6 +15,7 @@ import { ProductImagesToastTexts } from '../models/product-images-toast-texts.mo
 @Injectable()
 export class ProductImagesService {
   private readonly productsService = inject(ProductsService);
+  private readonly queryClient = injectQueryClient();
   private readonly toasterService = inject(ToasterService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -74,6 +77,7 @@ export class ProductImagesService {
       )
       .subscribe({
         next: () => {
+          this.invalidateProductQueries();
           this.images.update((currentImages) =>
             currentImages.filter((image) => image.id !== normalizedImageId),
           );
@@ -114,6 +118,7 @@ export class ProductImagesService {
       )
       .subscribe({
         next: (product) => {
+          this.invalidateProductQueries();
           this.images.set(extractProductImages(product));
           this.toasterService.success(this.getToastTexts().IMAGES_ASSIGN_SUCCESS_TITLE);
         },
@@ -170,6 +175,7 @@ export class ProductImagesService {
       )
       .subscribe({
         next: () => {
+          this.invalidateProductQueries();
           this.images.update((currentImages) =>
             this.moveImageByOffset(currentImages, normalizedImageId, offset),
           );
@@ -224,6 +230,30 @@ export class ProductImagesService {
     const randomPart = Math.random().toString(36).slice(2, 8);
     const namePart = file.name.trim().replace(/\s+/g, '-').toLowerCase() || 'image';
     return `${namePart}-${Date.now()}-${index}-${randomPart}`;
+  }
+
+  private invalidateProductQueries(): void {
+    const productId = this.getProductId();
+    if (!productId) {
+      return;
+    }
+
+    this.queryClient.invalidateQueries({
+      queryKey: SHOP_QUERY_KEYS.productById(productId),
+    });
+
+    const shopId = this.getShopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.invalidateQueries({
+      queryKey: ['shop', shopId, 'products'],
+    });
+  }
+
+  private getShopId(): string | null {
+    return this.requireContext().getShopId()?.trim() || null;
   }
 
   private getProductId(): string | null {

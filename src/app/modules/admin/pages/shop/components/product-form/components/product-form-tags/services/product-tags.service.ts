@@ -100,6 +100,7 @@ export class ProductTagsService {
       { productId, tagId: normalizedTagId, assign: true },
       {
         onSuccess: () => {
+          this.invalidateProductQueries(productId);
           this.assignedTags.update((currentValue) =>
             upsertAssignedTag(currentValue, selectedOption),
           );
@@ -140,6 +141,7 @@ export class ProductTagsService {
       { productId, tagId: normalizedTagId, assign: false },
       {
         onSuccess: () => {
+          this.invalidateProductQueries(productId);
           this.assignedTags.update((currentValue) =>
             removeAssignedTag(currentValue, normalizedTagId),
           );
@@ -225,6 +227,21 @@ export class ProductTagsService {
 
   private getProductId(): string | null {
     return this.requireContext().getProductId()?.trim() || null;
+  }
+
+  private invalidateProductQueries(productId: string): void {
+    this.queryClient.invalidateQueries({
+      queryKey: SHOP_QUERY_KEYS.productById(productId),
+    });
+
+    const shopId = this.getShopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.invalidateQueries({
+      queryKey: ['shop', shopId, 'products'],
+    });
   }
 
   private isSidebarEnabled(): boolean {

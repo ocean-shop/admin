@@ -305,6 +305,7 @@ export class ProductVariationsService {
       { productId, variation: targetVariation },
       {
         onSuccess: (product) => {
+          this.invalidateProductQueries(productId);
           const savedVariation = this.findSavedVariation(product.variations ?? [], targetVariation);
           const persistedId =
             typeof savedVariation === 'string' ? savedVariation : savedVariation?.id;
@@ -693,6 +694,21 @@ export class ProductVariationsService {
 
   private getProductId(): string | null {
     return this.requireContext().getProductId()?.trim() || null;
+  }
+
+  private invalidateProductQueries(productId: string): void {
+    this.queryClient.invalidateQueries({
+      queryKey: SHOP_QUERY_KEYS.productById(productId),
+    });
+
+    const shopId = this.getShopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.invalidateQueries({
+      queryKey: ['shop', shopId, 'products'],
+    });
   }
 
   private isSidebarEnabled(): boolean {

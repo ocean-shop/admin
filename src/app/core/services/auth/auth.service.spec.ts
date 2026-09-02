@@ -145,4 +145,42 @@ describe('AuthService', () => {
 
     expect(service.getAccessToken()).toBe('new-token');
   });
+
+  it('syncs access token state from storage events', () => {
+    service.setAccessToken('initial-token');
+
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: ACCESS_TOKEN_KEY,
+        newValue: JSON.stringify('token-from-another-tab'),
+      }),
+    );
+
+    expect(service.getAccessToken()).toBe('token-from-another-tab');
+
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: ACCESS_TOKEN_KEY,
+        newValue: null,
+      }),
+    );
+
+    expect(service.getAccessToken()).toBeNull();
+  });
+
+  it('ignores refresh response when logout clears session mid-flight', () => {
+    service.handleAuthSuccess('initial-token');
+
+    service.refreshToken().subscribe();
+    const refreshReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
+
+    service.logout();
+    const logoutReq = httpMock.expectOne(`${API_URL}/user/auth/logout`);
+    logoutReq.flush({});
+
+    refreshReq.flush({ accessToken: 'late-token' });
+
+    expect(service.getAccessToken()).toBeNull();
+    expect(service.hasSessionHint()).toBe(false);
+  });
 });

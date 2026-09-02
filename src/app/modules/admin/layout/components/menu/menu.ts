@@ -18,6 +18,7 @@ import { MenuFooterItem } from '../../models/menu.model';
   styleUrl: './menu.scss',
 })
 export class Menu {
+  private readonly compactSidebarBreakpoint = 1024;
   private readonly shopRootRoutePattern = /^\/admin\/shop\/[^/]+$/;
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
@@ -50,6 +51,8 @@ export class Menu {
   });
 
   protected onFooterItemClick(item: MenuFooterItem): void {
+    this.closeSidebarOnCompactScreens();
+
     if (item.value === 'logout') {
       this.authService.logout();
       this.router.navigate(['/login']);
@@ -65,6 +68,10 @@ export class Menu {
     return this.shopRootRoutePattern.test(route);
   }
 
+  protected onMenuItemClick(): void {
+    this.closeSidebarOnCompactScreens();
+  }
+
   private normalizeUrl(url: string): string {
     return url.split('?')[0].split('#')[0];
   }
@@ -72,5 +79,15 @@ export class Menu {
   private extractShopIdFromUrl(url: string): string | null {
     const match = url.match(/\/admin\/shop\/([^/]+)/);
     return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  private closeSidebarOnCompactScreens(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (window.innerWidth < this.compactSidebarBreakpoint) {
+      this.layoutService.setSidebarState(false);
+    }
   }
 }

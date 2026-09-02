@@ -12,8 +12,8 @@
         [disabled]="!isShopContextReady() || isActionLoading()"
         (click)="onCreateRootCategory()"
       >
-        <span class="material-symbols-outlined">{{ createIcon }}</span>
-        {{ textData.CREATE_ROOT_LABEL }}
+        <span class="material-symbols-outlined create-root-button-icon">{{ createIcon }}</span>
+        <span class="create-root-button-label">{{ textData.CREATE_ROOT_LABEL }}</span>
       </button>
     </header>
 

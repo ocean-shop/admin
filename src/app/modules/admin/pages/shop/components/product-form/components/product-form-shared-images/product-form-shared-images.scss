@@ -28,6 +28,10 @@
   @apply flex flex-col gap-2;
 }
 
+.product-form-images-list-sub {
+  @apply text-sm;
+}
+
 .product-form-images-empty {
   @apply rounded-sm border border-surface-dim bg-surface p-3 text-sm text-on-surface-variant;
 }

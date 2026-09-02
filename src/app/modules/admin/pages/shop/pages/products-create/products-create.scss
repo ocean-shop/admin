@@ -1,15 +1,23 @@
 @reference "../../../../../../../styles.scss";
 
 .products-create-page {
-  @apply ml-[50px] min-h-screen;
+  @apply min-h-screen;
 }
 
 .products-create-container {
-  @apply max-w-[1440px] mx-auto p-8 flex flex-col gap-6;
+  @apply max-w-[1440px] mx-auto py-8 lg:px-8 flex flex-col gap-6;
 }
 
 .products-create-header {
-  @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+  @apply flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between;
+}
+
+.create-action-button {
+  @apply w-full lg:w-auto;
+}
+
+.create-action-button ::ng-deep .admin-btn-create {
+  @apply w-full lg:w-auto justify-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 text-sm sm:text-base leading-tight text-center whitespace-normal;
 }
 
 .products-create-title {

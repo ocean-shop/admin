@@ -6,10 +6,11 @@
         <h1 class="products-create-title">{{ textData.PAGE_TITLE }}</h1>
       </div>
       <app-button
+        class="create-action-button"
         [label]="textData.CREATE_LABEL"
         type="submit"
         variant="create"
-        [fullWidth]="false"
+        [fullWidth]="true"
         [disabled]="!isFormValid() || isSubmitting()"
       />
     </header>

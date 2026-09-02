@@ -33,6 +33,7 @@ describe('ProductFormSharedImages', () => {
     fixture.componentRef.setInput('images', images);
     fixture.componentRef.setInput('dropzoneHint', 'Drop files here');
     fixture.componentRef.setInput('emptyStateText', 'No images yet');
+    fixture.componentRef.setInput('imageSubTitle', 'Assigned images');
     fixture.componentRef.setInput('allowDrop', true);
     fixture.detectChanges();
   });
