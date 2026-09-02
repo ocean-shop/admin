@@ -136,6 +136,7 @@
         [images]="variation.images"
         [dropzoneHint]="texts().VARIATION_IMAGES_DROPZONE_HINT"
         [emptyStateText]="texts().VARIATION_IMAGES_ASSIGNED_EMPTY"
+        [imageSubTitle]="texts().IMAGES_SUBTITLE"
         [compactDropzone]="true"
         (filesSelected)="onVariationImageFilesSelected(variation.localId, $event)"
         (moveUp)="onVariationImageMoveUp(variation.localId, $event)"

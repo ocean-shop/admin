@@ -5,6 +5,13 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
 import { SHOP_QUERY_KEYS } from '../../../../../constants/shop-query-keys.constants';
 import { parseProductPrice } from '../../../../../helpers/product-price.helper';
 import { AttributesService } from '../../../../../pages/attributes/services/attributes.service';
+import {
+  PRODUCT_FORM_DEFAULT_VARIATION_ATTRIBUTE_LABEL,
+  PRODUCT_FORM_SEARCH_DEBOUNCE_MS,
+  PRODUCT_FORM_SEARCH_QUERY_LIMIT,
+  PRODUCT_FORM_SEARCH_QUERY_PAGE,
+  PRODUCT_FORM_UUID_PATTERN,
+} from '../../../constants/product-form.constants';
 import { CreateProductVariationPayload } from '../../../../../pages/products/models/create-product-variation-payload.model';
 import { UpdateProductVariationPayload } from '../../../../../pages/products/models/update-product-variation-payload.model';
 import { ProductsService } from '../../../../../pages/products/services/products.service';
@@ -18,9 +25,9 @@ import { ProductFormVariationImageFilesEvent } from '../../../models/product-for
 import { ProductFormVariationImageToggleEvent } from '../../../models/product-form-variation-image-toggle-event.model';
 import { ProductFormVariationRemoveEvent } from '../../../models/product-form-variation-remove-event.model';
 import { ProductFormVariation } from '../../../models/product-form-variation.model';
+import { ProductVariationApiReference } from '../models/product-variation-api-reference.model';
+import { SaveProductVariationMutationPayload } from '../models/save-product-variation-mutation-payload.model';
 import { ProductVariationsToastTexts } from '../models/product-variations-toast-texts.model';
-
-const VARIATION_ATTRIBUTE_SEARCH_DEBOUNCE_MS = 300;
 
 @Injectable()
 export class ProductVariationsService {
@@ -41,13 +48,7 @@ export class ProductVariationsService {
   readonly variations = signal<ProductFormVariation[]>([]);
 
   private readonly saveVariationMutation = injectMutation(() => ({
-    mutationFn: ({
-      productId,
-      variation,
-    }: {
-      productId: string;
-      variation: ProductFormVariation;
-    }) =>
+    mutationFn: ({ productId, variation }: SaveProductVariationMutationPayload) =>
       variation.id
         ? lastValueFrom(
             this.productsService.updateVariation(
@@ -304,6 +305,7 @@ export class ProductVariationsService {
       { productId, variation: targetVariation },
       {
         onSuccess: (product) => {
+          this.invalidateProductQueries(productId);
           const savedVariation = this.findSavedVariation(product.variations ?? [], targetVariation);
           const persistedId =
             typeof savedVariation === 'string' ? savedVariation : savedVariation?.id;
@@ -355,7 +357,7 @@ export class ProductVariationsService {
 
     const timer = setTimeout(() => {
       this.loadAttributeSearchResults(localId, shopId, searchName);
-    }, VARIATION_ATTRIBUTE_SEARCH_DEBOUNCE_MS);
+    }, PRODUCT_FORM_SEARCH_DEBOUNCE_MS);
     this.attributeSearchDebounceTimers.set(localId, timer);
   }
 
@@ -392,7 +394,14 @@ export class ProductVariationsService {
       .fetchQuery({
         queryKey: SHOP_QUERY_KEYS.attributesSearch(shopId, name),
         queryFn: () =>
-          lastValueFrom(this.attributesService.getAttributes({ page: 1, limit: 20, shopId, name })),
+          lastValueFrom(
+            this.attributesService.getAttributes({
+              page: PRODUCT_FORM_SEARCH_QUERY_PAGE,
+              limit: PRODUCT_FORM_SEARCH_QUERY_LIMIT,
+              shopId,
+              name,
+            }),
+          ),
       })
       .then((response) => {
         if ((this.attributeSearchRequestIds.get(localId) ?? 0) !== requestId) {
@@ -413,7 +422,8 @@ export class ProductVariationsService {
                   return accumulator;
                 }
 
-                const labelName = item.name?.trim() || 'Атрибут';
+                const labelName =
+                  item.name?.trim() || PRODUCT_FORM_DEFAULT_VARIATION_ATTRIBUTE_LABEL;
                 const labelValue = item.value?.trim() || '';
                 const label = labelValue ? `${labelName}: ${labelValue}` : labelName;
                 return [...accumulator, { id, label }];
@@ -591,13 +601,13 @@ export class ProductVariationsService {
   }
 
   private isUuid(value: string): boolean {
-    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+    return PRODUCT_FORM_UUID_PATTERN.test(value);
   }
 
   private findSavedVariation(
-    apiVariations: ({ id?: string | null; sku?: string | null } | string)[],
+    apiVariations: ProductVariationApiReference[],
     targetVariation: ProductFormVariation,
-  ): { id?: string | null; sku?: string | null } | string | null {
+  ): ProductVariationApiReference | null {
     if (!apiVariations.length) {
       return null;
     }
@@ -684,6 +694,21 @@ export class ProductVariationsService {
 
   private getProductId(): string | null {
     return this.requireContext().getProductId()?.trim() || null;
+  }
+
+  private invalidateProductQueries(productId: string): void {
+    this.queryClient.invalidateQueries({
+      queryKey: SHOP_QUERY_KEYS.productById(productId),
+    });
+
+    const shopId = this.getShopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.invalidateQueries({
+      queryKey: ['shop', shopId, 'products'],
+    });
   }
 
   private isSidebarEnabled(): boolean {

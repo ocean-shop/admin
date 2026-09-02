@@ -5,6 +5,7 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of } from 'rxjs';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { Categories } from './categories';
+import { CATEGORIES_TEXTS } from './constants/categories.constants';
 import { CategoryModalModeEnum } from './models/category-modal-mode.type';
 import { CategoriesService } from './services/categories.service';
 
@@ -63,6 +64,14 @@ describe('Categories', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('renders breadcrumbs for shop page', () => {
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('nav[aria-label="Breadcrumb"]')).toBeTruthy();
+    expect(element.textContent).toContain('Головна');
+    expect(element.textContent).toContain(CATEGORIES_TEXTS.PAGE_TITLE);
   });
 
   it('loads categories for current shop', () => {

@@ -5,7 +5,6 @@ import { filter, map, startWith } from 'rxjs';
 import { AuthService } from '@core/services/auth/auth.service';
 import { LayoutService } from '../../services/layout.service';
 import {
-  ADMIN_HOME_ROUTE,
   ADMIN_PRIMARY_ROUTES,
   ADMIN_MENU_FOOTER_ITEMS,
   ADMIN_MENU_ITEMS,
@@ -19,12 +18,12 @@ import { MenuFooterItem } from '../../models/menu.model';
   styleUrl: './menu.scss',
 })
 export class Menu {
+  private readonly compactSidebarBreakpoint = 1024;
   private readonly shopRootRoutePattern = /^\/admin\/shop\/[^/]+$/;
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
   protected readonly layoutService = inject(LayoutService);
-  protected readonly adminHomeRoute = ADMIN_HOME_ROUTE;
   protected readonly menuItems = ADMIN_MENU_ITEMS;
   protected readonly menuFooterItems = ADMIN_MENU_FOOTER_ITEMS;
   private readonly primaryRoutes = ADMIN_PRIMARY_ROUTES;
@@ -52,6 +51,8 @@ export class Menu {
   });
 
   protected onFooterItemClick(item: MenuFooterItem): void {
+    this.closeSidebarOnCompactScreens();
+
     if (item.value === 'logout') {
       this.authService.logout();
       this.router.navigate(['/login']);
@@ -67,6 +68,10 @@ export class Menu {
     return this.shopRootRoutePattern.test(route);
   }
 
+  protected onMenuItemClick(): void {
+    this.closeSidebarOnCompactScreens();
+  }
+
   private normalizeUrl(url: string): string {
     return url.split('?')[0].split('#')[0];
   }
@@ -74,5 +79,15 @@ export class Menu {
   private extractShopIdFromUrl(url: string): string | null {
     const match = url.match(/\/admin\/shop\/([^/]+)/);
     return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  private closeSidebarOnCompactScreens(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (window.innerWidth < this.compactSidebarBreakpoint) {
+      this.layoutService.setSidebarState(false);
+    }
   }
 }

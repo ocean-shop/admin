@@ -1,7 +1,7 @@
 @reference "../../../../../styles.scss";
 
 .shop-detail-container {
-  @apply max-w-7xl mx-auto py-2;
+  @apply mx-auto py-2 lg:pl-[50px];
 }
 
 .shop-detail-header {

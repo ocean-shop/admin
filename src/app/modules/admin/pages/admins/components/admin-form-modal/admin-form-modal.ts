@@ -15,6 +15,7 @@ import {
   ADMINS_IDENTITY_PATTERN,
 } from '../../constants/admins.constants';
 import { AdminModalModeEnum } from '../../models/admin-modal-mode.type';
+import { AdminFormModalMode } from '../../models/admin-form-modal-mode.type';
 
 @Component({
   selector: 'app-admin-form-modal',
@@ -25,7 +26,7 @@ import { AdminModalModeEnum } from '../../models/admin-modal-mode.type';
 })
 export class AdminFormModal {
   readonly isOpen = input.required<boolean>();
-  readonly mode = input.required<'create' | 'update'>();
+  readonly mode = input.required<AdminFormModalMode>();
   readonly admin = input<Admin | null>(null);
   readonly roleOptions = input.required<DropdownOption[]>();
   readonly shopOptions = input.required<DropdownOption[]>();
@@ -71,6 +72,13 @@ export class AdminFormModal {
       if (admin) {
         this.prefillAdminForm(admin);
       } else {
+        this.resetAdminForm();
+      }
+    });
+
+    effect(() => {
+      const isOpen = this.isOpen();
+      if (!isOpen) {
         this.resetAdminForm();
       }
     });
@@ -140,7 +148,7 @@ export class AdminFormModal {
   }
 
   private resetAdminForm(): void {
-    this.adminFormModel.set({
+    this.adminForm().reset({
       identity: '',
       role: ADMINS_DEFAULT_ROLE_VALUE,
       shopIds: [],

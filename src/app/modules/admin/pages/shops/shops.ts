@@ -14,6 +14,7 @@ import {
   ShopsApiResponse,
   ShopsPagination,
 } from './models/shop.model';
+import { ShopsMappedResponse } from './models/shops-mapped-response.model';
 import { ShopModalMode, ShopModalModeEnum } from './models/shop-modal-mode.type';
 import { ShopCreatePayload } from './models/shop-payload.model';
 import { ShopsService } from './services/shops.service';
@@ -195,10 +196,7 @@ export class Shops implements OnInit {
       });
   }
 
-  private mapShopsResponse(response: ShopsApiResponse | ShopApiItem[]): {
-    shops: ShopModel[];
-    pagination: ShopsPagination;
-  } {
+  private mapShopsResponse(response: ShopsApiResponse | ShopApiItem[]): ShopsMappedResponse {
     const shops = Array.isArray(response)
       ? response
       : (response.items ?? response.shops ?? response.data ?? []);
@@ -248,7 +246,7 @@ export class Shops implements OnInit {
 
   private resolveUpdatedBadge(created: string): string {
     return created && created !== SHOPS_TEXTS.DEFAULT_UPDATED
-      ? `Created: ${new Date(created).toISOString().split('T')[0]}`
+      ? `Створено: ${new Date(created).toISOString().split('T')[0]}`
       : '';
   }
 }

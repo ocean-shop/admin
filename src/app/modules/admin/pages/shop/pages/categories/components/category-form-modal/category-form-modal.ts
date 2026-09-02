@@ -70,6 +70,13 @@ export class CategoryFormModal {
     });
 
     effect(() => {
+      const isOpen = this.isOpen();
+      if (!isOpen) {
+        this.resetCategoryForm();
+      }
+    });
+
+    effect(() => {
       const name = this.categoryForm.name().value()?.trim() ?? '';
       const slug = this.categoryForm.slug().value()?.trim() ?? '';
       const generatedSlug = this.slugify(name);
@@ -141,7 +148,7 @@ export class CategoryFormModal {
   }
 
   private resetCategoryForm(): void {
-    this.categoryFormModel.set({
+    this.categoryForm().reset({
       name: '',
       slug: '',
     });

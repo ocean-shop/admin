@@ -3,6 +3,7 @@ import {
   inject,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -11,6 +12,7 @@ import { provideTanStackQuery } from '@tanstack/angular-query-experimental';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
 import { loaderInterceptor } from '@core/interceptors/loader.interceptor';
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
+import { credentialsInterceptor } from '@core/interceptors/credentials.interceptor';
 import { LoaderService } from '@core/services/loader/loader.service';
 
 import { routes } from './app.routes';
@@ -31,9 +33,17 @@ const queryClient = new QueryClient({
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor, loaderInterceptor, errorInterceptor])),
+    provideHttpClient(
+      withInterceptors([
+        credentialsInterceptor,
+        authInterceptor,
+        loaderInterceptor,
+        errorInterceptor,
+      ]),
+    ),
     provideTanStackQuery(queryClient),
     provideAppInitializer(() => {
       inject(LoaderService);

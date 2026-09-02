@@ -5,8 +5,15 @@ import { form, required } from '@angular/forms/signals';
 import { injectMutation, injectQueryClient } from '@tanstack/angular-query-experimental';
 import { lastValueFrom, map } from 'rxjs';
 import { Button } from '@ui/button/button';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import {
+  buildShopBreadcrumb,
+  buildShopSectionBreadcrumb,
+} from '../../constants/shop-breadcrumbs.constants';
 import { PRODUCTS_TYPE_OPTIONS } from '../../constants/products.constants';
 import { ProductForm } from '../../components/product-form/product-form';
 import { ProductFormModel } from '../../components/product-form/models/product-form.model';
@@ -22,6 +29,7 @@ import {
   PRODUCTS_CREATE_STATUS_OPTIONS,
   PRODUCTS_CREATE_TEXTS,
 } from './constants/products-create.constants';
+import { PRODUCTS_TEXTS } from '../products/constants/products.constants';
 import { ProductType } from '../products/models/product-type.enum';
 import { CreateProductPayload } from '../products/models/create-product-payload.model';
 import { UpdateProductPayload } from '../products/models/update-product-payload.model';
@@ -29,7 +37,7 @@ import { ProductsService } from '../products/services/products.service';
 
 @Component({
   selector: 'app-products-create',
-  imports: [Button, ProductForm],
+  imports: [Button, ProductForm, Breadcrumbs],
   templateUrl: './products-create.html',
   styleUrl: './products-create.scss',
 })
@@ -45,6 +53,12 @@ export class ProductsCreate implements OnInit {
   protected readonly statusOptions = PRODUCTS_CREATE_STATUS_OPTIONS;
   protected readonly productTypeSimple = ProductType.Simple;
   protected readonly productTypeOptions: RadioGroupOption[] = PRODUCTS_TYPE_OPTIONS;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    buildShopSectionBreadcrumb(this.shopId(), 'products', PRODUCTS_TEXTS.PAGE_TITLE),
+    { label: this.textData.PAGE_TITLE },
+  ]);
   protected readonly shopId = signal<string | null>(null);
   protected readonly createdProductId = signal<string | null>(null);
 

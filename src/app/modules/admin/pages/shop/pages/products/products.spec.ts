@@ -4,6 +4,7 @@ import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { CategoriesService } from '../categories/services/categories.service';
+import { PRODUCTS_TEXTS } from './constants/products.constants';
 import { ProductListResponse } from './models/product.model';
 import { Products } from './products';
 import { ProductsService } from './services/products.service';
@@ -75,6 +76,14 @@ describe('Products', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('renders breadcrumbs for shop page', () => {
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('nav[aria-label="Breadcrumb"]')).toBeTruthy();
+    expect(element.textContent).toContain('Головна');
+    expect(element.textContent).toContain(PRODUCTS_TEXTS.PAGE_TITLE);
   });
 
   it('requests product list with default params', () => {

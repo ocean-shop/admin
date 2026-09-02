@@ -1,6 +1,11 @@
 import { Component, signal, inject, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { ToasterService } from '@core/services/toaster/toaster.service';
+import { LocalStorageService } from '@core/services/local-storage/local-storage.service';
+import { AuthService } from '@core/services/auth/auth.service';
+import { LoginView } from './models/login.enum';
+import { LoginService } from './services/login.service';
 import { LoginForm } from './components/login-form/login-form';
 import { OtpForm } from './components/otp-form/otp-form';
 import {
@@ -9,11 +14,6 @@ import {
   IDENTITY_STORAGE_KEY,
   LOGIN_TEXTS,
 } from './constants/login.constants';
-import { ToasterService } from '@core/services/toaster/toaster.service';
-import { LocalStorageService } from '@core/services/local-storage/local-storage.service';
-import { LoginView } from './models/login.enum';
-import { LoginService } from './services/login.service';
-import { AuthService } from '@core/services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -23,22 +23,22 @@ import { AuthService } from '@core/services/auth/auth.service';
   standalone: true,
 })
 export class Login implements OnInit {
-  private toasterService = inject(ToasterService);
-  private localStorageService = inject(LocalStorageService);
-  private loginService = inject(LoginService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
+  private readonly toasterService = inject(ToasterService);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly loginService = inject(LoginService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
-  LoginView = LoginView;
+  public readonly LoginView = LoginView;
   protected readonly pageTexts = LOGIN_TEXTS.page;
 
-  isFocused = signal(false);
-  currentView = signal<LoginView>(LoginView.Login);
-  isLoading = signal(false);
-  identity = signal<string>('');
+  public readonly isFocused = signal(false);
+  public readonly currentView = signal<LoginView>(LoginView.Login);
+  public readonly isLoading = signal(false);
+  public readonly identity = signal<string>('');
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.restoreView();
   }
 
@@ -53,7 +53,7 @@ export class Login implements OnInit {
     }
   }
 
-  onSubmit(identity: string) {
+  public onSubmit(identity: string): void {
     this.identity.set(identity);
     this.localStorageService.setItem(IDENTITY_STORAGE_KEY, identity);
     this.isLoading.set(true);
@@ -68,7 +68,7 @@ export class Login implements OnInit {
       });
   }
 
-  onOtpSubmit(code: string) {
+  public onOtpSubmit(code: string): void {
     this.isLoading.set(true);
     this.loginService
       .verifyOtp(this.identity(), code)
@@ -102,12 +102,12 @@ export class Login implements OnInit {
     this.router.navigate(['/admin']);
   }
 
-  onBackToLogin() {
+  public onBackToLogin(): void {
     this.localStorageService.removeItem(IDENTITY_STORAGE_KEY);
     this.setView(LoginView.Login);
   }
 
-  private setView(view: LoginView) {
+  private setView(view: LoginView): void {
     this.currentView.set(view);
     this.localStorageService.setItem(VIEW_STORAGE_KEY, view);
   }

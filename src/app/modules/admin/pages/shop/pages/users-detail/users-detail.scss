@@ -1,0 +1,57 @@
+@reference "../../../../../../../styles.scss";
+
+.users-detail-page {
+  @apply min-h-screen;
+}
+
+.users-detail-container {
+  @apply max-w-[1440px] mx-auto py-8 lg:px-8 flex flex-col gap-6;
+}
+
+.users-detail-header {
+  @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+}
+
+.users-detail-title {
+  @apply text-3xl font-semibold text-on-surface tracking-tight;
+}
+
+.users-detail-description {
+  @apply text-sm text-on-surface-variant mt-1;
+}
+
+.users-detail-main-content {
+  @apply flex flex-col gap-6;
+}
+
+.users-detail-card {
+  @apply rounded-2xl border border-outline-variant bg-surface-container-low p-5 flex flex-col gap-4;
+}
+
+.users-detail-card-title {
+  @apply text-lg font-semibold text-on-surface;
+}
+
+.users-detail-info-list {
+  @apply grid gap-3 sm:grid-cols-2;
+}
+
+.users-detail-info-item {
+  @apply flex flex-col gap-1;
+}
+
+.users-detail-info-key {
+  @apply text-xs uppercase tracking-wide text-on-surface-variant;
+}
+
+.users-detail-info-value {
+  @apply text-sm text-on-surface break-words;
+}
+
+.users-detail-scroll-area {
+  @apply min-h-0 max-h-[320px] overflow-y-auto;
+}
+
+.users-detail-state {
+  @apply text-sm text-on-surface-variant;
+}

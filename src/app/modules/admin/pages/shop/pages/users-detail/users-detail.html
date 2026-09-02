@@ -1,0 +1,71 @@
+<main class="users-detail-page">
+  <div class="users-detail-container">
+    <header class="users-detail-header">
+      <div>
+        <app-breadcrumbs [items]="breadcrumbItems()" />
+        <h1 class="users-detail-title">{{ textData.DETAILS_TITLE }}</h1>
+        <p class="users-detail-description">{{ textData.DETAILS_DESCRIPTION }}</p>
+      </div>
+    </header>
+
+    @if (hasError()) {
+    <p class="users-detail-state">{{ textData.USER_DETAIL_LOAD_ERROR }}</p>
+    } @if (!isLoading() && user()) {
+    <section class="users-detail-main-content">
+      <section class="users-detail-card">
+        <h2 class="users-detail-card-title">{{ textData.USER_INFO_TITLE }}</h2>
+        <dl class="users-detail-info-list">
+          @for (row of userInfoRows(); track row.label) {
+          <div class="users-detail-info-item">
+            <dt class="users-detail-info-key">{{ row.label }}</dt>
+            <dd class="users-detail-info-value">{{ row.value }}</dd>
+          </div>
+          }
+        </dl>
+      </section>
+
+      <section class="users-detail-card">
+        <h2 class="users-detail-card-title">{{ textData.USER_OTPS_TITLE }}</h2>
+        <div class="users-detail-scroll-area">
+          <app-table
+            [columns]="otpColumns"
+            [rows]="otpRows()"
+            [loading]="false"
+            emptyText="OTP записи відсутні."
+          />
+        </div>
+      </section>
+
+      <section class="users-detail-card">
+        <h2 class="users-detail-card-title">{{ textData.USER_SESSIONS_TITLE }}</h2>
+        <div class="users-detail-scroll-area">
+          <app-table
+            [columns]="sessionColumns"
+            [rows]="sessionRows()"
+            [loading]="false"
+            emptyText="Сесії користувача відсутні."
+          />
+        </div>
+      </section>
+
+      <section class="users-detail-card">
+        <h2 class="users-detail-card-title">{{ textData.USER_ROLE_TITLE }}</h2>
+        @if (roleRows().length) {
+        <dl class="users-detail-info-list">
+          @for (row of roleRows(); track row.label) {
+          <div class="users-detail-info-item">
+            <dt class="users-detail-info-key">{{ row.label }}</dt>
+            <dd class="users-detail-info-value">{{ row.value }}</dd>
+          </div>
+          }
+        </dl>
+        } @else {
+        <p class="users-detail-state">{{ textData.USER_ROLE_EMPTY_STATE }}</p>
+        }
+      </section>
+    </section>
+    } @else if (isLoading()) {
+    <p class="users-detail-state">{{ textData.TABLE_LOADING_TEXT }}</p>
+    }
+  </div>
+</main>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { FormField } from '@angular/forms/signals';
 
 @Component({
@@ -6,21 +6,16 @@ import { FormField } from '@angular/forms/signals';
   imports: [FormField],
   templateUrl: './textarea.html',
   styleUrl: './textarea.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class Textarea {
-  id = input.required<string>();
-  placeholder = input<string>('');
-  label = input<string>('');
-  rows = input<number>(4);
-
-  control = input.required<any>();
-
-  focusEvent = output<FocusEvent>();
-  blurEvent = output<FocusEvent>();
-
-  errorMessage = computed(() => {
+  public readonly id = input.required<string>();
+  public readonly placeholder = input<string>('');
+  public readonly label = input<string>('');
+  public readonly rows = input<number>(4);
+  public readonly control = input.required<any>();
+  public readonly focusEvent = output<FocusEvent>();
+  public readonly blurEvent = output<FocusEvent>();
+  public readonly errorMessage = computed(() => {
     const fieldFn = this.control();
     if (!fieldFn) return '';
 

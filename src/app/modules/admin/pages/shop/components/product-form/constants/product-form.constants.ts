@@ -39,6 +39,7 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   TAGS_SEARCH_EMPTY: 'Теги не знайдено.',
   TAGS_ASSIGNED_EMPTY: 'Ще немає призначених тегів.',
   IMAGES_TITLE: 'Медіа та файли',
+  IMAGES_SUBTITLE: 'Перше зображення буде головним',
   IMAGES_UPLOAD_LABEL: 'Завантажити',
   IMAGES_UPLOAD_LOADING_LABEL: 'Завантаження...',
   IMAGES_DROPZONE_HINT: 'Перетягніть зображення сюди або натисніть для вибору',
@@ -100,3 +101,10 @@ export const PRODUCT_FORM_DEFAULT_VALUE: ProductFormModel = {
   status: ProductStatus.Draft,
   available: true,
 };
+
+export const PRODUCT_FORM_SEARCH_DEBOUNCE_MS = 300;
+export const PRODUCT_FORM_SEARCH_QUERY_PAGE = 1;
+export const PRODUCT_FORM_SEARCH_QUERY_LIMIT = 20;
+export const PRODUCT_FORM_DEFAULT_VARIATION_ATTRIBUTE_LABEL = 'Атрибут';
+export const PRODUCT_FORM_UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

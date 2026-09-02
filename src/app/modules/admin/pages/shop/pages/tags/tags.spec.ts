@@ -81,6 +81,14 @@ describe('Tags', () => {
     expect((fixture.nativeElement as HTMLElement).textContent).toContain(TAGS_TEXTS.PAGE_TITLE);
   });
 
+  it('renders breadcrumbs for shop page', () => {
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('nav[aria-label="Breadcrumb"]')).toBeTruthy();
+    expect(element.textContent).toContain('Головна');
+    expect(element.textContent).toContain(TAGS_TEXTS.PAGE_TITLE);
+  });
+
   it('creates and deletes tags through modal actions', async () => {
     (component as any).onCreateTag();
     (component as any).onConfirmCreate({ name: 'New' });

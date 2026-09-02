@@ -15,7 +15,12 @@ import { Input } from '@ui/input/input';
 import { Button } from '@ui/button/button';
 import { ButtonLine } from '@ui/button-line/button-line';
 import { LocalStorageService } from '@core/services/local-storage/local-storage.service';
-import { OTP_EXPIRATION_KEY, OTP_PATTERN, LOGIN_TEXTS } from '../../constants/login.constants';
+import {
+  OTP_EXPIRATION_KEY,
+  OTP_PATTERN,
+  LOGIN_TEXTS,
+  FIVE_MINUTES,
+} from '../../constants/login.constants';
 import { OtpData } from '../../models/login.model';
 
 @Component({
@@ -26,26 +31,26 @@ import { OtpData } from '../../models/login.model';
   standalone: true,
 })
 export class OtpForm implements OnInit {
-  private localStorageService = inject(LocalStorageService);
-  private destroyRef = inject(DestroyRef);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly texts = LOGIN_TEXTS.otpForm;
 
-  submitEvent = output<string>();
-  backToLoginEvent = output<void>();
-  isLoading = input<boolean>(false);
+  public readonly submitEvent = output<string>();
+  public readonly backToLoginEvent = output<void>();
+  public readonly isLoading = input<boolean>(false);
 
-  timeLeft = signal(300);
+  public readonly timeLeft = signal(300);
 
-  otpModel = signal<OtpData>({
+  public readonly otpModel = signal<OtpData>({
     otp: '',
   });
 
-  otpForm = form(this.otpModel, (schemaPath) => {
+  public readonly otpForm = form(this.otpModel, (schemaPath) => {
     required(schemaPath.otp, { message: this.texts.requiredMessage });
     pattern(schemaPath.otp, OTP_PATTERN, { message: this.texts.invalidMessage });
   });
 
-  formattedTime = computed(() => {
+  public readonly formattedTime = computed(() => {
     const time = Math.max(0, this.timeLeft());
     const minutes = Math.floor(time / 60)
       .toString()
@@ -54,31 +59,31 @@ export class OtpForm implements OnInit {
     return `${minutes}:${seconds}`;
   });
 
-  isFormValid = computed(() => {
+  public readonly isFormValid = computed(() => {
     return this.otpForm.otp().valid();
   });
 
   private countdownSub: Subscription | undefined;
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.startTimer();
   }
 
-  onSubmit() {
+  public onSubmit(): void {
     if (this.isFormValid() && !this.isLoading()) {
       this.submitEvent.emit(this.otpForm.otp().value()!);
     }
   }
 
-  resendCode() {
+  public resendCode(): void {
     this.startTimer();
   }
 
-  onBackToLogin() {
+  public onBackToLogin(): void {
     this.backToLoginEvent.emit();
   }
 
-  private startTimer() {
+  private startTimer(): void {
     const expirationTime = this.getOrCreateExpirationTime();
     this.updateTimeLeft(expirationTime);
     this.startCountdown(expirationTime);
@@ -92,17 +97,16 @@ export class OtpForm implements OnInit {
       return savedExpiration;
     }
 
-    // 5 minutes from now
-    const expirationTime = now + 300 * 1000;
+    const expirationTime = now + FIVE_MINUTES;
     this.localStorageService.setItem(OTP_EXPIRATION_KEY, expirationTime);
     return expirationTime;
   }
 
-  private updateTimeLeft(expirationTime: number) {
+  private updateTimeLeft(expirationTime: number): void {
     this.timeLeft.set(Math.floor((expirationTime - Date.now()) / 1000));
   }
 
-  private startCountdown(expirationTime: number) {
+  private startCountdown(expirationTime: number): void {
     this.countdownSub = interval(1000)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -115,13 +119,13 @@ export class OtpForm implements OnInit {
       });
   }
 
-  private handleTimeout() {
+  private handleTimeout(): void {
     this.timeLeft.set(0);
     this.clearTimer();
     this.localStorageService.removeItem(OTP_EXPIRATION_KEY);
   }
 
-  private clearTimer() {
+  private clearTimer(): void {
     if (this.countdownSub) {
       this.countdownSub.unsubscribe();
       this.countdownSub = undefined;

@@ -8,6 +8,9 @@ import {
 } from '@tanstack/angular-query-experimental';
 import { lastValueFrom, map } from 'rxjs';
 import { Button } from '@ui/button/button';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { Modal } from '@ui/modal/modal';
@@ -16,6 +19,7 @@ import { MultiSelectDropdown } from '@ui/multi-select-dropdown/multi-select-drop
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
 import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { buildTree, flattenTree } from '../../helpers/tree.helper';
 import { CategoriesApiResponse, CategoryApiItem } from '../categories/models/category.model';
@@ -36,7 +40,7 @@ import { ProductsService } from './services/products.service';
 
 @Component({
   selector: 'app-products',
-  imports: [Button, Dropdown, MultiSelectDropdown, Pagination, Table, Modal],
+  imports: [Button, Dropdown, MultiSelectDropdown, Pagination, Table, Modal, Breadcrumbs],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
@@ -50,6 +54,11 @@ export class Products implements OnInit {
 
   protected readonly textData = PRODUCTS_TEXTS;
   protected readonly createProductIcon = PRODUCTS_CREATE_ICON;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    { label: this.textData.PAGE_TITLE },
+  ]);
   protected readonly pageSize = PRODUCTS_PAGE_SIZE;
   protected readonly sortOptions = PRODUCTS_SORT_OPTIONS;
   protected readonly nameFilterId = PRODUCTS_NAME_FILTER_ID;

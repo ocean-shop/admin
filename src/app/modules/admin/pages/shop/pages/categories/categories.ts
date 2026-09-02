@@ -9,6 +9,10 @@ import {
 import { lastValueFrom, map } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Modal } from '@ui/modal/modal';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
+import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { buildTree } from '../../helpers/tree.helper';
 import { TreeNode } from '../../models/tree-node.model';
@@ -32,7 +36,7 @@ import { CategoriesService } from './services/categories.service';
 
 @Component({
   selector: 'app-categories',
-  imports: [CategoryFormModal, Modal],
+  imports: [CategoryFormModal, Modal, Breadcrumbs],
   templateUrl: './categories.html',
   styleUrl: './categories.scss',
 })
@@ -45,6 +49,11 @@ export class Categories implements OnInit {
 
   protected readonly textData = CATEGORIES_TEXTS;
   protected readonly createIcon = CATEGORIES_CREATE_ICON;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    { label: this.textData.PAGE_TITLE },
+  ]);
   protected readonly expandedCategoryIds = signal<Set<string>>(new Set());
   protected readonly selectedCategory = signal<Category | null>(null);
   protected readonly selectedParentCategory = signal<Category | null>(null);

@@ -1,15 +1,18 @@
 <main class="tags-page">
   <div class="tags-container">
+    <app-breadcrumbs [items]="breadcrumbItems()" />
+
     <header class="tags-header">
       <div>
         <h1 class="tags-title">{{ textData.PAGE_TITLE }}</h1>
         <p class="tags-description">{{ textData.PAGE_DESCRIPTION }}</p>
       </div>
       <app-button
+        class="create-action-button"
         [label]="textData.CREATE_LABEL"
         [icon]="createTagIcon"
         [iconLeading]="true"
-        [fullWidth]="false"
+        [fullWidth]="true"
         [disabled]="!isShopContextReady() || isActionLoading()"
         variant="create"
         type="button"

@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
+import { ORDERS_TEXTS } from './constants/orders.constants';
 import { OrderListResponse } from './models/order.model';
 import { Orders } from './orders';
 import { OrdersService } from './services/orders.service';
@@ -72,6 +73,14 @@ describe('Orders', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('renders breadcrumbs for shop page', () => {
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('nav[aria-label="Breadcrumb"]')).toBeTruthy();
+    expect(element.textContent).toContain('Головна');
+    expect(element.textContent).toContain(ORDERS_TEXTS.PAGE_TITLE);
   });
 
   it('requests orders list with default params', () => {

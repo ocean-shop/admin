@@ -1,10 +1,15 @@
 <section class="shop-detail-container">
   <header class="shop-detail-header">
+    <app-breadcrumbs [items]="breadcrumbItems()" />
     <h3 class="shop-detail-title">Деталі Магазину</h3>
     <p class="shop-detail-placeholder">
       Оберіть розділ, щоб керувати контентом магазину: структурою каталогу, фільтрами та продуктами.
     </p>
   </header>
+
+  @if (shopId()) {
+  <app-shop-statistics [shopId]="shopId()" />
+  }
 
   <div class="shop-detail-cards">
     <article class="shop-detail-card">

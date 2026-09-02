@@ -18,6 +18,7 @@
       [routerLink]="item.route"
       [routerLinkActiveOptions]="{exact: useExactMatch(item.route)}"
       routerLinkActive="nav-item-active"
+      (click)="onMenuItemClick()"
       #rla="routerLinkActive"
       [class.nav-item-active]="rla.isActive"
       [class.nav-item]="!rla.isActive"

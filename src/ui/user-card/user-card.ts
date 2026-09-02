@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { EntityCard } from '@ui/entity-card/entity-card';
 import { UserCardData } from './models/user-card.model';
 
@@ -7,11 +7,9 @@ import { UserCardData } from './models/user-card.model';
   imports: [EntityCard],
   templateUrl: './user-card.html',
   styleUrl: './user-card.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class UserCard {
-  readonly user = input.required<UserCardData>();
+  public readonly user = input.required<UserCardData>();
   protected readonly entity = computed(() => ({
     id: this.user().id ?? crypto.randomUUID(),
     title: this.user().name,
@@ -20,6 +18,6 @@ export class UserCard {
     badge: this.user().role,
   }));
 
-  readonly edit = output<void>();
-  readonly removed = output<void>();
+  public readonly edit = output<void>();
+  public readonly removed = output<void>();
 }

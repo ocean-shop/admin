@@ -1,11 +1,16 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AUTH_STORAGE_KEYS, SESSION_HINT_KEY } from '../../constants/auth.constant';
+import {
+  ACCESS_TOKEN_KEY,
+  AUTH_STORAGE_KEYS,
+  SESSION_HINT_KEY,
+} from '../../constants/auth.constant';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
+  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: AuthService;
   let httpMock: HttpTestingController;
   let localStorageService: LocalStorageService;
@@ -57,7 +62,7 @@ describe('AuthService', () => {
       expect(removeItemSpy).toHaveBeenCalledWith(key);
     }
 
-    const req = httpMock.expectOne('http://localhost:3000/user/auth/logout');
+    const req = httpMock.expectOne(`${API_URL}/user/auth/logout`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
@@ -68,7 +73,7 @@ describe('AuthService', () => {
 
     expect(() => {
       service.logout();
-      const req = httpMock.expectOne('http://localhost:3000/user/auth/logout');
+      const req = httpMock.expectOne(`${API_URL}/user/auth/logout`);
       req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
     }).not.toThrow();
 
@@ -97,6 +102,7 @@ describe('AuthService', () => {
     service.handleAuthSuccess('token-value');
 
     expect(service.getAccessToken()).toBe('token-value');
+    expect(localStorageService.getItem(ACCESS_TOKEN_KEY)).toBe('token-value');
     expect(localStorageService.getItem(SESSION_HINT_KEY)).toBe(true);
     expect(service.hasSessionHint()).toBe(true);
   });
@@ -112,7 +118,7 @@ describe('AuthService', () => {
       secondResult = result;
     });
 
-    const req = httpMock.expectOne('http://localhost:3000/user/auth/refresh');
+    const req = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     req.flush({ accessToken: 'refreshed-token' });
@@ -130,13 +136,51 @@ describe('AuthService', () => {
       },
     });
 
-    const firstReq = httpMock.expectOne('http://localhost:3000/user/auth/refresh');
+    const firstReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
     firstReq.flush('failure', { status: 500, statusText: 'Server Error' });
 
     service.refreshToken().subscribe();
-    const secondReq = httpMock.expectOne('http://localhost:3000/user/auth/refresh');
+    const secondReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
     secondReq.flush({ accessToken: 'new-token' });
 
     expect(service.getAccessToken()).toBe('new-token');
+  });
+
+  it('syncs access token state from storage events', () => {
+    service.setAccessToken('initial-token');
+
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: ACCESS_TOKEN_KEY,
+        newValue: JSON.stringify('token-from-another-tab'),
+      }),
+    );
+
+    expect(service.getAccessToken()).toBe('token-from-another-tab');
+
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: ACCESS_TOKEN_KEY,
+        newValue: null,
+      }),
+    );
+
+    expect(service.getAccessToken()).toBeNull();
+  });
+
+  it('ignores refresh response when logout clears session mid-flight', () => {
+    service.handleAuthSuccess('initial-token');
+
+    service.refreshToken().subscribe();
+    const refreshReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
+
+    service.logout();
+    const logoutReq = httpMock.expectOne(`${API_URL}/user/auth/logout`);
+    logoutReq.flush({});
+
+    refreshReq.flush({ accessToken: 'late-token' });
+
+    expect(service.getAccessToken()).toBeNull();
+    expect(service.hasSessionHint()).toBe(false);
   });
 });

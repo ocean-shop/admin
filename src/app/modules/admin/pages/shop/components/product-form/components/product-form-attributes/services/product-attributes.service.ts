@@ -4,6 +4,11 @@ import { lastValueFrom } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { SHOP_QUERY_KEYS } from '../../../../../constants/shop-query-keys.constants';
 import {
+  PRODUCT_FORM_SEARCH_DEBOUNCE_MS,
+  PRODUCT_FORM_SEARCH_QUERY_LIMIT,
+  PRODUCT_FORM_SEARCH_QUERY_PAGE,
+} from '../../../constants/product-form.constants';
+import {
   mapAttributeSearchResults,
   removeAssignedAttribute,
   upsertAssignedAttribute,
@@ -13,9 +18,8 @@ import { ProductsService } from '../../../../../pages/products/services/products
 import { ProductFormAssignedAttribute } from '../../../models/product-form-assigned-attribute.model';
 import { ProductFormAttributeOption } from '../../../models/product-form-attribute-option.model';
 import { ProductFormEditorContext } from '../../../models/product-form-editor-context.model';
+import { ProductToggleAttributeMutationPayload } from '../models/product-toggle-attribute-mutation-payload.model';
 import { ProductAttributesToastTexts } from '../models/product-attributes-toast-texts.model';
-
-const ATTRIBUTE_SEARCH_DEBOUNCE_MS = 300;
 
 @Injectable()
 export class ProductAttributesService {
@@ -26,7 +30,7 @@ export class ProductAttributesService {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly toggleAttributeMutation = injectMutation(() => ({
-    mutationFn: (payload: { productId: string; attributeTypeId: string; assign: boolean }) =>
+    mutationFn: (payload: ProductToggleAttributeMutationPayload) =>
       lastValueFrom(
         this.productsService.toggleAttribute(payload.productId, {
           attributeTypeId: payload.attributeTypeId,
@@ -101,6 +105,7 @@ export class ProductAttributesService {
       { productId, attributeTypeId: normalizedAttributeId, assign: true },
       {
         onSuccess: () => {
+          this.invalidateProductQueries(productId);
           this.assignedAttributes.update((currentValue) =>
             upsertAssignedAttribute(currentValue, selectedOption),
           );
@@ -141,6 +146,7 @@ export class ProductAttributesService {
       { productId, attributeTypeId: normalizedAttributeId, assign: false },
       {
         onSuccess: () => {
+          this.invalidateProductQueries(productId);
           this.assignedAttributes.update((currentValue) =>
             removeAssignedAttribute(currentValue, normalizedAttributeId),
           );
@@ -172,7 +178,7 @@ export class ProductAttributesService {
 
     this.searchDebounceTimer = setTimeout(() => {
       this.loadAttributeSearchResults(shopId, searchName);
-    }, ATTRIBUTE_SEARCH_DEBOUNCE_MS);
+    }, PRODUCT_FORM_SEARCH_DEBOUNCE_MS);
   }
 
   private clearSearchDebounce(): void {
@@ -190,7 +196,14 @@ export class ProductAttributesService {
       .fetchQuery({
         queryKey: SHOP_QUERY_KEYS.attributesSearch(shopId, name),
         queryFn: () =>
-          lastValueFrom(this.attributesService.getAttributes({ page: 1, limit: 20, shopId, name })),
+          lastValueFrom(
+            this.attributesService.getAttributes({
+              page: PRODUCT_FORM_SEARCH_QUERY_PAGE,
+              limit: PRODUCT_FORM_SEARCH_QUERY_LIMIT,
+              shopId,
+              name,
+            }),
+          ),
       })
       .then((response) => {
         if (requestId !== this.searchRequestId) {
@@ -221,6 +234,21 @@ export class ProductAttributesService {
 
   private getProductId(): string | null {
     return this.requireContext().getProductId()?.trim() || null;
+  }
+
+  private invalidateProductQueries(productId: string): void {
+    this.queryClient.invalidateQueries({
+      queryKey: SHOP_QUERY_KEYS.productById(productId),
+    });
+
+    const shopId = this.getShopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.invalidateQueries({
+      queryKey: ['shop', shopId, 'products'],
+    });
   }
 
   private isSidebarEnabled(): boolean {

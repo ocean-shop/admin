@@ -14,6 +14,7 @@ import {
   SHOPS_URL_PATTERN,
 } from '../../constants/shops.constants';
 import { ShopModalModeEnum } from '../../models/shop-modal-mode.type';
+import { ShopFormModalMode } from '../../models/shop-form-modal-mode.type';
 
 @Component({
   selector: 'app-shops-form-modal',
@@ -24,7 +25,7 @@ import { ShopModalModeEnum } from '../../models/shop-modal-mode.type';
 })
 export class ShopsFormModal {
   readonly isOpen = input.required<boolean>();
-  readonly mode = input.required<'create' | 'update'>();
+  readonly mode = input.required<ShopFormModalMode>();
   readonly shop = input<Shop | null>(null);
   readonly confirmLoading = input<boolean>(false);
 
@@ -70,6 +71,13 @@ export class ShopsFormModal {
       if (shop) {
         this.prefillShopForm(shop);
       } else {
+        this.resetShopForm();
+      }
+    });
+
+    effect(() => {
+      const isOpen = this.isOpen();
+      if (!isOpen) {
         this.resetShopForm();
       }
     });
@@ -121,7 +129,7 @@ export class ShopsFormModal {
   }
 
   private resetShopForm(): void {
-    this.shopFormModel.set({
+    this.shopForm().reset({
       name: '',
       description: '',
       url: '',

@@ -1,19 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-pagination',
   templateUrl: './pagination.html',
   styleUrl: './pagination.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Pagination {
-  readonly currentPage = input.required<number>();
-  readonly pageSize = input.required<number>();
-  readonly totalItems = input.required<number>();
-  readonly totalPages = input.required<number>();
-  readonly label = input<string>('admins');
-
-  readonly pageChange = output<number>();
+  public readonly currentPage = input.required<number>();
+  public readonly pageSize = input.required<number>();
+  public readonly totalItems = input.required<number>();
+  public readonly totalPages = input.required<number>();
+  public readonly label = input<string>('admins');
+  public readonly pageChange = output<number>();
 
   protected readonly isPrevDisabled = computed(() => this.currentPage() <= 1);
   protected readonly isNextDisabled = computed(

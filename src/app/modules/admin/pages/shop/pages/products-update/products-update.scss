@@ -5,11 +5,11 @@
 }
 
 .products-update-page {
-  @apply ml-[50px] min-h-screen pt-8;
+  @apply min-h-screen;
 }
 
 .products-update-container {
-  @apply mx-auto flex max-w-[1440px] flex-col gap-6 p-8;
+  @apply mx-auto flex max-w-[1440px] flex-col gap-6 py-8 lg:px-8;
 }
 
 .products-update-header {

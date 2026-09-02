@@ -9,14 +9,21 @@ import {
 import { lastValueFrom, map } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Button } from '@ui/button/button';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { Table } from '@ui/table/table';
-import { TableColumn, TableRowData } from '@ui/table/models/table-column.model';
+import { TableRowData } from '@ui/table/models/table-column.model';
+import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import {
   ATTRIBUTES_CREATE_ICON,
+  ATTRIBUTES_DEFAULT_NAME,
+  ATTRIBUTES_DEFAULT_VALUE,
   ATTRIBUTES_PAGE_SIZE,
+  ATTRIBUTES_TABLE_COLUMNS,
   ATTRIBUTES_TEXTS,
 } from './constants/attributes.constants';
 import { AttributeFormModal } from './components/attribute-form-modal/attribute-form-modal';
@@ -25,12 +32,12 @@ import {
   AttributeFormSubmitPayload,
   CreateAttributePayload,
 } from './models/attribute-payload.model';
-import { Attribute, AttributeApiItem } from './models/attribute.model';
+import { Attribute, AttributeApiItem, AttributeListResponse } from './models/attribute.model';
 import { AttributesService } from './services/attributes.service';
 
 @Component({
   selector: 'app-attributes',
-  imports: [Button, Table, Pagination, Modal, AttributeFormModal],
+  imports: [Button, Table, Pagination, Modal, AttributeFormModal, Breadcrumbs],
   templateUrl: './attributes.html',
   styleUrl: './attributes.scss',
 })
@@ -43,11 +50,13 @@ export class Attributes implements OnInit {
 
   protected readonly textData = ATTRIBUTES_TEXTS;
   protected readonly createAttributeIcon = ATTRIBUTES_CREATE_ICON;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    { label: this.textData.PAGE_TITLE },
+  ]);
   protected readonly pageSize = ATTRIBUTES_PAGE_SIZE;
-  protected readonly tableColumns: TableColumn[] = [
-    { key: 'name', header: ATTRIBUTES_TEXTS.TABLE_NAME_HEADER },
-    { key: 'value', header: ATTRIBUTES_TEXTS.TABLE_VALUE_HEADER },
-  ];
+  protected readonly tableColumns = ATTRIBUTES_TABLE_COLUMNS;
 
   protected readonly shopId = signal<string | null>(null);
   protected readonly currentPage = signal(1);
@@ -86,9 +95,7 @@ export class Attributes implements OnInit {
     mutationFn: (id: string) => lastValueFrom(this.attributesService.deleteAttribute(id)),
   }));
 
-  protected readonly isLoading = computed(
-    () => this.attributesQuery.isPending() || this.attributesQuery.isFetching(),
-  );
+  protected readonly isLoading = computed(() => this.attributesQuery.isPending());
   protected readonly hasError = computed(() => this.attributesQuery.isError());
   protected readonly isActionLoading = computed(
     () => this.createAttributeMutation.isPending() || this.deleteAttributeMutation.isPending(),
@@ -207,11 +214,14 @@ export class Attributes implements OnInit {
       value: payload.value,
     };
 
-    this.executeMutation(
-      this.createAttributeMutation,
-      createPayload,
-      ATTRIBUTES_TEXTS.CREATE_SUCCESS_TITLE,
-    );
+    this.createAttributeMutation.mutate(createPayload, {
+      onSuccess: (createdAttribute) => {
+        this.toasterService.success(ATTRIBUTES_TEXTS.CREATE_SUCCESS_TITLE);
+        this.closeModal();
+        this.insertCreatedAttribute(createdAttribute);
+        this.refetchAttributesInBackground();
+      },
+    });
   }
 
   protected onConfirmDelete(): void {
@@ -220,11 +230,15 @@ export class Attributes implements OnInit {
       return;
     }
 
-    this.executeMutation(
-      this.deleteAttributeMutation,
-      selectedAttribute.id,
-      ATTRIBUTES_TEXTS.DELETE_SUCCESS_TITLE,
-    );
+    this.deleteAttributeMutation.mutate(selectedAttribute.id, {
+      onSuccess: () => {
+        this.toasterService.success(ATTRIBUTES_TEXTS.DELETE_SUCCESS_TITLE);
+        this.closeModal();
+        this.removeDeletedAttribute(selectedAttribute.id);
+        this.adjustPageAfterDelete();
+        this.refetchAttributesInBackground();
+      },
+    });
   }
 
   private watchShopId(): void {
@@ -243,21 +257,7 @@ export class Attributes implements OnInit {
       });
   }
 
-  private executeMutation<T>(
-    mutation: { mutate: (payload: T, options?: { onSuccess?: () => void }) => void },
-    payload: T,
-    successTitle: string,
-  ): void {
-    mutation.mutate(payload, {
-      onSuccess: () => {
-        this.toasterService.success(successTitle);
-        this.closeModal();
-        this.invalidateAttributes();
-      },
-    });
-  }
-
-  private invalidateAttributes(): void {
+  private refetchAttributesInBackground(): void {
     const shopId = this.shopId();
     if (!shopId) {
       return;
@@ -266,6 +266,80 @@ export class Attributes implements OnInit {
     this.queryClient.invalidateQueries({
       queryKey: ['shop', shopId, 'attributes'],
     });
+  }
+
+  private insertCreatedAttribute(createdAttribute: AttributeApiItem): void {
+    const shopId = this.shopId();
+    if (!shopId) {
+      return;
+    }
+
+    const normalizedSearchName = this.searchName().trim().toLowerCase();
+    const mappedAttribute = this.mapAttribute(createdAttribute, shopId);
+    const matchesSearch =
+      !normalizedSearchName || mappedAttribute.name.toLowerCase().includes(normalizedSearchName);
+    if (!matchesSearch) {
+      return;
+    }
+
+    this.queryClient.setQueryData<AttributeListResponse>(
+      this.resolveCurrentQueryKey(shopId),
+      (currentData) => {
+        if (!currentData) {
+          return currentData;
+        }
+
+        const nextItems = [mappedAttribute, ...currentData.items].slice(0, currentData.limit);
+        const nextTotal = currentData.total + 1;
+        return {
+          ...currentData,
+          items: nextItems,
+          total: nextTotal,
+          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
+        };
+      },
+    );
+  }
+
+  private removeDeletedAttribute(attributeId: string): void {
+    const shopId = this.shopId();
+    if (!shopId) {
+      return;
+    }
+
+    this.queryClient.setQueryData<AttributeListResponse>(
+      this.resolveCurrentQueryKey(shopId),
+      (currentData) => {
+        if (!currentData) {
+          return currentData;
+        }
+
+        const nextItems = currentData.items.filter((attribute) => attribute.id !== attributeId);
+        if (nextItems.length === currentData.items.length) {
+          return currentData;
+        }
+
+        const nextTotal = Math.max(0, currentData.total - 1);
+        return {
+          ...currentData,
+          items: nextItems,
+          total: nextTotal,
+          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
+        };
+      },
+    );
+  }
+
+  private adjustPageAfterDelete(): void {
+    if (this.currentPage() <= this.totalPages()) {
+      return;
+    }
+
+    this.currentPage.set(this.totalPages());
+  }
+
+  private resolveCurrentQueryKey(shopId: string) {
+    return SHOP_QUERY_KEYS.attributes(shopId, this.currentPage(), this.pageSize, this.searchName());
   }
 
   private closeModal(): void {
@@ -277,8 +351,8 @@ export class Attributes implements OnInit {
     return {
       id: attribute.id?.trim() || crypto.randomUUID(),
       shopId: attribute.shopId?.trim() || fallbackShopId,
-      name: attribute.name?.trim() || 'Untitled attribute',
-      value: attribute.value?.trim() || 'No value',
+      name: attribute.name?.trim() || ATTRIBUTES_DEFAULT_NAME,
+      value: attribute.value?.trim() || ATTRIBUTES_DEFAULT_VALUE,
       ...(attribute.createdAt?.trim() ? { createdAt: attribute.createdAt } : {}),
       ...(attribute.updatedAt?.trim() ? { updatedAt: attribute.updatedAt } : {}),
     };

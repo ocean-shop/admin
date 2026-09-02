@@ -56,4 +56,30 @@ describe('Menu', () => {
     expect(logoutSpy).toHaveBeenCalled();
     expect(navigateSpy).toHaveBeenCalledWith(['/login']);
   });
+
+  it('should close sidebar when a menu link is clicked on compact screens', () => {
+    const setSidebarStateSpy = vi.spyOn(layoutService, 'setSidebarState');
+    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 768 });
+    layoutService.setSidebarState(true);
+
+    (component as any).onMenuItemClick();
+
+    expect(setSidebarStateSpy).toHaveBeenCalledWith(false);
+    expect(layoutService.isSidebarOpen()).toBe(false);
+  });
+
+  it('should keep sidebar state on desktop when a menu link is clicked', () => {
+    const setSidebarStateSpy = vi.spyOn(layoutService, 'setSidebarState');
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 1280,
+    });
+    layoutService.setSidebarState(true);
+
+    (component as any).onMenuItemClick();
+
+    expect(setSidebarStateSpy).not.toHaveBeenCalledWith(false);
+    expect(layoutService.isSidebarOpen()).toBe(true);
+  });
 });

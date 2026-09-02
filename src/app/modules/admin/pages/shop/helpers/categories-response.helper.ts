@@ -6,6 +6,5 @@ export const extractCategoriesFromResponse = (
   if (Array.isArray(response)) {
     return response;
   }
-
   return response.items ?? response.categories ?? response.data ?? [];
 };

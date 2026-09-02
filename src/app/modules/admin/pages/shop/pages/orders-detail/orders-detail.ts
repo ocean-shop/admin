@@ -9,10 +9,17 @@ import {
 import { lastValueFrom, map } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Button } from '@ui/button/button';
+import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
+import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { Table } from '@ui/table/table';
 import { TableRowData } from '@ui/table/models/table-column.model';
+import {
+  buildShopBreadcrumb,
+  buildShopSectionBreadcrumb,
+} from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import {
   ORDER_PAYMENT_STATUS_OPTIONS,
@@ -28,7 +35,7 @@ import { OrderDetailInfoRow } from '../../models/order.models';
 
 @Component({
   selector: 'app-orders-detail',
-  imports: [Button, Dropdown, Table],
+  imports: [Button, Dropdown, Table, Breadcrumbs],
   templateUrl: './orders-detail.html',
   styleUrl: './orders-detail.scss',
 })
@@ -43,6 +50,12 @@ export class OrdersDetail implements OnInit {
   protected readonly paymentStatusOptions = ORDER_PAYMENT_STATUS_OPTIONS;
   protected readonly statusOptions = ORDER_STATUS_OPTIONS;
   protected readonly itemColumns = ITEM_COLUMNS;
+  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    DASHBOARD_BREADCRUMB,
+    buildShopBreadcrumb(this.shopId()),
+    buildShopSectionBreadcrumb(this.shopId(), 'orders', ORDERS_TEXTS.PAGE_TITLE),
+    { label: this.textData.DETAILS_TITLE },
+  ]);
 
   protected readonly shopId = signal<string | null>(
     this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null,

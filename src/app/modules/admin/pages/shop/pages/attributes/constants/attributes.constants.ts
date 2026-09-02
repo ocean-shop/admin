@@ -1,3 +1,5 @@
+import { TableColumn } from '@ui/table/models/table-column.model';
+
 export const ATTRIBUTES_TEXTS = {
   PAGE_TITLE: 'Керування атрибутами',
   PAGE_DESCRIPTION:
@@ -35,3 +37,9 @@ export const ATTRIBUTES_CREATE_ICON = 'add';
 export const ATTRIBUTES_PAGE_SIZE = 20;
 export const ATTRIBUTES_NAME_FIELD_ID = 'attribute-name';
 export const ATTRIBUTES_VALUE_FIELD_ID = 'attribute-value';
+export const ATTRIBUTES_DEFAULT_NAME = 'Untitled attribute';
+export const ATTRIBUTES_DEFAULT_VALUE = 'No value';
+export const ATTRIBUTES_TABLE_COLUMNS: TableColumn[] = [
+  { key: 'name', header: ATTRIBUTES_TEXTS.TABLE_NAME_HEADER },
+  { key: 'value', header: ATTRIBUTES_TEXTS.TABLE_VALUE_HEADER },
+];

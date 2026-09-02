@@ -36,3 +36,5 @@ export const LOGIN_TEXTS = {
     invalidMessage: 'Введіть коректний 4-значний OTP код',
   },
 } as const;
+
+export const FIVE_MINUTES = 300000;

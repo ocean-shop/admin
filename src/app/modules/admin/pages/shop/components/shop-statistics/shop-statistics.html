@@ -1,0 +1,16 @@
+<section class="shop-statistics">
+  <header class="shop-statistics-header">
+    <h4 class="shop-statistics-title">{{ textData.TITLE }}</h4>
+    <p class="shop-statistics-description">{{ textData.DESCRIPTION }}</p>
+  </header>
+
+  @if (isLoading()) {
+  <p class="shop-statistics-state">{{ textData.LOADING }}</p>
+  } @else if (hasError()) {
+  <p class="shop-statistics-state shop-statistics-state-error">{{ textData.LOAD_ERROR }}</p>
+  } @else if (!hasData()) {
+  <p class="shop-statistics-state">{{ textData.EMPTY }}</p>
+  } @else {
+  <div #chartContainer class="shop-statistics-chart"></div>
+  }
+</section>
