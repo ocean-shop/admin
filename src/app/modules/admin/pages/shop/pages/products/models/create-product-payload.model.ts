@@ -8,6 +8,7 @@ export type CreateProductPayload = {
   description?: string;
   status?: ProductStatus;
   available?: boolean;
+  isPopular?: boolean;
   sku?: string;
   price?: number;
   oldPrice?: number;

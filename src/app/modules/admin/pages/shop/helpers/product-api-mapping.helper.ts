@@ -19,6 +19,7 @@ export const mapProductToFormModel = (product: ProductApiItem): ProductFormModel
     sku: product.sku?.trim() ?? '',
     status: normalizeProductStatus(product.status),
     available: product.available ?? true,
+    isPopular: product.isPopular ?? false,
   };
 };
 

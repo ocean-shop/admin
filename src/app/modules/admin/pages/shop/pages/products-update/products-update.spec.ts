@@ -91,6 +91,7 @@ describe('ProductsUpdate', () => {
       sku: 'UPDATED-1',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: true,
     });
 
     (component as any).onSubmit();
@@ -103,6 +104,7 @@ describe('ProductsUpdate', () => {
       sku: 'UPDATED-1',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: true,
       price: 45.1,
       oldPrice: 55.1,
     });
@@ -121,6 +123,7 @@ describe('ProductsUpdate', () => {
       sku: '',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: false,
     });
 
     (component as any).onSubmit();
@@ -140,6 +143,7 @@ describe('ProductsUpdate', () => {
       sku: 'SKU-2',
       status: ProductStatus.Active,
       available: false,
+      isPopular: false,
     });
 
     (component as any).onSubmit();

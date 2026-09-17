@@ -239,6 +239,7 @@ export class ProductsUpdate implements OnInit {
       sku: this.productForm.sku().value(),
       status: this.productForm.status().value(),
       available: this.productForm.available().value(),
+      isPopular: this.productForm.isPopular().value(),
       price: this.productForm.price().value(),
       oldPrice: this.productForm.oldPrice().value(),
     };

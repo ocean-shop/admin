@@ -28,7 +28,17 @@ describe('product-api-mapping.helper', () => {
       sku: '',
       status: ProductStatus.Archived,
       available: false,
+      isPopular: false,
     });
+  });
+
+  it('maps isPopular from the product API item', () => {
+    const formModel = mapProductToFormModel({
+      name: 'Coastal Shirt',
+      isPopular: true,
+    });
+
+    expect(formModel.isPopular).toBe(true);
   });
 
   it('extracts unique attribute and tag labels from mixed shapes', () => {

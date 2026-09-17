@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { FormField } from '@angular/forms/signals';
+import { Checkbox } from '@ui/checkbox/checkbox';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { Input } from '@ui/input/input';
@@ -12,7 +13,7 @@ import { ProductFormTexts } from '../../models/product-form-texts.model';
 
 @Component({
   selector: 'app-product-form-basic-info',
-  imports: [FormField, Dropdown, Input, RadioGroup, Textarea],
+  imports: [Checkbox, FormField, Dropdown, Input, RadioGroup, Textarea],
   templateUrl: './product-form-basic-info.html',
   styleUrl: './product-form-basic-info.scss',
 })

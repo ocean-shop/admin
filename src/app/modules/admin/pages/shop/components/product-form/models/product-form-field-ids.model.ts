@@ -8,4 +8,5 @@ export type ProductFormFieldIds = {
   TYPE_SIMPLE: string;
   TYPE_VARIABLE: string;
   AVAILABLE: string;
+  IS_POPULAR: string;
 };

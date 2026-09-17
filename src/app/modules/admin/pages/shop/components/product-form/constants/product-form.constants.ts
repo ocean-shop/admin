@@ -24,6 +24,7 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   SKU_PLACEHOLDER: 'напр. CSTL-SHRT-01',
   STATUS_LABEL: 'Статус',
   AVAILABLE_LABEL: 'Доступний',
+  IS_POPULAR_LABEL: 'Популярний',
   CATEGORIES_TITLE: 'Категорії',
   ATTRIBUTES_TITLE: 'Атрибути',
   TAGS_TITLE: 'Теги',
@@ -83,6 +84,7 @@ export const PRODUCT_FORM_FIELD_IDS: ProductFormFieldIds = {
   TYPE_SIMPLE: 'product-type-simple',
   TYPE_VARIABLE: 'product-type-variable',
   AVAILABLE: 'product-available',
+  IS_POPULAR: 'product-is-popular',
 };
 
 export const PRODUCT_FORM_STATUS_OPTIONS: DropdownOption[] = [
@@ -100,6 +102,7 @@ export const PRODUCT_FORM_DEFAULT_VALUE: ProductFormModel = {
   sku: '',
   status: ProductStatus.Draft,
   available: true,
+  isPopular: false,
 };
 
 export const PRODUCT_FORM_SEARCH_DEBOUNCE_MS = 300;

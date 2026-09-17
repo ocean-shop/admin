@@ -13,6 +13,7 @@ describe('product-form-payload.helper', () => {
     sku: 'SKU-1',
     status: ProductStatus.Active,
     available: true,
+    isPopular: false,
     price: '99.99',
     oldPrice: '129.99',
   };
@@ -57,5 +58,30 @@ describe('product-form-payload.helper', () => {
       status: ProductStatus.Active,
       available: true,
     });
+  });
+
+  it('includes isPopular in the payload when checked', () => {
+    const payload = buildUpdateProductPayload({
+      ...baseValues,
+      isPopular: true,
+    });
+
+    expect(payload).toEqual({
+      name: 'Coastal Shirt',
+      type: ProductType.Simple,
+      description: 'Soft linen',
+      sku: 'SKU-1',
+      status: ProductStatus.Active,
+      available: true,
+      isPopular: true,
+      price: 99.99,
+      oldPrice: 129.99,
+    });
+  });
+
+  it('omits isPopular from the payload when not checked', () => {
+    const payload = buildUpdateProductPayload(baseValues);
+
+    expect(payload).not.toHaveProperty('isPopular');
   });
 });

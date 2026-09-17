@@ -45,6 +45,7 @@ const buildBaseProductPayload = (
     ...(sku ? { sku } : {}),
     ...(formValues.status ? { status: formValues.status } : {}),
     available: formValues.available ?? true,
+    ...(formValues.isPopular ? { isPopular: true } : {}),
     ...(price !== null ? { price } : {}),
     ...(oldPrice !== null ? { oldPrice } : {}),
   };

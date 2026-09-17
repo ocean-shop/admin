@@ -8,6 +8,7 @@ export type ProductFormValues = {
   sku: string | null | undefined;
   status: ProductStatus | null | undefined;
   available: boolean | null | undefined;
+  isPopular: boolean | null | undefined;
   price: string | null | undefined;
   oldPrice: string | null | undefined;
 };

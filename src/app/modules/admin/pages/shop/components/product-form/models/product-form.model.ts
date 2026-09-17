@@ -10,4 +10,5 @@ export type ProductFormModel = {
   sku: string;
   status: ProductStatus;
   available: boolean;
+  isPopular: boolean;
 };

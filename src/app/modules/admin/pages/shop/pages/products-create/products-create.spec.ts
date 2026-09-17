@@ -115,6 +115,7 @@ describe('ProductsCreate', () => {
       sku: 'CSTL-SHRT-01',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: true,
     });
 
     (component as any).onSubmit();
@@ -128,6 +129,7 @@ describe('ProductsCreate', () => {
       sku: 'CSTL-SHRT-01',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: true,
       price: 99.99,
       oldPrice: 129.99,
     });
@@ -149,6 +151,7 @@ describe('ProductsCreate', () => {
       sku: 'UPD-1',
       status: ProductStatus.Active,
       available: true,
+      isPopular: false,
     });
 
     (component as any).onSubmit();
@@ -179,6 +182,7 @@ describe('ProductsCreate', () => {
       sku: '',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: false,
     });
 
     (component as any).onSubmit();
@@ -198,6 +202,7 @@ describe('ProductsCreate', () => {
       sku: '',
       status: ProductStatus.Archived,
       available: false,
+      isPopular: false,
     });
 
     (component as any).onSubmit();
