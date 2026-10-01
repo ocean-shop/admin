@@ -6,4 +6,20 @@
   <section class="settings-card">
     <app-settings-form />
   </section>
+
+  <section class="settings-card settings-cache">
+    <div class="settings-cache-info">
+      <h4 class="settings-cache-title">{{ cacheTitle }}</h4>
+      <p class="settings-cache-description">{{ cacheDescription }}</p>
+    </div>
+    <app-button
+      [label]="cacheInvalidateLabel"
+      [icon]="cacheInvalidateIcon"
+      [iconLeading]="true"
+      [fullWidth]="false"
+      [disabled]="isCacheInvalidating()"
+      type="button"
+      (click)="onInvalidateCache()"
+    />
+  </section>
 </div>

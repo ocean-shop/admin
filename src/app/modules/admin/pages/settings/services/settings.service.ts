@@ -21,4 +21,14 @@ export class SettingsService {
       withCredentials: true,
     });
   }
+
+  invalidateCache(): Observable<void> {
+    return this.http.post<void>(
+      `${API_URL}/settings/cache/invalidate`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
+  }
 }
