@@ -15,16 +15,16 @@ import { ToggleProductCategoryPayload } from '../models/toggle-product-category-
 import { ToggleProductTagPayload } from '../models/toggle-product-tag-payload.model';
 import { UpdateProductVariationPayload } from '../models/update-product-variation-payload.model';
 import { UpdateProductPayload } from '../models/update-product-payload.model';
+import { API_URL } from '@core/constants/api.constant';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductsService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'https://api-production-1765.up.railway.app';
 
   getProducts(query: ProductListQueryParams): Observable<ProductListResponse> {
-    return this.http.get<ProductListResponse>(`${this.API_URL}/catalog/products`, {
+    return this.http.get<ProductListResponse>(`${API_URL}/catalog/products`, {
       withCredentials: true,
       params: {
         page: query.page,
@@ -40,19 +40,19 @@ export class ProductsService {
   }
 
   getProductById(id: string): Observable<ProductApiItem> {
-    return this.http.get<ProductApiItem>(`${this.API_URL}/catalog/products/${id}`, {
+    return this.http.get<ProductApiItem>(`${API_URL}/catalog/products/${id}`, {
       withCredentials: true,
     });
   }
 
   createProduct(payload: CreateProductPayload): Observable<ProductApiItem> {
-    return this.http.post<ProductApiItem>(`${this.API_URL}/catalog/products`, payload, {
+    return this.http.post<ProductApiItem>(`${API_URL}/catalog/products`, payload, {
       withCredentials: true,
     });
   }
 
   updateProduct(id: string, payload: UpdateProductPayload): Observable<ProductApiItem> {
-    return this.http.patch<ProductApiItem>(`${this.API_URL}/catalog/products/${id}`, payload, {
+    return this.http.patch<ProductApiItem>(`${API_URL}/catalog/products/${id}`, payload, {
       withCredentials: true,
     });
   }
@@ -62,7 +62,7 @@ export class ProductsService {
     payload: CreateProductVariationPayload,
   ): Observable<ProductApiItem> {
     return this.http.post<ProductApiItem>(
-      `${this.API_URL}/catalog/products/${productId}/variations`,
+      `${API_URL}/catalog/products/${productId}/variations`,
       payload,
       {
         withCredentials: true,
@@ -76,7 +76,7 @@ export class ProductsService {
     payload: UpdateProductVariationPayload,
   ): Observable<ProductApiItem> {
     return this.http.patch<ProductApiItem>(
-      `${this.API_URL}/catalog/products/${productId}/variations/${variationId}`,
+      `${API_URL}/catalog/products/${productId}/variations/${variationId}`,
       payload,
       {
         withCredentials: true,
@@ -89,51 +89,43 @@ export class ProductsService {
   }
 
   toggleCategory(productId: string, payload: ToggleProductCategoryPayload): Observable<void> {
-    return this.http.post<void>(
-      `${this.API_URL}/catalog/products/${productId}/categories`,
-      payload,
-      {
-        withCredentials: true,
-      },
-    );
+    return this.http.post<void>(`${API_URL}/catalog/products/${productId}/categories`, payload, {
+      withCredentials: true,
+    });
   }
 
   toggleAttribute(productId: string, payload: ToggleProductAttributePayload): Observable<void> {
-    return this.http.post<void>(
-      `${this.API_URL}/catalog/products/${productId}/attributes`,
-      payload,
-      {
-        withCredentials: true,
-      },
-    );
+    return this.http.post<void>(`${API_URL}/catalog/products/${productId}/attributes`, payload, {
+      withCredentials: true,
+    });
   }
 
   toggleTag(productId: string, payload: ToggleProductTagPayload): Observable<void> {
-    return this.http.post<void>(`${this.API_URL}/catalog/products/${productId}/tags`, payload, {
+    return this.http.post<void>(`${API_URL}/catalog/products/${productId}/tags`, payload, {
       withCredentials: true,
     });
   }
 
   assignImages(productId: string, payload: AssignProductImagesPayload): Observable<void> {
-    return this.http.put<void>(`${this.API_URL}/catalog/products/${productId}/images`, payload, {
+    return this.http.put<void>(`${API_URL}/catalog/products/${productId}/images`, payload, {
       withCredentials: true,
     });
   }
 
   changeImageSort(imageId: string, payload: ChangeProductImageSortPayload): Observable<void> {
-    return this.http.patch<void>(`${this.API_URL}/catalog/images/${imageId}/sort`, payload, {
+    return this.http.patch<void>(`${API_URL}/catalog/images/${imageId}/sort`, payload, {
       withCredentials: true,
     });
   }
 
   removeImage(imageId: string): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/catalog/images/${imageId}`, {
+    return this.http.delete<void>(`${API_URL}/catalog/images/${imageId}`, {
       withCredentials: true,
     });
   }
 
   deleteProduct(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/catalog/products/${id}`, {
+    return this.http.delete<void>(`${API_URL}/catalog/products/${id}`, {
       withCredentials: true,
     });
   }

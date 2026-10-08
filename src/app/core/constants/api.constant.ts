@@ -1,1 +1,3 @@
-export const API_URL = 'https://api-production-1765.up.railway.app';
+import { environment } from '../../../environments/environment';
+
+export const API_URL = environment.API_URL;

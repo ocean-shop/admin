@@ -8,9 +8,9 @@ import {
 } from '../../constants/auth.constant';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AuthService } from './auth.service';
+import { API_URL } from '@core/constants/api.constant';
 
 describe('AuthService', () => {
-  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: AuthService;
   let httpMock: HttpTestingController;
   let localStorageService: LocalStorageService;
