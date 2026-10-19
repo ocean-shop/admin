@@ -20,6 +20,7 @@ export const mapProductToFormModel = (product: ProductApiItem): ProductFormModel
     status: normalizeProductStatus(product.status),
     available: product.available ?? true,
     isPopular: product.isPopular ?? false,
+    isMainBanner: product.isMainBanner ?? false,
   };
 };
 

@@ -29,6 +29,7 @@ describe('product-api-mapping.helper', () => {
       status: ProductStatus.Archived,
       available: false,
       isPopular: false,
+      isMainBanner: false,
     });
   });
 
@@ -36,6 +37,7 @@ describe('product-api-mapping.helper', () => {
     const formModel = mapProductToFormModel({
       name: 'Coastal Shirt',
       isPopular: true,
+      isMainBanner: false,
     });
 
     expect(formModel.isPopular).toBe(true);

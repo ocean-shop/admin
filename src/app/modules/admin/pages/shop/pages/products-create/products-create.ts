@@ -216,6 +216,7 @@ export class ProductsCreate implements OnInit {
       status: this.productForm.status().value(),
       available: this.productForm.available().value(),
       isPopular: this.productForm.isPopular().value(),
+      isMainBanner: this.productForm.isMainBanner().value(),
       price: this.productForm.price().value(),
       oldPrice: this.productForm.oldPrice().value(),
     };

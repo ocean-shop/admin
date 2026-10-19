@@ -9,6 +9,7 @@ export type ProductFormValues = {
   status: ProductStatus | null | undefined;
   available: boolean | null | undefined;
   isPopular: boolean | null | undefined;
+  isMainBanner: boolean | null | undefined;
   price: string | null | undefined;
   oldPrice: string | null | undefined;
 };

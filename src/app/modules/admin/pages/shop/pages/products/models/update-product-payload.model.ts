@@ -8,6 +8,7 @@ export type UpdateProductPayload = {
   status?: ProductStatus;
   available?: boolean;
   isPopular?: boolean;
+  isMainBanner?: boolean;
   sku?: string;
   price?: number;
   oldPrice?: number;

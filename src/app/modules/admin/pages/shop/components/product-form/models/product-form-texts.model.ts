@@ -18,6 +18,7 @@ export type ProductFormTexts = {
   STATUS_LABEL: string;
   AVAILABLE_LABEL: string;
   IS_POPULAR_LABEL: string;
+  IS_MAIN_BANNER_LABEL: string;
   CATEGORIES_TITLE: string;
   ATTRIBUTES_TITLE: string;
   TAGS_TITLE: string;

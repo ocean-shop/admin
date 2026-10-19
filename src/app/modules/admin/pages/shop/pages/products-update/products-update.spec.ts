@@ -92,6 +92,7 @@ describe('ProductsUpdate', () => {
       status: ProductStatus.Draft,
       available: true,
       isPopular: true,
+      isMainBanner: false,
     });
 
     (component as any).onSubmit();
@@ -105,6 +106,7 @@ describe('ProductsUpdate', () => {
       status: ProductStatus.Draft,
       available: true,
       isPopular: true,
+      isMainBanner: false,
       price: 45.1,
       oldPrice: 55.1,
     });
@@ -124,6 +126,7 @@ describe('ProductsUpdate', () => {
       status: ProductStatus.Draft,
       available: true,
       isPopular: false,
+      isMainBanner: false,
     });
 
     (component as any).onSubmit();
@@ -144,6 +147,7 @@ describe('ProductsUpdate', () => {
       status: ProductStatus.Active,
       available: false,
       isPopular: false,
+      isMainBanner: false,
     });
 
     (component as any).onSubmit();

@@ -25,6 +25,7 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   STATUS_LABEL: 'Статус',
   AVAILABLE_LABEL: 'Доступний',
   IS_POPULAR_LABEL: 'Популярний',
+  IS_MAIN_BANNER_LABEL: 'Головний баннер',
   CATEGORIES_TITLE: 'Категорії',
   ATTRIBUTES_TITLE: 'Атрибути',
   TAGS_TITLE: 'Теги',
@@ -85,6 +86,7 @@ export const PRODUCT_FORM_FIELD_IDS: ProductFormFieldIds = {
   TYPE_VARIABLE: 'product-type-variable',
   AVAILABLE: 'product-available',
   IS_POPULAR: 'product-is-popular',
+  IS_MAIN_BANNER: 'product-is-main-banner',
 };
 
 export const PRODUCT_FORM_STATUS_OPTIONS: DropdownOption[] = [
@@ -103,6 +105,7 @@ export const PRODUCT_FORM_DEFAULT_VALUE: ProductFormModel = {
   status: ProductStatus.Draft,
   available: true,
   isPopular: false,
+  isMainBanner: false,
 };
 
 export const PRODUCT_FORM_SEARCH_DEBOUNCE_MS = 300;

@@ -14,6 +14,7 @@ describe('product-form-payload.helper', () => {
     status: ProductStatus.Active,
     available: true,
     isPopular: false,
+    isMainBanner: false,
     price: '99.99',
     oldPrice: '129.99',
   };
@@ -29,6 +30,7 @@ describe('product-form-payload.helper', () => {
       sku: 'SKU-1',
       status: ProductStatus.Active,
       available: true,
+      isMainBanner: false,
       price: 99.99,
       oldPrice: 129.99,
     });
@@ -57,6 +59,7 @@ describe('product-form-payload.helper', () => {
       sku: 'SKU-1',
       status: ProductStatus.Active,
       available: true,
+      isMainBanner: false,
     });
   });
 
@@ -73,6 +76,7 @@ describe('product-form-payload.helper', () => {
       sku: 'SKU-1',
       status: ProductStatus.Active,
       available: true,
+      isMainBanner: false,
       isPopular: true,
       price: 99.99,
       oldPrice: 129.99,
@@ -83,5 +87,13 @@ describe('product-form-payload.helper', () => {
     const payload = buildUpdateProductPayload(baseValues);
 
     expect(payload).not.toHaveProperty('isPopular');
+  });
+
+  it('always includes isMainBanner in the payload', () => {
+    expect(buildUpdateProductPayload({ ...baseValues, isMainBanner: true })).toHaveProperty(
+      'isMainBanner',
+      true,
+    );
+    expect(buildUpdateProductPayload(baseValues)).toHaveProperty('isMainBanner', false);
   });
 });

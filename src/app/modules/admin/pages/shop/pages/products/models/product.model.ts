@@ -49,6 +49,7 @@ export type ProductApiItem = {
   status?: ProductStatus | string | null;
   available?: boolean | null;
   isPopular?: boolean | null;
+  isMainBanner?: boolean | null;
   price?: number | string | null;
   oldPrice?: number | string | null;
   categories?: (ProductCategoryApiItem | string)[] | null;

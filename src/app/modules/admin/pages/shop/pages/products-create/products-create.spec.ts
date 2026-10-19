@@ -116,6 +116,7 @@ describe('ProductsCreate', () => {
       status: ProductStatus.Draft,
       available: true,
       isPopular: true,
+      isMainBanner: false,
     });
 
     (component as any).onSubmit();
@@ -130,6 +131,7 @@ describe('ProductsCreate', () => {
       status: ProductStatus.Draft,
       available: true,
       isPopular: true,
+      isMainBanner: false,
       price: 99.99,
       oldPrice: 129.99,
     });
@@ -152,6 +154,7 @@ describe('ProductsCreate', () => {
       status: ProductStatus.Active,
       available: true,
       isPopular: false,
+      isMainBanner: false,
     });
 
     (component as any).onSubmit();
@@ -164,6 +167,7 @@ describe('ProductsCreate', () => {
       sku: 'UPD-1',
       status: ProductStatus.Active,
       available: true,
+      isMainBanner: false,
       price: 90,
       oldPrice: 100,
     });
@@ -183,6 +187,7 @@ describe('ProductsCreate', () => {
       status: ProductStatus.Draft,
       available: true,
       isPopular: false,
+      isMainBanner: false,
     });
 
     (component as any).onSubmit();
@@ -203,6 +208,7 @@ describe('ProductsCreate', () => {
       status: ProductStatus.Archived,
       available: false,
       isPopular: false,
+      isMainBanner: false,
     });
 
     (component as any).onSubmit();

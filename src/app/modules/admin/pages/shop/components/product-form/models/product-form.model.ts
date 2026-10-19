@@ -11,4 +11,5 @@ export type ProductFormModel = {
   status: ProductStatus;
   available: boolean;
   isPopular: boolean;
+  isMainBanner: boolean;
 };

@@ -9,4 +9,5 @@ export type ProductFormFieldIds = {
   TYPE_VARIABLE: string;
   AVAILABLE: string;
   IS_POPULAR: string;
+  IS_MAIN_BANNER: string;
 };
