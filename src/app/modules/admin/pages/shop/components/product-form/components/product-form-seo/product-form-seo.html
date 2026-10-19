@@ -1,0 +1,47 @@
+<article class="product-form-card">
+  <h2 class="product-form-card-title">{{ texts().SEO_TITLE }}</h2>
+
+  <div class="product-form-field-group">
+    <app-input
+      [id]="fieldIds().SLUG"
+      [label]="texts().SLUG_LABEL"
+      [placeholder]="texts().SLUG_PLACEHOLDER"
+      [control]="productForm().slug"
+    />
+  </div>
+
+  <div class="product-form-field-group">
+    <app-input
+      [id]="fieldIds().META_TITLE"
+      [label]="texts().META_TITLE_LABEL"
+      [placeholder]="texts().META_TITLE_PLACEHOLDER"
+      [control]="productForm().metaTitle"
+    />
+  </div>
+
+  <div class="product-form-field-group">
+    <app-textarea
+      [id]="fieldIds().META_DESCRIPTION"
+      [label]="texts().META_DESCRIPTION_LABEL"
+      [rows]="3"
+      [placeholder]="texts().META_DESCRIPTION_PLACEHOLDER"
+      [control]="productForm().metaDescription"
+    />
+  </div>
+
+  <div class="product-form-field-group">
+    <app-input
+      [id]="fieldIds().CANONICAL_URL"
+      type="url"
+      [label]="texts().CANONICAL_URL_LABEL"
+      [placeholder]="texts().CANONICAL_URL_PLACEHOLDER"
+      [control]="productForm().canonicalUrl"
+    />
+  </div>
+
+  <app-checkbox
+    [id]="fieldIds().NO_INDEX"
+    [label]="texts().NO_INDEX_LABEL"
+    [control]="productForm().noIndex"
+  />
+</article>

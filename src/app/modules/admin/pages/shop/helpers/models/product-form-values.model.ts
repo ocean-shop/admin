@@ -12,4 +12,9 @@ export type ProductFormValues = {
   isMainBanner: boolean | null | undefined;
   price: string | null | undefined;
   oldPrice: string | null | undefined;
+  slug: string | null | undefined;
+  metaTitle: string | null | undefined;
+  metaDescription: string | null | undefined;
+  canonicalUrl: string | null | undefined;
+  noIndex: boolean | null | undefined;
 };

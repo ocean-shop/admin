@@ -40,6 +40,7 @@ import {
   mapProductToFormModel,
 } from '../../helpers/product-api-mapping.helper';
 import { buildUpdateProductPayload } from '../../helpers/product-form-payload.helper';
+import { applyProductSeoValidators } from '../../helpers/product-form-schema.helper';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
 import { PRODUCTS_TEXTS } from '../products/constants/products.constants';
@@ -84,6 +85,7 @@ export class ProductsUpdate implements OnInit {
   });
   protected readonly productForm = form(this.productFormModel, (schemaPath) => {
     required(schemaPath.name, { message: PRODUCTS_UPDATE_TEXTS.PRODUCT_NAME_REQUIRED });
+    applyProductSeoValidators(schemaPath);
   });
 
   protected readonly productQuery = injectQuery(() => {
@@ -106,7 +108,7 @@ export class ProductsUpdate implements OnInit {
   protected readonly isLoadingProduct = computed(
     () => this.productQuery.isPending() || this.productQuery.isFetching(),
   );
-  protected readonly isFormValid = computed(() => this.productForm.name().valid());
+  protected readonly isFormValid = computed(() => this.productForm().valid());
 
   constructor() {
     effect(() => {
@@ -243,6 +245,11 @@ export class ProductsUpdate implements OnInit {
       isMainBanner: this.productForm.isMainBanner().value(),
       price: this.productForm.price().value(),
       oldPrice: this.productForm.oldPrice().value(),
+      slug: this.productForm.slug().value(),
+      metaTitle: this.productForm.metaTitle().value(),
+      metaDescription: this.productForm.metaDescription().value(),
+      canonicalUrl: this.productForm.canonicalUrl().value(),
+      noIndex: this.productForm.noIndex().value(),
     };
   }
 }

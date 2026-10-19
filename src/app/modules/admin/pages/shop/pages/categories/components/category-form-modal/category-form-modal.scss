@@ -11,3 +11,7 @@
 .category-parent-name {
   @apply font-semibold text-on-surface;
 }
+
+.category-seo-title {
+  @apply mt-2 border-t border-surface-container pt-4 text-sm font-semibold text-on-surface;
+}

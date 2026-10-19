@@ -93,6 +93,11 @@ describe('ProductsUpdate', () => {
       available: true,
       isPopular: true,
       isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -109,6 +114,10 @@ describe('ProductsUpdate', () => {
       isMainBanner: false,
       price: 45.1,
       oldPrice: 55.1,
+      metaTitle: null,
+      metaDescription: null,
+      canonicalUrl: null,
+      noIndex: false,
     });
     expect(mockToasterService.success).toHaveBeenCalledWith(
       PRODUCTS_UPDATE_TEXTS.UPDATE_SUCCESS_TITLE,
@@ -127,6 +136,11 @@ describe('ProductsUpdate', () => {
       available: true,
       isPopular: false,
       isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -148,6 +162,11 @@ describe('ProductsUpdate', () => {
       available: false,
       isPopular: false,
       isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();

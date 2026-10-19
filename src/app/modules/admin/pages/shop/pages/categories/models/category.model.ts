@@ -7,6 +7,10 @@ export type CategoryApiItem = {
   productCount?: number | null;
   productsCount?: number | null;
   itemsCount?: number | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
 };
 
 export type CategoriesApiResponse = {
@@ -24,6 +28,10 @@ export type Category = {
   slug: string;
   sort: number;
   productCount?: number;
+  metaTitle?: string;
+  metaDescription?: string;
+  canonicalUrl?: string;
+  noIndex?: boolean;
 };
 
 export type CategoriesStats = {

@@ -117,6 +117,11 @@ describe('ProductsCreate', () => {
       available: true,
       isPopular: true,
       isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -134,6 +139,10 @@ describe('ProductsCreate', () => {
       isMainBanner: false,
       price: 99.99,
       oldPrice: 129.99,
+      metaTitle: null,
+      metaDescription: null,
+      canonicalUrl: null,
+      noIndex: false,
     });
     expect(mockToasterService.success).toHaveBeenCalledWith(
       PRODUCTS_CREATE_TEXTS.CREATE_SUCCESS_TITLE,
@@ -155,6 +164,11 @@ describe('ProductsCreate', () => {
       available: true,
       isPopular: false,
       isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -170,6 +184,10 @@ describe('ProductsCreate', () => {
       isMainBanner: false,
       price: 90,
       oldPrice: 100,
+      metaTitle: null,
+      metaDescription: null,
+      canonicalUrl: null,
+      noIndex: false,
     });
     expect(mockToasterService.success).toHaveBeenCalledWith(
       PRODUCTS_CREATE_TEXTS.UPDATE_SUCCESS_TITLE,
@@ -188,6 +206,11 @@ describe('ProductsCreate', () => {
       available: true,
       isPopular: false,
       isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -209,6 +232,11 @@ describe('ProductsCreate', () => {
       available: false,
       isPopular: false,
       isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();

@@ -52,6 +52,11 @@ export type ProductApiItem = {
   isMainBanner?: boolean | null;
   price?: number | string | null;
   oldPrice?: number | string | null;
+  slug?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
   categories?: (ProductCategoryApiItem | string)[] | null;
   attributes?: (ProductAttributeApiItem | string)[] | null;
   attributeTypes?: (ProductAttributeApiItem | string)[] | null;

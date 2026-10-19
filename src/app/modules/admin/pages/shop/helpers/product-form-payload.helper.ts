@@ -2,6 +2,7 @@ import { CreateProductPayload } from '../pages/products/models/create-product-pa
 import { UpdateProductPayload } from '../pages/products/models/update-product-payload.model';
 import { ProductFormValues } from './models/product-form-values.model';
 import { parseProductPrice } from './product-price.helper';
+import { toNullableSeoText } from './seo-form.helper';
 
 export const buildCreateProductPayload = (
   shopId: string | null,
@@ -37,6 +38,9 @@ const buildBaseProductPayload = (
   const sku = formValues.sku?.trim() ?? '';
   const price = parseProductPrice(formValues.price);
   const oldPrice = parseProductPrice(formValues.oldPrice);
+  // An empty slug is left out so the API generates one on create and keeps the
+  // current one on update.
+  const slug = formValues.slug?.trim() ?? '';
 
   return {
     name,
@@ -49,5 +53,10 @@ const buildBaseProductPayload = (
     isMainBanner: formValues.isMainBanner ?? false,
     ...(price !== null ? { price } : {}),
     ...(oldPrice !== null ? { oldPrice } : {}),
+    ...(slug ? { slug } : {}),
+    metaTitle: toNullableSeoText(formValues.metaTitle),
+    metaDescription: toNullableSeoText(formValues.metaDescription),
+    canonicalUrl: toNullableSeoText(formValues.canonicalUrl),
+    noIndex: formValues.noIndex ?? false,
   };
 };

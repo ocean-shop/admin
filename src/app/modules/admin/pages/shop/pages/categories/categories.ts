@@ -241,11 +241,11 @@ export class Categories implements OnInit {
     }
 
     if (mode === CategoryModalModeEnum.CreateRoot || mode === CategoryModalModeEnum.CreateChild) {
+      const { parentId, ...categoryFields } = payload;
       const createPayload: CreateCategoryPayload = {
         shopId: currentShopId,
-        name: payload.name,
-        slug: payload.slug,
-        ...(payload.parentId ? { parentId: payload.parentId } : {}),
+        ...categoryFields,
+        ...(parentId ? { parentId } : {}),
       };
       this.executeMutation(
         this.createCategoryMutation,
@@ -261,10 +261,10 @@ export class Categories implements OnInit {
       return;
     }
 
+    const { parentId, ...categoryFields } = payload;
     const updatePayload: UpdateCategoryPayload = {
-      name: payload.name,
-      slug: payload.slug,
-      ...(payload.parentId ? { parentId: payload.parentId } : {}),
+      ...categoryFields,
+      ...(parentId ? { parentId } : {}),
     };
     this.executeMutation(
       this.updateCategoryMutation,
@@ -386,6 +386,10 @@ export class Categories implements OnInit {
       slug: (category.slug ?? '').trim() || 'category',
       sort: typeof category.sort === 'number' ? category.sort : 0,
       ...(typeof productCount === 'number' ? { productCount } : {}),
+      ...(category.metaTitle ? { metaTitle: category.metaTitle } : {}),
+      ...(category.metaDescription ? { metaDescription: category.metaDescription } : {}),
+      ...(category.canonicalUrl ? { canonicalUrl: category.canonicalUrl } : {}),
+      ...(category.noIndex ? { noIndex: true } : {}),
     };
   }
 

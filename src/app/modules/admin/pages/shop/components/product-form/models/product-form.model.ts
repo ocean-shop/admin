@@ -12,4 +12,9 @@ export type ProductFormModel = {
   available: boolean;
   isPopular: boolean;
   isMainBanner: boolean;
+  slug: string;
+  metaTitle: string;
+  metaDescription: string;
+  canonicalUrl: string;
+  noIndex: boolean;
 };

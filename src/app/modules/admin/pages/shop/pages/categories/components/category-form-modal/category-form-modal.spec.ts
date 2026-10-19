@@ -8,6 +8,19 @@ describe('CategoryFormModal', () => {
   let fixture: ComponentFixture<CategoryFormModal>;
   let component: CategoryFormModal;
 
+  const emptySeoForm = {
+    metaTitle: '',
+    metaDescription: '',
+    canonicalUrl: '',
+    noIndex: false,
+  };
+  const emptySeoPayload = {
+    metaTitle: null,
+    metaDescription: null,
+    canonicalUrl: null,
+    noIndex: false,
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CategoryFormModal],
@@ -43,7 +56,7 @@ describe('CategoryFormModal', () => {
   });
 
   it('auto-generates slug from name when slug is empty', () => {
-    (component as any).categoryFormModel.set({ name: 'Home Decor', slug: '' });
+    (component as any).categoryFormModel.set({ name: 'Home Decor', slug: '', ...emptySeoForm });
     fixture.detectChanges();
 
     expect((component as any).categoryFormModel().slug).toBe('home-decor');
@@ -61,6 +74,7 @@ describe('CategoryFormModal', () => {
     (component as any).categoryFormModel.set({
       name: 'Laptops',
       slug: 'laptops',
+      ...emptySeoForm,
     });
     fixture.detectChanges();
 
@@ -69,6 +83,7 @@ describe('CategoryFormModal', () => {
     expect(confirmedSpy).toHaveBeenCalledWith({
       name: 'Laptops',
       slug: 'laptops',
+      ...emptySeoPayload,
       parentId: 'parent-1',
     });
   });
@@ -89,6 +104,7 @@ describe('CategoryFormModal', () => {
     (component as any).categoryFormModel.set({
       name: 'New Name',
       slug: 'new-name',
+      ...emptySeoForm,
     });
     fixture.detectChanges();
     (component as any).onConfirm();
@@ -96,8 +112,53 @@ describe('CategoryFormModal', () => {
     expect(confirmedSpy).toHaveBeenCalledWith({
       name: 'New Name',
       slug: 'new-name',
+      ...emptySeoPayload,
       parentId: 'parent-1',
     });
+  });
+
+  it('prefills SEO fields from category and emits them on update', async () => {
+    const confirmedSpy = vi.fn();
+    component.confirmed.subscribe(confirmedSpy);
+
+    fixture.componentRef.setInput('mode', 'update');
+    fixture.componentRef.setInput('category', {
+      id: 'category-1',
+      name: 'Wetsuits',
+      slug: 'wetsuits',
+      metaTitle: 'Wetsuits | Ocean',
+      metaDescription: 'Neoprene wetsuits',
+      canonicalUrl: 'https://ocean.shop/catalog/wetsuits',
+      noIndex: true,
+    } as Category);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    (component as any).onConfirm();
+
+    expect(confirmedSpy).toHaveBeenCalledWith({
+      name: 'Wetsuits',
+      slug: 'wetsuits',
+      metaTitle: 'Wetsuits | Ocean',
+      metaDescription: 'Neoprene wetsuits',
+      canonicalUrl: 'https://ocean.shop/catalog/wetsuits',
+      noIndex: true,
+    });
+  });
+
+  it('does not emit confirmed when canonical URL is invalid', () => {
+    const confirmedSpy = vi.fn();
+    component.confirmed.subscribe(confirmedSpy);
+
+    (component as any).categoryFormModel.set({
+      name: 'Laptops',
+      slug: 'laptops',
+      ...emptySeoForm,
+      canonicalUrl: 'not-a-url',
+    });
+    fixture.detectChanges();
+    (component as any).onConfirm();
+
+    expect(confirmedSpy).not.toHaveBeenCalled();
   });
 
   it('does not emit confirmed when form is invalid', () => {
@@ -107,6 +168,7 @@ describe('CategoryFormModal', () => {
     (component as any).categoryFormModel.set({
       name: '',
       slug: '',
+      ...emptySeoForm,
     });
     fixture.detectChanges();
     (component as any).onConfirm();

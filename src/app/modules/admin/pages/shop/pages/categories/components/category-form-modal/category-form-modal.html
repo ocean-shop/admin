@@ -28,5 +28,36 @@
       [placeholder]="texts.SLUG_PLACEHOLDER"
       [control]="categoryForm.slug"
     />
+
+    <h3 class="category-seo-title">{{ texts.SEO_TITLE }}</h3>
+
+    <app-input
+      [id]="metaTitleFieldId"
+      [label]="texts.META_TITLE_LABEL"
+      [placeholder]="texts.META_TITLE_PLACEHOLDER"
+      [control]="categoryForm.metaTitle"
+    />
+
+    <app-textarea
+      [id]="metaDescriptionFieldId"
+      [label]="texts.META_DESCRIPTION_LABEL"
+      [rows]="3"
+      [placeholder]="texts.META_DESCRIPTION_PLACEHOLDER"
+      [control]="categoryForm.metaDescription"
+    />
+
+    <app-input
+      [id]="canonicalUrlFieldId"
+      type="url"
+      [label]="texts.CANONICAL_URL_LABEL"
+      [placeholder]="texts.CANONICAL_URL_PLACEHOLDER"
+      [control]="categoryForm.canonicalUrl"
+    />
+
+    <app-checkbox
+      [id]="noIndexFieldId"
+      [label]="texts.NO_INDEX_LABEL"
+      [control]="categoryForm.noIndex"
+    />
   </form>
 </app-modal>

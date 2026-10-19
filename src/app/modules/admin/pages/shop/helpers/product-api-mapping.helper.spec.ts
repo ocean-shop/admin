@@ -30,6 +30,30 @@ describe('product-api-mapping.helper', () => {
       available: false,
       isPopular: false,
       isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
+    });
+  });
+
+  it('maps SEO fields to the form model', () => {
+    const formModel = mapProductToFormModel({
+      name: 'Coastal Shirt',
+      slug: 'coastal-shirt',
+      metaTitle: 'Coastal Shirt | Ocean',
+      metaDescription: 'Linen shirt',
+      canonicalUrl: 'https://ocean.shop/products/coastal-shirt',
+      noIndex: true,
+    });
+
+    expect(formModel).toMatchObject({
+      slug: 'coastal-shirt',
+      metaTitle: 'Coastal Shirt | Ocean',
+      metaDescription: 'Linen shirt',
+      canonicalUrl: 'https://ocean.shop/products/coastal-shirt',
+      noIndex: true,
     });
   });
 

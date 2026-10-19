@@ -17,6 +17,17 @@ describe('product-form-payload.helper', () => {
     isMainBanner: false,
     price: '99.99',
     oldPrice: '129.99',
+    slug: '',
+    metaTitle: '',
+    metaDescription: '',
+    canonicalUrl: '',
+    noIndex: false,
+  };
+  const emptySeoPayload = {
+    metaTitle: null,
+    metaDescription: null,
+    canonicalUrl: null,
+    noIndex: false,
   };
 
   it('builds create payload with normalized shop id', () => {
@@ -33,6 +44,7 @@ describe('product-form-payload.helper', () => {
       isMainBanner: false,
       price: 99.99,
       oldPrice: 129.99,
+      ...emptySeoPayload,
     });
   });
 
@@ -60,6 +72,7 @@ describe('product-form-payload.helper', () => {
       status: ProductStatus.Active,
       available: true,
       isMainBanner: false,
+      ...emptySeoPayload,
     });
   });
 
@@ -80,6 +93,7 @@ describe('product-form-payload.helper', () => {
       isPopular: true,
       price: 99.99,
       oldPrice: 129.99,
+      ...emptySeoPayload,
     });
   });
 
@@ -95,5 +109,31 @@ describe('product-form-payload.helper', () => {
       true,
     );
     expect(buildUpdateProductPayload(baseValues)).toHaveProperty('isMainBanner', false);
+  });
+
+  it('omits an empty slug so the API generates or keeps it', () => {
+    expect(buildCreateProductPayload('shop-1', { ...baseValues, slug: '  ' })).not.toHaveProperty(
+      'slug',
+    );
+    expect(buildUpdateProductPayload(baseValues)).not.toHaveProperty('slug');
+  });
+
+  it('includes trimmed SEO fields', () => {
+    const payload = buildUpdateProductPayload({
+      ...baseValues,
+      slug: ' coastal-shirt ',
+      metaTitle: ' Coastal Shirt | Ocean ',
+      metaDescription: ' Linen shirt ',
+      canonicalUrl: ' https://ocean.shop/products/coastal-shirt ',
+      noIndex: true,
+    });
+
+    expect(payload).toMatchObject({
+      slug: 'coastal-shirt',
+      metaTitle: 'Coastal Shirt | Ocean',
+      metaDescription: 'Linen shirt',
+      canonicalUrl: 'https://ocean.shop/products/coastal-shirt',
+      noIndex: true,
+    });
   });
 });
