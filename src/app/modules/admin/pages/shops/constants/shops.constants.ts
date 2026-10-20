@@ -7,6 +7,7 @@ export const SHOPS_TEXTS = {
   DEFAULT_URL: 'Немає URL',
   DEFAULT_CREATED: 'Невідомо',
   DEFAULT_UPDATED: 'Невідомо',
+  CREATED_BADGE_PREFIX: 'Створено:',
   PAGINATION_LABEL: 'магазинів',
   MODAL_CREATE_TITLE: 'Створити Магазин',
   MODAL_UPDATE_TITLE: 'Оновити Магазин',

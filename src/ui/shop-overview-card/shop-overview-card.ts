@@ -14,5 +14,3 @@ export class ShopOverviewCard {
     this.manageStore.emit(this.card().shopId);
   }
 }
-
-export type { ShopOverviewCardData, ShopOverviewMetric } from './models/shop-overview-card.model';

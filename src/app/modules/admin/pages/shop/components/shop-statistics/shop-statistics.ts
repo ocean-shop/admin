@@ -16,7 +16,12 @@ import {
   SHOP_STATISTICS_SERIES_COLORS,
   SHOP_STATISTICS_TEXTS,
 } from '../../constants/shop-statistics.constants';
-import { ChartData, MonthlyStatistic, ShopStatistic } from '../../models/shop-statistic.model';
+import {
+  ChartData,
+  MonthlyStatistic,
+  ShopStatistic,
+  StatisticMonthKey,
+} from '../../models/shop-statistic.model';
 import { ShopStatisticService } from '../../services/shop-statistic.service';
 
 @Component({
@@ -138,13 +143,8 @@ export class ShopStatistics {
     };
   }
 
-  private buildOrderedMonthKeys(
-    statistic: ShopStatistic,
-  ): { id: string; label: string; year: number; monthNumber: number }[] {
-    const merged = new Map<
-      string,
-      { id: string; label: string; year: number; monthNumber: number }
-    >();
+  private buildOrderedMonthKeys(statistic: ShopStatistic): StatisticMonthKey[] {
+    const merged = new Map<string, StatisticMonthKey>();
 
     for (const entry of [...statistic.orders, ...statistic.products, ...statistic.users]) {
       const id = `${entry.year}-${entry.monthNumber}`;
@@ -161,7 +161,7 @@ export class ShopStatistics {
     return [...merged.values()].sort((a, b) => a.year - b.year || a.monthNumber - b.monthNumber);
   }
 
-  private mapSeries(keys: { id: string }[], entries: MonthlyStatistic[]): number[] {
+  private mapSeries(keys: StatisticMonthKey[], entries: MonthlyStatistic[]): number[] {
     const counts = new Map<string, number>();
     for (const entry of entries) {
       counts.set(`${entry.year}-${entry.monthNumber}`, entry.count);

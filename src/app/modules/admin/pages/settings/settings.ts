@@ -10,6 +10,7 @@ import {
   SETTINGS_CACHE_INVALIDATE_LABEL,
   SETTINGS_CACHE_INVALIDATED_SUCCESS_MESSAGE,
   SETTINGS_CACHE_TITLE,
+  SETTINGS_PAGE_TITLE,
 } from './constants/settings.constants';
 
 @Component({
@@ -23,6 +24,7 @@ export class Settings {
   private readonly toasterService = inject(ToasterService);
   private readonly destroyRef = inject(DestroyRef);
 
+  protected readonly pageTitle = SETTINGS_PAGE_TITLE;
   protected readonly cacheTitle = SETTINGS_CACHE_TITLE;
   protected readonly cacheDescription = SETTINGS_CACHE_DESCRIPTION;
   protected readonly cacheInvalidateLabel = SETTINGS_CACHE_INVALIDATE_LABEL;

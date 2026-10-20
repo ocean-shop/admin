@@ -7,6 +7,7 @@ import { Textarea } from '@ui/textarea/textarea';
 import { applySeoValidators, toNullableSeoText } from '../../../../helpers/seo-form.helper';
 import {
   CATEGORIES_CANONICAL_URL_FIELD_ID,
+  CATEGORIES_EMPTY_FORM,
   CATEGORIES_META_DESCRIPTION_FIELD_ID,
   CATEGORIES_META_TITLE_FIELD_ID,
   CATEGORIES_NAME_FIELD_ID,
@@ -15,17 +16,9 @@ import {
   CATEGORIES_TEXTS,
 } from '../../constants/categories.constants';
 import { CategoryFormData } from '../../models/category-form.model';
+import { CategoryFormMode } from '../../models/category-modal-mode.type';
 import { Category } from '../../models/category.model';
 import { CategoryFormSubmitPayload } from '../../models/category-payload.model';
-
-const EMPTY_CATEGORY_FORM: CategoryFormData = {
-  name: '',
-  slug: '',
-  metaTitle: '',
-  metaDescription: '',
-  canonicalUrl: '',
-  noIndex: false,
-};
 
 @Component({
   selector: 'app-category-form-modal',
@@ -35,7 +28,7 @@ const EMPTY_CATEGORY_FORM: CategoryFormData = {
 })
 export class CategoryFormModal {
   readonly isOpen = input.required<boolean>();
-  readonly mode = input.required<'create' | 'update'>();
+  readonly mode = input.required<CategoryFormMode>();
   readonly category = input<Category | null>(null);
   readonly parentCategory = input<Category | null>(null);
   readonly confirmLoading = input<boolean>(false);
@@ -51,7 +44,7 @@ export class CategoryFormModal {
   protected readonly noIndexFieldId = CATEGORIES_NO_INDEX_FIELD_ID;
   protected readonly texts = CATEGORIES_TEXTS;
 
-  protected readonly categoryFormModel = signal<CategoryFormData>({ ...EMPTY_CATEGORY_FORM });
+  protected readonly categoryFormModel = signal<CategoryFormData>({ ...CATEGORIES_EMPTY_FORM });
   private readonly lastGeneratedSlug = signal('');
 
   protected readonly categoryForm = form(this.categoryFormModel, (schemaPath) => {
@@ -177,7 +170,7 @@ export class CategoryFormModal {
   }
 
   private resetCategoryForm(): void {
-    this.categoryForm().reset({ ...EMPTY_CATEGORY_FORM });
+    this.categoryForm().reset({ ...CATEGORIES_EMPTY_FORM });
     this.lastGeneratedSlug.set('');
   }
 

@@ -23,6 +23,7 @@ import {
   UserSessionApiItem,
 } from '../users/models/user.model';
 import { UsersService } from '../users/services/users.service';
+import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
 
 @Component({
   selector: 'app-users-detail',
@@ -73,7 +74,7 @@ export class UsersDetail implements OnInit {
     }
 
     return [
-      { label: 'email', value: user.email?.trim() || '—' },
+      { label: 'email', value: user.email?.trim() || EMPTY_VALUE_PLACEHOLDER },
       { label: 'mobile_number', value: this.resolveMobileNumber(user) },
       { label: 'is_active', value: this.resolveIsActiveLabel(user) },
       { label: 'created_at', value: this.resolveDateLabel(user.createdAt ?? user.created_at) },
@@ -158,7 +159,7 @@ export class UsersDetail implements OnInit {
   private resolveIsActiveLabel(user: UserApiItem): string {
     const value = user.isActive ?? user.is_active;
     if (typeof value !== 'boolean') {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     return value ? 'true' : 'false';
@@ -166,7 +167,7 @@ export class UsersDetail implements OnInit {
 
   private resolveDateLabel(value: string | null | undefined): string {
     if (!value?.trim()) {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     const parsed = new Date(value);
@@ -179,11 +180,11 @@ export class UsersDetail implements OnInit {
 
   private resolveStringValue(value: unknown): string {
     if (typeof value !== 'string') {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     const normalized = value.trim();
-    return normalized || '—';
+    return normalized || EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolveNumberValue(value: unknown): string {
@@ -191,12 +192,12 @@ export class UsersDetail implements OnInit {
       return String(value);
     }
 
-    return '—';
+    return EMPTY_VALUE_PLACEHOLDER;
   }
 
   private stringifyValue(value: unknown): string {
     if (value === null || value === undefined) {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     if (typeof value === 'string') {
@@ -210,7 +211,7 @@ export class UsersDetail implements OnInit {
     try {
       return JSON.stringify(value);
     } catch {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
   }
 }

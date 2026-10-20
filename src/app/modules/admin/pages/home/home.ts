@@ -3,9 +3,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth/auth.service';
-import { ShopOverviewCard, ShopOverviewCardData } from '@ui/shop-overview-card/shop-overview-card';
+import { ShopOverviewCard } from '@ui/shop-overview-card/shop-overview-card';
+import { ShopOverviewCardData } from '@ui/shop-overview-card/models/shop-overview-card.model';
 import { AdminsService } from '../admins/services/admins.service';
 import { AdminApiItem, AdminShopApiItem } from '../admins/models/admin.model';
+import {
+  HOME_METRIC_PENDING_ICON,
+  HOME_SHOP_ROUTE_PREFIX,
+  HOME_TEXTS,
+} from './constants/home.constants';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +25,7 @@ export class Home {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
+  protected readonly textData = HOME_TEXTS;
   protected readonly isLoading = signal(true);
   protected readonly hasError = signal(false);
   protected readonly cards = signal<ShopOverviewCardData[]>([]);
@@ -29,7 +36,7 @@ export class Home {
   }
 
   protected onManageStore(shopId: string): void {
-    this.router.navigate(['/admin/shop', shopId]);
+    this.router.navigate([HOME_SHOP_ROUTE_PREFIX, shopId]);
   }
 
   private loadAdminShops(): void {
@@ -86,7 +93,7 @@ export class Home {
         return null;
       }
 
-      return this.buildCard(id, `Shop ${id}`);
+      return this.buildCard(id, this.buildFallbackName(id));
     }
 
     const id = this.resolveId(shop.id);
@@ -94,7 +101,7 @@ export class Home {
       return null;
     }
 
-    const name = (shop.name ?? '').trim() || `Shop ${id}`;
+    const name = (shop.name ?? '').trim() || this.buildFallbackName(id);
     return this.buildCard(id, name);
   }
 
@@ -102,17 +109,25 @@ export class Home {
     return {
       shopId,
       title,
-      actionLabel: 'Керувати магазином',
+      actionLabel: HOME_TEXTS.MANAGE_SHOP_LABEL,
       metrics: [
         {
-          label: 'Загальні продажі',
-          value: 'N/A',
-          helperText: 'Очікування даних',
-          helperIcon: 'schedule',
+          label: HOME_TEXTS.SALES_METRIC_LABEL,
+          value: HOME_TEXTS.METRIC_EMPTY_VALUE,
+          helperText: HOME_TEXTS.METRIC_PENDING_TEXT,
+          helperIcon: HOME_METRIC_PENDING_ICON,
         },
-        { label: 'Запаси', value: 'N/A', helperText: 'Очікування даних' },
+        {
+          label: HOME_TEXTS.STOCK_METRIC_LABEL,
+          value: HOME_TEXTS.METRIC_EMPTY_VALUE,
+          helperText: HOME_TEXTS.METRIC_PENDING_TEXT,
+        },
       ],
     };
+  }
+
+  private buildFallbackName(shopId: string): string {
+    return `${HOME_TEXTS.SHOP_FALLBACK_NAME_PREFIX} ${shopId}`;
   }
 
   private resolveId(value: string | number | null | undefined): string {

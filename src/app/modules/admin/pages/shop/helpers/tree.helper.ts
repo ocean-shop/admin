@@ -1,10 +1,5 @@
 import { TreeNode } from '../models/tree-node.model';
-
-type TreeBuilderConfig<T> = {
-  getId: (value: T) => string;
-  getParentId: (value: T) => string | undefined;
-  compareSiblings?: (left: T, right: T) => number;
-};
+import { TreeBuilderConfig } from './models/tree-builder-config.model';
 
 export const buildTree = <T>(values: T[], config: TreeBuilderConfig<T>): TreeNode<T>[] => {
   const nodeMap = new Map<string, TreeNode<T>>();

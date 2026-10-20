@@ -4,7 +4,7 @@ import { Injectable, PLATFORM_ID, computed, inject, isDevMode, signal } from '@a
 import { Observable, catchError, finalize, of, shareReplay, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { API_URL } from '@core/constants/api.constant';
-import { RefreshResponse } from '@core/models/auth.model';
+import { AccessTokenPayload, RefreshResponse } from '@core/models/auth.model';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import {
   ACCESS_TOKEN_KEY,
@@ -47,7 +47,7 @@ export class AuthService {
     }
 
     try {
-      const decoded = jwtDecode<{ sub?: string; userId?: string; id?: string }>(token);
+      const decoded = jwtDecode<AccessTokenPayload>(token);
       return decoded.sub ?? decoded.userId ?? decoded.id ?? null;
     } catch {
       return null;

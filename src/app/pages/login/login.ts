@@ -20,7 +20,6 @@ import {
   imports: [LoginForm, OtpForm],
   templateUrl: './login.html',
   styleUrl: './login.scss',
-  standalone: true,
 })
 export class Login implements OnInit {
   private readonly toasterService = inject(ToasterService);

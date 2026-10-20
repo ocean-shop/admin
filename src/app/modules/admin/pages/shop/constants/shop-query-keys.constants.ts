@@ -1,5 +1,6 @@
 import { ProductSortValue } from '../pages/products/models/product-sort-value.type';
 import { UserSortValue } from '../pages/users/models/user-sort-value.type';
+import { OrderSortValue } from '../pages/orders/models/order-sort-value.type';
 
 export const SHOP_QUERY_KEYS = {
   products: (
@@ -24,7 +25,7 @@ export const SHOP_QUERY_KEYS = {
     shopId: string,
     page: number,
     limit: number,
-    sort: 'newest' | 'older',
+    sort: OrderSortValue,
     orderNumber: string,
   ) => ['shop', shopId, 'orders', page, limit, sort, orderNumber] as const,
   orderById: (orderId: string) => ['shop', 'orders', orderId] as const,

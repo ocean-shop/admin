@@ -1,3 +1,4 @@
+import { SortOrder } from '../../../models/sort-order.type';
 export type UserOtpApiItem = {
   channel?: string | null;
   purpose?: string | null;
@@ -53,7 +54,7 @@ export type UserListQueryParams = {
   shopId: string;
   email?: string;
   phoneNumber?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: SortOrder;
 };
 
 export type User = {

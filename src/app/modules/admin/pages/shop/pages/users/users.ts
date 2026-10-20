@@ -23,7 +23,9 @@ import {
 } from './constants/users.constants';
 import { User, UserApiItem, UserListQueryParams } from './models/user.model';
 import { UserSortValue } from './models/user-sort-value.type';
+import { SortOrder } from '../../models/sort-order.type';
 import { UsersService } from './services/users.service';
+import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
 
 @Component({
   selector: 'app-users',
@@ -198,31 +200,31 @@ export class Users implements OnInit {
   private mapUser(user: UserApiItem): User {
     return {
       id: user.id?.trim() || crypto.randomUUID(),
-      email: user.email?.trim() || '—',
+      email: user.email?.trim() || EMPTY_VALUE_PLACEHOLDER,
       mobileNumber: this.resolveMobileNumber(user),
       isActive: this.resolveIsActiveLabel(user),
       createdAt: this.resolveDateLabel(user.createdAt ?? user.created_at),
     };
   }
 
-  private resolveSortOrder(sort: UserSortValue): 'asc' | 'desc' {
+  private resolveSortOrder(sort: UserSortValue): SortOrder {
     return sort === 'older' ? 'asc' : 'desc';
   }
 
   private resolveMobileNumber(user: UserApiItem): string {
     const value = user.mobileNumber ?? user.mobile_number ?? user.phoneNumber;
     if (typeof value !== 'string') {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     const normalized = value.trim();
-    return normalized || '—';
+    return normalized || EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolveIsActiveLabel(user: UserApiItem): string {
     const value = user.isActive ?? user.is_active;
     if (typeof value !== 'boolean') {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     return value ? 'true' : 'false';
@@ -230,7 +232,7 @@ export class Users implements OnInit {
 
   private resolveDateLabel(value: string | null | undefined): string {
     if (!value?.trim()) {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     const parsed = new Date(value);

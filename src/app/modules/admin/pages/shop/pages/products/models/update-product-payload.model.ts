@@ -18,3 +18,8 @@ export type UpdateProductPayload = {
   canonicalUrl?: string | null;
   noIndex?: boolean;
 };
+
+export type UpdateProductVariables = {
+  productId: string;
+  payload: UpdateProductPayload;
+};

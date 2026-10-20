@@ -28,7 +28,6 @@ import { OtpData } from '../../models/login.model';
   imports: [Input, Button, ButtonLine],
   templateUrl: './otp-form.html',
   styleUrl: './otp-form.scss',
-  standalone: true,
 })
 export class OtpForm implements OnInit {
   private readonly localStorageService = inject(LocalStorageService);

@@ -1,6 +1,7 @@
 import { TableColumn } from '@ui/table/models/table-column.model';
 
 export const TAGS_TEXTS = {
+  LOAD_ERROR_MESSAGE: 'Не вдалося завантажити теги. Спробуйте ще раз.',
   PAGE_TITLE: 'Керування тегами',
   PAGE_DESCRIPTION:
     'Створюйте теги для магазину, знаходьте їх за назвою та видаляйте непотрібні теги.',

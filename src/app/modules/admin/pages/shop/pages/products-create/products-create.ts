@@ -33,7 +33,10 @@ import {
 import { PRODUCTS_TEXTS } from '../products/constants/products.constants';
 import { ProductType } from '../products/models/product-type.enum';
 import { CreateProductPayload } from '../products/models/create-product-payload.model';
-import { UpdateProductPayload } from '../products/models/update-product-payload.model';
+import {
+  UpdateProductPayload,
+  UpdateProductVariables,
+} from '../products/models/update-product-payload.model';
 import { ProductsService } from '../products/services/products.service';
 
 @Component({
@@ -69,7 +72,7 @@ export class ProductsCreate implements OnInit {
   }));
 
   protected readonly updateProductMutation = injectMutation(() => ({
-    mutationFn: ({ productId, payload }: { productId: string; payload: UpdateProductPayload }) =>
+    mutationFn: ({ productId, payload }: UpdateProductVariables) =>
       lastValueFrom(this.productsService.updateProduct(productId, payload)),
   }));
 

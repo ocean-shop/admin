@@ -1,3 +1,4 @@
+import { SortOrder } from '../../../models/sort-order.type';
 import { ProductStatus } from './product-status.enum';
 import { ProductType } from './product-type.enum';
 import { ProductVariationApiItem } from './product-variation.model';
@@ -83,7 +84,7 @@ export type ProductListQueryParams = {
   sku?: string;
   categoryIds?: string[];
   sortBy?: 'createdAt' | 'name';
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: SortOrder;
 };
 
 export type Product = {

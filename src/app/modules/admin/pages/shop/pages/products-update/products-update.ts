@@ -45,7 +45,10 @@ import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
 import { PRODUCTS_TEXTS } from '../products/constants/products.constants';
 import { ProductType } from '../products/models/product-type.enum';
-import { UpdateProductPayload } from '../products/models/update-product-payload.model';
+import {
+  UpdateProductPayload,
+  UpdateProductVariables,
+} from '../products/models/update-product-payload.model';
 import { ProductsService } from '../products/services/products.service';
 
 @Component({
@@ -100,7 +103,7 @@ export class ProductsUpdate implements OnInit {
   });
 
   protected readonly updateProductMutation = injectMutation(() => ({
-    mutationFn: ({ productId, payload }: { productId: string; payload: UpdateProductPayload }) =>
+    mutationFn: ({ productId, payload }: UpdateProductVariables) =>
       lastValueFrom(this.productsService.updateProduct(productId, payload)),
   }));
 

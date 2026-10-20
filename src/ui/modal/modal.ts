@@ -1,4 +1,5 @@
 import { Component, input, output } from '@angular/core';
+import { MODAL_LOADING_LABEL } from './constants/modal.constants';
 
 @Component({
   selector: 'app-modal',
@@ -15,6 +16,8 @@ export class Modal {
   public readonly showFooter = input<boolean>(true);
   public readonly closed = output<void>();
   public readonly confirmed = output<void>();
+
+  protected readonly loadingLabel = MODAL_LOADING_LABEL;
 
   protected onBackdropClick(event: MouseEvent): void {
     if (event.target === event.currentTarget) {

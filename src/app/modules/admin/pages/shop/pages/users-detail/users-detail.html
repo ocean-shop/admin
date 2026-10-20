@@ -31,7 +31,7 @@
             [columns]="otpColumns"
             [rows]="otpRows()"
             [loading]="false"
-            emptyText="OTP записи відсутні."
+            [emptyText]="textData.USER_OTPS_EMPTY_STATE"
           />
         </div>
       </section>
@@ -43,7 +43,7 @@
             [columns]="sessionColumns"
             [rows]="sessionRows()"
             [loading]="false"
-            emptyText="Сесії користувача відсутні."
+            [emptyText]="textData.USER_SESSIONS_EMPTY_STATE"
           />
         </div>
       </section>

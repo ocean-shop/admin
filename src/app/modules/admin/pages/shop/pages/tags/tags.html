@@ -55,7 +55,7 @@
     </form>
 
     @if (hasError()) {
-    <p class="tags-state">Не вдалося завантажити теги. Спробуйте ще раз.</p>
+    <p class="tags-state">{{ textData.LOAD_ERROR_MESSAGE }}</p>
     }
 
     <app-table

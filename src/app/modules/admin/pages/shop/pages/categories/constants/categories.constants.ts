@@ -2,6 +2,7 @@ import {
   SEO_META_DESCRIPTION_MAX_LENGTH,
   SEO_META_TITLE_MAX_LENGTH,
 } from '../../../constants/seo.constants';
+import { CategoryFormData } from '../models/category-form.model';
 
 export const CATEGORIES_TEXTS = {
   PAGE_TITLE: 'Керування категоріями',
@@ -54,3 +55,12 @@ export const CATEGORIES_META_TITLE_FIELD_ID = 'category-meta-title';
 export const CATEGORIES_META_DESCRIPTION_FIELD_ID = 'category-meta-description';
 export const CATEGORIES_CANONICAL_URL_FIELD_ID = 'category-canonical-url';
 export const CATEGORIES_NO_INDEX_FIELD_ID = 'category-no-index';
+
+export const CATEGORIES_EMPTY_FORM: CategoryFormData = {
+  name: '',
+  slug: '',
+  metaTitle: '',
+  metaDescription: '',
+  canonicalUrl: '',
+  noIndex: false,
+};

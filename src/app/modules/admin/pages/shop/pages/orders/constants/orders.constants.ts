@@ -3,6 +3,17 @@ import { OrderPaymentStatus } from '../models/order-payment-status.enum';
 import { OrderStatus } from '../models/order-status.enum';
 
 export const ORDERS_TEXTS = {
+  ORDER_ITEMS_EMPTY_STATE: 'Товари замовлення відсутні.',
+  INFO_ORDER_NUMBER_LABEL: 'Номер Замовлення',
+  INFO_AMOUNT_LABEL: 'Сума',
+  INFO_PAYMENT_STATUS_LABEL: 'Статус оплати',
+  INFO_ORDER_STATUS_LABEL: 'Статус Замовлення',
+  INFO_CREATED_LABEL: 'Створено',
+  INFO_UPDATED_LABEL: 'Оновлено',
+  USER_EMAIL_LABEL: 'Email',
+  USER_FIRST_NAME_LABEL: "Ім'я",
+  USER_LAST_NAME_LABEL: 'Прізвище',
+  USER_PHONE_LABEL: 'Телефон',
   PAGE_TITLE: 'Замовлення',
   PAGE_DESCRIPTION: 'Переглядайте замовлення магазину, відкривайте деталі та керуйте статусами.',
   ORDER_NUMBER_FILTER_LABEL: 'Номер замовлення',

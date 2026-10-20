@@ -1,10 +1,10 @@
 <div class="home-container">
   <header class="home-header">
-    <h3 class="home-title">Огляд магазинів</h3>
-    <p class="home-subtitle">Магазини, призначені вашому обліковому запису адміністратора.</p>
+    <h3 class="home-title">{{ textData.PAGE_TITLE }}</h3>
+    <p class="home-subtitle">{{ textData.PAGE_SUBTITLE }}</p>
   </header>
   @if (!hasCards()) {
-  <div class="home-state">До вашого облікового запису не призначено жодного магазину.</div>
+  <div class="home-state">{{ textData.EMPTY_STATE }}</div>
   } @else {
   <div class="cards-grid">
     @for (card of cards(); track card.shopId) {

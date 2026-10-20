@@ -23,3 +23,8 @@ export type CategoryFormSubmitPayload = CategorySeoPayload & {
   name: string;
   slug: string;
 };
+
+export type UpdateCategoryVariables = {
+  id: string;
+  payload: UpdateCategoryPayload;
+};

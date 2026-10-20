@@ -34,7 +34,7 @@
         type="button"
         (click)="confirmed.emit()"
       >
-        {{ confirmLoading() ? 'Зачекайте...' : confirmLabel() }}
+        {{ confirmLoading() ? loadingLabel : confirmLabel() }}
       </button>
     </div>
     }

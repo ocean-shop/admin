@@ -1,17 +1,17 @@
 <form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
   <div class="field-group">
-    <span class="field-label">Мова</span>
+    <span class="field-label">{{ languageLabel }}</span>
     <app-dropdown
       triggerMode="click"
       variant="form"
-      icon="language"
+      [icon]="languageIcon"
       [options]="languageOptions"
       [formField]="settingsForm.language"
     />
   </div>
   <app-button
-    label="Зберегти"
-    icon="save"
+    [label]="saveLabel"
+    [icon]="saveIcon"
     type="submit"
     [disabled]="!isFormValid() || isLoading()"
   />
