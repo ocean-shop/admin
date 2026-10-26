@@ -1,30 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { OtpForm } from './otp-form';
-import { LocalStorageService } from '../../../../core/services/local-storage/local-storage.service';
-import { OTP_EXPIRATION_KEY } from '../../constants/login.constants';
 
 describe('OtpForm', () => {
-  let component: OtpForm;
+  let component: any;
   let fixture: ComponentFixture<OtpForm>;
-  let mockLocalStorageService: any;
+  const now = 1_000_000;
+
+  const query = (selector: string): HTMLElement | null =>
+    (fixture.nativeElement as HTMLElement).querySelector(selector);
 
   beforeEach(async () => {
-    mockLocalStorageService = {
-      getItem: vi.fn(),
-      setItem: vi.fn(),
-      removeItem: vi.fn(),
-    };
-
-    // Prevent setInterval from actually running and hanging tests
     vi.useFakeTimers();
+    vi.setSystemTime(now);
 
     await TestBed.configureTestingModule({
       imports: [OtpForm],
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: LocalStorageService, useValue: mockLocalStorageService },
-      ],
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OtpForm);
@@ -39,34 +31,56 @@ describe('OtpForm', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should start timer on init with new expiration time', () => {
-    const mockNow = 1000000;
-    vi.setSystemTime(mockNow);
-    mockLocalStorageService.getItem.mockReturnValue(null);
-
-    component.ngOnInit();
-
-    // Expect setItem to be called with now + 5 minutes
-    expect(mockLocalStorageService.setItem).toHaveBeenCalledWith(
-      OTP_EXPIRATION_KEY,
-      mockNow + 300 * 1000,
-    );
-    expect(component.timeLeft()).toBe(300);
-  });
-
-  it('should use existing expiration time if valid', () => {
-    const mockNow = 1000000;
-    vi.setSystemTime(mockNow);
-    const savedExpiration = mockNow + 150 * 1000; // 150 seconds left
-    mockLocalStorageService.getItem.mockReturnValue(savedExpiration);
-
-    component.ngOnInit();
-
-    expect(mockLocalStorageService.setItem).not.toHaveBeenCalled();
+  it('counts down to the given expiration', () => {
+    fixture.componentRef.setInput('expiresAt', now + 150 * 1000);
     expect(component.timeLeft()).toBe(150);
+    expect(component.formattedTime()).toBe('02:30');
+
+    vi.advanceTimersByTime(105 * 1000);
+
+    expect(component.timeLeft()).toBe(45);
+    expect(component.formattedTime()).toBe('00:45');
   });
 
-  it('should emit submitEvent on submit if valid', () => {
+  it('never goes below zero', () => {
+    fixture.componentRef.setInput('expiresAt', now - 10_000);
+
+    expect(component.timeLeft()).toBe(0);
+    expect(component.formattedTime()).toBe('00:00');
+  });
+
+  it('shows submit while the code is valid and resend after it expires', () => {
+    fixture.componentRef.setInput('expiresAt', now + 2000);
+    fixture.detectChanges();
+    expect(query('#otp-resend')).toBeNull();
+
+    vi.advanceTimersByTime(2000);
+    fixture.detectChanges();
+
+    expect(query('#otp-resend')).toBeTruthy();
+  });
+
+  it('emits resendEvent when the resend button is clicked', () => {
+    const emitSpy = vi.spyOn(component.resendEvent, 'emit');
+    fixture.detectChanges();
+
+    (query('#otp-resend button') as HTMLButtonElement).click();
+
+    expect(emitSpy).toHaveBeenCalled();
+  });
+
+  it('does not emit resendEvent while loading', () => {
+    const emitSpy = vi.spyOn(component.resendEvent, 'emit');
+    fixture.componentRef.setInput('isLoading', true);
+    fixture.detectChanges();
+
+    expect((query('#otp-resend button') as HTMLButtonElement).disabled).toBe(true);
+    component.onResend();
+
+    expect(emitSpy).not.toHaveBeenCalled();
+  });
+
+  it('emits submitEvent on submit if valid', () => {
     const emitSpy = vi.spyOn(component.submitEvent, 'emit');
 
     component.otpModel.set({ otp: '1234' });
@@ -75,39 +89,24 @@ describe('OtpForm', () => {
     expect(emitSpy).toHaveBeenCalledWith('1234');
   });
 
-  it('should not emit submitEvent on submit if invalid', () => {
+  it('does not emit submitEvent if invalid or loading', () => {
     const emitSpy = vi.spyOn(component.submitEvent, 'emit');
 
     component.otpModel.set({ otp: '12' });
     component.onSubmit();
 
-    expect(mockLocalStorageService.removeItem).not.toHaveBeenCalled();
+    component.otpModel.set({ otp: '1234' });
+    fixture.componentRef.setInput('isLoading', true);
+    component.onSubmit();
+
     expect(emitSpy).not.toHaveBeenCalled();
   });
 
-  it('should emit backToLoginEvent and clear storage when timer reaches zero', () => {
-    const mockNow = 1000000;
-    vi.setSystemTime(mockNow);
-    mockLocalStorageService.getItem.mockReturnValue(null); // Will set to 300s
+  it('emits backToLoginEvent', () => {
+    const emitSpy = vi.spyOn(component.backToLoginEvent, 'emit');
 
-    component.ngOnInit();
+    component.onBackToLogin();
 
-    // Advance time by 300 seconds
-    vi.advanceTimersByTime(300 * 1000);
-
-    expect(component.timeLeft()).toBe(0);
-    expect(mockLocalStorageService.removeItem).toHaveBeenCalledWith(OTP_EXPIRATION_KEY);
-    // Notice that emitSpy should NOT be called directly here anymore
-    // because we removed `this.timeoutEvent.emit()` from `handleTimeout()`
-  });
-
-  it('should format time correctly', () => {
-    // 150 seconds = 02:30
-    component.timeLeft.set(150);
-    expect(component.formattedTime()).toBe('02:30');
-
-    // 45 seconds = 00:45
-    component.timeLeft.set(45);
-    expect(component.formattedTime()).toBe('00:45');
+    expect(emitSpy).toHaveBeenCalled();
   });
 });

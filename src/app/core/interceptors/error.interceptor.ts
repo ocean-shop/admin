@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn, HttpStatusCode } from '@angular/common/http';
 import { inject, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
@@ -49,9 +49,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.status >= 400 && error.status < 600) {
         if (!req.url.includes('/refresh') && !req.url.includes('/logout')) {
-          const message =
-            error.error?.message || error.message || HTTP_ERROR_TEXTS.UNEXPECTED_ERROR;
-          toasterService.danger(`Error ${error.status}`, message);
+          const isThrottled = error.status === HttpStatusCode.TooManyRequests;
+          const title = isThrottled
+            ? HTTP_ERROR_TEXTS.TOO_MANY_REQUESTS_TITLE
+            : `Error ${error.status}`;
+          const fallback = isThrottled
+            ? HTTP_ERROR_TEXTS.TOO_MANY_REQUESTS_MESSAGE
+            : error.message || HTTP_ERROR_TEXTS.UNEXPECTED_ERROR;
+          toasterService.danger(title, error.error?.message || fallback);
         }
       }
 

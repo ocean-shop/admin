@@ -3,7 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { LoginForm } from './login-form';
 
 describe('LoginForm', () => {
-  let component: LoginForm;
+  let component: any;
   let fixture: ComponentFixture<LoginForm>;
 
   beforeEach(() => {
@@ -20,16 +20,30 @@ describe('LoginForm', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should emit submitEvent on submit if form is valid', () => {
-    const emitSpy = vi.spyOn(component.submitEvent, 'emit');
-    component.loginModel.set({ identity: 'test@example.com' });
-    component.onSubmit();
-    expect(emitSpy).toHaveBeenCalled();
-  });
+  it.each(['test@example.com', '+380991234567', '380991234567', '0991234567'])(
+    'emits submitEvent for valid identity %s',
+    (identity) => {
+      const emitSpy = vi.spyOn(component.submitEvent, 'emit');
+      component.loginModel.set({ identity });
+      component.onSubmit();
+      expect(emitSpy).toHaveBeenCalledWith(identity);
+    },
+  );
 
-  it('should not emit submitEvent on submit if form is invalid', () => {
+  it.each(['invalid-email', '1234567890', '+1555000111', '099123456'])(
+    'does not emit submitEvent for invalid identity %s',
+    (identity) => {
+      const emitSpy = vi.spyOn(component.submitEvent, 'emit');
+      component.loginModel.set({ identity });
+      component.onSubmit();
+      expect(emitSpy).not.toHaveBeenCalled();
+    },
+  );
+
+  it('does not emit submitEvent while loading', () => {
     const emitSpy = vi.spyOn(component.submitEvent, 'emit');
-    component.loginModel.set({ identity: 'invalid-email' });
+    fixture.componentRef.setInput('isLoading', true);
+    component.loginModel.set({ identity: 'test@example.com' });
     component.onSubmit();
     expect(emitSpy).not.toHaveBeenCalled();
   });

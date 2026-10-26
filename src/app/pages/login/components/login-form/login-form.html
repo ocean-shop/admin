@@ -1,13 +1,13 @@
 <form class="form-container" (submit)="$event.preventDefault(); onSubmit()">
   <app-input
     id="identity"
-    [placeholder]="texts.identityPlaceholder"
-    [label]="texts.identityLabel"
+    [placeholder]="texts.IDENTITY_PLACEHOLDER"
+    [label]="texts.IDENTITY_LABEL"
     icon="person"
     [control]="loginForm.identity"
   ></app-input>
   <app-button
-    [label]="texts.submitButtonLabel"
+    [label]="texts.SUBMIT_BUTTON_LABEL"
     icon="arrow_forward"
     type="submit"
     [disabled]="!isFormValid() || isLoading()"

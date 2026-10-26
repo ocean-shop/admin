@@ -5,4 +5,6 @@ export const RETRIED_AFTER_REFRESH = new HttpContextToken<boolean>(() => false);
 export const HTTP_ERROR_TEXTS = {
   UNEXPECTED_ERROR: 'Сталася непередбачувана помилка',
   MISSING_ACCESS_TOKEN: 'Missing access token in refresh response',
+  TOO_MANY_REQUESTS_TITLE: 'Забагато спроб',
+  TOO_MANY_REQUESTS_MESSAGE: 'Забагато запитів. Спробуйте пізніше.',
 };

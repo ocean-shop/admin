@@ -14,7 +14,11 @@ describe('Menu', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Menu],
-      providers: [LayoutService, provideRouter([])],
+      providers: [
+        LayoutService,
+        provideRouter([]),
+        { provide: AuthService, useValue: { logout: vi.fn() } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Menu);
@@ -44,7 +48,7 @@ describe('Menu', () => {
     expect(aside.classList.contains('menu-closed')).toBeTruthy();
   });
 
-  it('should logout and navigate to login when footer logout button is clicked', () => {
+  it('should delegate logout (including navigation) to AuthService', () => {
     const logoutSpy = vi.spyOn(authService, 'logout');
     const navigateSpy = vi.spyOn(router, 'navigate');
 
@@ -54,7 +58,7 @@ describe('Menu', () => {
     logoutButton.click();
 
     expect(logoutSpy).toHaveBeenCalled();
-    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+    expect(navigateSpy).not.toHaveBeenCalled();
   });
 
   it('should close sidebar when a menu link is clicked on compact screens', () => {

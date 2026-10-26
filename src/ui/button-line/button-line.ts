@@ -9,4 +9,5 @@ import { ButtonType } from '../button/models/button.type';
 export class ButtonLine {
   public readonly label = input.required<string>();
   public readonly type = input<ButtonType>('button');
+  public readonly disabled = input<boolean>(false);
 }

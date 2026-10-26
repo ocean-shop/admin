@@ -49,4 +49,16 @@ describe('ButtonLine', () => {
 
     expect(buttonElement.type).toBe('submit');
   });
+
+  it('should be enabled by default and disable when requested', async () => {
+    const buttonElement = fixture.debugElement.query(By.css('button'))
+      .nativeElement as HTMLButtonElement;
+    expect(buttonElement.disabled).toBe(false);
+
+    fixture.componentRef.setInput('disabled', true);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(buttonElement.disabled).toBe(true);
+  });
 });

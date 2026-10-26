@@ -1,14 +1,28 @@
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, PLATFORM_ID, computed, inject, isDevMode, signal } from '@angular/core';
-import { Observable, catchError, finalize, of, shareReplay, tap } from 'rxjs';
-import { jwtDecode } from 'jwt-decode';
+import {
+  DestroyRef,
+  Injectable,
+  PLATFORM_ID,
+  computed,
+  inject,
+  isDevMode,
+  signal,
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { injectQueryClient } from '@tanstack/angular-query-experimental';
+import { Observable, catchError, defer, finalize, lastValueFrom, of, shareReplay, tap } from 'rxjs';
 import { API_URL } from '@core/constants/api.constant';
-import { AccessTokenPayload, RefreshResponse } from '@core/models/auth.model';
+import { AuthResponse, AuthUser } from '@core/models/auth.model';
+import { AuthBroadcastMessage } from '@core/models/auth-broadcast.model';
+import { AUTH_BROADCAST_EVENTS } from '@core/models/auth-broadcast.enum';
+import { AUTH_ROLES } from '@core/models/auth-role.enum';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import {
-  ACCESS_TOKEN_KEY,
+  AUTH_BROADCAST_CHANNEL,
+  AUTH_REFRESH_LOCK,
   AUTH_STORAGE_KEYS,
+  LEGACY_ACCESS_TOKEN_KEY,
   SESSION_HINT_KEY,
 } from '../../constants/auth.constant';
 
@@ -16,94 +30,79 @@ import {
   providedIn: 'root',
 })
 export class AuthService {
-  private http = inject(HttpClient);
-  private platformId = inject(PLATFORM_ID);
-  private localStorageService = inject(LocalStorageService);
-  private refreshInFlight: Observable<RefreshResponse> | null = null;
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly queryClient = injectQueryClient();
+  private readonly channel = this.createChannel();
+  private refreshInFlight: Observable<AuthResponse> | null = null;
   private sessionVersion = 0;
 
-  private accessTokenSignal = signal<string | null>(this.getStoredAccessToken());
+  /** Kept in memory only, so page scripts never find the token in storage. */
+  private readonly session = signal<AuthResponse | null>(null);
 
-  public isAuthenticated = computed(() => !!this.accessTokenSignal());
+  public readonly currentUser = computed<AuthUser | null>(() => this.session()?.user ?? null);
+  public readonly isAuthenticated = computed(() => !!this.session()?.accessToken);
+  public readonly isSuperAdmin = computed(() => this.currentUser()?.role === AUTH_ROLES.SUPER);
 
   constructor() {
-    if (isPlatformBrowser(this.platformId)) {
-      window.addEventListener('storage', this.handleStorageEvent);
-    }
-  }
-
-  setAccessToken(token: string): void {
-    this.accessTokenSignal.set(token);
+    this.localStorageService.removeItem(LEGACY_ACCESS_TOKEN_KEY);
+    this.channel?.addEventListener('message', this.handleBroadcast);
+    inject(DestroyRef).onDestroy(() => this.channel?.close());
   }
 
   getAccessToken(): string | null {
-    return this.accessTokenSignal();
+    return this.session()?.accessToken ?? null;
   }
 
   getUserId(): string | null {
-    const token = this.accessTokenSignal();
-    if (!token) {
-      return null;
-    }
-
-    try {
-      const decoded = jwtDecode<AccessTokenPayload>(token);
-      return decoded.sub ?? decoded.userId ?? decoded.id ?? null;
-    } catch {
-      return null;
-    }
+    return this.currentUser()?.id ?? null;
   }
 
-  handleAuthSuccess(token: string): void {
-    this.setAccessToken(token);
-    this.localStorageService.setItem(ACCESS_TOKEN_KEY, token);
+  handleAuthSuccess(session: AuthResponse): void {
+    this.session.set(session);
     this.localStorageService.setItem(SESSION_HINT_KEY, true);
+    this.broadcast({ type: AUTH_BROADCAST_EVENTS.SESSION, session });
   }
 
   hasSessionHint(): boolean {
     return this.localStorageService.getItem<boolean>(SESSION_HINT_KEY) === true;
   }
 
+  /** Ends the session in this tab and every other open tab. */
   clearSession(): void {
-    this.sessionVersion += 1;
-    this.accessTokenSignal.set(null);
-    for (const key of AUTH_STORAGE_KEYS) {
-      this.localStorageService.removeItem(key);
-    }
+    this.resetSession();
+    this.broadcast({ type: AUTH_BROADCAST_EVENTS.LOGOUT });
   }
 
-  private getStoredAccessToken(): string | null {
-    return this.localStorageService.getItem<string>(ACCESS_TOKEN_KEY);
-  }
-
-  refreshToken(): Observable<RefreshResponse> {
+  refreshToken(): Observable<AuthResponse> {
     if (this.refreshInFlight) {
       return this.refreshInFlight;
     }
 
     const refreshVersion = this.sessionVersion;
+    const tokenBeforeRefresh = this.getAccessToken();
     this.logAuthDebug('Starting refresh request');
 
-    this.refreshInFlight = this.http
-      .post<RefreshResponse>(`${API_URL}/user/auth/refresh`, {}, { withCredentials: true })
-      .pipe(
-        tap((response) => {
-          if (this.sessionVersion !== refreshVersion) {
-            this.logAuthDebug('Ignoring stale refresh response');
-            return;
-          }
+    this.refreshInFlight = this.withRefreshLock(this.requestRefresh(tokenBeforeRefresh)).pipe(
+      tap((session) => {
+        if (this.sessionVersion !== refreshVersion) {
+          this.logAuthDebug('Ignoring stale refresh response');
+          return;
+        }
 
-          if (response && response.accessToken) {
-            this.handleAuthSuccess(response.accessToken);
-            this.logAuthDebug('Refresh succeeded and token updated');
-          }
-        }),
-        finalize(() => {
-          this.refreshInFlight = null;
-          this.logAuthDebug('Refresh request finalized');
-        }),
-        shareReplay(1),
-      );
+        if (session?.accessToken) {
+          this.handleAuthSuccess(session);
+          this.logAuthDebug('Refresh succeeded and token updated');
+        }
+      }),
+      finalize(() => {
+        this.refreshInFlight = null;
+        this.logAuthDebug('Refresh request finalized');
+      }),
+      shareReplay(1),
+    );
 
     return this.refreshInFlight;
   }
@@ -114,30 +113,82 @@ export class AuthService {
       .post(`${API_URL}/user/auth/logout`, {}, { withCredentials: true })
       .pipe(catchError(() => of(null)))
       .subscribe();
+    this.router.navigate(['/login']);
   }
 
-  private handleStorageEvent = (event: StorageEvent): void => {
-    if (event.key !== ACCESS_TOKEN_KEY) {
+  /**
+   * Reuses a session another tab obtained while this one waited for the lock;
+   * otherwise refreshes, presenting the cookie that tab may have just rotated.
+   */
+  private requestRefresh(tokenBeforeRefresh: string | null): Observable<AuthResponse> {
+    return defer(() => {
+      const current = this.session();
+      if (current && current.accessToken !== tokenBeforeRefresh) {
+        this.logAuthDebug('Reusing session refreshed by another tab');
+        return of(current);
+      }
+
+      return this.http.post<AuthResponse>(
+        `${API_URL}/user/auth/refresh`,
+        {},
+        { withCredentials: true },
+      );
+    });
+  }
+
+  private withRefreshLock(refresh: Observable<AuthResponse>): Observable<AuthResponse> {
+    const locks = this.getLockManager();
+    if (!locks) {
+      return refresh;
+    }
+
+    return defer(() => locks.request(AUTH_REFRESH_LOCK, () => lastValueFrom(refresh)));
+  }
+
+  private getLockManager(): LockManager | null {
+    if (!isPlatformBrowser(this.platformId) || !('locks' in navigator)) {
+      return null;
+    }
+
+    return navigator.locks;
+  }
+
+  private resetSession(): void {
+    this.sessionVersion += 1;
+    this.session.set(null);
+    for (const key of AUTH_STORAGE_KEYS) {
+      this.localStorageService.removeItem(key);
+    }
+    this.queryClient.clear();
+  }
+
+  private createChannel(): BroadcastChannel | null {
+    if (!isPlatformBrowser(this.platformId) || typeof BroadcastChannel === 'undefined') {
+      return null;
+    }
+
+    return new BroadcastChannel(AUTH_BROADCAST_CHANNEL);
+  }
+
+  private broadcast(message: AuthBroadcastMessage): void {
+    this.channel?.postMessage(message);
+  }
+
+  private handleBroadcast = (event: MessageEvent<AuthBroadcastMessage>): void => {
+    const message = event.data;
+
+    if (message?.type === AUTH_BROADCAST_EVENTS.SESSION) {
+      this.session.set(message.session);
+      this.logAuthDebug('Synced session from another tab');
       return;
     }
 
-    const nextToken = this.parseStorageToken(event.newValue);
-    this.accessTokenSignal.set(nextToken);
-    this.logAuthDebug('Synced access token from another tab');
+    if (message?.type === AUTH_BROADCAST_EVENTS.LOGOUT) {
+      this.resetSession();
+      this.router.navigate(['/login']);
+      this.logAuthDebug('Logged out from another tab');
+    }
   };
-
-  private parseStorageToken(value: string | null): string | null {
-    if (!value) {
-      return null;
-    }
-
-    try {
-      const parsed = JSON.parse(value);
-      return typeof parsed === 'string' ? parsed : null;
-    } catch {
-      return null;
-    }
-  }
 
   private logAuthDebug(message: string): void {
     if (!isDevMode()) {

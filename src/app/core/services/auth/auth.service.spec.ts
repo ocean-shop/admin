@@ -1,42 +1,120 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { QueryClient } from '@tanstack/angular-query-experimental';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
+import { buildAuthSession } from '@testing/auth-session.fixture';
+import { API_URL } from '@core/constants/api.constant';
+import { AUTH_BROADCAST_EVENTS } from '@core/models/auth-broadcast.enum';
+import { AUTH_ROLES } from '@core/models/auth-role.enum';
 import {
-  ACCESS_TOKEN_KEY,
+  AUTH_REFRESH_LOCK,
   AUTH_STORAGE_KEYS,
+  LEGACY_ACCESS_TOKEN_KEY,
   SESSION_HINT_KEY,
 } from '../../constants/auth.constant';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AuthService } from './auth.service';
-import { API_URL } from '@core/constants/api.constant';
 
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
   let localStorageService: LocalStorageService;
+  let queryClient: QueryClient;
+  let mockRouter: { navigate: ReturnType<typeof vi.fn> };
 
-  beforeEach(() => {
+  const refreshUrl = `${API_URL}/user/auth/refresh`;
+  const logoutUrl = `${API_URL}/user/auth/logout`;
+
+  const setup = (): void => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        ...provideTestQueryClient(),
+        { provide: Router, useValue: mockRouter },
+      ],
     });
 
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
     localStorageService = TestBed.inject(LocalStorageService);
+    queryClient = TestBed.inject(QueryClient);
+  };
+
+  const channelOf = (target: AuthService): BroadcastChannel => (target as any).channel;
+
+  const receive = (data: unknown): void => {
+    (service as any).handleBroadcast({ data } as MessageEvent);
+  };
+
+  beforeEach(() => {
     localStorage.clear();
+    mockRouter = { navigate: vi.fn() };
+    setup();
   });
 
   afterEach(() => {
     httpMock.verify();
     localStorage.clear();
+    Reflect.deleteProperty(navigator, 'locks');
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  it('starts unauthenticated with no user', () => {
+    expect(service.isAuthenticated()).toBe(false);
+    expect(service.getAccessToken()).toBeNull();
+    expect(service.getUserId()).toBeNull();
+    expect(service.currentUser()).toBeNull();
+    expect(service.isSuperAdmin()).toBe(false);
   });
 
-  it('should clear access token and all auth storage keys on clearSession', () => {
-    service.setAccessToken('test-token');
+  it('purges the legacy access token from storage on start', () => {
+    TestBed.resetTestingModule();
+    localStorage.setItem(LEGACY_ACCESS_TOKEN_KEY, JSON.stringify('old-token'));
+
+    setup();
+
+    expect(localStorage.getItem(LEGACY_ACCESS_TOKEN_KEY)).toBeNull();
+  });
+
+  it('keeps the session in memory and stores only the session hint', () => {
+    const session = buildAuthSession('token-value', { id: 'user-7' });
+
+    service.handleAuthSuccess(session);
+
+    expect(service.getAccessToken()).toBe('token-value');
+    expect(service.isAuthenticated()).toBe(true);
+    expect(service.getUserId()).toBe('user-7');
+    expect(service.currentUser()).toEqual(session.user);
+    expect(service.hasSessionHint()).toBe(true);
+    expect(localStorageService.getItem(SESSION_HINT_KEY)).toBe(true);
+    expect(localStorage.getItem(LEGACY_ACCESS_TOKEN_KEY)).toBeNull();
+  });
+
+  it('detects super admin role', () => {
+    service.handleAuthSuccess(buildAuthSession('token', { role: AUTH_ROLES.SUPER }));
+    expect(service.isSuperAdmin()).toBe(true);
+
+    service.handleAuthSuccess(buildAuthSession('token', { role: AUTH_ROLES.ADMIN }));
+    expect(service.isSuperAdmin()).toBe(false);
+  });
+
+  it('broadcasts a new session to other tabs', () => {
+    const postSpy = vi.spyOn(channelOf(service), 'postMessage');
+    const session = buildAuthSession();
+
+    service.handleAuthSuccess(session);
+
+    expect(postSpy).toHaveBeenCalledWith({ type: AUTH_BROADCAST_EVENTS.SESSION, session });
+  });
+
+  it('clears session, storage keys and query cache, and broadcasts logout', () => {
+    const postSpy = vi.spyOn(channelOf(service), 'postMessage');
+    const clearSpy = vi.spyOn(queryClient, 'clear');
+    service.handleAuthSuccess(buildAuthSession());
     for (const key of AUTH_STORAGE_KEYS) {
       localStorageService.setItem(key, 'value');
     }
@@ -45,142 +123,161 @@ describe('AuthService', () => {
 
     expect(service.getAccessToken()).toBeNull();
     expect(service.isAuthenticated()).toBe(false);
+    expect(service.currentUser()).toBeNull();
     for (const key of AUTH_STORAGE_KEYS) {
       expect(localStorageService.getItem(key)).toBeNull();
     }
+    expect(clearSpy).toHaveBeenCalled();
+    expect(postSpy).toHaveBeenLastCalledWith({ type: AUTH_BROADCAST_EVENTS.LOGOUT });
   });
 
-  it('should clear session and POST to logout endpoint with credentials', () => {
-    const removeItemSpy = vi.spyOn(localStorageService, 'removeItem');
-    service.setAccessToken('test-token');
+  it('logout clears session, POSTs to logout with credentials and navigates to login', () => {
+    service.handleAuthSuccess(buildAuthSession());
 
     service.logout();
 
     expect(service.getAccessToken()).toBeNull();
-    expect(removeItemSpy).toHaveBeenCalledTimes(AUTH_STORAGE_KEYS.length);
-    for (const key of AUTH_STORAGE_KEYS) {
-      expect(removeItemSpy).toHaveBeenCalledWith(key);
-    }
-
-    const req = httpMock.expectOne(`${API_URL}/user/auth/logout`);
+    const req = httpMock.expectOne(logoutUrl);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
   });
 
-  it('should not throw when logout API call fails', () => {
-    service.setAccessToken('test-token');
+  it('does not throw when logout API call fails', () => {
+    service.handleAuthSuccess(buildAuthSession());
 
     expect(() => {
       service.logout();
-      const req = httpMock.expectOne(`${API_URL}/user/auth/logout`);
-      req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
+      httpMock
+        .expectOne(logoutUrl)
+        .flush('Server error', { status: 500, statusText: 'Internal Server Error' });
     }).not.toThrow();
 
     expect(service.getAccessToken()).toBeNull();
   });
 
-  it('returns user id from sub, userId, id claims and handles invalid token', () => {
-    service.setAccessToken('eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEifQ.sig');
-    expect(service.getUserId()).toBe('user-1');
-
-    service.setAccessToken('eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ1c2VyLTIifQ.sig');
-    expect(service.getUserId()).toBe('user-2');
-
-    service.setAccessToken('eyJhbGciOiJIUzI1NiJ9.eyJpZCI6InVzZXItMyJ9.sig');
-    expect(service.getUserId()).toBe('user-3');
-
-    service.setAccessToken('not-a-jwt');
-    expect(service.getUserId()).toBeNull();
-  });
-
-  it('returns null user id when no access token is set', () => {
-    expect(service.getUserId()).toBeNull();
-  });
-
-  it('stores session hint on auth success and reads it back', () => {
-    service.handleAuthSuccess('token-value');
-
-    expect(service.getAccessToken()).toBe('token-value');
-    expect(localStorageService.getItem(ACCESS_TOKEN_KEY)).toBe('token-value');
-    expect(localStorageService.getItem(SESSION_HINT_KEY)).toBe(true);
-    expect(service.hasSessionHint()).toBe(true);
-  });
-
-  it('reuses in-flight refresh request and updates access token on success', () => {
+  it('reuses in-flight refresh request and stores the refreshed session', () => {
+    const session = buildAuthSession('refreshed-token');
     let firstResult: unknown;
     let secondResult: unknown;
 
-    service.refreshToken().subscribe((result) => {
-      firstResult = result;
-    });
-    service.refreshToken().subscribe((result) => {
-      secondResult = result;
-    });
+    service.refreshToken().subscribe((result) => (firstResult = result));
+    service.refreshToken().subscribe((result) => (secondResult = result));
 
-    const req = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
+    const req = httpMock.expectOne(refreshUrl);
     expect(req.request.method).toBe('POST');
     expect(req.request.withCredentials).toBe(true);
-    req.flush({ accessToken: 'refreshed-token' });
+    req.flush(session);
 
-    expect(firstResult).toEqual({ accessToken: 'refreshed-token' });
-    expect(secondResult).toEqual({ accessToken: 'refreshed-token' });
+    expect(firstResult).toEqual(session);
+    expect(secondResult).toEqual(session);
     expect(service.getAccessToken()).toBe('refreshed-token');
+    expect(service.currentUser()).toEqual(session.user);
     expect(service.hasSessionHint()).toBe(true);
   });
 
-  it('clears refresh in-flight state after a failed refresh', () => {
-    service.refreshToken().subscribe({
-      error: () => {
-        // Expected error path for this test.
-      },
-    });
+  it('does not store a refresh response without an access token', () => {
+    service.refreshToken().subscribe();
+    httpMock.expectOne(refreshUrl).flush({});
 
-    const firstReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
-    firstReq.flush('failure', { status: 500, statusText: 'Server Error' });
+    expect(service.isAuthenticated()).toBe(false);
+    expect(service.hasSessionHint()).toBe(false);
+  });
+
+  it('clears refresh in-flight state after a failed refresh', () => {
+    service.refreshToken().subscribe({ error: () => undefined });
+    httpMock.expectOne(refreshUrl).flush('failure', { status: 500, statusText: 'Server Error' });
 
     service.refreshToken().subscribe();
-    const secondReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
-    secondReq.flush({ accessToken: 'new-token' });
+    httpMock.expectOne(refreshUrl).flush(buildAuthSession('new-token'));
 
     expect(service.getAccessToken()).toBe('new-token');
   });
 
-  it('syncs access token state from storage events', () => {
-    service.setAccessToken('initial-token');
-
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: ACCESS_TOKEN_KEY,
-        newValue: JSON.stringify('token-from-another-tab'),
-      }),
-    );
-
-    expect(service.getAccessToken()).toBe('token-from-another-tab');
-
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: ACCESS_TOKEN_KEY,
-        newValue: null,
-      }),
-    );
-
-    expect(service.getAccessToken()).toBeNull();
-  });
-
   it('ignores refresh response when logout clears session mid-flight', () => {
-    service.handleAuthSuccess('initial-token');
+    service.handleAuthSuccess(buildAuthSession('initial-token'));
 
     service.refreshToken().subscribe();
-    const refreshReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
+    const refreshReq = httpMock.expectOne(refreshUrl);
 
     service.logout();
-    const logoutReq = httpMock.expectOne(`${API_URL}/user/auth/logout`);
-    logoutReq.flush({});
+    httpMock.expectOne(logoutUrl).flush({});
 
-    refreshReq.flush({ accessToken: 'late-token' });
+    refreshReq.flush(buildAuthSession('late-token'));
 
     expect(service.getAccessToken()).toBeNull();
     expect(service.hasSessionHint()).toBe(false);
+  });
+
+  describe('with Web Locks', () => {
+    let request: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      request = vi.fn((_name: string, task: () => Promise<unknown>) => task());
+      Object.defineProperty(navigator, 'locks', { value: { request }, configurable: true });
+    });
+
+    it('runs the refresh inside the cross-tab lock', async () => {
+      const result = new Promise((resolve) => service.refreshToken().subscribe(resolve));
+
+      expect(request).toHaveBeenCalledWith(AUTH_REFRESH_LOCK, expect.any(Function));
+      httpMock.expectOne(refreshUrl).flush(buildAuthSession('locked-token'));
+
+      await expect(result).resolves.toEqual(buildAuthSession('locked-token'));
+      expect(service.getAccessToken()).toBe('locked-token');
+    });
+
+    it('reuses a session another tab refreshed while waiting for the lock', async () => {
+      const fromOtherTab = buildAuthSession('other-tab-token');
+      service.handleAuthSuccess(buildAuthSession('expired-token'));
+      request.mockImplementation((_name: string, task: () => Promise<unknown>) => {
+        receive({ type: AUTH_BROADCAST_EVENTS.SESSION, session: fromOtherTab });
+        return task();
+      });
+
+      const result = await new Promise((resolve) => service.refreshToken().subscribe(resolve));
+
+      httpMock.expectNone(refreshUrl);
+      expect(result).toEqual(fromOtherTab);
+      expect(service.getAccessToken()).toBe('other-tab-token');
+    });
+  });
+
+  describe('messages from other tabs', () => {
+    it('applies a session without re-broadcasting it', () => {
+      const postSpy = vi.spyOn(channelOf(service), 'postMessage');
+      const session = buildAuthSession('tab-token');
+
+      receive({ type: AUTH_BROADCAST_EVENTS.SESSION, session });
+
+      expect(service.getAccessToken()).toBe('tab-token');
+      expect(postSpy).not.toHaveBeenCalled();
+    });
+
+    it('logs out and navigates to login without re-broadcasting', () => {
+      const postSpy = vi.spyOn(channelOf(service), 'postMessage');
+      const clearSpy = vi.spyOn(queryClient, 'clear');
+      service.handleAuthSuccess(buildAuthSession());
+      postSpy.mockClear();
+
+      receive({ type: AUTH_BROADCAST_EVENTS.LOGOUT });
+
+      expect(service.isAuthenticated()).toBe(false);
+      expect(clearSpy).toHaveBeenCalled();
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
+      expect(postSpy).not.toHaveBeenCalled();
+      httpMock.expectNone(logoutUrl);
+    });
+
+    it('ignores unknown messages', () => {
+      service.handleAuthSuccess(buildAuthSession('kept-token'));
+
+      receive({ type: 'unknown' });
+      receive(null);
+
+      expect(service.getAccessToken()).toBe('kept-token');
+      expect(mockRouter.navigate).not.toHaveBeenCalled();
+    });
   });
 });

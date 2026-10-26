@@ -3,7 +3,7 @@ import { form, required, pattern } from '@angular/forms/signals';
 import { Input } from '@ui/input/input';
 import { Button } from '@ui/button/button';
 import { LoginData } from '../../models/login.model';
-import { IDENTITY_PATTERN, LOGIN_TEXTS } from '../../constants/login.constants';
+import { LOGIN_IDENTITY_PATTERN, LOGIN_TEXTS } from '../../constants/login.constants';
 
 @Component({
   selector: 'app-login-form',
@@ -14,24 +14,24 @@ import { IDENTITY_PATTERN, LOGIN_TEXTS } from '../../constants/login.constants';
 export class LoginForm {
   public readonly submitEvent = output<string>();
   public readonly isLoading = input<boolean>(false);
-  protected readonly texts = LOGIN_TEXTS.loginForm;
+  protected readonly texts = LOGIN_TEXTS.LOGIN_FORM;
 
-  public readonly loginModel = signal<LoginData>({
+  protected readonly loginModel = signal<LoginData>({
     identity: '',
   });
 
-  public readonly loginForm = form(this.loginModel, (schemaPath) => {
-    required(schemaPath.identity, { message: this.texts.requiredMessage });
-    pattern(schemaPath.identity, IDENTITY_PATTERN, {
-      message: this.texts.invalidMessage,
+  protected readonly loginForm = form(this.loginModel, (schemaPath) => {
+    required(schemaPath.identity, { message: this.texts.REQUIRED_MESSAGE });
+    pattern(schemaPath.identity, LOGIN_IDENTITY_PATTERN, {
+      message: this.texts.INVALID_MESSAGE,
     });
   });
 
-  public readonly isFormValid = computed(() => {
+  protected readonly isFormValid = computed(() => {
     return this.loginForm.identity().valid();
   });
 
-  public onSubmit(): void {
+  protected onSubmit(): void {
     if (this.isFormValid() && !this.isLoading()) {
       this.submitEvent.emit(this.loginForm.identity().value()!);
     }

@@ -35,7 +35,6 @@ export class Header {
 
     if (item.value === 'logout') {
       this.authService.logout();
-      this.router.navigate(['/login']);
     } else if (item.link) {
       this.router.navigate([item.link]);
     }
