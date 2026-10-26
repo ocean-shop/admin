@@ -6,7 +6,6 @@ import { EntityCardData } from './models/entity-card.model';
   templateUrl: './entity-card.html',
   styleUrl: './entity-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class EntityCard {
   public readonly entity = input.required<EntityCardData>();
@@ -22,5 +21,3 @@ export class EntityCard {
     this.removed.emit();
   }
 }
-
-export type { EntityCardData };

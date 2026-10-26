@@ -115,6 +115,13 @@ describe('ProductsCreate', () => {
       sku: 'CSTL-SHRT-01',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: true,
+      isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -128,8 +135,14 @@ describe('ProductsCreate', () => {
       sku: 'CSTL-SHRT-01',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: true,
+      isMainBanner: false,
       price: 99.99,
       oldPrice: 129.99,
+      metaTitle: null,
+      metaDescription: null,
+      canonicalUrl: null,
+      noIndex: false,
     });
     expect(mockToasterService.success).toHaveBeenCalledWith(
       PRODUCTS_CREATE_TEXTS.CREATE_SUCCESS_TITLE,
@@ -149,6 +162,13 @@ describe('ProductsCreate', () => {
       sku: 'UPD-1',
       status: ProductStatus.Active,
       available: true,
+      isPopular: false,
+      isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -161,8 +181,13 @@ describe('ProductsCreate', () => {
       sku: 'UPD-1',
       status: ProductStatus.Active,
       available: true,
+      isMainBanner: false,
       price: 90,
       oldPrice: 100,
+      metaTitle: null,
+      metaDescription: null,
+      canonicalUrl: null,
+      noIndex: false,
     });
     expect(mockToasterService.success).toHaveBeenCalledWith(
       PRODUCTS_CREATE_TEXTS.UPDATE_SUCCESS_TITLE,
@@ -179,6 +204,13 @@ describe('ProductsCreate', () => {
       sku: '',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: false,
+      isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -198,6 +230,13 @@ describe('ProductsCreate', () => {
       sku: '',
       status: ProductStatus.Archived,
       available: false,
+      isPopular: false,
+      isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();

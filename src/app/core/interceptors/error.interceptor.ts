@@ -1,11 +1,10 @@
-import { HttpContextToken, HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn, HttpStatusCode } from '@angular/common/http';
 import { inject, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { ToasterService } from '../services/toaster/toaster.service';
 import { AuthService } from '../services/auth/auth.service';
-
-const RETRIED_AFTER_REFRESH = new HttpContextToken<boolean>(() => false);
+import { HTTP_ERROR_TEXTS, RETRIED_AFTER_REFRESH } from '../constants/http-error.constants';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toasterService = inject(ToasterService);
@@ -29,7 +28,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           switchMap((response) => {
             if (!response?.accessToken) {
               logAuthDebug('Refresh response is missing access token');
-              return throwError(() => new Error('Missing access token in refresh response'));
+              return throwError(() => new Error(HTTP_ERROR_TEXTS.MISSING_ACCESS_TOKEN));
             }
 
             const clonedRequest = req.clone({
@@ -50,9 +49,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.status >= 400 && error.status < 600) {
         if (!req.url.includes('/refresh') && !req.url.includes('/logout')) {
-          const message =
-            error.error?.message || error.message || 'Сталася непередбачувана помилка';
-          toasterService.danger(`Error ${error.status}`, message);
+          const isThrottled = error.status === HttpStatusCode.TooManyRequests;
+          const title = isThrottled
+            ? HTTP_ERROR_TEXTS.TOO_MANY_REQUESTS_TITLE
+            : `Error ${error.status}`;
+          const fallback = isThrottled
+            ? HTTP_ERROR_TEXTS.TOO_MANY_REQUESTS_MESSAGE
+            : error.message || HTTP_ERROR_TEXTS.UNEXPECTED_ERROR;
+          toasterService.danger(title, error.error?.message || fallback);
         }
       }
 

@@ -37,6 +37,7 @@ import { ProductSortValue } from './models/product-sort-value.type';
 import { ProductStatus } from './models/product-status.enum';
 import { ProductType } from './models/product-type.enum';
 import { ProductsService } from './services/products.service';
+import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
 
 @Component({
   selector: 'app-products',
@@ -412,7 +413,7 @@ export class Products implements OnInit {
       type: this.resolveTypeLabel(product.type),
       status: this.resolveStatusLabel(product.status),
       price: this.resolvePriceLabel(product.price),
-      categories: categories.length ? categories.join(', ') : '—',
+      categories: categories.length ? categories.join(', ') : EMPTY_VALUE_PLACEHOLDER,
     };
   }
 
@@ -442,7 +443,7 @@ export class Products implements OnInit {
       return 'Variable';
     }
 
-    return normalized ? this.toCapitalizedLabel(normalized) : '—';
+    return normalized ? this.toCapitalizedLabel(normalized) : EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolveStatusLabel(status: ProductApiItem['status']): string {
@@ -461,7 +462,7 @@ export class Products implements OnInit {
       return 'Archived';
     }
 
-    return normalized ? this.toCapitalizedLabel(normalized) : '—';
+    return normalized ? this.toCapitalizedLabel(normalized) : EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolvePriceLabel(price: ProductApiItem['price']): string {
@@ -471,14 +472,14 @@ export class Products implements OnInit {
 
     if (typeof price === 'string') {
       const normalized = price.trim();
-      return normalized || '—';
+      return normalized || EMPTY_VALUE_PLACEHOLDER;
     }
 
-    return '—';
+    return EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolveSkuLabel(sku: ProductApiItem['sku']): string {
-    return sku?.trim() || '—';
+    return sku?.trim() || EMPTY_VALUE_PLACEHOLDER;
   }
 
   private toCapitalizedLabel(value: string): string {

@@ -60,6 +60,28 @@ describe('ProductFormBasicInfo', () => {
     expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.BASIC_INFORMATION_TITLE);
   });
 
+  it('renders the is popular checkbox', () => {
+    const pageElement = fixture.nativeElement as HTMLElement;
+    const checkboxInput = pageElement.querySelector(
+      `#${PRODUCT_FORM_FIELD_IDS.IS_POPULAR}`,
+    ) as HTMLInputElement;
+
+    expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.IS_POPULAR_LABEL);
+    expect(checkboxInput).toBeTruthy();
+    expect(checkboxInput.type).toBe('checkbox');
+  });
+
+  it('renders the is main banner checkbox', () => {
+    const pageElement = fixture.nativeElement as HTMLElement;
+    const checkboxInput = pageElement.querySelector(
+      `#${PRODUCT_FORM_FIELD_IDS.IS_MAIN_BANNER}`,
+    ) as HTMLInputElement;
+
+    expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.IS_MAIN_BANNER_LABEL);
+    expect(checkboxInput).toBeTruthy();
+    expect(checkboxInput.type).toBe('checkbox');
+  });
+
   it('emits product type changes for supported values', () => {
     const emitSpy = vi.spyOn((component as any).productTypeChange, 'emit');
 

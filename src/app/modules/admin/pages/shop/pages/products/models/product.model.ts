@@ -1,3 +1,4 @@
+import { SortOrder } from '../../../models/sort-order.type';
 import { ProductStatus } from './product-status.enum';
 import { ProductType } from './product-type.enum';
 import { ProductVariationApiItem } from './product-variation.model';
@@ -48,8 +49,15 @@ export type ProductApiItem = {
   type?: ProductType | string | null;
   status?: ProductStatus | string | null;
   available?: boolean | null;
+  isPopular?: boolean | null;
+  isMainBanner?: boolean | null;
   price?: number | string | null;
   oldPrice?: number | string | null;
+  slug?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
   categories?: (ProductCategoryApiItem | string)[] | null;
   attributes?: (ProductAttributeApiItem | string)[] | null;
   attributeTypes?: (ProductAttributeApiItem | string)[] | null;
@@ -76,7 +84,7 @@ export type ProductListQueryParams = {
   sku?: string;
   categoryIds?: string[];
   sortBy?: 'createdAt' | 'name';
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: SortOrder;
 };
 
 export type Product = {

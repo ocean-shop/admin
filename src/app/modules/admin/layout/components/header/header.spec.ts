@@ -18,7 +18,11 @@ describe('Header', () => {
 
     await TestBed.configureTestingModule({
       imports: [Header],
-      providers: [LayoutService, { provide: Router, useValue: mockRouter }],
+      providers: [
+        LayoutService,
+        { provide: Router, useValue: mockRouter },
+        { provide: AuthService, useValue: { logout: vi.fn() } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Header);
@@ -55,7 +59,7 @@ describe('Header', () => {
     expect(fixture.nativeElement.querySelector('app-simple-menu')).toBeNull();
   });
 
-  it('should logout and navigate to login when logout item is selected', () => {
+  it('should delegate logout (including navigation) to AuthService', () => {
     const logoutSpy = vi.spyOn(authService, 'logout');
     const button = fixture.nativeElement.querySelector('#account-toggle');
 
@@ -69,7 +73,7 @@ describe('Header', () => {
     fixture.detectChanges();
 
     expect(logoutSpy).toHaveBeenCalled();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
+    expect(mockRouter.navigate).not.toHaveBeenCalled();
     expect(fixture.nativeElement.querySelector('app-simple-menu')).toBeNull();
   });
 });

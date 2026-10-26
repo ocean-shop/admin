@@ -4,6 +4,7 @@ import { ProductFormAttributeOption } from '../components/product-form/models/pr
 import { ProductFormTagOption } from '../components/product-form/models/product-form-tag-option.model';
 import { AttributeApiItem } from '../pages/attributes/models/attribute.model';
 import { TagApiItem } from '../pages/tags/models/tag.model';
+import { PRODUCT_FALLBACK_LABELS } from '../constants/product-fallback-labels.constants';
 
 export const mapAttributeSearchResults = (
   items: AttributeApiItem[],
@@ -19,7 +20,8 @@ export const mapAttributeSearchResults = (
 
     const name = item.name?.trim() ?? '';
     const value = item.value?.trim() ?? '';
-    const label = value ? `${name || 'Атрибут'}: ${value}` : name || 'Атрибут';
+    const resolvedName = name || PRODUCT_FALLBACK_LABELS.ATTRIBUTE;
+    const label = value ? `${resolvedName}: ${value}` : resolvedName;
     options.push({ id, label });
   }
 
@@ -38,7 +40,7 @@ export const mapTagSearchResults = (
       continue;
     }
 
-    const label = item.name?.trim() || 'Тег';
+    const label = item.name?.trim() || PRODUCT_FALLBACK_LABELS.TAG;
     options.push({ id, label });
   }
 

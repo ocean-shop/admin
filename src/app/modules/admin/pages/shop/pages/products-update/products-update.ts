@@ -40,11 +40,15 @@ import {
   mapProductToFormModel,
 } from '../../helpers/product-api-mapping.helper';
 import { buildUpdateProductPayload } from '../../helpers/product-form-payload.helper';
+import { applyProductSeoValidators } from '../../helpers/product-form-schema.helper';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
 import { PRODUCTS_TEXTS } from '../products/constants/products.constants';
 import { ProductType } from '../products/models/product-type.enum';
-import { UpdateProductPayload } from '../products/models/update-product-payload.model';
+import {
+  UpdateProductPayload,
+  UpdateProductVariables,
+} from '../products/models/update-product-payload.model';
 import { ProductsService } from '../products/services/products.service';
 
 @Component({
@@ -84,6 +88,7 @@ export class ProductsUpdate implements OnInit {
   });
   protected readonly productForm = form(this.productFormModel, (schemaPath) => {
     required(schemaPath.name, { message: PRODUCTS_UPDATE_TEXTS.PRODUCT_NAME_REQUIRED });
+    applyProductSeoValidators(schemaPath);
   });
 
   protected readonly productQuery = injectQuery(() => {
@@ -98,7 +103,7 @@ export class ProductsUpdate implements OnInit {
   });
 
   protected readonly updateProductMutation = injectMutation(() => ({
-    mutationFn: ({ productId, payload }: { productId: string; payload: UpdateProductPayload }) =>
+    mutationFn: ({ productId, payload }: UpdateProductVariables) =>
       lastValueFrom(this.productsService.updateProduct(productId, payload)),
   }));
 
@@ -106,7 +111,7 @@ export class ProductsUpdate implements OnInit {
   protected readonly isLoadingProduct = computed(
     () => this.productQuery.isPending() || this.productQuery.isFetching(),
   );
-  protected readonly isFormValid = computed(() => this.productForm.name().valid());
+  protected readonly isFormValid = computed(() => this.productForm().valid());
 
   constructor() {
     effect(() => {
@@ -239,8 +244,15 @@ export class ProductsUpdate implements OnInit {
       sku: this.productForm.sku().value(),
       status: this.productForm.status().value(),
       available: this.productForm.available().value(),
+      isPopular: this.productForm.isPopular().value(),
+      isMainBanner: this.productForm.isMainBanner().value(),
       price: this.productForm.price().value(),
       oldPrice: this.productForm.oldPrice().value(),
+      slug: this.productForm.slug().value(),
+      metaTitle: this.productForm.metaTitle().value(),
+      metaDescription: this.productForm.metaDescription().value(),
+      canonicalUrl: this.productForm.canonicalUrl().value(),
+      noIndex: this.productForm.noIndex().value(),
     };
   }
 }

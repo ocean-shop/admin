@@ -8,5 +8,18 @@ export const SETTINGS_LANGUAGE_OPTIONS: DropdownOption[] = [
 
 export const DEFAULT_LANGUAGE = 'en';
 
+export const SETTINGS_PAGE_TITLE = 'Налаштування';
+export const SETTINGS_LANGUAGE_LABEL = 'Мова';
+export const SETTINGS_LANGUAGE_ICON = 'language';
+export const SETTINGS_SAVE_LABEL = 'Зберегти';
+export const SETTINGS_SAVE_ICON = 'save';
+
 export const SETTINGS_REQUIRED_LANGUAGE_MESSAGE = "Поле мова є обов'язкове";
 export const SETTINGS_UPDATED_SUCCESS_MESSAGE = 'Налаштування змінено';
+
+export const SETTINGS_CACHE_TITLE = 'Кеш';
+export const SETTINGS_CACHE_DESCRIPTION =
+  'Очистити кеш, щоб у магазині одразу застосувались останні зміни.';
+export const SETTINGS_CACHE_INVALIDATE_LABEL = 'Очистити кеш';
+export const SETTINGS_CACHE_INVALIDATE_ICON = 'cached';
+export const SETTINGS_CACHE_INVALIDATED_SUCCESS_MESSAGE = 'Кеш очищено';

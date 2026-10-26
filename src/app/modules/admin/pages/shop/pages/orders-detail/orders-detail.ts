@@ -29,9 +29,12 @@ import {
 import { OrderPaymentStatus } from '../orders/models/order-payment-status.enum';
 import { OrderApiItem, OrderProductApiItem, OrderUserApiItem } from '../orders/models/order.model';
 import { OrderStatus } from '../orders/models/order-status.enum';
+import { UpdateOrderPaymentStatusVariables } from '../orders/models/update-order-payment-status-payload.model';
+import { UpdateOrderStatusVariables } from '../orders/models/update-order-status-payload.model';
 import { OrdersService } from '../orders/services/orders.service';
 import { ITEM_COLUMNS } from '../../constants/order.constants';
 import { OrderDetailInfoRow } from '../../models/order.models';
+import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
 
 @Component({
   selector: 'app-orders-detail',
@@ -78,13 +81,7 @@ export class OrdersDetail implements OnInit {
   });
 
   protected readonly updatePaymentStatusMutation = injectMutation(() => ({
-    mutationFn: ({
-      orderId,
-      paymentStatus,
-    }: {
-      orderId: string;
-      paymentStatus: OrderPaymentStatus;
-    }) =>
+    mutationFn: ({ orderId, paymentStatus }: UpdateOrderPaymentStatusVariables) =>
       lastValueFrom(
         this.ordersService.updateOrderPaymentStatus(orderId, {
           paymentStatus,
@@ -93,7 +90,7 @@ export class OrdersDetail implements OnInit {
   }));
 
   protected readonly updateStatusMutation = injectMutation(() => ({
-    mutationFn: ({ orderId, status }: { orderId: string; status: OrderStatus }) =>
+    mutationFn: ({ orderId, status }: UpdateOrderStatusVariables) =>
       lastValueFrom(
         this.ordersService.updateOrderStatus(orderId, {
           status,
@@ -138,8 +135,8 @@ export class OrdersDetail implements OnInit {
   });
   protected readonly orderItemRows = computed<TableRowData[]>(() =>
     this.orderItems().map((item) => ({
-      name: item.product?.name?.trim() || '—',
-      sku: item.product?.sku?.trim() || '—',
+      name: item.product?.name?.trim() || EMPTY_VALUE_PLACEHOLDER,
+      sku: item.product?.sku?.trim() || EMPTY_VALUE_PLACEHOLDER,
       quantity: this.resolveNumberLabel(item.quantity),
       price: this.resolveAmountLabel(item.unitPrice),
       total: this.resolveAmountLabel((item.quantity || 1) * Number(item.unitPrice)),
@@ -152,12 +149,18 @@ export class OrdersDetail implements OnInit {
     }
 
     return [
-      { label: 'Номер Замовлення', value: this.resolveOrderNumber(order.orderNumber) },
-      { label: 'Сума', value: this.resolveAmountLabel(order.totalAmount) },
-      { label: 'Статус оплати', value: this.resolveStatusLabel(order.paymentStatus) },
-      { label: 'Статус Замовлення', value: this.resolveStatusLabel(order.status) },
-      { label: 'Створено', value: this.resolveDateLabel(order.createdAt) },
-      { label: 'Оновлено', value: this.resolveDateLabel(order.updatedAt) },
+      {
+        label: ORDERS_TEXTS.INFO_ORDER_NUMBER_LABEL,
+        value: this.resolveOrderNumber(order.orderNumber),
+      },
+      { label: ORDERS_TEXTS.INFO_AMOUNT_LABEL, value: this.resolveAmountLabel(order.totalAmount) },
+      {
+        label: ORDERS_TEXTS.INFO_PAYMENT_STATUS_LABEL,
+        value: this.resolveStatusLabel(order.paymentStatus),
+      },
+      { label: ORDERS_TEXTS.INFO_ORDER_STATUS_LABEL, value: this.resolveStatusLabel(order.status) },
+      { label: ORDERS_TEXTS.INFO_CREATED_LABEL, value: this.resolveDateLabel(order.createdAt) },
+      { label: ORDERS_TEXTS.INFO_UPDATED_LABEL, value: this.resolveDateLabel(order.updatedAt) },
     ];
   });
   protected readonly userInfoRows = computed<OrderDetailInfoRow[]>(() => {
@@ -168,10 +171,22 @@ export class OrdersDetail implements OnInit {
 
     const user = this.resolveOrderUser(order);
     return [
-      { label: 'Email', value: user?.email?.trim() || '—' },
-      { label: "Ім'я", value: user?.firstName?.trim() || '—' },
-      { label: 'Прізвище', value: user?.lastName?.trim() || '—' },
-      { label: 'Телефон', value: user?.phone?.trim() || '—' },
+      {
+        label: ORDERS_TEXTS.USER_EMAIL_LABEL,
+        value: user?.email?.trim() || EMPTY_VALUE_PLACEHOLDER,
+      },
+      {
+        label: ORDERS_TEXTS.USER_FIRST_NAME_LABEL,
+        value: user?.firstName?.trim() || EMPTY_VALUE_PLACEHOLDER,
+      },
+      {
+        label: ORDERS_TEXTS.USER_LAST_NAME_LABEL,
+        value: user?.lastName?.trim() || EMPTY_VALUE_PLACEHOLDER,
+      },
+      {
+        label: ORDERS_TEXTS.USER_PHONE_LABEL,
+        value: user?.phone?.trim() || EMPTY_VALUE_PLACEHOLDER,
+      },
     ];
   });
   protected readonly extraDataRows = computed<OrderDetailInfoRow[]>(() => {
@@ -336,12 +351,12 @@ export class OrdersDetail implements OnInit {
 
   private stringifyValue(value: unknown): string {
     if (value === null || value === undefined) {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     if (typeof value === 'string') {
       const normalized = value.trim();
-      return normalized || '—';
+      return normalized || EMPTY_VALUE_PLACEHOLDER;
     }
 
     if (typeof value === 'number' || typeof value === 'boolean') {
@@ -351,7 +366,7 @@ export class OrdersDetail implements OnInit {
     try {
       return JSON.stringify(value);
     } catch {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
   }
 
@@ -362,10 +377,10 @@ export class OrdersDetail implements OnInit {
 
     if (typeof orderNumber === 'string') {
       const normalized = orderNumber.trim();
-      return normalized || '—';
+      return normalized || EMPTY_VALUE_PLACEHOLDER;
     }
 
-    return '—';
+    return EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolveAmountLabel(value: number | string | null | undefined): string {
@@ -375,10 +390,10 @@ export class OrdersDetail implements OnInit {
 
     if (typeof value === 'string') {
       const normalized = value.trim();
-      return normalized || '—';
+      return normalized || EMPTY_VALUE_PLACEHOLDER;
     }
 
-    return '—';
+    return EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolveNumberLabel(value: number | null | undefined): string {
@@ -386,12 +401,12 @@ export class OrdersDetail implements OnInit {
       return String(value);
     }
 
-    return '—';
+    return EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolveDateLabel(value: string | null | undefined): string {
     if (!value?.trim()) {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     const parsed = new Date(value);
@@ -407,7 +422,7 @@ export class OrdersDetail implements OnInit {
       .trim()
       .toLowerCase();
     if (!normalized) {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     return normalized

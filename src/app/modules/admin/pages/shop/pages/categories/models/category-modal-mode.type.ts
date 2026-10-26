@@ -6,3 +6,5 @@ export enum CategoryModalModeEnum {
   Update = 'update',
   Delete = 'delete',
 }
+
+export type CategoryFormMode = 'create' | 'update';

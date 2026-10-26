@@ -1,25 +1,34 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { form, required } from '@angular/forms/signals';
+import { Checkbox } from '@ui/checkbox/checkbox';
 import { Input } from '@ui/input/input';
 import { Modal } from '@ui/modal/modal';
+import { Textarea } from '@ui/textarea/textarea';
+import { applySeoValidators, toNullableSeoText } from '../../../../helpers/seo-form.helper';
 import {
+  CATEGORIES_CANONICAL_URL_FIELD_ID,
+  CATEGORIES_EMPTY_FORM,
+  CATEGORIES_META_DESCRIPTION_FIELD_ID,
+  CATEGORIES_META_TITLE_FIELD_ID,
   CATEGORIES_NAME_FIELD_ID,
+  CATEGORIES_NO_INDEX_FIELD_ID,
   CATEGORIES_SLUG_FIELD_ID,
   CATEGORIES_TEXTS,
 } from '../../constants/categories.constants';
 import { CategoryFormData } from '../../models/category-form.model';
+import { CategoryFormMode } from '../../models/category-modal-mode.type';
 import { Category } from '../../models/category.model';
 import { CategoryFormSubmitPayload } from '../../models/category-payload.model';
 
 @Component({
   selector: 'app-category-form-modal',
-  imports: [Modal, Input],
+  imports: [Checkbox, Modal, Input, Textarea],
   templateUrl: './category-form-modal.html',
   styleUrl: './category-form-modal.scss',
 })
 export class CategoryFormModal {
   readonly isOpen = input.required<boolean>();
-  readonly mode = input.required<'create' | 'update'>();
+  readonly mode = input.required<CategoryFormMode>();
   readonly category = input<Category | null>(null);
   readonly parentCategory = input<Category | null>(null);
   readonly confirmLoading = input<boolean>(false);
@@ -29,17 +38,19 @@ export class CategoryFormModal {
 
   protected readonly nameFieldId = CATEGORIES_NAME_FIELD_ID;
   protected readonly slugFieldId = CATEGORIES_SLUG_FIELD_ID;
+  protected readonly metaTitleFieldId = CATEGORIES_META_TITLE_FIELD_ID;
+  protected readonly metaDescriptionFieldId = CATEGORIES_META_DESCRIPTION_FIELD_ID;
+  protected readonly canonicalUrlFieldId = CATEGORIES_CANONICAL_URL_FIELD_ID;
+  protected readonly noIndexFieldId = CATEGORIES_NO_INDEX_FIELD_ID;
   protected readonly texts = CATEGORIES_TEXTS;
 
-  protected readonly categoryFormModel = signal<CategoryFormData>({
-    name: '',
-    slug: '',
-  });
+  protected readonly categoryFormModel = signal<CategoryFormData>({ ...CATEGORIES_EMPTY_FORM });
   private readonly lastGeneratedSlug = signal('');
 
   protected readonly categoryForm = form(this.categoryFormModel, (schemaPath) => {
     required(schemaPath.name, { message: CATEGORIES_TEXTS.NAME_REQUIRED_MESSAGE });
     required(schemaPath.slug, { message: CATEGORIES_TEXTS.SLUG_REQUIRED_MESSAGE });
+    applySeoValidators(schemaPath, CATEGORIES_TEXTS);
   });
 
   protected readonly title = computed(() =>
@@ -54,9 +65,7 @@ export class CategoryFormModal {
       ? CATEGORIES_TEXTS.MODAL_CREATE_CONFIRM_LABEL
       : CATEGORIES_TEXTS.MODAL_UPDATE_CONFIRM_LABEL,
   );
-  protected readonly isFormValid = computed(
-    () => this.categoryForm.name().valid() && this.categoryForm.slug().valid(),
-  );
+  protected readonly isFormValid = computed(() => this.categoryForm().valid());
 
   constructor() {
     effect(() => {
@@ -121,12 +130,20 @@ export class CategoryFormModal {
       return null;
     }
 
+    const seo = {
+      metaTitle: toNullableSeoText(this.categoryForm.metaTitle().value()),
+      metaDescription: toNullableSeoText(this.categoryForm.metaDescription().value()),
+      canonicalUrl: toNullableSeoText(this.categoryForm.canonicalUrl().value()),
+      noIndex: this.categoryForm.noIndex().value() ?? false,
+    };
+
     if (this.mode() === 'update') {
       const currentCategory = this.category();
 
       return {
         name,
         slug,
+        ...seo,
         ...(currentCategory?.parentId ? { parentId: currentCategory.parentId } : {}),
       };
     }
@@ -135,6 +152,7 @@ export class CategoryFormModal {
     return {
       name,
       slug,
+      ...seo,
       ...(parentId ? { parentId } : {}),
     };
   }
@@ -143,15 +161,16 @@ export class CategoryFormModal {
     this.categoryFormModel.set({
       name: category.name,
       slug: category.slug,
+      metaTitle: category.metaTitle ?? '',
+      metaDescription: category.metaDescription ?? '',
+      canonicalUrl: category.canonicalUrl ?? '',
+      noIndex: category.noIndex ?? false,
     });
     this.lastGeneratedSlug.set(category.slug);
   }
 
   private resetCategoryForm(): void {
-    this.categoryForm().reset({
-      name: '',
-      slug: '',
-    });
+    this.categoryForm().reset({ ...CATEGORIES_EMPTY_FORM });
     this.lastGeneratedSlug.set('');
   }
 

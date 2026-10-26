@@ -49,4 +49,14 @@ describe('SettingsService', () => {
     expect(req.request.body).toEqual(payload);
     req.flush({ language: 'ua' });
   });
+
+  it('invalidates cache', () => {
+    service.invalidateCache().subscribe();
+
+    const req = httpMock.expectOne(`${API_URL}/settings/cache/invalidate`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual({});
+    req.flush(null);
+  });
 });

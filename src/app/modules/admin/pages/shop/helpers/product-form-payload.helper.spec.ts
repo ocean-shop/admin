@@ -13,8 +13,21 @@ describe('product-form-payload.helper', () => {
     sku: 'SKU-1',
     status: ProductStatus.Active,
     available: true,
+    isPopular: false,
+    isMainBanner: false,
     price: '99.99',
     oldPrice: '129.99',
+    slug: '',
+    metaTitle: '',
+    metaDescription: '',
+    canonicalUrl: '',
+    noIndex: false,
+  };
+  const emptySeoPayload = {
+    metaTitle: null,
+    metaDescription: null,
+    canonicalUrl: null,
+    noIndex: false,
   };
 
   it('builds create payload with normalized shop id', () => {
@@ -28,8 +41,10 @@ describe('product-form-payload.helper', () => {
       sku: 'SKU-1',
       status: ProductStatus.Active,
       available: true,
+      isMainBanner: false,
       price: 99.99,
       oldPrice: 129.99,
+      ...emptySeoPayload,
     });
   });
 
@@ -56,6 +71,69 @@ describe('product-form-payload.helper', () => {
       sku: 'SKU-1',
       status: ProductStatus.Active,
       available: true,
+      isMainBanner: false,
+      ...emptySeoPayload,
+    });
+  });
+
+  it('includes isPopular in the payload when checked', () => {
+    const payload = buildUpdateProductPayload({
+      ...baseValues,
+      isPopular: true,
+    });
+
+    expect(payload).toEqual({
+      name: 'Coastal Shirt',
+      type: ProductType.Simple,
+      description: 'Soft linen',
+      sku: 'SKU-1',
+      status: ProductStatus.Active,
+      available: true,
+      isMainBanner: false,
+      isPopular: true,
+      price: 99.99,
+      oldPrice: 129.99,
+      ...emptySeoPayload,
+    });
+  });
+
+  it('omits isPopular from the payload when not checked', () => {
+    const payload = buildUpdateProductPayload(baseValues);
+
+    expect(payload).not.toHaveProperty('isPopular');
+  });
+
+  it('always includes isMainBanner in the payload', () => {
+    expect(buildUpdateProductPayload({ ...baseValues, isMainBanner: true })).toHaveProperty(
+      'isMainBanner',
+      true,
+    );
+    expect(buildUpdateProductPayload(baseValues)).toHaveProperty('isMainBanner', false);
+  });
+
+  it('omits an empty slug so the API generates or keeps it', () => {
+    expect(buildCreateProductPayload('shop-1', { ...baseValues, slug: '  ' })).not.toHaveProperty(
+      'slug',
+    );
+    expect(buildUpdateProductPayload(baseValues)).not.toHaveProperty('slug');
+  });
+
+  it('includes trimmed SEO fields', () => {
+    const payload = buildUpdateProductPayload({
+      ...baseValues,
+      slug: ' coastal-shirt ',
+      metaTitle: ' Coastal Shirt | Ocean ',
+      metaDescription: ' Linen shirt ',
+      canonicalUrl: ' https://ocean.shop/products/coastal-shirt ',
+      noIndex: true,
+    });
+
+    expect(payload).toMatchObject({
+      slug: 'coastal-shirt',
+      metaTitle: 'Coastal Shirt | Ocean',
+      metaDescription: 'Linen shirt',
+      canonicalUrl: 'https://ocean.shop/products/coastal-shirt',
+      noIndex: true,
     });
   });
 });

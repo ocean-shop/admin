@@ -19,6 +19,13 @@ export const mapProductToFormModel = (product: ProductApiItem): ProductFormModel
     sku: product.sku?.trim() ?? '',
     status: normalizeProductStatus(product.status),
     available: product.available ?? true,
+    isPopular: product.isPopular ?? false,
+    isMainBanner: product.isMainBanner ?? false,
+    slug: product.slug?.trim() ?? '',
+    metaTitle: product.metaTitle?.trim() ?? '',
+    metaDescription: product.metaDescription?.trim() ?? '',
+    canonicalUrl: product.canonicalUrl?.trim() ?? '',
+    noIndex: product.noIndex ?? false,
   };
 };
 

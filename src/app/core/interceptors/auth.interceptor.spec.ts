@@ -3,6 +3,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { API_URL } from '@core/constants/api.constant';
 import { AuthService } from '@core/services/auth/auth.service';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
+import { buildAuthSession } from '@testing/auth-session.fixture';
 import { authInterceptor } from './auth.interceptor';
 
 describe('authInterceptor', () => {
@@ -15,6 +17,7 @@ describe('authInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
+        ...provideTestQueryClient(),
       ],
     });
 
@@ -30,7 +33,7 @@ describe('authInterceptor', () => {
   });
 
   it('adds bearer token to regular API calls', () => {
-    authService.setAccessToken('token-123');
+    authService.handleAuthSuccess(buildAuthSession('token-123'));
 
     http.get(`${API_URL}/catalog/categories`).subscribe();
 
@@ -39,13 +42,21 @@ describe('authInterceptor', () => {
     req.flush([]);
   });
 
+  it('sends no bearer token when there is no session', () => {
+    http.get(`${API_URL}/catalog/categories`).subscribe();
+
+    const req = httpMock.expectOne(`${API_URL}/catalog/categories`);
+    expect(req.request.headers.has('Authorization')).toBe(false);
+    req.flush([]);
+  });
+
   it('skips bearer token for refresh and logout endpoints', () => {
-    authService.setAccessToken('token-123');
+    authService.handleAuthSuccess(buildAuthSession('token-123'));
 
     http.post(`${API_URL}/user/auth/refresh`, {}).subscribe();
     const refreshReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
     expect(refreshReq.request.headers.has('Authorization')).toBe(false);
-    refreshReq.flush({ accessToken: 'next-token' });
+    refreshReq.flush(buildAuthSession('next-token'));
 
     http.post(`${API_URL}/user/auth/logout`, {}).subscribe();
     const logoutReq = httpMock.expectOne(`${API_URL}/user/auth/logout`);

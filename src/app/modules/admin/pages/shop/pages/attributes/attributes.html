@@ -57,7 +57,7 @@
     </form>
 
     @if (hasError()) {
-    <p class="attributes-state">Не вдалося завантажити атрибути. Спробуйте ще раз.</p>
+    <p class="attributes-state">{{ textData.LOAD_ERROR_MESSAGE }}</p>
     }
 
     <app-table

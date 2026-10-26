@@ -1,3 +1,4 @@
+import { SortOrder } from '../../../models/sort-order.type';
 import { OrderPaymentStatus } from './order-payment-status.enum';
 import { OrderStatus } from './order-status.enum';
 
@@ -63,7 +64,7 @@ export type OrderListQueryParams = {
   shopId: string;
   orderNumber?: string;
   sortBy?: 'createdAt';
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: SortOrder;
 };
 
 export type Order = {

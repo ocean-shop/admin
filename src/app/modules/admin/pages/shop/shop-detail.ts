@@ -7,6 +7,14 @@ import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { ShopStatistics } from './components/shop-statistics/shop-statistics';
 import { buildShopBreadcrumb } from './constants/shop-breadcrumbs.constants';
+import {
+  SHOP_DETAIL_LINK_ICON,
+  SHOP_DETAIL_ROUTE_PREFIX,
+  SHOP_DETAIL_SECTIONS,
+  SHOP_DETAIL_SHOP_ID_PLACEHOLDER,
+  SHOP_DETAIL_TEXTS,
+} from './constants/shop-detail.constants';
+import { ShopDetailSectionLink } from './models/shop-detail-section.model';
 
 @Component({
   selector: 'app-shop',
@@ -17,6 +25,9 @@ import { buildShopBreadcrumb } from './constants/shop-breadcrumbs.constants';
 export class ShopDetail {
   private readonly activatedRoute = inject(ActivatedRoute);
 
+  protected readonly textData = SHOP_DETAIL_TEXTS;
+  protected readonly linkIcon = SHOP_DETAIL_LINK_ICON;
+
   protected readonly shopId = toSignal(
     this.activatedRoute.paramMap.pipe(map((params) => params.get('shopId') ?? '')),
     { initialValue: '' },
@@ -25,29 +36,12 @@ export class ShopDetail {
     DASHBOARD_BREADCRUMB,
     buildShopBreadcrumb(this.shopId()),
   ]);
-  protected readonly categoriesRoute = computed(() => [
-    '/admin/shop',
-    this.shopId() || ':shopId',
-    'categories',
-  ]);
-  protected readonly tagsRoute = computed(() => [
-    '/admin/shop',
-    this.shopId() || ':shopId',
-    'tags',
-  ]);
-  protected readonly attributesRoute = computed(() => [
-    '/admin/shop',
-    this.shopId() || ':shopId',
-    'attributes',
-  ]);
-  protected readonly productsRoute = computed(() => [
-    '/admin/shop',
-    this.shopId() || ':shopId',
-    'products',
-  ]);
-  protected readonly ordersRoute = computed(() => [
-    '/admin/shop',
-    this.shopId() || ':shopId',
-    'orders',
-  ]);
+  protected readonly sections = computed<ShopDetailSectionLink[]>(() => {
+    const shopRouteId = this.shopId() || SHOP_DETAIL_SHOP_ID_PLACEHOLDER;
+
+    return SHOP_DETAIL_SECTIONS.map((section) => ({
+      ...section,
+      route: [SHOP_DETAIL_ROUTE_PREFIX, shopRouteId, section.segment],
+    }));
+  });
 }

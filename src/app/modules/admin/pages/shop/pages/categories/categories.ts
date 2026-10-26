@@ -29,9 +29,13 @@ import {
   CategoryFormSubmitPayload,
   CreateCategoryPayload,
   UpdateCategoryPayload,
+  UpdateCategoryVariables,
 } from './models/category-payload.model';
 import { CategoryTreeNode, VisibleCategoryNode } from './models/category-tree.model';
-import { CategorySortDirection } from './models/change-category-sort.model';
+import {
+  CategorySortDirection,
+  ChangeCategorySortVariables,
+} from './models/change-category-sort.model';
 import { CategoriesService } from './services/categories.service';
 
 @Component({
@@ -89,7 +93,7 @@ export class Categories implements OnInit {
   }));
 
   protected readonly updateCategoryMutation = injectMutation(() => ({
-    mutationFn: ({ id, payload }: { id: string; payload: UpdateCategoryPayload }) =>
+    mutationFn: ({ id, payload }: UpdateCategoryVariables) =>
       lastValueFrom(this.categoriesService.updateCategory(id, payload)),
   }));
 
@@ -98,7 +102,7 @@ export class Categories implements OnInit {
   }));
 
   protected readonly changeSortMutation = injectMutation(() => ({
-    mutationFn: ({ id, direction }: { id: string; direction: CategorySortDirection }) =>
+    mutationFn: ({ id, direction }: ChangeCategorySortVariables) =>
       lastValueFrom(this.categoriesService.changeCategorySort(id, { direction })),
   }));
 
@@ -241,11 +245,11 @@ export class Categories implements OnInit {
     }
 
     if (mode === CategoryModalModeEnum.CreateRoot || mode === CategoryModalModeEnum.CreateChild) {
+      const { parentId, ...categoryFields } = payload;
       const createPayload: CreateCategoryPayload = {
         shopId: currentShopId,
-        name: payload.name,
-        slug: payload.slug,
-        ...(payload.parentId ? { parentId: payload.parentId } : {}),
+        ...categoryFields,
+        ...(parentId ? { parentId } : {}),
       };
       this.executeMutation(
         this.createCategoryMutation,
@@ -261,10 +265,10 @@ export class Categories implements OnInit {
       return;
     }
 
+    const { parentId, ...categoryFields } = payload;
     const updatePayload: UpdateCategoryPayload = {
-      name: payload.name,
-      slug: payload.slug,
-      ...(payload.parentId ? { parentId: payload.parentId } : {}),
+      ...categoryFields,
+      ...(parentId ? { parentId } : {}),
     };
     this.executeMutation(
       this.updateCategoryMutation,
@@ -386,6 +390,10 @@ export class Categories implements OnInit {
       slug: (category.slug ?? '').trim() || 'category',
       sort: typeof category.sort === 'number' ? category.sort : 0,
       ...(typeof productCount === 'number' ? { productCount } : {}),
+      ...(category.metaTitle ? { metaTitle: category.metaTitle } : {}),
+      ...(category.metaDescription ? { metaDescription: category.metaDescription } : {}),
+      ...(category.canonicalUrl ? { canonicalUrl: category.canonicalUrl } : {}),
+      ...(category.noIndex ? { noIndex: true } : {}),
     };
   }
 

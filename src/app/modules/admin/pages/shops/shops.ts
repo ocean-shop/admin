@@ -3,7 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, Observable } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Button } from '@ui/button/button';
-import { EntityCard, EntityCardData } from '@ui/entity-card/entity-card';
+import { EntityCard } from '@ui/entity-card/entity-card';
+import { EntityCardData } from '@ui/entity-card/models/entity-card.model';
 import { Modal } from '@ui/modal/modal';
 import { Pagination } from '@ui/pagination/pagination';
 import { ShopsFormModal } from './components/shops-form-modal/shops-form-modal';
@@ -246,7 +247,7 @@ export class Shops implements OnInit {
 
   private resolveUpdatedBadge(created: string): string {
     return created && created !== SHOPS_TEXTS.DEFAULT_UPDATED
-      ? `Створено: ${new Date(created).toISOString().split('T')[0]}`
+      ? `${SHOPS_TEXTS.CREATED_BADGE_PREFIX} ${new Date(created).toISOString().split('T')[0]}`
       : '';
   }
 }

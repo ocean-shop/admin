@@ -2,6 +2,8 @@ import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { TableColumn } from '@ui/table/models/table-column.model';
 
 export const USERS_TEXTS = {
+  USER_OTPS_EMPTY_STATE: 'OTP записи відсутні.',
+  USER_SESSIONS_EMPTY_STATE: 'Сесії користувача відсутні.',
   PAGE_TITLE: 'Користувачі',
   PAGE_DESCRIPTION: 'Переглядайте користувачів магазину та відкривайте детальну інформацію.',
   EMAIL_FILTER_LABEL: 'Email',

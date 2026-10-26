@@ -4,9 +4,9 @@ import { TestBed } from '@angular/core/testing';
 import { ProductStatus } from '../models/product-status.enum';
 import { ProductType } from '../models/product-type.enum';
 import { ProductsService } from './products.service';
+import { API_URL } from '@core/constants/api.constant';
 
 describe('ProductsService', () => {
-  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: ProductsService;
   let httpMock: HttpTestingController;
 

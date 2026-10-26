@@ -17,3 +17,10 @@ export type ChartData = {
   products: number[];
   users: number[];
 };
+
+export type StatisticMonthKey = {
+  id: string;
+  label: string;
+  year: number;
+  monthNumber: number;
+};

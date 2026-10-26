@@ -2,13 +2,16 @@ import { buildTree } from './tree.helper';
 import { TreeNode } from '../models/tree-node.model';
 import { CategoryApiItem } from '../pages/categories/models/category.model';
 import { ProductFormCategoryNode } from '../components/product-form/models/product-form-category-node.model';
-
-type ProductCategoryNodeWithParent = ProductFormCategoryNode & { parentId?: string };
+import {
+  ProductCategoryNodeWithParent,
+  ProductCategoryTreeOptions,
+} from './models/product-category-tree.model';
+import { PRODUCT_FALLBACK_LABELS } from '../constants/product-fallback-labels.constants';
 
 export const buildProductCategoryTreeNodes = (
   categories: CategoryApiItem[],
   selectedCategoryIds: Set<string>,
-  options?: { disabled?: boolean },
+  options?: ProductCategoryTreeOptions,
 ): ProductFormCategoryNode[] => {
   const normalizedCategories = categories
     .map((category) => normalizeProductCategory(category, selectedCategoryIds, options))
@@ -41,7 +44,7 @@ export const updateSelectedCategoryIds = (
 const normalizeProductCategory = (
   category: CategoryApiItem,
   selectedCategoryIds: Set<string>,
-  options?: { disabled?: boolean },
+  options?: ProductCategoryTreeOptions,
 ): ProductCategoryNodeWithParent | null => {
   const id = String(category.id ?? '').trim();
   if (!id) {
@@ -52,7 +55,7 @@ const normalizeProductCategory = (
 
   return {
     id,
-    label: category.name?.trim() || `Category ${id}`,
+    label: category.name?.trim() || `${PRODUCT_FALLBACK_LABELS.CATEGORY_PREFIX} ${id}`,
     checked: selectedCategoryIds.has(id),
     disabled: Boolean(options?.disabled),
     ...(parentId && parentId !== id ? { parentId } : {}),

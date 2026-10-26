@@ -7,6 +7,9 @@ import { API_URL } from '@core/constants/api.constant';
 import { AuthService } from '@core/services/auth/auth.service';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { authInterceptor } from './auth.interceptor';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
+import { buildAuthSession } from '@testing/auth-session.fixture';
+import { HTTP_ERROR_TEXTS } from '../constants/http-error.constants';
 import { errorInterceptor } from './error.interceptor';
 
 class ToasterServiceStub {
@@ -31,6 +34,7 @@ describe('errorInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
         provideHttpClientTesting(),
+        ...provideTestQueryClient(),
         provideRouter([
           { path: 'login', component: DummyPageComponent },
           { path: 'admin/not-permission', component: DummyPageComponent },
@@ -56,7 +60,7 @@ describe('errorInterceptor', () => {
   });
 
   it('retries a protected request once and avoids a second refresh loop', () => {
-    authService.handleAuthSuccess('expired-token');
+    authService.handleAuthSuccess(buildAuthSession('expired-token'));
     const errorHandler = vi.fn();
 
     http.get(`${API_URL}/catalog/categories`).subscribe({
@@ -69,7 +73,7 @@ describe('errorInterceptor', () => {
 
     const refreshReq = httpMock.expectOne(`${API_URL}/user/auth/refresh`);
     expect(refreshReq.request.withCredentials).toBe(true);
-    refreshReq.flush({ accessToken: 'fresh-token' });
+    refreshReq.flush(buildAuthSession('fresh-token'));
 
     const retriedReq = httpMock.expectOne(`${API_URL}/catalog/categories`);
     expect(retriedReq.request.headers.get('Authorization')).toBe('Bearer fresh-token');
@@ -81,7 +85,7 @@ describe('errorInterceptor', () => {
 
   it('clears session and redirects when refresh response misses access token', () => {
     const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
-    authService.handleAuthSuccess('expired-token');
+    authService.handleAuthSuccess(buildAuthSession('expired-token'));
     const errorHandler = vi.fn();
 
     http.get(`${API_URL}/catalog/categories`).subscribe({
@@ -98,5 +102,41 @@ describe('errorInterceptor', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['/login']);
     expect(errorHandler).toHaveBeenCalledTimes(1);
     expect(toasterService.danger).not.toHaveBeenCalled();
+  });
+
+  it('shows a throttling toast with the API message on 429', () => {
+    http.post(`${API_URL}/user/auth/admin/request-otp`, {}).subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne(`${API_URL}/user/auth/admin/request-otp`)
+      .flush({ message: 'Забагато запитів' }, { status: 429, statusText: 'Too Many Requests' });
+
+    expect(toasterService.danger).toHaveBeenCalledWith(
+      HTTP_ERROR_TEXTS.TOO_MANY_REQUESTS_TITLE,
+      'Забагато запитів',
+    );
+  });
+
+  it('falls back to the default throttling message when 429 has no body message', () => {
+    http.get(`${API_URL}/catalog/categories`).subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne(`${API_URL}/catalog/categories`)
+      .flush(null, { status: 429, statusText: 'Too Many Requests' });
+
+    expect(toasterService.danger).toHaveBeenCalledWith(
+      HTTP_ERROR_TEXTS.TOO_MANY_REQUESTS_TITLE,
+      HTTP_ERROR_TEXTS.TOO_MANY_REQUESTS_MESSAGE,
+    );
+  });
+
+  it('shows status title and API message for other errors', () => {
+    http.get(`${API_URL}/catalog/categories`).subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne(`${API_URL}/catalog/categories`)
+      .flush({ message: 'Bad input' }, { status: 400, statusText: 'Bad Request' });
+
+    expect(toasterService.danger).toHaveBeenCalledWith('Error 400', 'Bad input');
   });
 });

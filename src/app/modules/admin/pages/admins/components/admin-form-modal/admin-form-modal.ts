@@ -22,7 +22,6 @@ import { AdminFormModalMode } from '../../models/admin-form-modal-mode.type';
   imports: [Modal, Input, Dropdown, MultiSelectDropdown, FormField],
   templateUrl: './admin-form-modal.html',
   styleUrl: './admin-form-modal.scss',
-  standalone: true,
 })
 export class AdminFormModal {
   readonly isOpen = input.required<boolean>();

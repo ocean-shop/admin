@@ -27,6 +27,7 @@ import {
 import { Order, OrderApiItem, OrderListQueryParams } from './models/order.model';
 import { OrderSortValue } from './models/order-sort-value.type';
 import { OrdersService } from './services/orders.service';
+import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
 
 @Component({
   selector: 'app-orders',
@@ -268,10 +269,10 @@ export class Orders implements OnInit {
 
     if (typeof orderNumber === 'string') {
       const normalized = orderNumber.trim();
-      return normalized || '—';
+      return normalized || EMPTY_VALUE_PLACEHOLDER;
     }
 
-    return '—';
+    return EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolveAmountLabel(value: number | string | null | undefined): string {
@@ -281,15 +282,15 @@ export class Orders implements OnInit {
 
     if (typeof value === 'string') {
       const normalized = value.trim();
-      return normalized || '—';
+      return normalized || EMPTY_VALUE_PLACEHOLDER;
     }
 
-    return '—';
+    return EMPTY_VALUE_PLACEHOLDER;
   }
 
   private resolveDateLabel(value: string | null | undefined): string {
     if (!value?.trim()) {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     const parsed = new Date(value);
@@ -305,7 +306,7 @@ export class Orders implements OnInit {
       .trim()
       .toLowerCase();
     if (!normalized) {
-      return '—';
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     return normalized

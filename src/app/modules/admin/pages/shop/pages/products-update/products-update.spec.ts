@@ -91,6 +91,13 @@ describe('ProductsUpdate', () => {
       sku: 'UPDATED-1',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: true,
+      isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -103,8 +110,14 @@ describe('ProductsUpdate', () => {
       sku: 'UPDATED-1',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: true,
+      isMainBanner: false,
       price: 45.1,
       oldPrice: 55.1,
+      metaTitle: null,
+      metaDescription: null,
+      canonicalUrl: null,
+      noIndex: false,
     });
     expect(mockToasterService.success).toHaveBeenCalledWith(
       PRODUCTS_UPDATE_TEXTS.UPDATE_SUCCESS_TITLE,
@@ -121,6 +134,13 @@ describe('ProductsUpdate', () => {
       sku: '',
       status: ProductStatus.Draft,
       available: true,
+      isPopular: false,
+      isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();
@@ -140,6 +160,13 @@ describe('ProductsUpdate', () => {
       sku: 'SKU-2',
       status: ProductStatus.Active,
       available: false,
+      isPopular: false,
+      isMainBanner: false,
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      canonicalUrl: '',
+      noIndex: false,
     });
 
     (component as any).onSubmit();

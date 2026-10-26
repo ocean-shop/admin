@@ -9,8 +9,12 @@ import { SettingsData, SettingsUpdateData } from '../../models/settings.model';
 import { SettingsService } from '../../services/settings.service';
 import {
   DEFAULT_LANGUAGE,
+  SETTINGS_LANGUAGE_ICON,
+  SETTINGS_LANGUAGE_LABEL,
   SETTINGS_LANGUAGE_OPTIONS,
   SETTINGS_REQUIRED_LANGUAGE_MESSAGE,
+  SETTINGS_SAVE_ICON,
+  SETTINGS_SAVE_LABEL,
   SETTINGS_UPDATED_SUCCESS_MESSAGE,
 } from '../../constants/settings.constants';
 
@@ -19,15 +23,18 @@ import {
   imports: [Dropdown, Button, FormField],
   templateUrl: './settings-form.html',
   styleUrl: './settings-form.scss',
-  standalone: true,
 })
 export class SettingsForm implements OnInit {
   private readonly toasterService = inject(ToasterService);
   private readonly authService = inject(AuthService);
   private readonly settingsService = inject(SettingsService);
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly languageOptions = SETTINGS_LANGUAGE_OPTIONS;
+  protected readonly languageLabel = SETTINGS_LANGUAGE_LABEL;
+  protected readonly languageIcon = SETTINGS_LANGUAGE_ICON;
+  protected readonly saveLabel = SETTINGS_SAVE_LABEL;
+  protected readonly saveIcon = SETTINGS_SAVE_ICON;
   protected readonly isLoading = signal(true);
 
   private readonly settingsModel = signal<SettingsData>({
@@ -47,11 +54,11 @@ export class SettingsForm implements OnInit {
   }
 
   protected onSubmit(): void {
-    this.isLoading.set(true);
-    if (!this.isFormValid()) {
+    if (!this.isFormValid() || this.isLoading()) {
       return;
     }
 
+    this.isLoading.set(true);
     const payload: SettingsUpdateData = {
       language: this.settingsForm.language().value()!,
       userId: this.userId(),
@@ -64,6 +71,9 @@ export class SettingsForm implements OnInit {
           this.isLoading.set(false);
           this.applyLanguage(settings?.language);
           this.toasterService.success(SETTINGS_UPDATED_SUCCESS_MESSAGE);
+        },
+        error: () => {
+          this.isLoading.set(false);
         },
       });
   }

@@ -1,6 +1,7 @@
 import { TableColumn } from '@ui/table/models/table-column.model';
 
 export const ATTRIBUTES_TEXTS = {
+  LOAD_ERROR_MESSAGE: 'Не вдалося завантажити атрибути. Спробуйте ще раз.',
   PAGE_TITLE: 'Керування атрибутами',
   PAGE_DESCRIPTION:
     'Створюйте атрибути для магазину, знаходьте їх за назвою та видаляйте непотрібні атрибути.',

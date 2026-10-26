@@ -3,9 +3,9 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { CreateCategoryPayload, UpdateCategoryPayload } from '../models/category-payload.model';
 import { CategoriesService } from './categories.service';
+import { API_URL } from '@core/constants/api.constant';
 
 describe('CategoriesService', () => {
-  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: CategoriesService;
   let httpMock: HttpTestingController;
 

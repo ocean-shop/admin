@@ -21,7 +21,6 @@ import { ShopFormModalMode } from '../../models/shop-form-modal-mode.type';
   imports: [Modal, Input, Textarea],
   templateUrl: './shops-form-modal.html',
   styleUrl: './shops-form-modal.scss',
-  standalone: true,
 })
 export class ShopsFormModal {
   readonly isOpen = input.required<boolean>();

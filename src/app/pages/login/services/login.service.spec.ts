@@ -2,9 +2,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { LoginService } from './login.service';
+import { API_URL } from '@core/constants/api.constant';
 
 describe('LoginService', () => {
-  const API_URL = 'https://api-production-1765.up.railway.app';
   let service: LoginService;
   let httpMock: HttpTestingController;
 

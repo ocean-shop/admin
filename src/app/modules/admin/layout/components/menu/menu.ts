@@ -55,7 +55,6 @@ export class Menu {
 
     if (item.value === 'logout') {
       this.authService.logout();
-      this.router.navigate(['/login']);
       return;
     }
 

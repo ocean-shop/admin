@@ -18,6 +18,7 @@ import { PRODUCTS_TYPE_OPTIONS } from '../../constants/products.constants';
 import { ProductForm } from '../../components/product-form/product-form';
 import { ProductFormModel } from '../../components/product-form/models/product-form.model';
 import { ProductFormValues } from '../../helpers/models/product-form-values.model';
+import { applyProductSeoValidators } from '../../helpers/product-form-schema.helper';
 import {
   buildCreateProductPayload,
   buildUpdateProductPayload,
@@ -32,7 +33,10 @@ import {
 import { PRODUCTS_TEXTS } from '../products/constants/products.constants';
 import { ProductType } from '../products/models/product-type.enum';
 import { CreateProductPayload } from '../products/models/create-product-payload.model';
-import { UpdateProductPayload } from '../products/models/update-product-payload.model';
+import {
+  UpdateProductPayload,
+  UpdateProductVariables,
+} from '../products/models/update-product-payload.model';
 import { ProductsService } from '../products/services/products.service';
 
 @Component({
@@ -68,7 +72,7 @@ export class ProductsCreate implements OnInit {
   }));
 
   protected readonly updateProductMutation = injectMutation(() => ({
-    mutationFn: ({ productId, payload }: { productId: string; payload: UpdateProductPayload }) =>
+    mutationFn: ({ productId, payload }: UpdateProductVariables) =>
       lastValueFrom(this.productsService.updateProduct(productId, payload)),
   }));
 
@@ -80,9 +84,10 @@ export class ProductsCreate implements OnInit {
   });
   protected readonly productForm = form(this.productFormModel, (schemaPath) => {
     required(schemaPath.name, { message: PRODUCTS_CREATE_TEXTS.PRODUCT_NAME_REQUIRED });
+    applyProductSeoValidators(schemaPath);
   });
 
-  protected readonly isFormValid = computed(() => this.productForm.name().valid());
+  protected readonly isFormValid = computed(() => this.productForm().valid());
   protected readonly isSidebarDisabled = computed(() => !this.createdProductId());
 
   ngOnInit(): void {
@@ -144,6 +149,7 @@ export class ProductsCreate implements OnInit {
         }
 
         this.createdProductId.set(normalizedProductId);
+        this.syncGeneratedSlug(product.slug);
         this.toasterService.success(PRODUCTS_CREATE_TEXTS.CREATE_SUCCESS_TITLE);
         this.invalidateProductQueries();
       },
@@ -215,8 +221,29 @@ export class ProductsCreate implements OnInit {
       sku: this.productForm.sku().value(),
       status: this.productForm.status().value(),
       available: this.productForm.available().value(),
+      isPopular: this.productForm.isPopular().value(),
+      isMainBanner: this.productForm.isMainBanner().value(),
       price: this.productForm.price().value(),
       oldPrice: this.productForm.oldPrice().value(),
+      slug: this.productForm.slug().value(),
+      metaTitle: this.productForm.metaTitle().value(),
+      metaDescription: this.productForm.metaDescription().value(),
+      canonicalUrl: this.productForm.canonicalUrl().value(),
+      noIndex: this.productForm.noIndex().value(),
     };
+  }
+
+  // The API generates a slug from the name when none is given; show it so later
+  // saves from this page keep it in the form.
+  private syncGeneratedSlug(slug: string | null | undefined): void {
+    const normalizedSlug = slug?.trim() ?? '';
+    if (!normalizedSlug) {
+      return;
+    }
+
+    this.productFormModel.update((currentValue) => ({
+      ...currentValue,
+      slug: normalizedSlug,
+    }));
   }
 }

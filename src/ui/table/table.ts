@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { TableCellAlign, TableColumn, TableRowData } from './models/table-column.model';
+import { TABLE_EMPTY_CELL_FALLBACK } from './constants/table.constants';
 
 @Component({
   selector: 'app-table',
@@ -25,7 +26,7 @@ export class Table {
   protected resolveCellValue(row: TableRowData, column: TableColumn): string {
     const value = row[column.key];
     if (value === null || value === undefined || value === '') {
-      return column.fallback ?? '—';
+      return column.fallback ?? TABLE_EMPTY_CELL_FALLBACK;
     }
 
     if (typeof value === 'string') {
@@ -36,7 +37,7 @@ export class Table {
       return String(value);
     }
 
-    return column.fallback ?? '—';
+    return column.fallback ?? TABLE_EMPTY_CELL_FALLBACK;
   }
 
   protected resolveRowKey(row: TableRowData, index: number): string {

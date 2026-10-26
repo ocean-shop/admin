@@ -8,4 +8,11 @@ export type ProductFormFieldIds = {
   TYPE_SIMPLE: string;
   TYPE_VARIABLE: string;
   AVAILABLE: string;
+  IS_POPULAR: string;
+  IS_MAIN_BANNER: string;
+  SLUG: string;
+  META_TITLE: string;
+  META_DESCRIPTION: string;
+  CANONICAL_URL: string;
+  NO_INDEX: string;
 };

@@ -1,6 +1,10 @@
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { ProductStatus } from '../../../pages/products/models/product-status.enum';
 import { ProductType } from '../../../pages/products/models/product-type.enum';
+import {
+  SEO_META_DESCRIPTION_MAX_LENGTH,
+  SEO_META_TITLE_MAX_LENGTH,
+} from '../../../constants/seo.constants';
 import { ProductFormFieldIds } from '../models/product-form-field-ids.model';
 import { ProductFormModel } from '../models/product-form.model';
 import { ProductFormTexts } from '../models/product-form-texts.model';
@@ -24,6 +28,22 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   SKU_PLACEHOLDER: 'напр. CSTL-SHRT-01',
   STATUS_LABEL: 'Статус',
   AVAILABLE_LABEL: 'Доступний',
+  IS_POPULAR_LABEL: 'Популярний',
+  IS_MAIN_BANNER_LABEL: 'Головний баннер',
+  SEO_TITLE: 'SEO',
+  SLUG_LABEL: 'Слаг (URL)',
+  SLUG_PLACEHOLDER: 'Згенерується з назви, напр. hidrokostium-5-mm',
+  SLUG_INVALID: 'Лише малі латинські літери, цифри та дефіси.',
+  META_TITLE_LABEL: 'Meta title',
+  META_TITLE_PLACEHOLDER: 'Заголовок для пошукових систем',
+  META_TITLE_TOO_LONG: `Максимум ${SEO_META_TITLE_MAX_LENGTH} символів.`,
+  META_DESCRIPTION_LABEL: 'Meta description',
+  META_DESCRIPTION_PLACEHOLDER: 'Короткий опис для пошукових систем',
+  META_DESCRIPTION_TOO_LONG: `Максимум ${SEO_META_DESCRIPTION_MAX_LENGTH} символів.`,
+  CANONICAL_URL_LABEL: 'Canonical URL',
+  CANONICAL_URL_PLACEHOLDER: 'https://...',
+  CANONICAL_URL_INVALID: 'Введіть коректний URL (http:// або https://).',
+  NO_INDEX_LABEL: 'Не індексувати (noindex)',
   CATEGORIES_TITLE: 'Категорії',
   ATTRIBUTES_TITLE: 'Атрибути',
   TAGS_TITLE: 'Теги',
@@ -83,6 +103,13 @@ export const PRODUCT_FORM_FIELD_IDS: ProductFormFieldIds = {
   TYPE_SIMPLE: 'product-type-simple',
   TYPE_VARIABLE: 'product-type-variable',
   AVAILABLE: 'product-available',
+  IS_POPULAR: 'product-is-popular',
+  IS_MAIN_BANNER: 'product-is-main-banner',
+  SLUG: 'product-slug',
+  META_TITLE: 'product-meta-title',
+  META_DESCRIPTION: 'product-meta-description',
+  CANONICAL_URL: 'product-canonical-url',
+  NO_INDEX: 'product-no-index',
 };
 
 export const PRODUCT_FORM_STATUS_OPTIONS: DropdownOption[] = [
@@ -100,6 +127,13 @@ export const PRODUCT_FORM_DEFAULT_VALUE: ProductFormModel = {
   sku: '',
   status: ProductStatus.Draft,
   available: true,
+  isPopular: false,
+  isMainBanner: false,
+  slug: '',
+  metaTitle: '',
+  metaDescription: '',
+  canonicalUrl: '',
+  noIndex: false,
 };
 
 export const PRODUCT_FORM_SEARCH_DEBOUNCE_MS = 300;
