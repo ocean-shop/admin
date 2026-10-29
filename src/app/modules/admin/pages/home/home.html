@@ -3,8 +3,11 @@
     <h3 class="home-title">{{ textData.PAGE_TITLE }}</h3>
     <p class="home-subtitle">{{ textData.PAGE_SUBTITLE }}</p>
   </header>
-  @if (!hasCards()) {
-  <div class="home-state">{{ textData.EMPTY_STATE }}</div>
+
+  @if (adminQuery.isError()) {
+  <app-state-message tone="warning" [message]="textData.LOAD_ERROR_MESSAGE" />
+  } @else if (isEmpty()) {
+  <app-state-message [message]="textData.EMPTY_STATE" />
   } @else {
   <div class="cards-grid">
     @for (card of cards(); track card.shopId) {

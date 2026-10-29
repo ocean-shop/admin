@@ -1,0 +1,8 @@
+<dl class="info-list">
+  @for (row of rows(); track row.label) {
+  <div class="info-list-item">
+    <dt class="info-list-key">{{ row.label }}</dt>
+    <dd class="info-list-value" [class.info-list-value-mono]="monospace()">{{ row.value }}</dd>
+  </div>
+  }
+</dl>

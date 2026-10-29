@@ -1,180 +1,176 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { By } from '@angular/platform-browser';
-import { of } from 'rxjs';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of, throwError } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { Admins } from './admins';
-import { AdminsService } from './services/admins.service';
-import { AdminsApiResponse } from './models/admin.model';
-import { ADMINS_TEXTS } from './constants/admins.constants';
+import { flushQueries } from '@testing/flush-async';
+import { provideTestQueryClient } from '@testing/query-client-test.provider';
+import { SHOPS_ALL_PAGE_SIZE } from '../shops/constants/shops.constants';
 import { ShopsService } from '../shops/services/shops.service';
-import { ShopsApiResponse } from '../shops/models/shop.model';
+import { Admins } from './admins';
+import { ADMINS_PAGE_SIZE, ADMINS_TEXTS } from './constants/admins.constants';
+import { AdminModalModeEnum } from './models/admin-modal-mode.type';
+import { AdminsApiResponse } from './models/admin.model';
+import { AdminsService } from './services/admins.service';
+
+const buildPage = (id: string, page: number): AdminsApiResponse => ({
+  items: [{ id, fullName: `Admin ${id}`, email: `${id}@ocean.dev`, role: 'admin' }],
+  total: 12,
+  page,
+  limit: ADMINS_PAGE_SIZE,
+  totalPages: 2,
+});
 
 describe('Admins', () => {
   let fixture: ComponentFixture<Admins>;
   let component: Admins;
-  let mockAdminsService: {
+  let element: HTMLElement;
+  let adminsService: {
     getAdmins: ReturnType<typeof vi.fn>;
     createAdmin: ReturnType<typeof vi.fn>;
     updateAdmin: ReturnType<typeof vi.fn>;
     deleteAdmin: ReturnType<typeof vi.fn>;
   };
-  let mockToasterService: { success: ReturnType<typeof vi.fn> };
-  let mockShopsService: { getShops: ReturnType<typeof vi.fn> };
+  let shopsService: { getAllShops: ReturnType<typeof vi.fn> };
+  let toaster: { success: ReturnType<typeof vi.fn> };
+
+  const card = { id: 'admin-1', title: '', subtitle: '', detail: '', badge: '' };
+  const payload = { email: 'new@ocean.dev', role: 'admin', shopIds: [] };
+
+  const createComponent = async (): Promise<void> => {
+    fixture = TestBed.createComponent(Admins);
+    component = fixture.componentInstance;
+    element = fixture.nativeElement as HTMLElement;
+    await flushQueries(fixture);
+  };
 
   beforeEach(async () => {
-    const firstPageResponse: AdminsApiResponse = {
-      items: [
-        {
-          id: 'a817f770-4569-4080-b9c9-3eb364f15774',
-          email: 'kukulyak.taras@gmail.com',
-          mobileNumber: null,
-          role: {
-            id: 'aad1f9ef-2ef2-45ba-9b70-1a3b09d1480f',
-            name: 'super',
-            description: 'Super user',
-          },
-        },
-      ],
-      total: 12,
-      page: 1,
-      limit: 10,
-      totalPages: 2,
-    };
-
-    const secondPageResponse: AdminsApiResponse = {
-      items: [
-        {
-          id: '6f3097a3-1173-4e95-b5eb-2a23d635779f',
-          email: 'second.page@ocean-shop.com',
-          mobileNumber: '+1 (555) 019-7777',
-          role: 'admin',
-        },
-      ],
-      total: 12,
-      page: 2,
-      limit: 10,
-      totalPages: 2,
-    };
-
-    mockAdminsService = {
+    adminsService = {
       getAdmins: vi
         .fn()
-        .mockReturnValueOnce(of(firstPageResponse))
-        .mockReturnValue(of(secondPageResponse)),
-      createAdmin: vi.fn().mockReturnValue(of({ id: 'created-admin' })),
-      updateAdmin: vi.fn().mockReturnValue(of({ id: 'updated-admin' })),
-      deleteAdmin: vi.fn().mockReturnValue(of(void 0)),
+        .mockImplementation(({ page }: { page: number }) => of(buildPage(`admin-${page}`, page))),
+      createAdmin: vi.fn().mockReturnValue(of({ id: 'admin-3' })),
+      updateAdmin: vi.fn().mockReturnValue(of({ id: 'admin-1' })),
+      deleteAdmin: vi.fn().mockReturnValue(of(undefined)),
     };
-    mockToasterService = {
-      success: vi.fn(),
+    shopsService = {
+      getAllShops: vi.fn().mockReturnValue(of([{ id: 'shop-1', name: 'Ocean' }])),
     };
-    const shopsResponse: ShopsApiResponse = {
-      items: [
-        { id: 'shop-1', name: 'Shop One' },
-        { id: 'shop-2', name: 'Shop Two' },
-      ],
-      total: 2,
-      page: 1,
-      limit: 100,
-      totalPages: 1,
-    };
-    mockShopsService = {
-      getShops: vi.fn().mockReturnValue(of(shopsResponse)),
-    };
+    toaster = { success: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [Admins],
       providers: [
         provideZonelessChangeDetection(),
-        { provide: AdminsService, useValue: mockAdminsService },
-        { provide: ShopsService, useValue: mockShopsService },
-        { provide: ToasterService, useValue: mockToasterService },
+        ...provideTestQueryClient(),
+        { provide: AdminsService, useValue: adminsService },
+        { provide: ShopsService, useValue: shopsService },
+        { provide: ToasterService, useValue: toaster },
       ],
     }).compileComponents();
-
-    fixture = TestBed.createComponent(Admins);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-    fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('renders page title and create action', () => {
-    const pageElement = fixture.nativeElement as HTMLElement;
-
-    expect(pageElement.textContent).toContain(ADMINS_TEXTS.PAGE_TITLE);
-    expect(pageElement.textContent).toContain(ADMINS_TEXTS.CREATE_LABEL);
-  });
-
-  it('renders administrators list from API', () => {
-    const pageElement = fixture.nativeElement as HTMLElement;
-
-    expect(mockAdminsService.getAdmins).toHaveBeenCalledTimes(1);
-    expect(mockAdminsService.getAdmins).toHaveBeenCalledWith({ page: 1, limit: 10 });
-    expect(mockShopsService.getShops).toHaveBeenCalledWith({ page: 1, limit: 100 });
-    expect(pageElement.textContent).toContain(ADMINS_TEXTS.DEFAULT_NAME);
-    expect(pageElement.textContent).toContain('kukulyak.taras@gmail.com');
-    expect(pageElement.textContent).toContain(ADMINS_TEXTS.DEFAULT_PHONE);
-    expect(pageElement.textContent).toContain('super');
-  });
-
-  it('renders pagination summary from API metadata', () => {
-    const pageElement = fixture.nativeElement as HTMLElement;
-
-    expect(pageElement.textContent).toContain(
-      `Showing 1 to 10 of 12 ${ADMINS_TEXTS.PAGINATION_LABEL}`,
-    );
-  });
-
-  it('requests selected page when pagination page is clicked', async () => {
-    const pageButtons = fixture.debugElement.queryAll(By.css('.pagination-page-button'));
-    const secondPageButton = pageButtons.find(
-      (button) => (button.nativeElement as HTMLButtonElement).textContent?.trim() === '2',
-    );
-
-    secondPageButton?.triggerEventHandler('click');
-    await fixture.whenStable();
-
-    expect(mockAdminsService.getAdmins).toHaveBeenNthCalledWith(2, { page: 2, limit: 10 });
-  });
-
-  it('creates admin and refreshes list after success', () => {
-    (component as any).onCreateAdmin();
-    (component as any).onConfirmFormModal({ email: 'new.admin@ocean-shop.com', role: 'admin' });
-
-    expect(mockAdminsService.createAdmin).toHaveBeenCalledWith({
-      email: 'new.admin@ocean-shop.com',
-      role: 'admin',
+  describe('with admins', () => {
+    beforeEach(async () => {
+      await createComponent();
     });
-    expect(mockToasterService.success).toHaveBeenCalledWith(ADMINS_TEXTS.CREATE_SUCCESS_TITLE);
-    expect(mockAdminsService.getAdmins).toHaveBeenCalledTimes(2);
-  });
 
-  it('updates selected admin and refreshes list after success', () => {
-    const admin = (component as any).admins()[0];
-    (component as any).onEditAdmin(admin);
-    (component as any).onConfirmFormModal({ mobileNumber: '1234567890', role: 'super' });
-
-    expect(mockAdminsService.updateAdmin).toHaveBeenCalledWith(admin.id, {
-      mobileNumber: '1234567890',
-      role: 'super',
+    it('renders admins, pagination and loads shop options', () => {
+      expect(adminsService.getAdmins).toHaveBeenCalledWith({ page: 1, limit: ADMINS_PAGE_SIZE });
+      expect(element.querySelectorAll('app-entity-card')).toHaveLength(1);
+      expect(element.textContent).toContain('Admin admin-1');
+      expect(element.querySelector('app-pagination')).not.toBeNull();
+      expect(shopsService.getAllShops).toHaveBeenCalledWith(SHOPS_ALL_PAGE_SIZE);
+      expect((component as any).shopOptions()).toEqual([{ value: 'shop-1', label: 'Ocean' }]);
     });
-    expect(mockToasterService.success).toHaveBeenCalledWith(ADMINS_TEXTS.UPDATE_SUCCESS_TITLE);
-    expect(mockAdminsService.getAdmins).toHaveBeenCalledTimes(2);
+
+    it('changes pages within bounds', async () => {
+      (component as any).onPageChange(2);
+      await flushQueries(fixture);
+      (component as any).onPageChange(0);
+
+      expect(adminsService.getAdmins).toHaveBeenLastCalledWith({
+        page: 2,
+        limit: ADMINS_PAGE_SIZE,
+      });
+      expect((component as any).currentPage()).toBe(2);
+    });
+
+    it('creates an admin, toasts and refetches', async () => {
+      (component as any).onCreateAdmin();
+      (component as any).onConfirmFormModal(payload);
+      await flushQueries(fixture);
+
+      expect(adminsService.createAdmin).toHaveBeenCalledWith(payload);
+      expect(toaster.success).toHaveBeenCalledWith(ADMINS_TEXTS.CREATE_SUCCESS_TITLE);
+      expect((component as any).modalMode()).toBeNull();
+      expect(adminsService.getAdmins).toHaveBeenCalledTimes(2);
+    });
+
+    it('updates the selected admin', async () => {
+      (component as any).onEditAdmin(card);
+      expect((component as any).formModalMode()).toBe(AdminModalModeEnum.Update);
+
+      (component as any).onConfirmFormModal(payload);
+      await flushQueries(fixture);
+
+      expect(adminsService.updateAdmin).toHaveBeenCalledWith('admin-1', payload);
+      expect(toaster.success).toHaveBeenCalledWith(ADMINS_TEXTS.UPDATE_SUCCESS_TITLE);
+    });
+
+    it('deletes the selected admin and steps back from an emptied page', async () => {
+      (component as any).onPageChange(2);
+      await flushQueries(fixture);
+      (component as any).onDeleteAdmin({ ...card, id: 'admin-2' });
+      expect((component as any).selectedAdminName()).toBe('Admin admin-2');
+
+      (component as any).onConfirmDelete();
+      await flushQueries(fixture);
+
+      expect(adminsService.deleteAdmin).toHaveBeenCalledWith('admin-2');
+      expect(toaster.success).toHaveBeenCalledWith(ADMINS_TEXTS.DELETE_SUCCESS_TITLE);
+      expect((component as any).currentPage()).toBe(1);
+    });
+
+    it('ignores unknown cards and confirms without a selection', () => {
+      (component as any).onDeleteAdmin({ ...card, id: 'unknown' });
+      (component as any).onConfirmDelete();
+
+      expect((component as any).selectedAdminName()).toBe('');
+      expect(adminsService.deleteAdmin).not.toHaveBeenCalled();
+    });
+
+    it('keeps the modal open when the request fails', async () => {
+      adminsService.updateAdmin.mockReturnValueOnce(throwError(() => new Error('boom')));
+      (component as any).onEditAdmin(card);
+
+      (component as any).onConfirmFormModal(payload);
+      await flushQueries(fixture);
+
+      expect((component as any).modalMode()).toBe(AdminModalModeEnum.Update);
+      expect(toaster.success).not.toHaveBeenCalled();
+    });
+
+    it('closes the modal on cancel', () => {
+      (component as any).onCreateAdmin();
+      (component as any).onCloseModal();
+
+      expect((component as any).isFormModalOpen()).toBe(false);
+    });
   });
 
-  it('deletes selected admin and refreshes list after success', () => {
-    const admin = (component as any).admins()[0];
-    (component as any).onDeleteAdmin(admin);
+  it('shows the empty state', async () => {
+    adminsService.getAdmins.mockReturnValue(of({ items: [] }));
 
-    (component as any).onConfirmDelete();
+    await createComponent();
 
-    expect(mockAdminsService.deleteAdmin).toHaveBeenCalledWith(admin.id);
-    expect(mockToasterService.success).toHaveBeenCalledWith(ADMINS_TEXTS.DELETE_SUCCESS_TITLE);
-    expect(mockAdminsService.getAdmins).toHaveBeenCalledTimes(2);
+    expect(element.textContent).toContain(ADMINS_TEXTS.EMPTY_STATE);
+  });
+
+  it('shows the error state', async () => {
+    adminsService.getAdmins.mockReturnValue(throwError(() => new Error('boom')));
+
+    await createComponent();
+
+    expect(element.textContent).toContain(ADMINS_TEXTS.LOAD_ERROR_MESSAGE);
   });
 });

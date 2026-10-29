@@ -1,337 +1,126 @@
+import { uniqueBy } from '@core/helpers/array.helper';
+import { toTrimmedString } from '@core/helpers/value-format.helper';
+import { ImageFileItem } from '@core/models/image-file-item.model';
 import { ProductFormAssignedAttribute } from '../components/product-form/models/product-form-assigned-attribute.model';
 import { ProductFormAssignedTag } from '../components/product-form/models/product-form-assigned-tag.model';
 import { ProductFormImageItem } from '../components/product-form/models/product-form-image-item.model';
-import { ProductFormVariation } from '../components/product-form/models/product-form-variation.model';
 import { ProductFormModel } from '../components/product-form/models/product-form.model';
-import { ProductApiItem } from '../pages/products/models/product.model';
+import { PRODUCT_IMAGE_ID_PREFIX } from '../constants/product-api-mapping.constants';
+import { PRODUCT_FALLBACK_LABELS } from '../constants/product-fallback-labels.constants';
+import {
+  ProductApiItem,
+  ProductAttributeApiItem,
+  ProductImageApiItem,
+  ProductTagApiItem,
+} from '../pages/products/models/product.model';
 import { ProductStatus } from '../pages/products/models/product-status.enum';
 import { ProductType } from '../pages/products/models/product-type.enum';
-import { ProductApiMappingOptions } from './models/product-api-mapping-options.model';
+import { formatAttributeLabel } from './attribute-label.helper';
 import { toProductPriceInput } from './product-price.helper';
 
-export const mapProductToFormModel = (product: ProductApiItem): ProductFormModel => {
-  return {
-    name: product.name?.trim() || product.title?.trim() || '',
-    type: normalizeProductType(product.type),
-    description: product.description?.trim() ?? '',
-    price: toProductPriceInput(product.price),
-    oldPrice: toProductPriceInput(product.oldPrice),
-    sku: product.sku?.trim() ?? '',
-    status: normalizeProductStatus(product.status),
-    available: product.available ?? true,
-    isPopular: product.isPopular ?? false,
-    isMainBanner: product.isMainBanner ?? false,
-    slug: product.slug?.trim() ?? '',
-    metaTitle: product.metaTitle?.trim() ?? '',
-    metaDescription: product.metaDescription?.trim() ?? '',
-    canonicalUrl: product.canonicalUrl?.trim() ?? '',
-    noIndex: product.noIndex ?? false,
-  };
+const normalizeEnumValue = <T extends string>(
+  value: unknown,
+  allowed: readonly T[],
+  fallback: T,
+): T => {
+  const normalized = toTrimmedString(value).toLowerCase();
+  return allowed.find((item) => item === normalized) ?? fallback;
 };
 
-export const extractProductCategoryIds = (product: ProductApiItem): Set<string> => {
-  const categoryIds = (product.categories ?? [])
-    .map((category) => {
-      if (typeof category === 'string') {
-        return category.trim();
-      }
+export const mapProductToFormModel = (product: ProductApiItem): ProductFormModel => ({
+  name: product.name?.trim() || product.title?.trim() || '',
+  type: normalizeEnumValue(product.type, Object.values(ProductType), ProductType.Simple),
+  description: product.description?.trim() ?? '',
+  price: toProductPriceInput(product.price),
+  oldPrice: toProductPriceInput(product.oldPrice),
+  sku: product.sku?.trim() ?? '',
+  status: normalizeEnumValue(product.status, Object.values(ProductStatus), ProductStatus.Draft),
+  available: product.available ?? true,
+  isPopular: product.isPopular ?? false,
+  isMainBanner: product.isMainBanner ?? false,
+  slug: product.slug?.trim() ?? '',
+  metaTitle: product.metaTitle?.trim() ?? '',
+  metaDescription: product.metaDescription?.trim() ?? '',
+  canonicalUrl: product.canonicalUrl?.trim() ?? '',
+  noIndex: product.noIndex ?? false,
+});
 
-      return String(category.id ?? '').trim();
-    })
-    .filter(Boolean);
-
-  return new Set(categoryIds);
-};
-
-export const extractProductAttributes = (
-  product: ProductApiItem,
-  options: ProductApiMappingOptions,
-): ProductFormAssignedAttribute[] => {
-  const productAttributes = product.attributes ?? product.attributeTypes ?? [];
-  const assignedAttributes: ProductFormAssignedAttribute[] = [];
-
-  for (const productAttribute of productAttributes) {
-    if (typeof productAttribute === 'string') {
-      const id = productAttribute.trim();
-      if (!id) {
-        continue;
-      }
-
-      assignedAttributes.push({ id, label: id });
-      continue;
-    }
-
-    const directId = String(productAttribute.id ?? '').trim();
-    const attributeTypeId = String(productAttribute.attributeTypeId ?? '').trim();
-    const nestedAttributeType = productAttribute.attributeType;
-    const nestedId = String(nestedAttributeType?.id ?? '').trim();
-    const id = directId || attributeTypeId || nestedId;
-    if (!id) {
-      continue;
-    }
-
-    const name =
-      productAttribute.name?.trim() ||
-      nestedAttributeType?.name?.trim() ||
-      options.attributesFallbackLabel;
-    const value = productAttribute.value?.trim() || nestedAttributeType?.value?.trim() || '';
-    const label = value ? `${name}: ${value}` : name;
-    assignedAttributes.push({ id, label });
-  }
-
-  return assignedAttributes.reduce<ProductFormAssignedAttribute[]>(
-    (accumulator, currentAttribute) => {
-      if (accumulator.some((attribute) => attribute.id === currentAttribute.id)) {
-        return accumulator;
-      }
-
-      return [...accumulator, currentAttribute];
-    },
-    [],
+export const extractProductCategoryIds = (product: ProductApiItem): Set<string> =>
+  new Set(
+    (product.categories ?? [])
+      .map((category) => toTrimmedString(typeof category === 'string' ? category : category.id))
+      .filter(Boolean),
   );
-};
 
-export const extractProductTags = (
-  product: ProductApiItem,
-  options: ProductApiMappingOptions,
-): ProductFormAssignedTag[] => {
-  const productTags = product.tags ?? [];
-  const assignedTags: ProductFormAssignedTag[] = [];
-
-  for (const productTag of productTags) {
-    if (typeof productTag === 'string') {
-      const id = productTag.trim();
-      if (!id) {
-        continue;
-      }
-
-      assignedTags.push({ id, label: id });
-      continue;
-    }
-
-    const directId = String(productTag.id ?? '').trim();
-    const tagId = String(productTag.tagId ?? '').trim();
-    const nestedTag = productTag.tag;
-    const nestedId = String(nestedTag?.id ?? '').trim();
-    const id = directId || tagId || nestedId;
-    if (!id) {
-      continue;
-    }
-
-    const label = productTag.name?.trim() || nestedTag?.name?.trim() || options.tagsFallbackLabel;
-    assignedTags.push({ id, label });
+const mapProductAttribute = (
+  attribute: ProductAttributeApiItem | string,
+): ProductFormAssignedAttribute[] => {
+  if (typeof attribute === 'string') {
+    const id = attribute.trim();
+    return id ? [{ id, label: id }] : [];
   }
 
-  return assignedTags.reduce<ProductFormAssignedTag[]>((accumulator, currentTag) => {
-    if (accumulator.some((tag) => tag.id === currentTag.id)) {
-      return accumulator;
-    }
+  const nested = attribute.attributeType;
+  const id =
+    toTrimmedString(attribute.id) ||
+    toTrimmedString(attribute.attributeTypeId) ||
+    toTrimmedString(nested?.id);
+  if (!id) {
+    return [];
+  }
 
-    return [...accumulator, currentTag];
-  }, []);
+  const name = attribute.name?.trim() || nested?.name?.trim() || PRODUCT_FALLBACK_LABELS.ATTRIBUTE;
+  const value = attribute.value?.trim() || nested?.value?.trim() || '';
+  return [{ id, label: formatAttributeLabel(name, value) }];
 };
 
-export const extractProductImages = (product: ProductApiItem): ProductFormImageItem[] => {
-  const productImages = product.images ?? [];
+export const extractProductAttributes = (product: ProductApiItem): ProductFormAssignedAttribute[] =>
+  uniqueBy(
+    (product.attributes ?? product.attributeTypes ?? []).flatMap(mapProductAttribute),
+    (attribute) => attribute.id,
+  );
 
-  return productImages.reduce<ProductFormImageItem[]>((accumulator, productImage, index) => {
-    if (typeof productImage === 'string') {
-      const imageUrl = productImage.trim();
-      if (!imageUrl) {
-        return accumulator;
-      }
+const mapProductTag = (tag: ProductTagApiItem | string): ProductFormAssignedTag[] => {
+  if (typeof tag === 'string') {
+    const id = tag.trim();
+    return id ? [{ id, label: id }] : [];
+  }
 
-      return [
-        ...accumulator,
-        {
-          id: `product-image-${index}-${imageUrl}`,
-          name: `Image ${index + 1}`,
-          imageDataUrl: imageUrl,
-        },
-      ];
-    }
+  const id = toTrimmedString(tag.id) || toTrimmedString(tag.tagId) || toTrimmedString(tag.tag?.id);
+  if (!id) {
+    return [];
+  }
 
-    const imageUrl =
-      productImage.image?.trim() || productImage.url?.trim() || productImage.src?.trim() || '';
+  return [{ id, label: tag.name?.trim() || tag.tag?.name?.trim() || PRODUCT_FALLBACK_LABELS.TAG }];
+};
+
+export const extractProductTags = (product: ProductApiItem): ProductFormAssignedTag[] =>
+  uniqueBy((product.tags ?? []).flatMap(mapProductTag), (tag) => tag.id);
+
+/** Normalizes API images (bare URLs or objects); entries without a URL are dropped. */
+export const mapApiImages = (
+  images: (ProductImageApiItem | string)[] | null | undefined,
+  idPrefix: string,
+): ImageFileItem[] =>
+  (images ?? []).flatMap((rawImage, index) => {
+    const image: ProductImageApiItem =
+      typeof rawImage === 'string' ? { image: rawImage } : rawImage;
+    const imageUrl = image.image?.trim() || image.url?.trim() || image.src?.trim() || '';
     if (!imageUrl) {
-      return accumulator;
+      return [];
     }
 
-    const imageId = productImage.id?.trim() || `product-image-${index}-${imageUrl}`;
-    const imageName =
-      productImage.name?.trim() || productImage.title?.trim() || `Image ${index + 1}`;
     return [
-      ...accumulator,
       {
-        id: imageId,
-        name: imageName,
+        id: image.id?.trim() || `${idPrefix}-${index}-${imageUrl}`,
+        name:
+          image.name?.trim() ||
+          image.title?.trim() ||
+          `${PRODUCT_FALLBACK_LABELS.IMAGE_PREFIX} ${index + 1}`,
         imageDataUrl: imageUrl,
       },
     ];
-  }, []);
-};
+  });
 
-export const extractProductVariations = (product: ProductApiItem): ProductFormVariation[] => {
-  const productVariations = product.variations ?? [];
-
-  return productVariations.reduce<ProductFormVariation[]>((accumulator, variation, index) => {
-    if (typeof variation === 'string') {
-      const variationId = variation.trim();
-      if (!variationId) {
-        return accumulator;
-      }
-
-      return [
-        ...accumulator,
-        {
-          localId: `variation-${variationId}`,
-          id: variationId,
-          title: '',
-          name: '',
-          price: '',
-          oldPrice: '',
-          sku: '',
-          available: true,
-          isMain: false,
-          attributes: [],
-          attributeSearchValue: '',
-          attributeSearchResults: [],
-          isAttributeSearchLoading: false,
-          images: [],
-          isSaving: false,
-        },
-      ];
-    }
-
-    const variationId = String(variation.id ?? '').trim();
-    const localId = variationId || `variation-${index}`;
-    const attributes = (variation.attributes ?? []).reduce<ProductFormVariation['attributes']>(
-      (attributeAccumulator, attribute, attributeIndex) => {
-        if (typeof attribute === 'string') {
-          const normalizedValue = attribute.trim();
-          if (!normalizedValue) {
-            return attributeAccumulator;
-          }
-
-          return [
-            ...attributeAccumulator,
-            {
-              id: normalizedValue,
-              attributeTypeId: normalizedValue,
-              name: normalizedValue,
-              value: '',
-              label: normalizedValue,
-            },
-          ];
-        }
-
-        const directId = String(attribute.id ?? '').trim();
-        const attributeTypeId = String(attribute.attributeTypeId ?? '').trim();
-        const nestedAttributeType = attribute.attributeType;
-        const nestedId = String(nestedAttributeType?.id ?? '').trim();
-        const resolvedAttributeTypeId = attributeTypeId || nestedId || directId;
-        const attributeId =
-          resolvedAttributeTypeId || `variation-attribute-${localId}-${attributeIndex}`;
-        const name = attribute.name?.trim() || nestedAttributeType?.name?.trim() || '';
-        const value = attribute.value?.trim() || nestedAttributeType?.value?.trim() || '';
-        if (!name && !value) {
-          return attributeAccumulator;
-        }
-
-        const label = value ? `${name}: ${value}` : name;
-        return [
-          ...attributeAccumulator,
-          {
-            id: attributeId,
-            attributeTypeId: resolvedAttributeTypeId,
-            name,
-            value,
-            label,
-          },
-        ];
-      },
-      [],
-    );
-    const images = (variation.images ?? []).reduce<ProductFormVariation['images']>(
-      (imageAccumulator, image, imageIndex) => {
-        if (typeof image === 'string') {
-          const imageUrl = image.trim();
-          if (!imageUrl) {
-            return imageAccumulator;
-          }
-
-          return [
-            ...imageAccumulator,
-            {
-              id: `variation-image-${localId}-${imageIndex}`,
-              name: `Image ${imageIndex + 1}`,
-              imageDataUrl: imageUrl,
-            },
-          ];
-        }
-
-        const imageUrl = image.image?.trim() || image.url?.trim() || image.src?.trim() || '';
-        if (!imageUrl) {
-          return imageAccumulator;
-        }
-
-        return [
-          ...imageAccumulator,
-          {
-            id: image.id?.trim() || `variation-image-${localId}-${imageIndex}`,
-            name: image.name?.trim() || image.title?.trim() || `Image ${imageIndex + 1}`,
-            imageDataUrl: imageUrl,
-          },
-        ];
-      },
-      [],
-    );
-
-    return [
-      ...accumulator,
-      {
-        localId,
-        id: variationId || null,
-        title: variation.title?.trim() ?? '',
-        name: variation.name?.trim() ?? '',
-        price: toProductPriceInput(variation.price),
-        oldPrice: toProductPriceInput(variation.oldPrice),
-        sku: variation.sku?.trim() ?? '',
-        available: variation.available ?? true,
-        isMain: variation.isDefault ?? false,
-        attributes,
-        attributeSearchValue: '',
-        attributeSearchResults: [],
-        isAttributeSearchLoading: false,
-        images,
-        isSaving: false,
-      },
-    ];
-  }, []);
-};
-
-const normalizeProductType = (value: ProductApiItem['type']): ProductType => {
-  const normalized = String(value ?? '')
-    .trim()
-    .toLowerCase();
-  if (normalized === ProductType.Variable) {
-    return ProductType.Variable;
-  }
-
-  return ProductType.Simple;
-};
-
-const normalizeProductStatus = (value: ProductApiItem['status']): ProductStatus => {
-  const normalized = String(value ?? '')
-    .trim()
-    .toLowerCase();
-  if (normalized === ProductStatus.Active) {
-    return ProductStatus.Active;
-  }
-
-  if (normalized === ProductStatus.Archived) {
-    return ProductStatus.Archived;
-  }
-
-  return ProductStatus.Draft;
-};
+export const extractProductImages = (product: ProductApiItem): ProductFormImageItem[] =>
+  mapApiImages(product.images, PRODUCT_IMAGE_ID_PREFIX);

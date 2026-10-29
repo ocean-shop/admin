@@ -1,8 +1,16 @@
+import { PaginationMeta } from '@core/models/pagination-meta.model';
+
 export type AdminShopApiItem = {
   id?: string | number | null;
   name?: string | null;
   description?: string | null;
   url?: string | null;
+};
+
+export type AdminRoleApiItem = {
+  id?: string | null;
+  name?: string | null;
+  description?: string | null;
 };
 
 export type AdminApiItem = {
@@ -16,38 +24,17 @@ export type AdminApiItem = {
   mobileNumber?: string | null;
   shopIds?: (string | number)[] | null;
   shops?: (string | number | AdminShopApiItem)[] | null;
-  role?:
-    | string
-    | {
-        id?: string | null;
-        name?: string | null;
-        description?: string | null;
-      }
-    | null;
+  role?: string | AdminRoleApiItem | null;
 };
 
-export type AdminsApiResponse = {
+/** The list endpoint has used several envelope keys; any of them may carry the items. */
+export type AdminsApiResponse = Partial<PaginationMeta> & {
   admins?: AdminApiItem[] | null;
   data?: AdminApiItem[] | null;
   items?: AdminApiItem[] | null;
-  total?: number;
-  page?: number;
-  limit?: number;
-  totalPages?: number;
 };
 
-export type AdminsQueryParams = {
-  page: number;
-  limit: number;
-};
-
-export type AdminsPagination = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-};
-
+/** Empty strings mean "unknown"; display fallbacks are applied by the card mapping. */
 export type Admin = {
   id: string;
   name: string;

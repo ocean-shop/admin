@@ -1,47 +1,7 @@
 @reference "../../../../../../../styles.scss";
 
-.categories-page {
-  @apply min-h-screen;
-}
-
-.categories-container {
-  @apply max-w-[1440px] mx-auto py-8 lg:px-8;
-}
-
-.categories-header {
-  @apply flex flex-col gap-4 lg:flex-row lg:items-center justify-between mb-8;
-}
-
-.categories-title {
-  @apply text-3xl font-bold text-on-background mb-2;
-}
-
-.categories-description {
-  @apply text-on-surface-variant max-w-2xl;
-}
-
-.create-root-button {
-  @apply inline-flex w-full lg:w-auto items-center justify-center gap-2.5 bg-primary text-on-primary px-4 py-2.5 sm:px-5 sm:py-3 rounded-lg font-semibold text-sm sm:text-base leading-tight text-center transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
-}
-
-.create-root-button-icon {
-  @apply text-[20px] sm:text-[22px] leading-none;
-}
-
-.create-root-button-label {
-  @apply break-words;
-}
-
-.categories-state {
-  @apply text-on-surface-variant text-base mb-6;
-}
-
-.categories-state-warning {
-  @apply text-error;
-}
-
 .categories-stats {
-  @apply grid grid-cols-1 md:grid-cols-3 gap-6 mb-10;
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6;
 }
 
 .categories-stat-card {
@@ -110,8 +70,4 @@
 
 .category-actions button:last-child {
   @apply text-error hover:bg-error-container hover:text-on-error-container disabled:hover:bg-transparent disabled:hover:text-error;
-}
-
-.categories-delete-message {
-  @apply text-on-surface-variant text-sm leading-6;
 }

@@ -1,20 +1,15 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { isApiUrl, isAuthTokenLifecycleUrl } from '@core/helpers/api-url.helper';
 import { AuthService } from '../services/auth/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const token = authService.getAccessToken();
-  const isAuthTokenLifecycleRequest =
-    req.url.includes('/user/auth/refresh') || req.url.includes('/user/auth/logout');
+  const token = inject(AuthService).getAccessToken();
 
-  if (token && !isAuthTokenLifecycleRequest) {
-    req = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  // The bearer token is only ever sent to our own API, never to third-party hosts.
+  if (!token || !isApiUrl(req.url) || isAuthTokenLifecycleUrl(req.url)) {
+    return next(req);
   }
 
-  return next(req);
+  return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));
 };

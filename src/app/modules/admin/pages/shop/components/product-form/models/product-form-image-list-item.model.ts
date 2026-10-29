@@ -1,5 +1,3 @@
-export type ProductFormImageListItem = {
-  id: string;
-  name: string;
-  imageDataUrl: string;
-};
+import { ImageFileItem } from '@core/models/image-file-item.model';
+
+export type ProductFormImageListItem = ImageFileItem;

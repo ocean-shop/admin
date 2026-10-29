@@ -1,13 +1,13 @@
-<article class="product-form-card" [class.product-form-card-disabled]="sidebarDisabled()">
-  <h2 class="product-form-card-title product-form-card-title-icon">
-    <span class="material-symbols-outlined">category</span>
-    {{ texts().CATEGORIES_TITLE }}
-  </h2>
+<app-product-form-card
+  [title]="texts().CATEGORIES_TITLE"
+  [icon]="icon"
+  [disabled]="sidebarDisabled()"
+>
   <div class="product-form-static-scroll">
     @for (category of categoryNodes(); track category.id) {
     <app-checkbox
       class="product-form-tree-row"
-      [id]="'category-' + category.id"
+      [id]="checkboxIdPrefix + category.id"
       [label]="category.label"
       [checked]="category.checked"
       [disabled]="sidebarDisabled() || !!category.disabled"
@@ -19,7 +19,7 @@
       @for (childCategory of category.children; track childCategory.id) {
       <app-checkbox
         class="product-form-tree-row"
-        [id]="'category-' + childCategory.id"
+        [id]="checkboxIdPrefix + childCategory.id"
         [label]="childCategory.label"
         [checked]="childCategory.checked"
         [disabled]="sidebarDisabled() || !!childCategory.disabled"
@@ -29,4 +29,4 @@
     </div>
     } }
   </div>
-</article>
+</app-product-form-card>

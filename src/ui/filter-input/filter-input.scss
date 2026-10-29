@@ -1,0 +1,13 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply flex flex-col gap-2 xl:min-w-[200px] xl:flex-1;
+}
+
+.filter-input-label {
+  @apply text-sm font-semibold text-on-surface;
+}
+
+.filter-input-control {
+  @apply h-11 px-4 rounded-lg border border-outline-variant bg-surface text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary disabled:opacity-60;
+}

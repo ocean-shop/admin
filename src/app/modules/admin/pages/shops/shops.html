@@ -1,6 +1,5 @@
-<section class="shops-page">
-  <header class="shops-header">
-    <h3 class="shops-title">{{ textData.PAGE_TITLE }}</h3>
+<app-page-layout>
+  <app-page-header [title]="textData.PAGE_TITLE">
     <app-button
       [label]="textData.CREATE_LABEL"
       [icon]="createShopIcon"
@@ -10,33 +9,33 @@
       type="button"
       (click)="onCreateShop()"
     />
-  </header>
+  </app-page-header>
 
-  @if (!isLoading() && !hasShops()) {
-  <p class="state-text">{{ textData.EMPTY_STATE }}</p>
+  @if (shopsQuery.isError()) {
+  <app-state-message tone="warning" [message]="textData.LOAD_ERROR_MESSAGE" />
+  } @else if (isEmpty()) {
+  <app-state-message [message]="textData.EMPTY_STATE" />
   } @else {
   <div class="shops-list">
     @for (shopCard of shopCards(); track shopCard.id) {
     <app-entity-card
       [entity]="shopCard"
-      [icon]="'store'"
+      [icon]="cardIcon"
       (edit)="onEditShop(shopCard)"
       (removed)="onDeleteShop(shopCard)"
     />
     }
   </div>
-
-  @if (totalItems() > SHOPS_PAGE_SIZE) {
+  } @if (hasPagination()) {
   <app-pagination
-    class="shops-pagination"
     [currentPage]="currentPage()"
-    [pageSize]="pageSize()"
+    [pageSize]="pageSize"
     [totalItems]="totalItems()"
     [totalPages]="totalPages()"
     [label]="textData.PAGINATION_LABEL"
     (pageChange)="onPageChange($event)"
   />
-  } }
+  }
 
   <app-shops-form-modal
     [isOpen]="isFormModalOpen()"
@@ -47,16 +46,15 @@
     (confirmed)="onConfirmFormModal($event)"
   />
 
-  <app-modal
+  <app-confirm-modal
     [isOpen]="isDeleteModalOpen()"
     [title]="textData.MODAL_DELETE_TITLE"
     [confirmLabel]="textData.MODAL_DELETE_CONFIRM_LABEL"
-    [confirmLoading]="isActionLoading()"
-    [confirmDisabled]="isActionLoading()"
-    [isDanger]="true"
+    [message]="textData.MODAL_DELETE_MESSAGE"
+    [highlight]="selectedShopName()"
+    [suffix]="textData.MODAL_DELETE_SUFFIX"
+    [loading]="isActionLoading()"
     (closed)="onCloseModal()"
     (confirmed)="onConfirmDelete()"
-  >
-    <p class="shops-delete-message">{{ textData.MODAL_DELETE_MESSAGE }}</p>
-  </app-modal>
-</section>
+  />
+</app-page-layout>

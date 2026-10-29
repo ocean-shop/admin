@@ -15,8 +15,6 @@ export const TAGS_TEXTS = {
   EMPTY_STATE: 'Теги не знайдено.',
   PAGINATION_LABEL: 'тегів',
   TABLE_NAME_HEADER: 'Назва',
-  TABLE_CREATED_HEADER: 'Створено',
-  TABLE_UPDATED_HEADER: 'Оновлено',
   TABLE_DELETE_LABEL: 'Видалити',
   TABLE_LOADING_TEXT: 'Завантаження тегів...',
   MODAL_CREATE_TITLE: 'Створити тег',
@@ -30,13 +28,13 @@ export const TAGS_TEXTS = {
   NAME_REQUIRED_MESSAGE: "Назва тега є обов'язковою",
   CREATE_SUCCESS_TITLE: 'Тег створено',
   DELETE_SUCCESS_TITLE: 'Тег видалено',
-  UNKNOWN_DATE: '—',
-};
+} as const;
 
 export const TAGS_CREATE_ICON = 'add';
 export const TAGS_PAGE_SIZE = 20;
 export const TAGS_NAME_FIELD_ID = 'tag-name';
-export const TAGS_DEFAULT_NAME = 'Untitled tag';
+export const TAGS_SEARCH_INPUT_ID = 'tags-search-input';
+export const TAGS_DEFAULT_NAME = 'Тег без назви';
 export const TAGS_TABLE_COLUMNS: TableColumn[] = [
   { key: 'name', header: TAGS_TEXTS.TABLE_NAME_HEADER },
 ];

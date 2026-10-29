@@ -3,19 +3,22 @@ import { form, FormField, pattern, required } from '@angular/forms/signals';
 import { Dropdown } from '@ui/dropdown/dropdown';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { Input } from '@ui/input/input';
-import { MultiSelectDropdown } from '@ui/multi-select-dropdown/multi-select-dropdown';
 import { Modal } from '@ui/modal/modal';
-import { Admin } from '../../models/admin.model';
-import { AdminCreatePayload } from '../../models/admin-payload.model';
-import { AdminFormData } from '../../models/admin-form.model';
+import { MultiSelectDropdown } from '@ui/multi-select-dropdown/multi-select-dropdown';
 import {
-  ADMINS_TEXTS,
   ADMINS_DEFAULT_ROLE_VALUE,
   ADMINS_IDENTITY_FIELD_ID,
   ADMINS_IDENTITY_PATTERN,
+  ADMINS_ROLE_ICON,
+  ADMINS_SHOPS_ICON,
+  ADMINS_TEXTS,
 } from '../../constants/admins.constants';
-import { AdminModalModeEnum } from '../../models/admin-modal-mode.type';
+import { buildAdminPayload, mapAdminToFormData } from '../../helpers/admin-form.helper';
+import { AdminFormData } from '../../models/admin-form.model';
 import { AdminFormModalMode } from '../../models/admin-form-modal-mode.type';
+import { AdminModalModeEnum } from '../../models/admin-modal-mode.type';
+import { Admin } from '../../models/admin.model';
+import { AdminCreatePayload } from '../../models/admin-payload.model';
 
 @Component({
   selector: 'app-admin-form-modal',
@@ -35,14 +38,17 @@ export class AdminFormModal {
   readonly confirmed = output<AdminCreatePayload>();
 
   protected readonly identityFieldId = ADMINS_IDENTITY_FIELD_ID;
+  protected readonly roleIcon = ADMINS_ROLE_ICON;
+  protected readonly shopsIcon = ADMINS_SHOPS_ICON;
   protected readonly texts = ADMINS_TEXTS;
 
-  protected readonly adminFormModel = signal<AdminFormData>({
+  private readonly emptyFormData: AdminFormData = {
     identity: '',
     role: ADMINS_DEFAULT_ROLE_VALUE,
     shopIds: [],
-  });
+  };
 
+  protected readonly adminFormModel = signal<AdminFormData>({ ...this.emptyFormData });
   protected readonly adminForm = form(this.adminFormModel, (schemaPath) => {
     required(schemaPath.identity, { message: ADMINS_TEXTS.IDENTITY_REQUIRED_MESSAGE });
     pattern(schemaPath.identity, ADMINS_IDENTITY_PATTERN, {
@@ -51,111 +57,49 @@ export class AdminFormModal {
     required(schemaPath.role, { message: ADMINS_TEXTS.ROLE_REQUIRED_MESSAGE });
   });
 
+  private readonly isCreateMode = computed(() => this.mode() === AdminModalModeEnum.Create);
   protected readonly title = computed(() =>
-    this.mode() === AdminModalModeEnum.Create
-      ? ADMINS_TEXTS.MODAL_CREATE_TITLE
-      : ADMINS_TEXTS.MODAL_UPDATE_TITLE,
+    this.isCreateMode() ? ADMINS_TEXTS.MODAL_CREATE_TITLE : ADMINS_TEXTS.MODAL_UPDATE_TITLE,
   );
   protected readonly confirmLabel = computed(() =>
-    this.mode() === AdminModalModeEnum.Create
+    this.isCreateMode()
       ? ADMINS_TEXTS.MODAL_CREATE_CONFIRM_LABEL
       : ADMINS_TEXTS.MODAL_UPDATE_CONFIRM_LABEL,
   );
   protected readonly isFormValid = computed(
     () => this.adminForm.identity().valid() && this.adminForm.role().valid(),
   );
+  protected readonly isConfirmDisabled = computed(
+    () => !this.isFormValid() || this.confirmLoading(),
+  );
 
   constructor() {
+    // Re-seeds the form (values and touched state) for the edited admin and after closing.
     effect(() => {
       const admin = this.admin();
-      if (admin) {
-        this.prefillAdminForm(admin);
-      } else {
-        this.resetAdminForm();
-      }
-    });
-
-    effect(() => {
-      const isOpen = this.isOpen();
-      if (!isOpen) {
-        this.resetAdminForm();
-      }
+      const formData =
+        admin && this.isOpen()
+          ? mapAdminToFormData(admin, this.roleOptions())
+          : { ...this.emptyFormData };
+      this.adminForm().reset(formData);
     });
   }
 
   protected onClose(): void {
-    if (this.confirmLoading()) {
+    if (!this.confirmLoading()) {
+      this.closed.emit();
+    }
+  }
+
+  protected onConfirm(event?: Event): void {
+    event?.preventDefault();
+    if (this.isConfirmDisabled()) {
       return;
     }
 
-    this.closed.emit();
-  }
-
-  protected onConfirm(): void {
-    if (!this.isFormValid() || this.confirmLoading()) {
-      return;
+    const payload = buildAdminPayload(this.adminFormModel());
+    if (payload) {
+      this.confirmed.emit(payload);
     }
-
-    const payload = this.buildPayload();
-    if (!payload) {
-      return;
-    }
-
-    this.confirmed.emit(payload);
-  }
-
-  private buildPayload(): AdminCreatePayload | null {
-    const identity = this.adminForm.identity().value()?.trim() ?? '';
-    const role = this.adminForm.role().value()?.trim() ?? '';
-    const shopIds = this.resolveSelectedShopIds();
-
-    if (!identity || !role) {
-      return null;
-    }
-
-    if (identity.includes('@')) {
-      return { email: identity, role, shopIds };
-    }
-
-    return { mobileNumber: identity, role, shopIds };
-  }
-
-  private prefillAdminForm(admin: Admin): void {
-    this.adminFormModel.set({
-      identity: this.resolveAdminIdentity(admin),
-      role: this.normalizeRoleValue(admin.role),
-      shopIds: admin.shopIds,
-    });
-  }
-
-  private resolveAdminIdentity(admin: Admin): string {
-    if (admin.email && admin.email !== ADMINS_TEXTS.DEFAULT_EMAIL) {
-      return admin.email;
-    }
-
-    if (admin.phone && admin.phone !== ADMINS_TEXTS.DEFAULT_PHONE) {
-      return admin.phone;
-    }
-
-    return '';
-  }
-
-  private normalizeRoleValue(role: string): string {
-    const normalized = role.trim().toLowerCase();
-    const roleExists = this.roleOptions().some((option) => option.value === normalized);
-    return roleExists ? normalized : ADMINS_DEFAULT_ROLE_VALUE;
-  }
-
-  private resetAdminForm(): void {
-    this.adminForm().reset({
-      identity: '',
-      role: ADMINS_DEFAULT_ROLE_VALUE,
-      shopIds: [],
-    });
-  }
-
-  private resolveSelectedShopIds(): string[] {
-    const selectedShopIds = this.adminForm.shopIds().value() ?? [];
-    return Array.from(new Set(selectedShopIds.map((shopId) => shopId.trim()).filter(Boolean)));
   }
 }

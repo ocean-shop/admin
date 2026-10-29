@@ -1,43 +1,39 @@
 @if (sidebarDisabled()) {
-<p class="product-form-sidebar-hint">{{ texts().SIDEBAR_DISABLED_HINT }}</p>
+<p class="product-form-sidebar-hint">{{ texts.SIDEBAR_DISABLED_HINT }}</p>
 }
 
 <div class="product-form-grid">
   <section class="product-form-main">
     <app-product-form-basic-info
       [productForm]="productForm()"
-      [texts]="texts()"
-      [fieldIds]="fieldIds()"
-      [statusOptions]="statusOptions()"
-      [productTypeOptions]="productTypeOptions()"
-      [productTypeSimple]="productTypeSimple()"
-      (productTypeChange)="onProductTypeOptionChange($event)"
+      [texts]="texts"
+      [fieldIds]="fieldIds"
+      [statusOptions]="statusOptions"
+      [productTypeOptions]="productTypeOptions"
     />
 
-    @if (shouldShowPricingInventory()) {
-    <app-product-form-pricing-inventory
-      [productForm]="productForm()"
-      [texts]="texts()"
-      [fieldIds]="fieldIds()"
-    />
-    } @if (shouldShowVariations()) {
+    @if (isVariable()) {
     <app-product-form-variations
-      [texts]="texts()"
-      [toastTexts]="toastTexts()"
+      [texts]="texts"
       [shopId]="shopId()"
       [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"
       [initialVariations]="initialVariations()"
     />
+    } @else {
+    <app-product-form-pricing-inventory
+      [productForm]="productForm()"
+      [texts]="texts"
+      [fieldIds]="fieldIds"
+    />
     }
 
-    <app-product-form-seo [productForm]="productForm()" [texts]="texts()" [fieldIds]="fieldIds()" />
+    <app-product-form-seo [productForm]="productForm()" [texts]="texts" [fieldIds]="fieldIds" />
   </section>
 
   <aside class="product-form-sidebar">
     <app-product-form-categories
-      [texts]="texts()"
-      [toastTexts]="toastTexts()"
+      [texts]="texts"
       [shopId]="shopId()"
       [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"
@@ -45,8 +41,7 @@
     />
 
     <app-product-form-tags
-      [texts]="texts()"
-      [toastTexts]="toastTexts()"
+      [texts]="texts"
       [shopId]="shopId()"
       [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"
@@ -54,16 +49,14 @@
     />
 
     <app-product-form-images
-      [texts]="texts()"
-      [toastTexts]="toastTexts()"
+      [texts]="texts"
       [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"
       [initialImages]="initialImages()"
     />
 
     <app-product-form-attributes
-      [texts]="texts()"
-      [toastTexts]="toastTexts()"
+      [texts]="texts"
       [shopId]="shopId()"
       [productId]="productId()"
       [sidebarDisabled]="sidebarDisabled()"

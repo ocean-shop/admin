@@ -1,3 +1,5 @@
+import { PaginationMeta } from '@core/models/pagination-meta.model';
+
 export type ShopApiItem = {
   id?: string | number | null;
   name?: string | null;
@@ -9,33 +11,17 @@ export type ShopApiItem = {
   updatedAt?: string | null;
 };
 
-export type ShopsApiResponse = {
+/** The list endpoint has used several envelope keys; any of them may carry the items. */
+export type ShopsApiResponse = Partial<PaginationMeta> & {
   shops?: ShopApiItem[] | null;
   data?: ShopApiItem[] | null;
   items?: ShopApiItem[] | null;
-  total?: number;
-  page?: number;
-  limit?: number;
-  totalPages?: number;
-};
-
-export type ShopsQueryParams = {
-  page: number;
-  limit: number;
-};
-
-export type ShopsPagination = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
 };
 
 export type Shop = {
   id: string;
   name: string;
-  description?: string;
-  url?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  description: string;
+  url: string;
+  createdAt: string;
 };

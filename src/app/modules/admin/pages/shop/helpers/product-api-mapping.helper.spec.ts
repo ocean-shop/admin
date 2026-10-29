@@ -1,10 +1,12 @@
+import { PRODUCT_IMAGE_ID_PREFIX } from '../constants/product-api-mapping.constants';
+import { PRODUCT_FALLBACK_LABELS } from '../constants/product-fallback-labels.constants';
 import { ProductStatus } from '../pages/products/models/product-status.enum';
 import { ProductType } from '../pages/products/models/product-type.enum';
 import {
   extractProductAttributes,
+  extractProductCategoryIds,
   extractProductImages,
   extractProductTags,
-  extractProductVariations,
   mapProductToFormModel,
 } from './product-api-mapping.helper';
 
@@ -66,36 +68,57 @@ describe('product-api-mapping.helper', () => {
 
     expect(formModel.isPopular).toBe(true);
   });
+  it('falls back to simple / draft for unknown type and status', () => {
+    const formModel = mapProductToFormModel({ type: 'unknown', status: null });
+
+    expect(formModel.type).toBe(ProductType.Simple);
+    expect(formModel.status).toBe(ProductStatus.Draft);
+    expect(formModel.name).toBe('');
+  });
+
+  it('extracts category ids from mixed shapes, skipping empty ones', () => {
+    expect(
+      extractProductCategoryIds({ categories: [' cat-1 ', { id: 'cat-2' }, { id: null }, ''] }),
+    ).toEqual(new Set(['cat-1', 'cat-2']));
+    expect(extractProductCategoryIds({})).toEqual(new Set());
+  });
 
   it('extracts unique attribute and tag labels from mixed shapes', () => {
     const product = {
       attributes: [
         'attr-raw',
+        ' ',
         { attributeTypeId: 'attr-2', attributeType: { name: 'Колір', value: 'Синій' } },
         { id: 'attr-2', name: 'Колір', value: 'Синій' },
+        { attributeType: { id: 'attr-3' } },
+        { name: 'No id' },
       ],
-      tags: ['tag-raw', { tag: { id: 'tag-2' } }, { id: 'tag-2', name: 'Льон' }],
+      tags: [
+        'tag-raw',
+        ' ',
+        { tag: { id: 'tag-2' } },
+        { id: 'tag-2', name: 'Льон' },
+        { name: 'x' },
+      ],
     };
 
-    expect(
-      extractProductAttributes(product, {
-        attributesFallbackLabel: 'Атрибути',
-        tagsFallbackLabel: 'Теги',
-      }),
-    ).toEqual([
+    expect(extractProductAttributes(product)).toEqual([
       { id: 'attr-raw', label: 'attr-raw' },
       { id: 'attr-2', label: 'Колір: Синій' },
+      { id: 'attr-3', label: PRODUCT_FALLBACK_LABELS.ATTRIBUTE },
     ]);
 
-    expect(
-      extractProductTags(product, {
-        attributesFallbackLabel: 'Атрибути',
-        tagsFallbackLabel: 'Теги',
-      }),
-    ).toEqual([
+    expect(extractProductTags(product)).toEqual([
       { id: 'tag-raw', label: 'tag-raw' },
-      { id: 'tag-2', label: 'Теги' },
+      { id: 'tag-2', label: PRODUCT_FALLBACK_LABELS.TAG },
     ]);
+  });
+
+  it('reads attributes from attributeTypes when attributes are missing', () => {
+    expect(extractProductAttributes({ attributeTypes: ['attr-1'] })).toEqual([
+      { id: 'attr-1', label: 'attr-1' },
+    ]);
+    expect(extractProductTags({})).toEqual([]);
   });
 
   it('extracts product images from mixed shapes', () => {
@@ -110,8 +133,8 @@ describe('product-api-mapping.helper', () => {
       }),
     ).toEqual([
       {
-        id: 'product-image-0-https://cdn.example.com/first.jpg',
-        name: 'Image 1',
+        id: `${PRODUCT_IMAGE_ID_PREFIX}-0-https://cdn.example.com/first.jpg`,
+        name: `${PRODUCT_FALLBACK_LABELS.IMAGE_PREFIX} 1`,
         imageDataUrl: 'https://cdn.example.com/first.jpg',
       },
       {
@@ -120,82 +143,11 @@ describe('product-api-mapping.helper', () => {
         imageDataUrl: 'https://cdn.example.com/second.jpg',
       },
       {
-        id: 'product-image-2-https://cdn.example.com/third.jpg',
+        id: `${PRODUCT_IMAGE_ID_PREFIX}-2-https://cdn.example.com/third.jpg`,
         name: 'Third image',
         imageDataUrl: 'https://cdn.example.com/third.jpg',
       },
     ]);
-  });
-
-  it('extracts product variations from mixed shapes', () => {
-    expect(
-      extractProductVariations({
-        variations: [
-          {
-            id: 'variation-1',
-            title: 'Синій M',
-            name: 'Синій / M',
-            sku: 'SKU-1',
-            price: 99.5,
-            oldPrice: 120,
-            available: false,
-            isDefault: true,
-            attributes: [
-              {
-                id: 'attribute-link-1',
-                attributeTypeId: '11111111-1111-4111-8111-111111111111',
-                name: 'Колір',
-                value: 'Синій',
-              },
-            ],
-            images: [{ id: 'img-1', image: 'https://cdn.example.com/var-1.jpg', name: 'V1' }],
-          },
-          'variation-raw',
-        ],
-      }),
-    ).toEqual([
-      {
-        localId: 'variation-1',
-        id: 'variation-1',
-        title: 'Синій M',
-        name: 'Синій / M',
-        price: '99.50',
-        oldPrice: '120.00',
-        sku: 'SKU-1',
-        available: false,
-        isMain: true,
-        attributes: [
-          {
-            id: '11111111-1111-4111-8111-111111111111',
-            attributeTypeId: '11111111-1111-4111-8111-111111111111',
-            name: 'Колір',
-            value: 'Синій',
-            label: 'Колір: Синій',
-          },
-        ],
-        attributeSearchValue: '',
-        attributeSearchResults: [],
-        isAttributeSearchLoading: false,
-        images: [{ id: 'img-1', name: 'V1', imageDataUrl: 'https://cdn.example.com/var-1.jpg' }],
-        isSaving: false,
-      },
-      {
-        localId: 'variation-variation-raw',
-        id: 'variation-raw',
-        title: '',
-        name: '',
-        price: '',
-        oldPrice: '',
-        sku: '',
-        available: true,
-        isMain: false,
-        attributes: [],
-        attributeSearchValue: '',
-        attributeSearchResults: [],
-        isAttributeSearchLoading: false,
-        images: [],
-        isSaving: false,
-      },
-    ]);
+    expect(extractProductImages({})).toEqual([]);
   });
 });

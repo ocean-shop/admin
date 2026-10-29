@@ -1,10 +1,18 @@
 import { HttpErrorResponse, HttpInterceptorFn, HttpStatusCode } from '@angular/common/http';
-import { inject, isDevMode } from '@angular/core';
+import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
-import { ToasterService } from '../services/toaster/toaster.service';
+import {
+  HTTP_ERROR_LOG_SCOPE,
+  HTTP_ERROR_TEXTS,
+  RETRIED_AFTER_REFRESH,
+} from '@core/constants/http-error.constants';
+import { APP_ROUTES } from '@core/constants/routes.constants';
+import { isApiUrl, isAuthApiUrl, isAuthTokenLifecycleUrl } from '@core/helpers/api-url.helper';
+import { logDebug } from '@core/helpers/debug-log.helper';
+import { buildHttpErrorToast, isHttpErrorStatus } from '@core/helpers/http-error.helper';
 import { AuthService } from '../services/auth/auth.service';
-import { HTTP_ERROR_TEXTS, RETRIED_AFTER_REFRESH } from '../constants/http-error.constants';
+import { ToasterService } from '../services/toaster/toaster.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toasterService = inject(ToasterService);
@@ -14,69 +22,52 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      const shouldHandleUnauthorized =
-        error.status === 401 && !req.url.includes('/auth/') && !alreadyRetried;
-
-      logAuthDebug('Request failed', {
+      logDebug(HTTP_ERROR_LOG_SCOPE, 'Request failed', {
         status: error.status,
         url: req.url,
         alreadyRetried,
       });
 
-      if (shouldHandleUnauthorized) {
+      // Only our own API may trigger a refresh: a 401 from a third party says nothing about our session.
+      const shouldRefreshSession =
+        error.status === HttpStatusCode.Unauthorized &&
+        isApiUrl(req.url) &&
+        !isAuthApiUrl(req.url) &&
+        !alreadyRetried;
+
+      if (shouldRefreshSession) {
         return authService.refreshToken().pipe(
           switchMap((response) => {
             if (!response?.accessToken) {
-              logAuthDebug('Refresh response is missing access token');
+              logDebug(HTTP_ERROR_LOG_SCOPE, 'Refresh response is missing access token');
               return throwError(() => new Error(HTTP_ERROR_TEXTS.MISSING_ACCESS_TOKEN));
             }
 
-            const clonedRequest = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${response.accessToken}`,
-              },
-              context: req.context.set(RETRIED_AFTER_REFRESH, true),
-            });
-            return next(clonedRequest);
+            return next(
+              req.clone({
+                setHeaders: { Authorization: `Bearer ${response.accessToken}` },
+                context: req.context.set(RETRIED_AFTER_REFRESH, true),
+              }),
+            );
           }),
           catchError((refreshError) => {
             authService.clearSession();
-            router.navigate(['/login']);
+            router.navigate([APP_ROUTES.LOGIN]);
             return throwError(() => refreshError);
           }),
         );
       }
 
-      if (error.status >= 400 && error.status < 600) {
-        if (!req.url.includes('/refresh') && !req.url.includes('/logout')) {
-          const isThrottled = error.status === HttpStatusCode.TooManyRequests;
-          const title = isThrottled
-            ? HTTP_ERROR_TEXTS.TOO_MANY_REQUESTS_TITLE
-            : `Error ${error.status}`;
-          const fallback = isThrottled
-            ? HTTP_ERROR_TEXTS.TOO_MANY_REQUESTS_MESSAGE
-            : error.message || HTTP_ERROR_TEXTS.UNEXPECTED_ERROR;
-          toasterService.danger(title, error.error?.message || fallback);
-        }
+      if (isHttpErrorStatus(error.status) && !isAuthTokenLifecycleUrl(req.url)) {
+        const { title, message } = buildHttpErrorToast(error);
+        toasterService.danger(title, message);
       }
 
-      if (error.status === 403) {
-        router.navigate(['/admin/not-permission']);
+      if (error.status === HttpStatusCode.Forbidden) {
+        router.navigate([APP_ROUTES.NOT_PERMISSION]);
       }
+
       return throwError(() => error);
     }),
   );
 };
-
-function logAuthDebug(message: string, data?: unknown): void {
-  if (!isDevMode()) {
-    return;
-  }
-
-  if (data) {
-    console.debug(`[AuthInterceptor] ${message}`, data);
-    return;
-  }
-
-  console.debug(`[AuthInterceptor] ${message}`);
-}

@@ -1,4 +1,5 @@
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
+import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { ProductStatus } from '../../../pages/products/models/product-status.enum';
 import { ProductType } from '../../../pages/products/models/product-type.enum';
 import {
@@ -54,19 +55,26 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   ATTRIBUTES_SEARCH_LOADING: 'Завантаження атрибутів...',
   ATTRIBUTES_SEARCH_EMPTY: 'Атрибути не знайдено.',
   ATTRIBUTES_ASSIGNED_EMPTY: 'Ще немає призначених атрибутів.',
+  ATTRIBUTES_REMOVE_LABEL: 'Видалити атрибут',
   TAGS_INPUT_PLACEHOLDER: 'Додати теги...',
   TAGS_SEARCH_LOADING: 'Завантаження тегів...',
   TAGS_SEARCH_EMPTY: 'Теги не знайдено.',
   TAGS_ASSIGNED_EMPTY: 'Ще немає призначених тегів.',
+  TAGS_REMOVE_LABEL: 'Видалити тег',
+  VARIATION_ATTRIBUTES_REMOVE_LABEL: 'Видалити атрибут варіації',
   IMAGES_TITLE: 'Медіа та файли',
   IMAGES_SUBTITLE: 'Перше зображення буде головним',
   IMAGES_UPLOAD_LABEL: 'Завантажити',
   IMAGES_UPLOAD_LOADING_LABEL: 'Завантаження...',
   IMAGES_DROPZONE_HINT: 'Перетягніть зображення сюди або натисніть для вибору',
   IMAGES_ASSIGNED_EMPTY: 'Ще немає доданих зображень.',
+  IMAGE_MOVE_UP_LABEL: 'Перемістити вище',
+  IMAGE_MOVE_DOWN_LABEL: 'Перемістити нижче',
+  IMAGE_REMOVE_LABEL: 'Видалити зображення',
   VARIATIONS_TITLE: 'Варіації товару',
   VARIATIONS_EMPTY: 'Ще немає доданих варіацій.',
   VARIATION_CARD_TITLE: 'Варіація',
+  VARIATION_REMOVE_LABEL: 'Видалити варіацію',
   VARIATION_ADD_BUTTON_LABEL: 'Додати варіацію',
   VARIATION_CREATE_BUTTON_LABEL: 'Додати варіацію',
   VARIATION_CREATE_LOADING_BUTTON_LABEL: 'Збереження...',
@@ -118,6 +126,19 @@ export const PRODUCT_FORM_STATUS_OPTIONS: DropdownOption[] = [
   { label: 'Архівний', value: ProductStatus.Archived },
 ];
 
+export const PRODUCT_FORM_TYPE_OPTIONS: RadioGroupOption[] = [
+  {
+    id: PRODUCT_FORM_FIELD_IDS.TYPE_SIMPLE,
+    value: ProductType.Simple,
+    label: PRODUCT_FORM_TEXTS.PRODUCT_TYPE_SIMPLE_LABEL,
+  },
+  {
+    id: PRODUCT_FORM_FIELD_IDS.TYPE_VARIABLE,
+    value: ProductType.Variable,
+    label: PRODUCT_FORM_TEXTS.PRODUCT_TYPE_VARIABLE_LABEL,
+  },
+];
+
 export const PRODUCT_FORM_DEFAULT_VALUE: ProductFormModel = {
   name: '',
   type: ProductType.Simple,
@@ -136,9 +157,56 @@ export const PRODUCT_FORM_DEFAULT_VALUE: ProductFormModel = {
   noIndex: false,
 };
 
+/** Success toasts of the editor sidebar; failures are reported by the global error interceptor. */
+export const PRODUCT_FORM_TOAST_TEXTS = {
+  CATEGORY_ASSIGN_SUCCESS_TITLE: 'Категорію прив’язано',
+  CATEGORY_UNASSIGN_SUCCESS_TITLE: 'Категорію відв’язано',
+  ATTRIBUTE_ASSIGN_SUCCESS_TITLE: 'Атрибут прив’язано',
+  ATTRIBUTE_UNASSIGN_SUCCESS_TITLE: 'Атрибут відв’язано',
+  TAG_ASSIGN_SUCCESS_TITLE: 'Тег прив’язано',
+  TAG_UNASSIGN_SUCCESS_TITLE: 'Тег відв’язано',
+  IMAGES_ASSIGN_SUCCESS_TITLE: 'Зображення збережено',
+  VARIATION_SAVE_SUCCESS_TITLE: 'Варіацію збережено',
+} as const;
+
+export const PRODUCT_FORM_SERVICE_NOT_CONFIGURED_ERROR =
+  'Product form section service is used before configure().';
+
 export const PRODUCT_FORM_SEARCH_DEBOUNCE_MS = 300;
 export const PRODUCT_FORM_SEARCH_QUERY_PAGE = 1;
 export const PRODUCT_FORM_SEARCH_QUERY_LIMIT = 20;
-export const PRODUCT_FORM_DEFAULT_VARIATION_ATTRIBUTE_LABEL = 'Атрибут';
+/** Key of the single debounced search of the tags / attributes sections. */
+export const PRODUCT_FORM_ASSIGNABLE_SEARCH_KEY = 'search';
+export const PRODUCT_FORM_IMAGE_ID_PREFIX = 'image';
+export const PRODUCT_FORM_VARIATION_LOCAL_ID_PREFIX = 'variation-local';
+/** Payload marker the API expects when creating a variation. */
+export const PRODUCT_FORM_VARIATION_PAYLOAD_KIND = 'product_variations';
+export const PRODUCT_FORM_TAGS_INPUT_ID = 'tags-input';
+export const PRODUCT_FORM_ATTRIBUTES_SEARCH_ID = 'attributes-search';
+export const PRODUCT_FORM_CATEGORY_CHECKBOX_ID_PREFIX = 'category-';
+export const PRODUCT_FORM_TAGS_ICON = 'local_offer';
+export const PRODUCT_FORM_ATTRIBUTES_ICON = 'list_alt';
+export const PRODUCT_FORM_CATEGORIES_ICON = 'category';
+export const PRODUCT_FORM_IMAGES_ICON = 'perm_media';
+export const PRODUCT_FORM_VARIATIONS_ICON = 'style';
+export const PRODUCT_FORM_IMAGE_ICONS = {
+  UPLOAD: 'cloud_upload',
+  IMAGE: 'image',
+  MOVE_UP: 'keyboard_arrow_up',
+  MOVE_DOWN: 'keyboard_arrow_down',
+  REMOVE: 'delete',
+} as const;
+export const PRODUCT_FORM_VARIATION_REMOVE_ICON = 'delete';
+/** Prefixes of the per-variation field ids; the variation local id is appended. */
+export const PRODUCT_FORM_VARIATION_FIELD_ID_PREFIXES = {
+  TITLE: 'variation-title-',
+  NAME: 'variation-name-',
+  PRICE: 'variation-price-',
+  OLD_PRICE: 'variation-old-price-',
+  SKU: 'variation-sku-',
+  AVAILABLE: 'variation-available-',
+  IS_MAIN: 'variation-main-',
+  ATTRIBUTE_SEARCH: 'variation-attribute-search-',
+} as const;
 export const PRODUCT_FORM_UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

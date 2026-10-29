@@ -1,6 +1,4 @@
-<article class="product-form-card">
-  <h2 class="product-form-card-title">{{ texts().PRICING_INVENTORY_TITLE }}</h2>
-
+<app-product-form-card [title]="texts().PRICING_INVENTORY_TITLE">
   <div class="product-form-two-columns">
     <div class="product-form-field-group">
       <app-input
@@ -39,4 +37,4 @@
     [label]="texts().AVAILABLE_LABEL"
     [control]="productForm().available"
   />
-</article>
+</app-product-form-card>

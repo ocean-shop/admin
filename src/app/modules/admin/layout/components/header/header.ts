@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth/auth.service';
 import { SimpleMenu } from '@ui/simple-menu/simple-menu';
@@ -11,6 +11,9 @@ import { LayoutService } from '../../services/layout.service';
   imports: [SimpleMenu],
   templateUrl: './header.html',
   styleUrl: './header.scss',
+  host: {
+    '(document:click)': 'closeAccountMenu()',
+  },
 })
 export class Header {
   protected readonly layoutService = inject(LayoutService);
@@ -40,7 +43,6 @@ export class Header {
     }
   }
 
-  @HostListener('document:click')
   protected closeAccountMenu(): void {
     this.isAccountMenuOpen.set(false);
   }

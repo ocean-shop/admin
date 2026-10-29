@@ -150,72 +150,56 @@ describe('Products', () => {
     expect(mockProductsService.deleteProduct).toHaveBeenCalledWith('product-1');
   });
 
-  it('maps sort options to query parameters', () => {
-    expect((component as any).resolveSortQuery('older')).toEqual({
-      sortBy: 'createdAt',
-      sortOrder: 'asc',
-    });
-    expect((component as any).resolveSortQuery('alphabet')).toEqual({
-      sortBy: 'name',
-      sortOrder: 'asc',
-    });
-    expect((component as any).resolveSortQuery('newest')).toEqual({
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
-    });
-  });
-
-  it('extracts categories from all supported response shapes', () => {
-    expect((component as any).extractCategories([{ id: 'a', name: 'A' }])).toEqual([
-      { id: 'a', name: 'A' },
-    ]);
-    expect((component as any).extractCategories({ items: [{ id: 'b', name: 'B' }] })).toEqual([
-      { id: 'b', name: 'B' },
-    ]);
-    expect((component as any).extractCategories({ categories: [{ id: 'c', name: 'C' }] })).toEqual([
-      { id: 'c', name: 'C' },
-    ]);
-    expect((component as any).extractCategories({ data: [{ id: 'd', name: 'D' }] })).toEqual([
-      { id: 'd', name: 'D' },
-    ]);
-    expect((component as any).extractCategories({})).toEqual([]);
-  });
-
-  it('formats product labels and ids for edge cases', () => {
-    expect((component as any).resolveTypeLabel('simple')).toBe('Simple');
-    expect((component as any).resolveTypeLabel('variable')).toBe('Variable');
-    expect((component as any).resolveTypeLabel('custom-type')).toBe('Custom Type');
-    expect((component as any).resolveTypeLabel(undefined)).toBe('—');
-
-    expect((component as any).resolveStatusLabel('active')).toBe('Active');
-    expect((component as any).resolveStatusLabel('draft')).toBe('Draft');
-    expect((component as any).resolveStatusLabel('archived')).toBe('Archived');
-    expect((component as any).resolveStatusLabel('pending-review')).toBe('Pending Review');
-    expect((component as any).resolveStatusLabel(undefined)).toBe('—');
-
-    expect((component as any).resolvePriceLabel(25)).toBe('25.00');
-    expect((component as any).resolvePriceLabel(' 50.10 ')).toBe('50.10');
-    expect((component as any).resolvePriceLabel('   ')).toBe('—');
-    expect((component as any).resolvePriceLabel(undefined)).toBe('—');
-
-    expect((component as any).resolveProductId({ id: ' product-1 ' })).toBe('product-1');
-    expect((component as any).resolveProductId({ id: 100 })).toBe('100');
-    expect((component as any).resolveProductId({ id: null })).toBeNull();
-  });
-
-  it('handles array equality and guard branches', async () => {
-    expect((component as any).areArraysEqual(['a'], ['a'])).toBe(true);
-    expect((component as any).areArraysEqual(['a'], ['b'])).toBe(false);
-    expect((component as any).areArraysEqual(['a'], ['a', 'b'])).toBe(false);
-    expect((component as any).isValidSortValue('newest')).toBe(true);
-    expect((component as any).isValidSortValue('broken')).toBe(false);
-
+  it('ignores unknown sort values and unchanged filters', async () => {
     const initialCalls = mockProductsService.getProducts.mock.calls.length;
     (component as any).onSortSelected({ label: 'x', value: 'broken' });
+    (component as any).onSortSelected({ label: 'x', value: 'newest' });
     (component as any).onApplyFilters();
     (component as any).onResetFilters();
     await fixture.whenStable();
 
     expect(mockProductsService.getProducts.mock.calls.length).toBe(initialCalls);
+  });
+
+  it('changes sort and resets the page', () => {
+    (component as any).currentPage.set(3);
+    (component as any).onSortSelected({ label: 'A-Z', value: 'alphabet' });
+
+    expect((component as any).selectedSort()).toBe('alphabet');
+    expect((component as any).currentPage()).toBe(1);
+  });
+
+  it('toggles category filter values', () => {
+    (component as any).onCategoryOptionToggled({ label: 'A', value: 'a' });
+    (component as any).onCategoryOptionToggled({ label: 'B', value: 'b' });
+    (component as any).onCategoryOptionToggled({ label: 'A', value: 'a' });
+
+    expect((component as any).categoryIdsInput()).toEqual(['b']);
+  });
+
+  it('resets applied filters', () => {
+    (component as any).nameFilter.set('Shirt');
+    (component as any).categoryIdsFilter.set(['a']);
+    (component as any).currentPage.set(2);
+
+    (component as any).onResetFilters();
+
+    expect((component as any).nameFilter()).toBe('');
+    expect((component as any).categoryIdsFilter()).toEqual([]);
+    expect((component as any).currentPage()).toBe(1);
+  });
+
+  it('ignores rows without a known product', () => {
+    (component as any).onDeleteProduct({ id: 'missing' });
+    (component as any).onUpdateProduct({ id: null });
+
+    expect((component as any).selectedProduct()).toBeNull();
+  });
+
+  it('closes the delete modal when idle', () => {
+    (component as any).selectedProduct.set({ id: 'p', title: 'P' });
+    (component as any).onCloseDeleteModal();
+
+    expect((component as any).isDeleteModalOpen()).toBe(false);
   });
 });

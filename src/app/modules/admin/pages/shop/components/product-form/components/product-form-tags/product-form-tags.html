@@ -1,40 +1,20 @@
-<article class="product-form-card" [class.product-form-card-disabled]="sidebarDisabled()">
-  <h2 class="product-form-card-title product-form-card-title-icon">
-    <span class="material-symbols-outlined">local_offer</span>
-    {{ texts().TAGS_TITLE }}
-  </h2>
-  <app-input
-    id="tags-input"
-    [label]="texts().TAGS_INPUT_PLACEHOLDER"
-    [placeholder]="texts().TAGS_INPUT_PLACEHOLDER"
-    [disabled]="sidebarDisabled()"
-    [value]="tagSearchValue()"
-    (valueChange)="onTagSearchChange($event)"
+<app-product-form-card [title]="texts().TAGS_TITLE" [icon]="icon" [disabled]="sidebarDisabled()">
+  <app-product-form-shared-attributes
+    chipVariant="tag"
+    [searchInputId]="inputId"
+    [searchLabel]="texts().TAGS_INPUT_PLACEHOLDER"
+    [searchPlaceholder]="texts().TAGS_INPUT_PLACEHOLDER"
+    [searchValue]="searchValue()"
+    [interactionDisabled]="sidebarDisabled()"
+    [isSearchLoading]="isSearchLoading()"
+    [searchLoadingText]="texts().TAGS_SEARCH_LOADING"
+    [searchEmptyText]="texts().TAGS_SEARCH_EMPTY"
+    [assignedEmptyText]="texts().TAGS_ASSIGNED_EMPTY"
+    [removeAriaLabel]="texts().TAGS_REMOVE_LABEL"
+    [searchResults]="searchResults()"
+    [assignedAttributes]="assignedTags()"
+    (searchChange)="onSearchChange($event)"
+    (assign)="onAssign($event)"
+    (unassign)="onUnassign($event)"
   />
-  @if (!sidebarDisabled() && tagSearchValue().trim()) {
-  <div class="product-form-attribute-results">
-    @if (isTagSearchLoading()) {
-    <p class="product-form-attribute-state">{{ texts().TAGS_SEARCH_LOADING }}</p>
-    } @else if (!tagSearchResults().length) {
-    <p class="product-form-attribute-state">{{ texts().TAGS_SEARCH_EMPTY }}</p>
-    } @else { @for (tag of tagSearchResults(); track tag.id) {
-    <button type="button" class="product-form-attribute-result" (click)="onTagAssign(tag.id)">
-      {{ tag.label }}
-    </button>
-    } }
-  </div>
-  }
-  <div class="product-form-tag-list">
-    @if (!assignedTags().length) {
-    <span class="product-form-placeholder-chip">{{ texts().TAGS_ASSIGNED_EMPTY }}</span>
-    } @else { @for (tag of assignedTags(); track tag.id) {
-    <app-chip
-      [label]="tag.label"
-      variant="tag"
-      removeAriaLabel="Remove tag"
-      [disabled]="sidebarDisabled()"
-      (remove)="onTagUnassign(tag.id)"
-    />
-    } }
-  </div>
-</article>
+</app-product-form-card>

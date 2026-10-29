@@ -1,0 +1,49 @@
+@reference "../../../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.variation-card {
+  @apply mb-4 rounded-md border border-surface-dim bg-surface p-4;
+}
+
+.variation-card-header {
+  @apply mb-3 flex items-center justify-between;
+}
+
+.variation-card-title {
+  @apply text-base font-semibold text-on-surface;
+}
+
+.variation-card-remove {
+  @apply text-outline transition-colors hover:text-error disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.variation-card-remove-icon {
+  @apply text-[18px];
+}
+
+.variation-card-field {
+  @apply mb-4 flex flex-col gap-2;
+}
+
+.variation-card-columns {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2;
+}
+
+.variation-card-checkboxes {
+  @apply justify-center gap-2;
+}
+
+.variation-card-section {
+  @apply mb-4 rounded-sm border border-surface-dim bg-surface-container-lowest p-3;
+}
+
+.variation-card-section-title {
+  @apply mb-2 text-sm font-semibold text-on-surface;
+}
+
+.variation-card-save {
+  @apply w-full rounded-sm bg-primary px-3 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70;
+}

@@ -50,6 +50,20 @@ describe('authInterceptor', () => {
     req.flush([]);
   });
 
+  it('never sends the bearer token to third-party or look-alike hosts', () => {
+    authService.handleAuthSuccess(buildAuthSession('token-123'));
+
+    http.get('https://cdn.example.com/image.png').subscribe();
+    http.get(`${API_URL}.evil.com/steal`).subscribe();
+
+    const thirdPartyReq = httpMock.expectOne('https://cdn.example.com/image.png');
+    const lookAlikeReq = httpMock.expectOne(`${API_URL}.evil.com/steal`);
+    expect(thirdPartyReq.request.headers.has('Authorization')).toBe(false);
+    expect(lookAlikeReq.request.headers.has('Authorization')).toBe(false);
+    thirdPartyReq.flush({});
+    lookAlikeReq.flush({});
+  });
+
   it('skips bearer token for refresh and logout endpoints', () => {
     authService.handleAuthSuccess(buildAuthSession('token-123'));
 

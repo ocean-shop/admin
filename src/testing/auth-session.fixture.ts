@@ -1,17 +1,15 @@
 import { AuthResponse, AuthUser } from '@core/models/auth.model';
 
-export function buildAuthSession(
+export const buildAuthSession = (
   accessToken = 'access-token',
   user: Partial<AuthUser> = {},
-): AuthResponse {
-  return {
-    accessToken,
-    user: {
-      id: 'admin-1',
-      email: 'admin@ocean.dev',
-      mobileNumber: null,
-      role: 'admin',
-      ...user,
-    },
-  };
-}
+): AuthResponse => ({
+  accessToken,
+  user: {
+    id: 'admin-1',
+    email: 'admin@ocean.dev',
+    mobileNumber: null,
+    role: 'admin',
+    ...user,
+  },
+});

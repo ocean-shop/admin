@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { API_URL } from '@core/constants/api.constant';
+import { APP_ROUTES } from '@core/constants/routes.constants';
 import { AuthService } from '@core/services/auth/auth.service';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { authInterceptor } from './auth.interceptor';
@@ -137,6 +138,58 @@ describe('errorInterceptor', () => {
       .expectOne(`${API_URL}/catalog/categories`)
       .flush({ message: 'Bad input' }, { status: 400, statusText: 'Bad Request' });
 
-    expect(toasterService.danger).toHaveBeenCalledWith('Error 400', 'Bad input');
+    expect(toasterService.danger).toHaveBeenCalledWith(
+      `${HTTP_ERROR_TEXTS.ERROR_TITLE_PREFIX} 400`,
+      'Bad input',
+    );
+  });
+
+  it('joins validation message arrays into one toast message', () => {
+    http.get(`${API_URL}/catalog/categories`).subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne(`${API_URL}/catalog/categories`)
+      .flush(
+        { message: ['name is required', 'slug is required'] },
+        { status: 400, statusText: 'Bad Request' },
+      );
+
+    expect(toasterService.danger).toHaveBeenCalledWith(
+      `${HTTP_ERROR_TEXTS.ERROR_TITLE_PREFIX} 400`,
+      'name is required, slug is required',
+    );
+  });
+
+  it('redirects to the not-permission page on 403', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    http.get(`${API_URL}/catalog/categories`).subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne(`${API_URL}/catalog/categories`)
+      .flush(null, { status: 403, statusText: 'Forbidden' });
+
+    expect(navigateSpy).toHaveBeenCalledWith([APP_ROUTES.NOT_PERMISSION]);
+  });
+
+  it('does not refresh the session on a 401 from a third-party host', () => {
+    authService.handleAuthSuccess(buildAuthSession('token'));
+    http.get('https://cdn.example.com/file.json').subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne('https://cdn.example.com/file.json')
+      .flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    httpMock.expectNone(`${API_URL}/user/auth/refresh`);
+    expect(authService.getAccessToken()).toBe('token');
+  });
+
+  it('does not toast failures of the logout call', () => {
+    http.post(`${API_URL}/user/auth/logout`, {}).subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne(`${API_URL}/user/auth/logout`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+
+    expect(toasterService.danger).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,5 @@
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
+import { TableColumn } from '@ui/table/models/table-column.model';
 import { OrderPaymentStatus } from '../models/order-payment-status.enum';
 import { OrderStatus } from '../models/order-status.enum';
 
@@ -33,6 +34,11 @@ export const ORDERS_TEXTS = {
   TABLE_ACTIONS_LABEL: 'Дії',
   TABLE_SHOW_LABEL: 'Переглянути замовлення',
   TABLE_DELETE_LABEL: 'Видалити замовлення',
+  ITEMS_PRODUCT_HEADER: 'Товар',
+  ITEMS_SKU_HEADER: 'SKU',
+  ITEMS_QUANTITY_HEADER: 'Кількість',
+  ITEMS_PRICE_HEADER: 'Ціна Товару',
+  ITEMS_TOTAL_HEADER: 'Загальна Сума',
   MODAL_DELETE_TITLE: 'Видалити замовлення',
   MODAL_DELETE_MESSAGE: 'Ви справді хочете видалити замовлення ',
   MODAL_DELETE_MESSAGE_SUFFIX: '? Цю дію не можна скасувати.',
@@ -51,17 +57,18 @@ export const ORDERS_TEXTS = {
   SAVE_STATUS_LABEL: 'Зберегти статус',
   PAYMENT_STATUS_UPDATED_TITLE: 'Статус оплати оновлено',
   ORDER_STATUS_UPDATED_TITLE: 'Статус замовлення оновлено',
-  UPDATE_PAYMENT_STATUS_ERROR_TITLE: 'Не вдалося оновити оплату',
-  UPDATE_PAYMENT_STATUS_ERROR_MESSAGE:
-    'Спробуйте ще раз або перевірте, чи замовлення доступне для редагування.',
-  UPDATE_STATUS_ERROR_TITLE: 'Не вдалося оновити статус замовлення',
-  UPDATE_STATUS_ERROR_MESSAGE:
-    'Спробуйте ще раз або перевірте, чи замовлення доступне для редагування.',
   ORDER_DETAILS_LOAD_ERROR: 'Не вдалося завантажити деталі замовлення.',
-};
+} as const;
 
+export const ORDERS_SECTION_PATH = 'orders';
 export const ORDERS_PAGE_SIZE = 20;
 export const ORDERS_NUMBER_FILTER_ID = 'orders-number-filter';
+export const ORDERS_SORT_ICON = 'swap_vert';
+export const ORDER_NUMBER_PREFIX = '#';
+export const ORDER_PAYMENT_STATUS_ICON = 'credit_card';
+export const ORDER_STATUS_ICON = 'sync';
+/** Item quantity used for the line total when the API omits it. */
+export const ORDER_ITEM_DEFAULT_QUANTITY = 1;
 
 export const ORDERS_SORT_OPTIONS: DropdownOption[] = [
   { label: 'Спочатку новіші', value: 'newest' },
@@ -78,4 +85,36 @@ export const ORDER_STATUS_OPTIONS: DropdownOption[] = [
   { label: 'В обробці', value: OrderStatus.Processing },
   { label: 'Відправлено', value: OrderStatus.Shipped },
   { label: 'Скасовано', value: OrderStatus.Cancelled },
+];
+
+export const ORDERS_TABLE_COLUMNS: TableColumn[] = [
+  { key: 'orderNumber', header: ORDERS_TEXTS.TABLE_NUMBER_HEADER },
+  { key: 'totalAmount', header: ORDERS_TEXTS.TABLE_TOTAL_HEADER, align: 'right' },
+  { key: 'paymentStatus', header: ORDERS_TEXTS.TABLE_PAYMENT_STATUS_HEADER },
+  { key: 'status', header: ORDERS_TEXTS.TABLE_STATUS_HEADER },
+  { key: 'createdAt', header: ORDERS_TEXTS.TABLE_CREATED_AT_HEADER },
+];
+
+export const ORDER_ITEMS_TABLE_COLUMNS: TableColumn[] = [
+  { key: 'name', header: ORDERS_TEXTS.ITEMS_PRODUCT_HEADER },
+  { key: 'sku', header: ORDERS_TEXTS.ITEMS_SKU_HEADER },
+  { key: 'quantity', header: ORDERS_TEXTS.ITEMS_QUANTITY_HEADER, align: 'right' },
+  { key: 'price', header: ORDERS_TEXTS.ITEMS_PRICE_HEADER, align: 'right' },
+  { key: 'total', header: ORDERS_TEXTS.ITEMS_TOTAL_HEADER, align: 'right' },
+];
+
+/** Order fields rendered in dedicated sections; everything else goes to "extra data". */
+export const ORDER_KNOWN_FIELDS: readonly string[] = [
+  'id',
+  'shopId',
+  'orderNumber',
+  'totalAmount',
+  'paymentStatus',
+  'status',
+  'createdAt',
+  'updatedAt',
+  'items',
+  'products',
+  'user',
+  'createdBy',
 ];

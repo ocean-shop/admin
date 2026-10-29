@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { HttpRequest, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { API_URL } from '@core/constants/api.constant';
@@ -66,5 +66,29 @@ describe('ShopsService', () => {
     expect(req.request.method).toBe('DELETE');
     expect(req.request.withCredentials).toBe(true);
     req.flush({});
+  });
+
+  describe('getAllShops', () => {
+    const matchPage = (page: number) => (request: HttpRequest<unknown>) =>
+      request.url === `${API_URL}/catalog/shops` && request.params.get('page') === String(page);
+
+    it('loads every page and flattens the items', () => {
+      let result: unknown;
+      service.getAllShops(2).subscribe((shops) => (result = shops));
+
+      httpMock.expectOne(matchPage(1)).flush({ items: [{ id: '1' }], totalPages: 2 });
+      httpMock.expectOne(matchPage(2)).flush({ shops: [{ id: '2' }] });
+
+      expect(result).toEqual([{ id: '1' }, { id: '2' }]);
+    });
+
+    it('stops after the first page for bare array responses', () => {
+      let result: unknown;
+      service.getAllShops(2).subscribe((shops) => (result = shops));
+
+      httpMock.expectOne(matchPage(1)).flush([{ id: '1' }]);
+
+      expect(result).toEqual([{ id: '1' }]);
+    });
   });
 });

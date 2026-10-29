@@ -1,0 +1,21 @@
+@reference "../../styles.scss";
+
+.info-list {
+  @apply grid gap-3 sm:grid-cols-2;
+}
+
+.info-list-item {
+  @apply flex flex-col gap-1;
+}
+
+.info-list-key {
+  @apply text-xs uppercase tracking-wide text-on-surface-variant;
+}
+
+.info-list-value {
+  @apply text-sm text-on-surface break-words;
+}
+
+.info-list-value-mono {
+  @apply font-mono text-xs;
+}

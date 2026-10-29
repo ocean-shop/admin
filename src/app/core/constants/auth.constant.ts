@@ -13,6 +13,8 @@ export const AUTH_STORAGE_KEYS = [
   OTP_EXPIRATION_KEY,
 ] as const;
 
+export const AUTH_LOG_SCOPE = 'AuthService';
+
 export const AUTH_BROADCAST_CHANNEL = 'ocean-admin-auth';
 /** Web Lock that serializes refreshes across tabs: the API rotates the refresh cookie on each one. */
 export const AUTH_REFRESH_LOCK = 'ocean-admin-auth-refresh';

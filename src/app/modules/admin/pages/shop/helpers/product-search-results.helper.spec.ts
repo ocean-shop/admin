@@ -1,10 +1,9 @@
+import { PRODUCT_FALLBACK_LABELS } from '../constants/product-fallback-labels.constants';
 import {
   mapAttributeSearchResults,
   mapTagSearchResults,
-  removeAssignedAttribute,
-  removeAssignedTag,
-  upsertAssignedAttribute,
-  upsertAssignedTag,
+  removeProductFormOption,
+  upsertProductFormOption,
 } from './product-search-results.helper';
 
 describe('product-search-results.helper', () => {
@@ -14,11 +13,13 @@ describe('product-search-results.helper', () => {
       { id: 'a2', name: 'Size', value: '' },
       { id: '', name: 'Broken', value: 'X' },
       { id: 'a3', name: '', value: 'Cotton' },
+      { id: 'a4', name: 'Fit', value: null },
     ];
 
-    expect(mapAttributeSearchResults(items as any, [{ id: 'a2', label: 'Size' }])).toEqual([
+    expect(mapAttributeSearchResults(items, [{ id: 'a2', label: 'Size' }])).toEqual([
       { id: 'a1', label: 'Color: Blue' },
-      { id: 'a3', label: 'Атрибут: Cotton' },
+      { id: 'a3', label: `${PRODUCT_FALLBACK_LABELS.ATTRIBUTE}: Cotton` },
+      { id: 'a4', label: 'Fit' },
     ]);
   });
 
@@ -29,64 +30,30 @@ describe('product-search-results.helper', () => {
       { id: '', name: 'Broken' },
     ];
 
-    expect(mapTagSearchResults(items as any, [{ id: 't1', label: 'Summer' }])).toEqual([
-      { id: 't2', label: 'Тег' },
+    expect(mapTagSearchResults(items, [{ id: 't1', label: 'Summer' }])).toEqual([
+      { id: 't2', label: PRODUCT_FALLBACK_LABELS.TAG },
     ]);
   });
 
-  it('upserts and removes assigned attributes and tags', () => {
-    expect(
-      upsertAssignedAttribute([{ id: 'a1', label: 'Color: Blue' }], {
-        id: 'a1',
-        label: 'Color: Blue',
-      }),
-    ).toEqual([{ id: 'a1', label: 'Color: Blue' }]);
+  it('upserts options without duplicates', () => {
+    const options = [{ id: 'a1', label: 'Color: Blue' }];
 
-    expect(
-      upsertAssignedAttribute([{ id: 'a1', label: 'Color: Blue' }], {
-        id: 'a2',
-        label: 'Size: M',
-      }),
-    ).toEqual([
+    expect(upsertProductFormOption(options, { id: 'a1', label: 'Other' })).toBe(options);
+    expect(upsertProductFormOption(options, { id: 'a2', label: 'Size: M' })).toEqual([
       { id: 'a1', label: 'Color: Blue' },
       { id: 'a2', label: 'Size: M' },
     ]);
+  });
 
+  it('removes options by id', () => {
     expect(
-      upsertAssignedTag([{ id: 't1', label: 'Summer' }], {
-        id: 't1',
-        label: 'Summer',
-      }),
-    ).toEqual([{ id: 't1', label: 'Summer' }]);
-
-    expect(
-      upsertAssignedTag([{ id: 't1', label: 'Summer' }], {
-        id: 't2',
-        label: 'Sale',
-      }),
-    ).toEqual([
-      { id: 't1', label: 'Summer' },
-      { id: 't2', label: 'Sale' },
-    ]);
-
-    expect(
-      removeAssignedAttribute(
-        [
-          { id: 'a1', label: 'Color' },
-          { id: 'a2', label: 'Size' },
-        ],
-        'a1',
-      ),
-    ).toEqual([{ id: 'a2', label: 'Size' }]);
-
-    expect(
-      removeAssignedTag(
+      removeProductFormOption(
         [
           { id: 't1', label: 'Summer' },
-          { id: 't2', label: 'Sale' },
+          { id: 't2', label: 'Winter' },
         ],
-        't2',
+        't1',
       ),
-    ).toEqual([{ id: 't1', label: 'Summer' }]);
+    ).toEqual([{ id: 't2', label: 'Winter' }]);
   });
 });

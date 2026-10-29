@@ -1,0 +1,11 @@
+<article class="product-form-card" [class.product-form-card-disabled]="disabled()">
+  <header class="product-form-card-header">
+    <h2 class="product-form-card-title">
+      @if (icon()) {
+      <span class="product-form-card-icon material-symbols-outlined">{{ icon() }}</span>
+      } {{ title() }}
+    </h2>
+    <ng-content select="[cardActions]" />
+  </header>
+  <ng-content />
+</article>

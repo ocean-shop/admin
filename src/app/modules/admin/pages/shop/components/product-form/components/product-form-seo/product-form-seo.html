@@ -1,6 +1,4 @@
-<article class="product-form-card">
-  <h2 class="product-form-card-title">{{ texts().SEO_TITLE }}</h2>
-
+<app-product-form-card [title]="texts().SEO_TITLE">
   <div class="product-form-field-group">
     <app-input
       [id]="fieldIds().SLUG"
@@ -44,4 +42,4 @@
     [label]="texts().NO_INDEX_LABEL"
     [control]="productForm().noIndex"
   />
-</article>
+</app-product-form-card>

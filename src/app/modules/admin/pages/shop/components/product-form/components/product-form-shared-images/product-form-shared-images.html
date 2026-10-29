@@ -1,9 +1,9 @@
 <input
   #imageInput
   type="file"
-  accept="image/*"
   multiple
   class="product-form-image-input"
+  [accept]="accept"
   [disabled]="interactionDisabled()"
   (change)="onFileInputChange($event)"
 />
@@ -17,47 +17,50 @@
   (drop)="onDrop($event)"
   (dragover)="onDragOver($event)"
 >
-  <span class="material-symbols-outlined">cloud_upload</span>
+  <span class="material-symbols-outlined">{{ icons.UPLOAD }}</span>
   <p>{{ dropzoneHint() }}</p>
 </button>
 
 <div class="product-form-images-list">
-  <p class="product-form-images-list-sub">{{imageSubTitle()}}</p>
-  @if (!images().length) {
-  <p class="product-form-images-empty">{{ emptyStateText() }}</p>
-  } @else { @for (image of images(); track image.id; let index = $index) {
+  <p class="product-form-images-list-sub">{{ imageSubTitle() }}</p>
+  @for (image of images(); track image.id; let first = $first; let last = $last) {
   <div class="product-form-image-row">
     <div class="product-form-image-row-content">
       <img class="product-form-image-preview" [src]="image.imageDataUrl" [alt]="image.name" />
       <div class="product-form-image-meta">
-        <span class="material-symbols-outlined">image</span>
+        <span class="material-symbols-outlined">{{ icons.IMAGE }}</span>
         <span class="product-form-image-name">{{ image.name }}</span>
       </div>
     </div>
     <div class="product-form-image-actions">
       <button
         type="button"
-        [disabled]="interactionDisabled() || index === 0"
+        [attr.aria-label]="texts.IMAGE_MOVE_UP_LABEL"
+        [disabled]="interactionDisabled() || first"
         (click)="onMoveUp(image.id)"
       >
-        <span class="material-symbols-outlined text-[18px]">keyboard_arrow_up</span>
+        <span class="image-action-icon material-symbols-outlined">{{ icons.MOVE_UP }}</span>
       </button>
       <button
         type="button"
-        [disabled]="interactionDisabled() || index === images().length - 1"
+        [attr.aria-label]="texts.IMAGE_MOVE_DOWN_LABEL"
+        [disabled]="interactionDisabled() || last"
         (click)="onMoveDown(image.id)"
       >
-        <span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+        <span class="image-action-icon material-symbols-outlined">{{ icons.MOVE_DOWN }}</span>
       </button>
       <button
         type="button"
-        [disabled]="interactionDisabled()"
         class="product-form-image-delete"
+        [attr.aria-label]="texts.IMAGE_REMOVE_LABEL"
+        [disabled]="interactionDisabled()"
         (click)="onRemove(image.id)"
       >
-        <span class="material-symbols-outlined text-[18px]">delete</span>
+        <span class="image-action-icon material-symbols-outlined">{{ icons.REMOVE }}</span>
       </button>
     </div>
   </div>
-  } }
+  } @empty {
+  <p class="product-form-images-empty">{{ emptyStateText() }}</p>
+  }
 </div>

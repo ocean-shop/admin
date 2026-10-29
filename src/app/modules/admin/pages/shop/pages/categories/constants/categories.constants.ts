@@ -46,7 +46,28 @@ export const CATEGORIES_TEXTS = {
   DELETE_SUCCESS_TITLE: 'Категорію видалено',
   SORT_SUCCESS_TITLE: 'Порядок категорії оновлено',
   PRODUCT_COUNT_FALLBACK: '-',
-};
+  TOGGLE_LABEL: 'Розгорнути або згорнути підкатегорії',
+  MOVE_UP_LABEL: 'Перемістити категорію вище',
+  MOVE_DOWN_LABEL: 'Перемістити категорію нижче',
+  EDIT_LABEL: 'Редагувати категорію',
+  ADD_CHILD_LABEL: 'Додати підкатегорію',
+  DELETE_LABEL: 'Видалити категорію',
+} as const;
+
+export const CATEGORIES_DEFAULT_NAME = 'Категорія без назви';
+export const CATEGORIES_DEFAULT_SLUG = 'category';
+/** Horizontal indentation per tree level. */
+export const CATEGORIES_TREE_INDENT_PX = 24;
+
+export const CATEGORIES_ICONS = {
+  TOGGLE: 'chevron_right',
+  CATEGORY: 'category',
+  MOVE_UP: 'keyboard_arrow_up',
+  MOVE_DOWN: 'keyboard_arrow_down',
+  EDIT: 'edit',
+  ADD_CHILD: 'add',
+  DELETE: 'delete',
+} as const;
 
 export const CATEGORIES_CREATE_ICON = 'add_circle';
 export const CATEGORIES_NAME_FIELD_ID = 'category-name';

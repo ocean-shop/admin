@@ -1,8 +1,8 @@
 import { Provider } from '@angular/core';
 import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query-experimental';
 
-export function provideTestQueryClient(): Provider[] {
-  return provideTanStackQuery(
+export const provideTestQueryClient = (): Provider[] =>
+  provideTanStackQuery(
     new QueryClient({
       defaultOptions: {
         queries: {
@@ -15,4 +15,3 @@ export function provideTestQueryClient(): Provider[] {
       },
     }),
   );
-}

@@ -1,4 +1,4 @@
-import { Component, HostListener, computed, input, model, output, signal } from '@angular/core';
+import { Component, computed, input, model, output, signal } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
 import { DropdownOption } from './models/dropdown.type';
 import { DropdownTriggerMode } from './models/dropdown-trigger-mode.type';
@@ -8,6 +8,9 @@ import { DropdownVariant } from './models/dropdown-variant.type';
   selector: 'app-dropdown',
   templateUrl: './dropdown.html',
   styleUrl: './dropdown.scss',
+  host: {
+    '(document:click)': 'closeMenu()',
+  },
 })
 export class Dropdown implements FormValueControl<string> {
   public readonly value = model<string>('');
@@ -50,7 +53,6 @@ export class Dropdown implements FormValueControl<string> {
     this.optionSelected.emit(option);
   }
 
-  @HostListener('document:click')
   protected closeMenu(): void {
     if (this.triggerMode() === 'click') {
       this.isOpen.set(false);

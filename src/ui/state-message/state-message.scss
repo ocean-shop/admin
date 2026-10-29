@@ -1,0 +1,9 @@
+@reference "../../styles.scss";
+
+.state-message {
+  @apply text-sm text-on-surface-variant;
+}
+
+.state-message-warning {
+  @apply text-error;
+}

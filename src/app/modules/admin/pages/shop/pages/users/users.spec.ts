@@ -2,6 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
+import { VALUE_FORMAT_TEXTS } from '@core/constants/value-format.constants';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { USERS_TEXTS } from './constants/users.constants';
 import { UserListResponse } from './models/user.model';
@@ -93,8 +94,8 @@ describe('Users', () => {
     const rows = (component as any).userRows();
     expect(rows).toHaveLength(1);
     expect(rows[0]['email']).toBe('john@example.com');
-    expect(rows[0]['mobile_number']).toBe('+380991112233');
-    expect(rows[0]['is_active']).toBe('true');
+    expect(rows[0]['mobileNumber']).toBe('+380991112233');
+    expect(rows[0]['isActive']).toBe(VALUE_FORMAT_TEXTS.YES);
   });
 
   it('navigates to user details on show action', () => {

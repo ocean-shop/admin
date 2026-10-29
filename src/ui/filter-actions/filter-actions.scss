@@ -1,0 +1,13 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply flex gap-2;
+}
+
+.filter-actions-apply {
+  @apply h-11 px-4 rounded-lg bg-primary text-on-primary font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.filter-actions-reset {
+  @apply h-11 px-4 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+}

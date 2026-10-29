@@ -11,6 +11,14 @@ export const ADMIN_PRIMARY_ROUTES = [
   ADMIN_SHOPS_ROUTE,
 ];
 
+export const MENU_SHOP_ID_PLACEHOLDER = ':shopId';
+export const MENU_LOGOUT_ACTION = 'logout';
+/** Shop dashboard route (`/admin/shop/:id`) — needs exact matching to stay inactive on sub-pages. */
+export const MENU_SHOP_ROOT_ROUTE_PATTERN = /^\/admin\/shop\/[^/]+$/;
+export const MENU_SHOP_ID_URL_PATTERN = /\/admin\/shop\/([^/]+)/;
+export const MENU_URL_QUERY_SEPARATOR = '?';
+export const MENU_URL_HASH_SEPARATOR = '#';
+
 export const ADMIN_MENU_ITEMS: MenuItem[] = [
   { icon: 'shop', label: 'Магазин', route: '/admin/shop/:shopId' },
   { icon: 'category', label: 'Категорії', route: '/admin/shop/:shopId/categories' },
@@ -22,8 +30,8 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
 ];
 
 export const ADMIN_MENU_FOOTER_ITEMS: MenuFooterItem[] = [
-  { icon: 'dashboard', label: 'Головна', route: '/admin', buttonClass: 'footer-btn' },
-  { icon: 'ShoppingBag', label: 'Магазини', route: '/admin/shops', buttonClass: 'footer-btn' },
-  { icon: 'person', label: 'Адміністратори', route: '/admin/admins', buttonClass: 'footer-btn' },
-  { icon: 'logout', label: 'Вийти', value: 'logout', buttonClass: 'footer-btn-danger' },
+  { icon: 'dashboard', label: 'Головна', route: ADMIN_HOME_ROUTE, buttonClass: 'footer-btn' },
+  { icon: 'ShoppingBag', label: 'Магазини', route: ADMIN_SHOPS_ROUTE, buttonClass: 'footer-btn' },
+  { icon: 'person', label: 'Адміністратори', route: ADMIN_ADMINS_ROUTE, buttonClass: 'footer-btn' },
+  { icon: 'logout', label: 'Вийти', value: MENU_LOGOUT_ACTION, buttonClass: 'footer-btn-danger' },
 ];

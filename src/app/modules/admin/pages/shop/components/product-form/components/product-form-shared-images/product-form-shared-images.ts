@@ -1,6 +1,13 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, OutputEmitterRef } from '@angular/core';
+import { IMAGE_UPLOAD_ACCEPT } from '@core/constants/image-upload.constants';
+import { filterAllowedImageFiles } from '@core/helpers/image-file.helper';
+import {
+  PRODUCT_FORM_IMAGE_ICONS,
+  PRODUCT_FORM_TEXTS,
+} from '../../constants/product-form.constants';
 import { ProductFormImageListItem } from '../../models/product-form-image-list-item.model';
 
+/** Dropzone + ordered image list shared by the product gallery and the variation images. */
 @Component({
   selector: 'app-product-form-shared-images',
   templateUrl: './product-form-shared-images.html',
@@ -20,33 +27,26 @@ export class ProductFormSharedImages {
   readonly moveDown = output<string>();
   readonly remove = output<string>();
 
+  protected readonly accept = IMAGE_UPLOAD_ACCEPT;
+  protected readonly icons = PRODUCT_FORM_IMAGE_ICONS;
+  protected readonly texts = PRODUCT_FORM_TEXTS;
+
   protected onFileInputChange(event: Event): void {
     const inputElement = event.target as HTMLInputElement | null;
-    const files = this.extractImageFiles(inputElement?.files);
+    const files = filterAllowedImageFiles(inputElement?.files);
     if (inputElement) {
       inputElement.value = '';
     }
 
-    if (!files.length || this.interactionDisabled()) {
-      return;
-    }
-
-    this.filesSelected.emit(files);
+    this.emitFiles(files);
   }
 
   protected onDrop(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (!this.allowDrop() || this.interactionDisabled()) {
-      return;
+    if (this.allowDrop()) {
+      this.emitFiles(filterAllowedImageFiles(event.dataTransfer?.files));
     }
-
-    const files = this.extractImageFiles(event.dataTransfer?.files);
-    if (!files.length) {
-      return;
-    }
-
-    this.filesSelected.emit(files);
   }
 
   protected onDragOver(event: DragEvent): void {
@@ -55,49 +55,27 @@ export class ProductFormSharedImages {
   }
 
   protected onMoveUp(imageId: string): void {
-    if (this.interactionDisabled()) {
-      return;
-    }
-
-    const normalizedImageId = imageId.trim();
-    if (!normalizedImageId) {
-      return;
-    }
-
-    this.moveUp.emit(normalizedImageId);
+    this.emitImageAction(this.moveUp, imageId);
   }
 
   protected onMoveDown(imageId: string): void {
-    if (this.interactionDisabled()) {
-      return;
-    }
-
-    const normalizedImageId = imageId.trim();
-    if (!normalizedImageId) {
-      return;
-    }
-
-    this.moveDown.emit(normalizedImageId);
+    this.emitImageAction(this.moveDown, imageId);
   }
 
   protected onRemove(imageId: string): void {
-    if (this.interactionDisabled()) {
-      return;
-    }
-
-    const normalizedImageId = imageId.trim();
-    if (!normalizedImageId) {
-      return;
-    }
-
-    this.remove.emit(normalizedImageId);
+    this.emitImageAction(this.remove, imageId);
   }
 
-  private extractImageFiles(fileList: FileList | null | undefined): File[] {
-    if (!fileList?.length) {
-      return [];
+  private emitFiles(files: File[]): void {
+    if (files.length && !this.interactionDisabled()) {
+      this.filesSelected.emit(files);
     }
+  }
 
-    return Array.from(fileList).filter((file) => file.type.startsWith('image/'));
+  private emitImageAction(emitter: OutputEmitterRef<string>, imageId: string): void {
+    const id = imageId.trim();
+    if (id && !this.interactionDisabled()) {
+      emitter.emit(id);
+    }
   }
 }

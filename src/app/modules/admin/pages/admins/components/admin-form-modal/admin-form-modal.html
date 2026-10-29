@@ -2,12 +2,12 @@
   [isOpen]="isOpen()"
   [title]="title()"
   [confirmLabel]="confirmLabel()"
-  [confirmDisabled]="!isFormValid() || confirmLoading()"
+  [confirmDisabled]="isConfirmDisabled()"
   [confirmLoading]="confirmLoading()"
   (closed)="onClose()"
   (confirmed)="onConfirm()"
 >
-  <form class="admin-form-modal-form" (submit)="$event.preventDefault(); onConfirm()">
+  <form class="admin-form-modal-form" (submit)="onConfirm($event)">
     <app-input
       [id]="identityFieldId"
       [label]="texts.IDENTITY_LABEL"
@@ -18,7 +18,7 @@
     <app-dropdown
       triggerMode="click"
       variant="form"
-      icon="shield_person"
+      [icon]="roleIcon"
       [label]="texts.ROLE_LABEL"
       [options]="roleOptions()"
       [formField]="adminForm.role"
@@ -27,7 +27,7 @@
     <app-multi-select-dropdown
       triggerMode="click"
       variant="form"
-      icon="storefront"
+      [icon]="shopsIcon"
       [label]="texts.SHOPS_LABEL"
       [options]="shopOptions()"
       [formField]="adminForm.shopIds"

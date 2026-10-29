@@ -1,62 +1,59 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
 import { injectQuery } from '@tanstack/angular-query-experimental';
-import { lastValueFrom, map } from 'rxjs';
-import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
-import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
+import { lastValueFrom } from 'rxjs';
+import { injectRouteParam } from '@core/helpers/route-param.helper';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
+import { InfoList } from '@ui/info-list/info-list';
+import { PageHeader } from '@ui/page-header/page-header';
+import { PageLayout } from '@ui/page-layout/page-layout';
+import { SectionCard } from '@ui/section-card/section-card';
+import { StateMessage } from '@ui/state-message/state-message';
 import { Table } from '@ui/table/table';
-import { TableRowData } from '@ui/table/models/table-column.model';
-import {
-  buildShopBreadcrumb,
-  buildShopSectionBreadcrumb,
-} from '../../constants/shop-breadcrumbs.constants';
-import { USER_OTP_COLUMNS, USER_SESSION_COLUMNS } from '../../constants/user.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { DetailInfoRow } from '../../models/detail-info-row.model';
-import { USERS_TEXTS } from '../users/constants/users.constants';
+import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
 import {
-  UserApiItem,
-  UserOtpApiItem,
-  UserRoleApiItem,
-  UserSessionApiItem,
-} from '../users/models/user.model';
+  USER_OTP_TABLE_COLUMNS,
+  USER_SESSION_TABLE_COLUMNS,
+  USERS_SECTION_PATH,
+  USERS_TEXTS,
+} from '../users/constants/users.constants';
+import {
+  buildUserInfoRows,
+  buildUserOtpRows,
+  buildUserRoleRows,
+  buildUserSessionRows,
+} from '../users/helpers/user-mapping.helper';
 import { UsersService } from '../users/services/users.service';
-import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
 
 @Component({
   selector: 'app-users-detail',
-  imports: [Table, Breadcrumbs],
+  imports: [PageLayout, PageHeader, Breadcrumbs, StateMessage, SectionCard, InfoList, Table],
   templateUrl: './users-detail.html',
   styleUrl: './users-detail.scss',
 })
-export class UsersDetail implements OnInit {
+export class UsersDetail {
   private readonly usersService = inject(UsersService);
-  private readonly activatedRoute = inject(ActivatedRoute);
-  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly textData = USERS_TEXTS;
-  protected readonly otpColumns = USER_OTP_COLUMNS;
-  protected readonly sessionColumns = USER_SESSION_COLUMNS;
-  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    DASHBOARD_BREADCRUMB,
-    buildShopBreadcrumb(this.shopId()),
-    buildShopSectionBreadcrumb(this.shopId(), 'users', this.textData.PAGE_TITLE),
-    { label: this.textData.DETAILS_TITLE },
-  ]);
+  protected readonly otpColumns = USER_OTP_TABLE_COLUMNS;
+  protected readonly sessionColumns = USER_SESSION_TABLE_COLUMNS;
 
-  protected readonly shopId = signal<string | null>(
-    this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null,
-  );
-  protected readonly userId = signal<string | null>(
-    this.activatedRoute.snapshot?.paramMap?.get('userId') ?? null,
+  protected readonly shopId = injectRouteParam('shopId');
+  protected readonly userId = injectRouteParam('userId');
+
+  protected readonly breadcrumbItems = computed(() =>
+    buildShopSectionPageBreadcrumbs(
+      this.shopId(),
+      USERS_SECTION_PATH,
+      USERS_TEXTS.PAGE_TITLE,
+      USERS_TEXTS.DETAILS_TITLE,
+    ),
   );
 
   protected readonly userQuery = injectQuery(() => {
     const userId = this.userId();
     return {
-      queryKey: userId ? SHOP_QUERY_KEYS.userById(userId) : ['shop', 'users', 'missing-user-id'],
+      queryKey: userId ? SHOP_QUERY_KEYS.userById(userId) : SHOP_QUERY_KEYS.disabled('user'),
       enabled: Boolean(this.shopId() && userId),
       queryFn: () => lastValueFrom(this.usersService.getUserById(userId ?? '')),
     };
@@ -67,151 +64,11 @@ export class UsersDetail implements OnInit {
   );
   protected readonly hasError = computed(() => this.userQuery.isError());
   protected readonly user = computed(() => this.userQuery.data() ?? null);
-  protected readonly userInfoRows = computed<DetailInfoRow[]>(() => {
+  protected readonly userInfoRows = computed(() => {
     const user = this.user();
-    if (!user) {
-      return [];
-    }
-
-    return [
-      { label: 'email', value: user.email?.trim() || EMPTY_VALUE_PLACEHOLDER },
-      { label: 'mobile_number', value: this.resolveMobileNumber(user) },
-      { label: 'is_active', value: this.resolveIsActiveLabel(user) },
-      { label: 'created_at', value: this.resolveDateLabel(user.createdAt ?? user.created_at) },
-    ];
+    return user ? buildUserInfoRows(user) : [];
   });
-  protected readonly otpRows = computed<TableRowData[]>(() =>
-    this.resolveOtps(this.user()).map((otp) => ({
-      channel: this.resolveStringValue(otp.channel),
-      purpose: this.resolveStringValue(otp.purpose),
-      attempts: this.resolveNumberValue(otp.attempts),
-    })),
-  );
-  protected readonly sessionRows = computed<TableRowData[]>(() =>
-    this.resolveSessions(this.user()).map((session) => ({
-      user_agent: this.resolveStringValue(session.userAgent ?? session.user_agent),
-      ip_address: this.resolveStringValue(session.ipAddress ?? session.ip_address),
-      device_name: this.resolveStringValue(session.deviceName ?? session.device_name),
-    })),
-  );
-  protected readonly roleRows = computed<DetailInfoRow[]>(() => this.resolveRoleRows(this.user()));
-
-  ngOnInit(): void {
-    this.watchRouteContext();
-  }
-
-  private watchRouteContext(): void {
-    this.shopId.set(this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null);
-    this.userId.set(this.activatedRoute.snapshot?.paramMap?.get('userId') ?? null);
-
-    this.activatedRoute.paramMap
-      .pipe(
-        map((params) => ({
-          shopId: params.get('shopId'),
-          userId: params.get('userId'),
-        })),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(({ shopId, userId }) => {
-        this.shopId.set(shopId);
-        this.userId.set(userId);
-      });
-  }
-
-  private resolveOtps(user: UserApiItem | null): UserOtpApiItem[] {
-    if (!user || !Array.isArray(user.otps)) {
-      return [];
-    }
-
-    return user.otps;
-  }
-
-  private resolveSessions(user: UserApiItem | null): UserSessionApiItem[] {
-    if (!user || !Array.isArray(user.sessions)) {
-      return [];
-    }
-
-    return user.sessions;
-  }
-
-  private resolveRoleRows(user: UserApiItem | null): DetailInfoRow[] {
-    if (!user?.role) {
-      return [];
-    }
-
-    if (typeof user.role === 'string') {
-      return [{ label: 'value', value: this.resolveStringValue(user.role) }];
-    }
-
-    return Object.entries(user.role as UserRoleApiItem)
-      .filter(([key]) => key !== 'id')
-      .map(([key, value]) => ({
-        label: key,
-        value: this.stringifyValue(value),
-      }));
-  }
-
-  private resolveMobileNumber(user: UserApiItem): string {
-    const value = user.mobileNumber ?? user.mobile_number ?? user.phoneNumber;
-    return this.resolveStringValue(value);
-  }
-
-  private resolveIsActiveLabel(user: UserApiItem): string {
-    const value = user.isActive ?? user.is_active;
-    if (typeof value !== 'boolean') {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    return value ? 'true' : 'false';
-  }
-
-  private resolveDateLabel(value: string | null | undefined): string {
-    if (!value?.trim()) {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) {
-      return value.trim();
-    }
-
-    return parsed.toLocaleString();
-  }
-
-  private resolveStringValue(value: unknown): string {
-    if (typeof value !== 'string') {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    const normalized = value.trim();
-    return normalized || EMPTY_VALUE_PLACEHOLDER;
-  }
-
-  private resolveNumberValue(value: unknown): string {
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      return String(value);
-    }
-
-    return EMPTY_VALUE_PLACEHOLDER;
-  }
-
-  private stringifyValue(value: unknown): string {
-    if (value === null || value === undefined) {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    if (typeof value === 'string') {
-      return this.resolveStringValue(value);
-    }
-
-    if (typeof value === 'number' || typeof value === 'boolean') {
-      return String(value);
-    }
-
-    try {
-      return JSON.stringify(value);
-    } catch {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-  }
+  protected readonly otpRows = computed(() => buildUserOtpRows(this.user()));
+  protected readonly sessionRows = computed(() => buildUserSessionRows(this.user()));
+  protected readonly roleRows = computed(() => buildUserRoleRows(this.user()));
 }

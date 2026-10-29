@@ -1,0 +1,9 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply flex flex-col gap-2 min-w-[220px];
+}
+
+.filter-dropdown-label {
+  @apply text-sm font-semibold text-on-surface;
+}

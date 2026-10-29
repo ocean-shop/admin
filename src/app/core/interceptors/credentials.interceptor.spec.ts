@@ -32,6 +32,22 @@ describe('credentialsInterceptor', () => {
     req.flush([]);
   });
 
+  it('does not enable credentials for look-alike hosts that share the API prefix', () => {
+    http.get(`${API_URL}.evil.com/collect`).subscribe();
+
+    const req = httpMock.expectOne(`${API_URL}.evil.com/collect`);
+    expect(req.request.withCredentials).toBe(false);
+    req.flush({});
+  });
+
+  it('keeps an explicit withCredentials flag untouched', () => {
+    http.get(`${API_URL}/catalog/categories`, { withCredentials: true }).subscribe();
+
+    const req = httpMock.expectOne(`${API_URL}/catalog/categories`);
+    expect(req.request.withCredentials).toBe(true);
+    req.flush([]);
+  });
+
   it('does not alter non-API requests', () => {
     http.get('/assets/config.json').subscribe();
 

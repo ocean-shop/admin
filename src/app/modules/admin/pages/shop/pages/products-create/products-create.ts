@@ -1,77 +1,75 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
-import { form, required } from '@angular/forms/signals';
+import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
+import { form } from '@angular/forms/signals';
 import { injectMutation, injectQueryClient } from '@tanstack/angular-query-experimental';
-import { lastValueFrom, map } from 'rxjs';
-import { Button } from '@ui/button/button';
-import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
-import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
-import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
-import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
+import { lastValueFrom } from 'rxjs';
+import { injectRouteParam } from '@core/helpers/route-param.helper';
+import { toTrimmedString } from '@core/helpers/value-format.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import {
-  buildShopBreadcrumb,
-  buildShopSectionBreadcrumb,
-} from '../../constants/shop-breadcrumbs.constants';
-import { PRODUCTS_TYPE_OPTIONS } from '../../constants/products.constants';
-import { ProductForm } from '../../components/product-form/product-form';
+import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
+import { Button } from '@ui/button/button';
+import { PageHeader } from '@ui/page-header/page-header';
+import { PageLayout } from '@ui/page-layout/page-layout';
+import { StateMessage } from '@ui/state-message/state-message';
+import { PRODUCT_FORM_DEFAULT_VALUE } from '../../components/product-form/constants/product-form.constants';
 import { ProductFormModel } from '../../components/product-form/models/product-form.model';
-import { ProductFormValues } from '../../helpers/models/product-form-values.model';
-import { applyProductSeoValidators } from '../../helpers/product-form-schema.helper';
+import { ProductForm } from '../../components/product-form/product-form';
 import {
   buildCreateProductPayload,
   buildUpdateProductPayload,
 } from '../../helpers/product-form-payload.helper';
-import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import {
-  PRODUCTS_CREATE_DEFAULT_FORM_VALUE,
-  PRODUCTS_CREATE_FIELD_IDS,
-  PRODUCTS_CREATE_STATUS_OPTIONS,
-  PRODUCTS_CREATE_TEXTS,
-} from './constants/products-create.constants';
-import { PRODUCTS_TEXTS } from '../products/constants/products.constants';
-import { ProductType } from '../products/models/product-type.enum';
+import { applyProductFormValidators } from '../../helpers/product-form-schema.helper';
+import { invalidateProductQueries } from '../../helpers/product-query.helper';
+import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+import { PRODUCTS_SECTION_PATH, PRODUCTS_TEXTS } from '../products/constants/products.constants';
 import { CreateProductPayload } from '../products/models/create-product-payload.model';
-import {
-  UpdateProductPayload,
-  UpdateProductVariables,
-} from '../products/models/update-product-payload.model';
+import { ProductApiItem } from '../products/models/product.model';
+import { UpdateProductVariables } from '../products/models/update-product-payload.model';
 import { ProductsService } from '../products/services/products.service';
+import { PRODUCTS_CREATE_TEXTS } from './constants/products-create.constants';
 
+/**
+ * The first submit creates the product and unlocks the sidebar sections;
+ * later submits update the same product.
+ */
 @Component({
   selector: 'app-products-create',
-  imports: [Button, ProductForm, Breadcrumbs],
+  imports: [PageLayout, PageHeader, Breadcrumbs, Button, StateMessage, ProductForm],
   templateUrl: './products-create.html',
   styleUrl: './products-create.scss',
 })
-export class ProductsCreate implements OnInit {
+export class ProductsCreate {
   private readonly productsService = inject(ProductsService);
   private readonly toasterService = inject(ToasterService);
-  private readonly activatedRoute = inject(ActivatedRoute);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly queryClient = injectQueryClient();
 
   protected readonly textData = PRODUCTS_CREATE_TEXTS;
-  protected readonly fieldIds = PRODUCTS_CREATE_FIELD_IDS;
-  protected readonly statusOptions = PRODUCTS_CREATE_STATUS_OPTIONS;
-  protected readonly productTypeSimple = ProductType.Simple;
-  protected readonly productTypeOptions: RadioGroupOption[] = PRODUCTS_TYPE_OPTIONS;
-  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    DASHBOARD_BREADCRUMB,
-    buildShopBreadcrumb(this.shopId()),
-    buildShopSectionBreadcrumb(this.shopId(), 'products', PRODUCTS_TEXTS.PAGE_TITLE),
-    { label: this.textData.PAGE_TITLE },
-  ]);
-  protected readonly shopId = signal<string | null>(null);
-  protected readonly createdProductId = signal<string | null>(null);
 
-  protected readonly createProductMutation = injectMutation(() => ({
+  protected readonly shopId = injectRouteParam('shopId');
+  /** Id of the product created on this page; reset when the shop changes. */
+  protected readonly createdProductId = linkedSignal<string | null, string | null>({
+    source: this.shopId,
+    computation: () => null,
+  });
+  protected readonly productFormModel = signal<ProductFormModel>({
+    ...PRODUCT_FORM_DEFAULT_VALUE,
+  });
+  protected readonly productForm = form(this.productFormModel, applyProductFormValidators);
+
+  protected readonly breadcrumbItems = computed(() =>
+    buildShopSectionPageBreadcrumbs(
+      this.shopId(),
+      PRODUCTS_SECTION_PATH,
+      PRODUCTS_TEXTS.PAGE_TITLE,
+      PRODUCTS_CREATE_TEXTS.PAGE_TITLE,
+    ),
+  );
+
+  private readonly createProductMutation = injectMutation(() => ({
     mutationFn: (payload: CreateProductPayload) =>
       lastValueFrom(this.productsService.createProduct(payload)),
   }));
 
-  protected readonly updateProductMutation = injectMutation(() => ({
+  private readonly updateProductMutation = injectMutation(() => ({
     mutationFn: ({ productId, payload }: UpdateProductVariables) =>
       lastValueFrom(this.productsService.updateProduct(productId, payload)),
   }));
@@ -79,91 +77,55 @@ export class ProductsCreate implements OnInit {
   protected readonly isSubmitting = computed(
     () => this.createProductMutation.isPending() || this.updateProductMutation.isPending(),
   );
-  protected readonly productFormModel = signal<ProductFormModel>({
-    ...PRODUCTS_CREATE_DEFAULT_FORM_VALUE,
-  });
-  protected readonly productForm = form(this.productFormModel, (schemaPath) => {
-    required(schemaPath.name, { message: PRODUCTS_CREATE_TEXTS.PRODUCT_NAME_REQUIRED });
-    applyProductSeoValidators(schemaPath);
-  });
-
-  protected readonly isFormValid = computed(() => this.productForm().valid());
+  protected readonly isSubmitDisabled = computed(
+    () => !this.shopId() || !this.productForm().valid() || this.isSubmitting(),
+  );
   protected readonly isSidebarDisabled = computed(() => !this.createdProductId());
 
-  ngOnInit(): void {
-    this.watchShopId();
-  }
-
-  protected onSubmit(): void {
-    if (!this.isFormValid() || this.isSubmitting()) {
+  protected onSubmit(event: Event): void {
+    event.preventDefault();
+    if (this.isSubmitDisabled()) {
       return;
     }
 
-    const existingProductId = this.createdProductId();
-    if (existingProductId) {
-      this.submitProductUpdate(existingProductId);
-      return;
+    const productId = this.createdProductId();
+    if (productId) {
+      this.submitUpdate(productId);
+    } else {
+      this.submitCreate();
     }
-
-    this.submitProductCreate();
   }
 
-  protected onProductTypeChange(type: ProductType): void {
-    this.productFormModel.update((currentValue) => ({
-      ...currentValue,
-      type,
-    }));
-  }
-
-  private watchShopId(): void {
-    const initialShopId = this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null;
-    this.shopId.set(initialShopId);
-    this.createdProductId.set(null);
-
-    this.activatedRoute.paramMap
-      .pipe(
-        map((params) => params.get('shopId')),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((shopId) => {
-        this.shopId.set(shopId);
-        this.createdProductId.set(null);
-      });
-  }
-
-  private submitProductCreate(): void {
-    const payload = this.buildCreatePayload();
-    if (!payload) {
+  private submitCreate(): void {
+    const shopId = this.shopId();
+    const payload = buildCreateProductPayload(shopId, this.productFormModel());
+    if (!shopId || !payload) {
       return;
     }
 
     this.createProductMutation.mutate(payload, {
-      onSuccess: (product) => {
-        const normalizedProductId = String(product.id ?? '').trim();
-        if (!normalizedProductId) {
-          this.toasterService.danger(
-            PRODUCTS_CREATE_TEXTS.CREATE_ERROR_TITLE,
-            PRODUCTS_CREATE_TEXTS.CREATE_ERROR_MESSAGE,
-          );
-          return;
-        }
-
-        this.createdProductId.set(normalizedProductId);
-        this.syncGeneratedSlug(product.slug);
-        this.toasterService.success(PRODUCTS_CREATE_TEXTS.CREATE_SUCCESS_TITLE);
-        this.invalidateProductQueries();
-      },
-      onError: () => {
-        this.toasterService.danger(
-          PRODUCTS_CREATE_TEXTS.CREATE_ERROR_TITLE,
-          PRODUCTS_CREATE_TEXTS.CREATE_ERROR_MESSAGE,
-        );
-      },
+      onSuccess: (product) => this.onProductCreated(shopId, product),
     });
   }
 
-  private submitProductUpdate(productId: string): void {
-    const payload = this.buildUpdatePayload();
+  private onProductCreated(shopId: string, product: ProductApiItem): void {
+    const productId = toTrimmedString(product.id);
+    if (!productId) {
+      this.toasterService.danger(
+        PRODUCTS_CREATE_TEXTS.CREATE_ERROR_TITLE,
+        PRODUCTS_CREATE_TEXTS.CREATE_ERROR_MESSAGE,
+      );
+      return;
+    }
+
+    this.createdProductId.set(productId);
+    this.syncGeneratedSlug(product.slug);
+    this.toasterService.success(PRODUCTS_CREATE_TEXTS.CREATE_SUCCESS_TITLE);
+    invalidateProductQueries(this.queryClient, productId, shopId);
+  }
+
+  private submitUpdate(productId: string): void {
+    const payload = buildUpdateProductPayload(this.productFormModel());
     if (!payload) {
       return;
     }
@@ -173,77 +135,17 @@ export class ProductsCreate implements OnInit {
       {
         onSuccess: () => {
           this.toasterService.success(PRODUCTS_CREATE_TEXTS.UPDATE_SUCCESS_TITLE);
-          this.invalidateProductQueries();
-        },
-        onError: () => {
-          this.toasterService.danger(
-            PRODUCTS_CREATE_TEXTS.UPDATE_ERROR_TITLE,
-            PRODUCTS_CREATE_TEXTS.UPDATE_ERROR_MESSAGE,
-          );
+          invalidateProductQueries(this.queryClient, productId, this.shopId());
         },
       },
     );
   }
 
-  private invalidateProductQueries(): void {
-    const shopId = this.shopId();
-    if (!shopId) {
-      return;
-    }
-
-    this.queryClient.invalidateQueries({
-      queryKey: ['shop', shopId, 'products'],
-    });
-
-    const productId = this.createdProductId();
-    if (!productId) {
-      return;
-    }
-
-    this.queryClient.invalidateQueries({
-      queryKey: SHOP_QUERY_KEYS.productById(productId),
-    });
-  }
-
-  private buildCreatePayload(): CreateProductPayload | null {
-    return buildCreateProductPayload(this.shopId(), this.getFormValues());
-  }
-
-  private buildUpdatePayload(): UpdateProductPayload | null {
-    return buildUpdateProductPayload(this.getFormValues());
-  }
-
-  private getFormValues(): ProductFormValues {
-    return {
-      name: this.productForm.name().value(),
-      type: this.productForm.type().value(),
-      description: this.productForm.description().value(),
-      sku: this.productForm.sku().value(),
-      status: this.productForm.status().value(),
-      available: this.productForm.available().value(),
-      isPopular: this.productForm.isPopular().value(),
-      isMainBanner: this.productForm.isMainBanner().value(),
-      price: this.productForm.price().value(),
-      oldPrice: this.productForm.oldPrice().value(),
-      slug: this.productForm.slug().value(),
-      metaTitle: this.productForm.metaTitle().value(),
-      metaDescription: this.productForm.metaDescription().value(),
-      canonicalUrl: this.productForm.canonicalUrl().value(),
-      noIndex: this.productForm.noIndex().value(),
-    };
-  }
-
-  // The API generates a slug from the name when none is given; show it so later
-  // saves from this page keep it in the form.
+  /** The API generates a slug from the name when none is given; keep it so later saves send it. */
   private syncGeneratedSlug(slug: string | null | undefined): void {
-    const normalizedSlug = slug?.trim() ?? '';
-    if (!normalizedSlug) {
-      return;
+    const generatedSlug = slug?.trim();
+    if (generatedSlug) {
+      this.productFormModel.update((value) => ({ ...value, slug: generatedSlug }));
     }
-
-    this.productFormModel.update((currentValue) => ({
-      ...currentValue,
-      slug: normalizedSlug,
-    }));
   }
 }

@@ -6,7 +6,10 @@ import {
   PRODUCT_FORM_TEXTS,
 } from '../components/product-form/constants/product-form.constants';
 import { ProductFormModel } from '../components/product-form/models/product-form.model';
-import { applyProductSeoValidators } from './product-form-schema.helper';
+import {
+  applyProductFormValidators,
+  applyProductSeoValidators,
+} from './product-form-schema.helper';
 
 describe('product-form-schema.helper', () => {
   const createProductForm = (value: Partial<ProductFormModel>) =>
@@ -41,5 +44,14 @@ describe('product-form-schema.helper', () => {
     expect(productForm.canonicalUrl().errors()[0]?.message).toBe(
       PRODUCT_FORM_TEXTS.CANONICAL_URL_INVALID,
     );
+  });
+
+  it('applyProductFormValidators requires the product name', () => {
+    const productForm = TestBed.runInInjectionContext(() =>
+      form(signal<ProductFormModel>({ ...PRODUCT_FORM_DEFAULT_VALUE }), applyProductFormValidators),
+    );
+
+    expect(productForm.name().valid()).toBe(false);
+    expect(productForm.name().errors()[0]?.message).toBe(PRODUCT_FORM_TEXTS.PRODUCT_NAME_REQUIRED);
   });
 });

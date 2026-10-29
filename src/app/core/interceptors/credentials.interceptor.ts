@@ -1,12 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { API_URL } from '@core/constants/api.constant';
-
-function shouldAttachCredentials(url: string): boolean {
-  return url.startsWith(API_URL);
-}
+import { isApiUrl } from '@core/helpers/api-url.helper';
 
 export const credentialsInterceptor: HttpInterceptorFn = (req, next) => {
-  if (req.withCredentials || !shouldAttachCredentials(req.url)) {
+  if (req.withCredentials || !isApiUrl(req.url)) {
     return next(req);
   }
 

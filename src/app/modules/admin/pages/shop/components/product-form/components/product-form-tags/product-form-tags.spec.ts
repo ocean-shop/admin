@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import { PRODUCTS_CREATE_TEXTS } from '../../../../pages/products-create/constants/products-create.constants';
+import { PRODUCT_FORM_TEXTS } from '../../constants/product-form.constants';
 import { ProductFormAssignedTag } from '../../models/product-form-assigned-tag.model';
 import { ProductTagsService } from './services/product-tags.service';
 import { ProductFormTags } from './product-form-tags';
@@ -22,8 +22,7 @@ describe('ProductFormTags', () => {
     component = fixture.componentInstance;
     tagsService = fixture.debugElement.injector.get(ProductTagsService);
 
-    fixture.componentRef.setInput('texts', PRODUCTS_CREATE_TEXTS);
-    fixture.componentRef.setInput('toastTexts', PRODUCTS_CREATE_TEXTS);
+    fixture.componentRef.setInput('texts', PRODUCT_FORM_TEXTS);
     fixture.componentRef.setInput('shopId', 'shop-1');
     fixture.componentRef.setInput('productId', 'product-1');
     fixture.componentRef.setInput('sidebarDisabled', false);
@@ -38,29 +37,29 @@ describe('ProductFormTags', () => {
   it('renders tags title', () => {
     const pageElement = fixture.nativeElement as HTMLElement;
 
-    expect(pageElement.textContent).toContain(PRODUCTS_CREATE_TEXTS.TAGS_TITLE);
+    expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.TAGS_TITLE);
   });
 
   it('delegates tag search changes to tags service', () => {
-    const searchSpy = vi.spyOn(tagsService, 'onTagSearchChange');
+    const searchSpy = vi.spyOn(tagsService, 'onSearchChange');
 
-    (component as any).onTagSearchChange('summer');
+    (component as any).onSearchChange('summer');
 
     expect(searchSpy).toHaveBeenCalledWith('summer');
   });
 
   it('delegates tag assignment and unassignment to tags service', () => {
-    const assignSpy = vi.spyOn(tagsService, 'onTagAssign');
-    const unassignSpy = vi.spyOn(tagsService, 'onTagUnassign');
+    const assignSpy = vi.spyOn(tagsService, 'onAssign');
+    const unassignSpy = vi.spyOn(tagsService, 'onUnassign');
 
-    (component as any).onTagAssign('tag-1');
-    (component as any).onTagUnassign('tag-5');
+    (component as any).onAssign('tag-1');
+    (component as any).onUnassign('tag-5');
 
     expect(assignSpy).toHaveBeenCalledWith('tag-1');
     expect(unassignSpy).toHaveBeenCalledWith('tag-5');
   });
 
   it('seeds assigned tags in service state', () => {
-    expect(tagsService.assignedTags()).toEqual(assignedTags);
+    expect(tagsService.assignedItems()).toEqual(assignedTags);
   });
 });
