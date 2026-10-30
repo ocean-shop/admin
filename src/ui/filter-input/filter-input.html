@@ -1,0 +1,10 @@
+<label class="filter-input-label" [for]="inputId()">{{ label() }}</label>
+<input
+  class="filter-input-control"
+  type="text"
+  [id]="inputId()"
+  [value]="value()"
+  [placeholder]="placeholder()"
+  [disabled]="disabled()"
+  (input)="onInput($event)"
+/>

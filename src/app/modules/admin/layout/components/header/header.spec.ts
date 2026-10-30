@@ -1,30 +1,31 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
-import { AuthService } from '../../../../../core/services/auth/auth.service';
+import { provideRouter, Router } from '@angular/router';
+import { APP_ROUTES } from '@core/constants/routes.constants';
+import { AuthService } from '@core/services/auth/auth.service';
+import { HEADER_TEXTS } from '../../constants/header.constants';
 import { Header } from './header';
-import { LayoutService } from '../../services/layout.service';
+import { LayoutService } from '../../services/layout/layout.service';
 
 describe('Header', () => {
   let component: Header;
   let fixture: ComponentFixture<Header>;
   let layoutService: LayoutService;
   let authService: AuthService;
-  let mockRouter: { navigate: ReturnType<typeof vi.fn> };
+  let navigateSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
-    mockRouter = {
-      navigate: vi.fn(),
-    };
-
     await TestBed.configureTestingModule({
       imports: [Header],
       providers: [
+        provideZonelessChangeDetection(),
+        provideRouter([]),
         LayoutService,
-        { provide: Router, useValue: mockRouter },
         { provide: AuthService, useValue: { logout: vi.fn() } },
       ],
     }).compileComponents();
 
+    navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(Header);
     component = fixture.componentInstance;
     layoutService = TestBed.inject(LayoutService);
@@ -34,6 +35,13 @@ describe('Header', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('renders the title as a link to the admin home', () => {
+    const link = fixture.nativeElement.querySelector('.header-title-link') as HTMLAnchorElement;
+
+    expect(link.textContent?.trim()).toBe(HEADER_TEXTS.TITLE);
+    expect(link.getAttribute('href')).toBe(APP_ROUTES.ADMIN);
   });
 
   it('should toggle sidebar on menu button click', () => {
@@ -73,7 +81,7 @@ describe('Header', () => {
     fixture.detectChanges();
 
     expect(logoutSpy).toHaveBeenCalled();
-    expect(mockRouter.navigate).not.toHaveBeenCalled();
+    expect(navigateSpy).not.toHaveBeenCalled();
     expect(fixture.nativeElement.querySelector('app-simple-menu')).toBeNull();
   });
 });

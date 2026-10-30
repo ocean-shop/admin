@@ -1,0 +1,9 @@
+<span class="filter-dropdown-label">{{ label() }}</span>
+<app-dropdown
+  triggerMode="click"
+  variant="bordered"
+  [icon]="icon()"
+  [options]="options()"
+  [value]="value()"
+  (optionSelected)="optionSelected.emit($event)"
+/>

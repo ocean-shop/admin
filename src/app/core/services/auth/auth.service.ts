@@ -1,18 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import {
-  DestroyRef,
-  Injectable,
-  PLATFORM_ID,
-  computed,
-  inject,
-  isDevMode,
-  signal,
-} from '@angular/core';
+import { DestroyRef, Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { injectQueryClient } from '@tanstack/angular-query-experimental';
 import { Observable, catchError, defer, finalize, lastValueFrom, of, shareReplay, tap } from 'rxjs';
-import { API_URL } from '@core/constants/api.constant';
+import { AUTH_API_ENDPOINTS } from '@core/constants/api.constant';
+import { APP_ROUTES } from '@core/constants/routes.constants';
+import { logDebug } from '@core/helpers/debug-log/debug-log.helper';
 import { AuthResponse, AuthUser } from '@core/models/auth.model';
 import { AuthBroadcastMessage } from '@core/models/auth-broadcast.model';
 import { AUTH_BROADCAST_EVENTS } from '@core/models/auth-broadcast.enum';
@@ -20,6 +14,8 @@ import { AUTH_ROLES } from '@core/models/auth-role.enum';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import {
   AUTH_BROADCAST_CHANNEL,
+  AUTH_LOG_MESSAGES,
+  AUTH_LOG_SCOPE,
   AUTH_REFRESH_LOCK,
   AUTH_STORAGE_KEYS,
   LEGACY_ACCESS_TOKEN_KEY,
@@ -83,23 +79,23 @@ export class AuthService {
 
     const refreshVersion = this.sessionVersion;
     const tokenBeforeRefresh = this.getAccessToken();
-    this.logAuthDebug('Starting refresh request');
+    this.logAuthDebug(AUTH_LOG_MESSAGES.REFRESH_STARTED);
 
     this.refreshInFlight = this.withRefreshLock(this.requestRefresh(tokenBeforeRefresh)).pipe(
       tap((session) => {
         if (this.sessionVersion !== refreshVersion) {
-          this.logAuthDebug('Ignoring stale refresh response');
+          this.logAuthDebug(AUTH_LOG_MESSAGES.REFRESH_STALE_IGNORED);
           return;
         }
 
         if (session?.accessToken) {
           this.handleAuthSuccess(session);
-          this.logAuthDebug('Refresh succeeded and token updated');
+          this.logAuthDebug(AUTH_LOG_MESSAGES.REFRESH_SUCCEEDED);
         }
       }),
       finalize(() => {
         this.refreshInFlight = null;
-        this.logAuthDebug('Refresh request finalized');
+        this.logAuthDebug(AUTH_LOG_MESSAGES.REFRESH_FINALIZED);
       }),
       shareReplay(1),
     );
@@ -110,10 +106,10 @@ export class AuthService {
   logout(): void {
     this.clearSession();
     this.http
-      .post(`${API_URL}/user/auth/logout`, {}, { withCredentials: true })
+      .post(AUTH_API_ENDPOINTS.LOGOUT, {}, { withCredentials: true })
       .pipe(catchError(() => of(null)))
       .subscribe();
-    this.router.navigate(['/login']);
+    this.router.navigate([APP_ROUTES.LOGIN]);
   }
 
   /**
@@ -124,12 +120,12 @@ export class AuthService {
     return defer(() => {
       const current = this.session();
       if (current && current.accessToken !== tokenBeforeRefresh) {
-        this.logAuthDebug('Reusing session refreshed by another tab');
+        this.logAuthDebug(AUTH_LOG_MESSAGES.SESSION_REUSED_FROM_TAB);
         return of(current);
       }
 
       return this.http.post<AuthResponse>(
-        `${API_URL}/user/auth/refresh`,
+        AUTH_API_ENDPOINTS.REFRESH,
         {},
         { withCredentials: true },
       );
@@ -174,27 +170,23 @@ export class AuthService {
     this.channel?.postMessage(message);
   }
 
-  private handleBroadcast = (event: MessageEvent<AuthBroadcastMessage>): void => {
+  private readonly handleBroadcast = (event: MessageEvent<AuthBroadcastMessage>): void => {
     const message = event.data;
 
     if (message?.type === AUTH_BROADCAST_EVENTS.SESSION) {
       this.session.set(message.session);
-      this.logAuthDebug('Synced session from another tab');
+      this.logAuthDebug(AUTH_LOG_MESSAGES.SESSION_SYNCED_FROM_TAB);
       return;
     }
 
     if (message?.type === AUTH_BROADCAST_EVENTS.LOGOUT) {
       this.resetSession();
-      this.router.navigate(['/login']);
-      this.logAuthDebug('Logged out from another tab');
+      this.router.navigate([APP_ROUTES.LOGIN]);
+      this.logAuthDebug(AUTH_LOG_MESSAGES.LOGGED_OUT_FROM_TAB);
     }
   };
 
   private logAuthDebug(message: string): void {
-    if (!isDevMode()) {
-      return;
-    }
-
-    console.debug(`[AuthService] ${message}`);
+    logDebug(AUTH_LOG_SCOPE, message);
   }
 }

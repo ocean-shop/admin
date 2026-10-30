@@ -32,14 +32,15 @@ export const ATTRIBUTES_TEXTS = {
   VALUE_REQUIRED_MESSAGE: "Значення атрибута є обов'язковим",
   CREATE_SUCCESS_TITLE: 'Атрибут створено',
   DELETE_SUCCESS_TITLE: 'Атрибут видалено',
-};
+} as const;
 
 export const ATTRIBUTES_CREATE_ICON = 'add';
 export const ATTRIBUTES_PAGE_SIZE = 20;
 export const ATTRIBUTES_NAME_FIELD_ID = 'attribute-name';
 export const ATTRIBUTES_VALUE_FIELD_ID = 'attribute-value';
-export const ATTRIBUTES_DEFAULT_NAME = 'Untitled attribute';
-export const ATTRIBUTES_DEFAULT_VALUE = 'No value';
+export const ATTRIBUTES_SEARCH_INPUT_ID = 'attributes-search-input';
+export const ATTRIBUTES_DEFAULT_NAME = 'Атрибут без назви';
+export const ATTRIBUTES_DEFAULT_VALUE = 'Без значення';
 export const ATTRIBUTES_TABLE_COLUMNS: TableColumn[] = [
   { key: 'name', header: ATTRIBUTES_TEXTS.TABLE_NAME_HEADER },
   { key: 'value', header: ATTRIBUTES_TEXTS.TABLE_VALUE_HEADER },

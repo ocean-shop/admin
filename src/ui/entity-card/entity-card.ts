@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { EntityCardData } from './models/entity-card.model';
 
 @Component({
   selector: 'app-entity-card',
+  imports: [RouterLink],
   templateUrl: './entity-card.html',
   styleUrl: './entity-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

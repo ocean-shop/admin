@@ -28,6 +28,10 @@
   @apply text-2xl font-bold text-primary dark:text-primary-fixed tracking-tight;
 }
 
+.header-title-link {
+  @apply hover:opacity-80 transition-opacity;
+}
+
 .notification-dot {
   @apply absolute top-2 right-2 w-2 h-2 bg-error rounded-full;
 }

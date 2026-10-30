@@ -1,8 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import { PRODUCTS_CREATE_TEXTS } from '../../../../pages/products-create/constants/products-create.constants';
-import { ProductCategoriesService } from './services/product-categories.service';
+import { PRODUCT_FORM_TEXTS } from '../../constants/product-form.constants';
+import { ProductCategoriesService } from './services/product-categories/product-categories.service';
 import { ProductFormCategories } from './product-form-categories';
 
 describe('ProductFormCategories', () => {
@@ -20,8 +20,7 @@ describe('ProductFormCategories', () => {
     component = fixture.componentInstance;
     categoriesService = fixture.debugElement.injector.get(ProductCategoriesService);
 
-    fixture.componentRef.setInput('texts', PRODUCTS_CREATE_TEXTS);
-    fixture.componentRef.setInput('toastTexts', PRODUCTS_CREATE_TEXTS);
+    fixture.componentRef.setInput('texts', PRODUCT_FORM_TEXTS);
     fixture.componentRef.setInput('shopId', 'shop-1');
     fixture.componentRef.setInput('productId', 'product-1');
     fixture.componentRef.setInput('sidebarDisabled', false);
@@ -36,7 +35,7 @@ describe('ProductFormCategories', () => {
   it('renders categories title', () => {
     const pageElement = fixture.nativeElement as HTMLElement;
 
-    expect(pageElement.textContent).toContain(PRODUCTS_CREATE_TEXTS.CATEGORIES_TITLE);
+    expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.CATEGORIES_TITLE);
   });
 
   it('delegates category toggles to categories service', () => {

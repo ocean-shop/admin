@@ -1,0 +1,139 @@
+<section class="variation-card">
+  <header class="variation-card-header">
+    <h3 class="variation-card-title">{{ title() }}</h3>
+    <button
+      type="button"
+      class="variation-card-remove"
+      [attr.aria-label]="texts().VARIATION_REMOVE_LABEL"
+      [disabled]="disabled()"
+      (click)="removed.emit()"
+    >
+      <span class="variation-card-remove-icon material-symbols-outlined">{{ removeIcon }}</span>
+    </button>
+  </header>
+
+  <div class="variation-card-field">
+    <app-input
+      [id]="fieldIds().TITLE"
+      [label]="texts().VARIATION_TITLE_LABEL"
+      [placeholder]="texts().VARIATION_TITLE_PLACEHOLDER"
+      [value]="variation().title"
+      [disabled]="disabled()"
+      (valueChange)="onFieldChange('title', $event)"
+    />
+  </div>
+
+  <div class="variation-card-field">
+    <app-input
+      [id]="fieldIds().NAME"
+      [label]="texts().VARIATION_NAME_LABEL"
+      [placeholder]="texts().VARIATION_NAME_PLACEHOLDER"
+      [value]="variation().name"
+      [disabled]="disabled()"
+      (valueChange)="onFieldChange('name', $event)"
+    />
+  </div>
+
+  <div class="variation-card-columns">
+    <div class="variation-card-field">
+      <app-input
+        [id]="fieldIds().PRICE"
+        [label]="texts().VARIATION_PRICE_LABEL"
+        [placeholder]="texts().VARIATION_PRICE_PLACEHOLDER"
+        type="number"
+        [value]="variation().price"
+        [disabled]="disabled()"
+        (valueChange)="onFieldChange('price', $event)"
+      />
+    </div>
+
+    <div class="variation-card-field">
+      <app-input
+        [id]="fieldIds().OLD_PRICE"
+        [label]="texts().VARIATION_OLD_PRICE_LABEL"
+        [placeholder]="texts().VARIATION_OLD_PRICE_PLACEHOLDER"
+        type="number"
+        [value]="variation().oldPrice"
+        [disabled]="disabled()"
+        (valueChange)="onFieldChange('oldPrice', $event)"
+      />
+    </div>
+  </div>
+
+  <div class="variation-card-columns">
+    <div class="variation-card-field">
+      <app-input
+        [id]="fieldIds().SKU"
+        [label]="texts().VARIATION_SKU_LABEL"
+        [placeholder]="texts().VARIATION_SKU_PLACEHOLDER"
+        [value]="variation().sku"
+        [disabled]="disabled()"
+        (valueChange)="onFieldChange('sku', $event)"
+      />
+    </div>
+
+    <div class="variation-card-field variation-card-checkboxes">
+      <app-checkbox
+        [id]="fieldIds().AVAILABLE"
+        [label]="texts().VARIATION_AVAILABLE_LABEL"
+        [checked]="variation().available"
+        [disabled]="disabled()"
+        (checkedChange)="onFieldChange('available', $event)"
+      />
+      <app-checkbox
+        [id]="fieldIds().IS_MAIN"
+        [label]="texts().VARIATION_IS_MAIN_LABEL"
+        [checked]="variation().isMain"
+        [disabled]="disabled()"
+        (checkedChange)="onFieldChange('isMain', $event)"
+      />
+    </div>
+  </div>
+
+  <section class="variation-card-section">
+    <h4 class="variation-card-section-title">{{ texts().VARIATION_ATTRIBUTES_TITLE }}</h4>
+    <app-product-form-shared-attributes
+      [searchInputId]="fieldIds().ATTRIBUTE_SEARCH"
+      [searchLabel]="texts().VARIATION_ATTRIBUTES_SEARCH_PLACEHOLDER"
+      [searchPlaceholder]="texts().VARIATION_ATTRIBUTES_SEARCH_PLACEHOLDER"
+      [searchValue]="variation().attributeSearchValue"
+      [interactionDisabled]="disabled()"
+      [isSearchLoading]="variation().isAttributeSearchLoading"
+      [searchLoadingText]="texts().VARIATION_ATTRIBUTES_SEARCH_LOADING"
+      [searchEmptyText]="texts().VARIATION_ATTRIBUTES_SEARCH_EMPTY"
+      [assignedEmptyText]="texts().VARIATION_ATTRIBUTES_ASSIGNED_EMPTY"
+      [removeAriaLabel]="texts().VARIATION_ATTRIBUTES_REMOVE_LABEL"
+      [searchResults]="variation().attributeSearchResults"
+      [assignedAttributes]="variation().attributes"
+      [compactLayout]="true"
+      (searchChange)="attributeSearchChange.emit($event)"
+      (assign)="attributeAssign.emit($event)"
+      (unassign)="attributeUnassign.emit($event)"
+    />
+  </section>
+
+  <section class="variation-card-section">
+    <h4 class="variation-card-section-title">{{ texts().VARIATION_IMAGES_TITLE }}</h4>
+    <app-product-form-shared-images
+      [interactionDisabled]="disabled()"
+      [images]="variation().images"
+      [dropzoneHint]="texts().VARIATION_IMAGES_DROPZONE_HINT"
+      [emptyStateText]="texts().VARIATION_IMAGES_ASSIGNED_EMPTY"
+      [imageSubTitle]="texts().IMAGES_SUBTITLE"
+      [compactDropzone]="true"
+      (filesSelected)="imageFilesSelected.emit($event)"
+      (moveUp)="imageMoveUp.emit($event)"
+      (moveDown)="imageMoveDown.emit($event)"
+      (remove)="imageRemove.emit($event)"
+    />
+  </section>
+
+  <button
+    type="button"
+    class="variation-card-save"
+    [disabled]="isSaveDisabled()"
+    (click)="saved.emit()"
+  >
+    {{ saveButtonLabel() }}
+  </button>
+</section>

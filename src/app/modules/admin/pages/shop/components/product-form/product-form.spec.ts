@@ -2,15 +2,8 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { form } from '@angular/forms/signals';
 import { By } from '@angular/platform-browser';
-import { RadioGroupOption } from '@ui/radio-group/models/radio-group-option.model';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import {
-  PRODUCT_FORM_DEFAULT_VALUE,
-  PRODUCT_FORM_FIELD_IDS,
-  PRODUCT_FORM_STATUS_OPTIONS,
-  PRODUCT_FORM_TEXTS,
-} from './constants/product-form.constants';
-import { PRODUCTS_CREATE_TEXTS } from '../../pages/products-create/constants/products-create.constants';
+import { PRODUCT_FORM_DEFAULT_VALUE, PRODUCT_FORM_TEXTS } from './constants/product-form.constants';
 import { ProductForm } from './product-form';
 import { ProductFormImageItem } from './models/product-form-image-item.model';
 import { ProductFormModel } from './models/product-form.model';
@@ -20,18 +13,6 @@ import { ProductType } from '../../pages/products/models/product-type.enum';
 describe('ProductForm', () => {
   let fixture: ComponentFixture<ProductForm>;
   let component: ProductForm;
-  const productTypeOptions: RadioGroupOption[] = [
-    {
-      id: PRODUCT_FORM_FIELD_IDS.TYPE_SIMPLE,
-      value: ProductType.Simple,
-      label: PRODUCT_FORM_TEXTS.PRODUCT_TYPE_SIMPLE_LABEL,
-    },
-    {
-      id: PRODUCT_FORM_FIELD_IDS.TYPE_VARIABLE,
-      value: ProductType.Variable,
-      label: PRODUCT_FORM_TEXTS.PRODUCT_TYPE_VARIABLE_LABEL,
-    },
-  ];
   const images: ProductFormImageItem[] = [
     { id: 'img-1', name: 'image-1.jpg', imageDataUrl: 'data:image/jpeg;base64,Zm9v' },
   ];
@@ -67,12 +48,6 @@ describe('ProductForm', () => {
     const formModel = signal<ProductFormModel>({ ...PRODUCT_FORM_DEFAULT_VALUE });
     const productForm = TestBed.runInInjectionContext(() => form(formModel, () => undefined));
     fixture.componentRef.setInput('productForm', productForm);
-    fixture.componentRef.setInput('texts', PRODUCT_FORM_TEXTS);
-    fixture.componentRef.setInput('toastTexts', PRODUCTS_CREATE_TEXTS);
-    fixture.componentRef.setInput('fieldIds', PRODUCT_FORM_FIELD_IDS);
-    fixture.componentRef.setInput('statusOptions', PRODUCT_FORM_STATUS_OPTIONS);
-    fixture.componentRef.setInput('productTypeOptions', productTypeOptions);
-    fixture.componentRef.setInput('productTypeSimple', ProductType.Simple);
     fixture.componentRef.setInput('shopId', 'shop-1');
     fixture.componentRef.setInput('productId', 'product-1');
     fixture.componentRef.setInput('sidebarDisabled', false);
@@ -115,27 +90,9 @@ describe('ProductForm', () => {
       By.css('app-product-form-pricing-inventory'),
     );
     const variationsSection = fixture.debugElement.query(By.css('app-product-form-variations'));
-    const pageElement = fixture.nativeElement as HTMLElement;
 
     expect(pricingInventorySection).toBeNull();
     expect(variationsSection).not.toBeNull();
-    expect(pageElement.textContent).not.toContain(PRODUCT_FORM_TEXTS.PRICING_INVENTORY_TITLE);
-  });
-
-  it('emits product type changes for supported values', () => {
-    const emitSpy = vi.spyOn((component as any).productTypeChange, 'emit');
-
-    (component as any).onProductTypeOptionChange(ProductType.Variable);
-
-    expect(emitSpy).toHaveBeenCalledWith(ProductType.Variable);
-  });
-
-  it('ignores product type changes for unsupported values', () => {
-    const emitSpy = vi.spyOn((component as any).productTypeChange, 'emit');
-
-    (component as any).onProductTypeOptionChange('unknown');
-
-    expect(emitSpy).not.toHaveBeenCalled();
   });
 
   it('shows sidebar hint when sidebar is disabled', () => {

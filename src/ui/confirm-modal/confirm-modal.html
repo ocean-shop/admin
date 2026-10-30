@@ -1,0 +1,16 @@
+<app-modal
+  [isOpen]="isOpen()"
+  [title]="title()"
+  [confirmLabel]="confirmLabel()"
+  [confirmLoading]="loading()"
+  [confirmDisabled]="loading()"
+  [isDanger]="true"
+  (closed)="closed.emit()"
+  (confirmed)="confirmed.emit()"
+>
+  <p class="confirm-modal-message">
+    {{ message() }} @if (highlight()) {
+    <strong class="confirm-modal-highlight">{{ highlight() }}</strong>
+    }{{ suffix() }}
+  </p>
+</app-modal>

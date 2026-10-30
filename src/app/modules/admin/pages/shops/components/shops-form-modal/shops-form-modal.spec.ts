@@ -122,7 +122,6 @@ describe('ShopsFormModal', () => {
       description: 'Main warehouse shop',
       url: 'https://ocean-shop.example',
       createdAt: '2026-01-01T10:00:00Z',
-      updatedAt: '2026-01-02T10:00:00Z',
     };
     fixture.componentRef.setInput('mode', 'update');
     fixture.componentRef.setInput('shop', shop);

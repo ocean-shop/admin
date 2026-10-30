@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { LOCAL_STORAGE_LOG_MESSAGES } from '@core/constants/local-storage.constants';
 import { LocalStorageService } from './local-storage.service';
 import { describe, beforeEach, it, expect, vi, afterEach } from 'vitest';
 
@@ -50,7 +51,7 @@ describe('LocalStorageService', () => {
 
       expect(result).toBeNull();
       expect(consoleSpy).toHaveBeenCalled();
-      expect(consoleSpy.mock.calls[0][0]).toContain('Error reading testKey from localStorage');
+      expect(consoleSpy.mock.calls[0][0]).toBe(LOCAL_STORAGE_LOG_MESSAGES.READ_ERROR('testKey'));
     });
 
     it('should handle and log unexpected errors', () => {
@@ -63,7 +64,7 @@ describe('LocalStorageService', () => {
 
       expect(result).toBeNull();
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Error reading testKey from localStorage',
+        LOCAL_STORAGE_LOG_MESSAGES.READ_ERROR('testKey'),
         expect.any(Error),
       );
     });
@@ -87,7 +88,7 @@ describe('LocalStorageService', () => {
       service.setItem('testKey', { data: 'test' });
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Error saving testKey to localStorage',
+        LOCAL_STORAGE_LOG_MESSAGES.SAVE_ERROR('testKey'),
         expect.any(Error),
       );
     });
@@ -111,7 +112,7 @@ describe('LocalStorageService', () => {
       service.removeItem('testKey');
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Error removing testKey from localStorage',
+        LOCAL_STORAGE_LOG_MESSAGES.REMOVE_ERROR('testKey'),
         expect.any(Error),
       );
     });
@@ -137,7 +138,10 @@ describe('LocalStorageService', () => {
 
       service.clear();
 
-      expect(consoleSpy).toHaveBeenCalledWith('Error clearing localStorage', expect.any(Error));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        LOCAL_STORAGE_LOG_MESSAGES.CLEAR_ERROR,
+        expect.any(Error),
+      );
     });
   });
 });

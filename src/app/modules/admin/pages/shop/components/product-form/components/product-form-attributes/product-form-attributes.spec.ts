@@ -1,9 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import { PRODUCTS_CREATE_TEXTS } from '../../../../pages/products-create/constants/products-create.constants';
+import { PRODUCT_FORM_TEXTS } from '../../constants/product-form.constants';
 import { ProductFormAssignedAttribute } from '../../models/product-form-assigned-attribute.model';
-import { ProductAttributesService } from './services/product-attributes.service';
+import { ProductAttributesService } from './services/product-attributes/product-attributes.service';
 import { ProductFormAttributes } from './product-form-attributes';
 
 describe('ProductFormAttributes', () => {
@@ -24,8 +24,7 @@ describe('ProductFormAttributes', () => {
     component = fixture.componentInstance;
     attributesService = fixture.debugElement.injector.get(ProductAttributesService);
 
-    fixture.componentRef.setInput('texts', PRODUCTS_CREATE_TEXTS);
-    fixture.componentRef.setInput('toastTexts', PRODUCTS_CREATE_TEXTS);
+    fixture.componentRef.setInput('texts', PRODUCT_FORM_TEXTS);
     fixture.componentRef.setInput('shopId', 'shop-1');
     fixture.componentRef.setInput('productId', 'product-1');
     fixture.componentRef.setInput('sidebarDisabled', false);
@@ -40,29 +39,29 @@ describe('ProductFormAttributes', () => {
   it('renders attributes title', () => {
     const pageElement = fixture.nativeElement as HTMLElement;
 
-    expect(pageElement.textContent).toContain(PRODUCTS_CREATE_TEXTS.ATTRIBUTES_TITLE);
+    expect(pageElement.textContent).toContain(PRODUCT_FORM_TEXTS.ATTRIBUTES_TITLE);
   });
 
   it('delegates attribute search changes to attributes service', () => {
-    const searchSpy = vi.spyOn(attributesService, 'onAttributeSearchChange');
+    const searchSpy = vi.spyOn(attributesService, 'onSearchChange');
 
-    (component as any).onAttributeSearchChange('new search');
+    (component as any).onSearchChange('new search');
 
     expect(searchSpy).toHaveBeenCalledWith('new search');
   });
 
   it('delegates attribute assignment and unassignment to attributes service', () => {
-    const assignSpy = vi.spyOn(attributesService, 'onAttributeAssign');
-    const unassignSpy = vi.spyOn(attributesService, 'onAttributeUnassign');
+    const assignSpy = vi.spyOn(attributesService, 'onAssign');
+    const unassignSpy = vi.spyOn(attributesService, 'onUnassign');
 
-    (component as any).onAttributeAssign('attr-1');
-    (component as any).onAttributeUnassign('attr-5');
+    (component as any).onAssign('attr-1');
+    (component as any).onUnassign('attr-5');
 
     expect(assignSpy).toHaveBeenCalledWith('attr-1');
     expect(unassignSpy).toHaveBeenCalledWith('attr-5');
   });
 
   it('seeds assigned attributes in service state', () => {
-    expect(attributesService.assignedAttributes()).toEqual(assignedAttributes);
+    expect(attributesService.assignedItems()).toEqual(assignedAttributes);
   });
 });

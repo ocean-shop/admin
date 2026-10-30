@@ -1,4 +1,3 @@
-export type ProductFormAttributeItem = {
-  id: string;
-  label: string;
-};
+import { ProductFormOption } from './product-form-option.model';
+
+export type ProductFormAttributeItem = ProductFormOption;

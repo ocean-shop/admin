@@ -1,0 +1,8 @@
+<form class="filter-bar" (submit)="onSubmit($event)">
+  <div class="filter-bar-fields">
+    <ng-content select="[filterFields]" />
+  </div>
+  <div class="filter-bar-controls">
+    <ng-content select="[filterControls]" />
+  </div>
+</form>

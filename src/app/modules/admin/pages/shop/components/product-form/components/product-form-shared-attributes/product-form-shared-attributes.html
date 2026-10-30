@@ -27,7 +27,7 @@
   } @else { @for (attribute of assignedAttributes(); track attribute.id) {
   <app-chip
     [label]="attribute.label"
-    variant="attribute"
+    [variant]="chipVariant()"
     [removeAriaLabel]="removeAriaLabel()"
     [disabled]="interactionDisabled()"
     (remove)="onUnassign(attribute.id)"

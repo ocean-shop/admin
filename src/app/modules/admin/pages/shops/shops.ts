@@ -1,118 +1,145 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize, Observable } from 'rxjs';
+import { Component, computed, inject, signal } from '@angular/core';
+import {
+  injectMutation,
+  injectQuery,
+  injectQueryClient,
+} from '@tanstack/angular-query-experimental';
+import { lastValueFrom, map } from 'rxjs';
+import {
+  isPageChangeAllowed,
+  resolveTotalItems,
+  resolveTotalPages,
+} from '@core/helpers/pagination/pagination.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Button } from '@ui/button/button';
+import { ConfirmModal } from '@ui/confirm-modal/confirm-modal';
 import { EntityCard } from '@ui/entity-card/entity-card';
 import { EntityCardData } from '@ui/entity-card/models/entity-card.model';
-import { Modal } from '@ui/modal/modal';
+import { PageHeader } from '@ui/page-header/page-header';
+import { PageLayout } from '@ui/page-layout/page-layout';
 import { Pagination } from '@ui/pagination/pagination';
+import { StateMessage } from '@ui/state-message/state-message';
 import { ShopsFormModal } from './components/shops-form-modal/shops-form-modal';
-import { SHOPS_CREATE_ICON, SHOPS_PAGE_SIZE, SHOPS_TEXTS } from './constants/shops.constants';
+import { SHOPS_QUERY_KEYS } from './constants/shops-query-keys.constants';
 import {
-  Shop as ShopModel,
-  ShopApiItem,
-  ShopsApiResponse,
-  ShopsPagination,
-} from './models/shop.model';
-import { ShopsMappedResponse } from './models/shops-mapped-response.model';
+  SHOPS_CARD_ICON,
+  SHOPS_CREATE_ICON,
+  SHOPS_PAGE_SIZE,
+  SHOPS_TEXTS,
+} from './constants/shops.constants';
+import { mapShopsResponse, mapShopToCard } from './helpers/shop-mapping/shop-mapping.helper';
+import { ShopFormModalMode } from './models/shop-form-modal-mode.type';
 import { ShopModalMode, ShopModalModeEnum } from './models/shop-modal-mode.type';
+import { Shop } from './models/shop.model';
 import { ShopCreatePayload } from './models/shop-payload.model';
-import { ShopsService } from './services/shops.service';
+import { ShopUpdateVariables } from './models/shop-update-variables.model';
+import { ShopsService } from './services/shops/shops.service';
 
 @Component({
   selector: 'app-shops',
-  imports: [Button, EntityCard, Pagination, Modal, ShopsFormModal],
+  imports: [
+    PageLayout,
+    PageHeader,
+    Button,
+    StateMessage,
+    EntityCard,
+    Pagination,
+    ShopsFormModal,
+    ConfirmModal,
+  ],
   templateUrl: './shops.html',
   styleUrl: './shops.scss',
 })
-export class Shops implements OnInit {
+export class Shops {
   private readonly shopsService = inject(ShopsService);
   private readonly toasterService = inject(ToasterService);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly queryClient = injectQueryClient();
 
   protected readonly textData = SHOPS_TEXTS;
   protected readonly createShopIcon = SHOPS_CREATE_ICON;
-  protected readonly SHOPS_PAGE_SIZE = SHOPS_PAGE_SIZE;
+  protected readonly cardIcon = SHOPS_CARD_ICON;
+  protected readonly pageSize = SHOPS_PAGE_SIZE;
 
-  protected readonly isLoading = signal(true);
-  protected readonly hasError = signal(false);
-  protected readonly isActionLoading = signal(false);
-  protected readonly shops = signal<ShopModel[]>([]);
   protected readonly currentPage = signal(1);
-  protected readonly pageSize = signal(SHOPS_PAGE_SIZE);
-  protected readonly totalItems = signal(0);
-  protected readonly totalPages = signal(1);
-  protected readonly selectedShop = signal<ShopModel | null>(null);
+  protected readonly selectedShop = signal<Shop | null>(null);
   protected readonly modalMode = signal<ShopModalMode>(null);
-  protected readonly hasShops = computed(() => this.shops().length > 0);
-  protected readonly shopCards = computed(() =>
-    this.shops().map((shop) => ({
-      id: shop.id,
-      title: shop.name,
-      subtitle: shop.description || '',
-      detail: shop.url || '',
-      badge: this.resolveUpdatedBadge(shop.createdAt || ''),
-    })),
-  );
-  protected readonly isFormModalOpen = computed(() => {
-    const mode = this.modalMode();
-    return mode === ShopModalModeEnum.Create || mode === ShopModalModeEnum.Update;
+
+  protected readonly shopsQuery = injectQuery(() => {
+    const query = { page: this.currentPage(), limit: this.pageSize };
+    return {
+      queryKey: SHOPS_QUERY_KEYS.list(query.page, query.limit),
+      queryFn: () =>
+        lastValueFrom(
+          this.shopsService
+            .getShops(query)
+            .pipe(map((response) => mapShopsResponse(response, query))),
+        ),
+    };
   });
+
+  private readonly createShopMutation = injectMutation(() => ({
+    mutationFn: (payload: ShopCreatePayload) =>
+      lastValueFrom(this.shopsService.createShop(payload)),
+  }));
+
+  private readonly updateShopMutation = injectMutation(() => ({
+    mutationFn: ({ id, payload }: ShopUpdateVariables) =>
+      lastValueFrom(this.shopsService.updateShop(id, payload)),
+  }));
+
+  private readonly deleteShopMutation = injectMutation(() => ({
+    mutationFn: (id: string) => lastValueFrom(this.shopsService.deleteShop(id)),
+  }));
+
+  protected readonly shops = computed(() => this.shopsQuery.data()?.items ?? []);
+  protected readonly shopCards = computed(() => this.shops().map(mapShopToCard));
+  protected readonly isEmpty = computed(() => this.shopsQuery.isSuccess() && !this.shops().length);
+  protected readonly totalItems = computed(() => resolveTotalItems(this.shopsQuery.data()));
+  protected readonly totalPages = computed(() => resolveTotalPages(this.shopsQuery.data()));
+  protected readonly hasPagination = computed(() => this.totalItems() > this.pageSize);
+  protected readonly isActionLoading = computed(
+    () =>
+      this.createShopMutation.isPending() ||
+      this.updateShopMutation.isPending() ||
+      this.deleteShopMutation.isPending(),
+  );
+  protected readonly isFormModalOpen = computed(
+    () =>
+      this.modalMode() === ShopModalModeEnum.Create ||
+      this.modalMode() === ShopModalModeEnum.Update,
+  );
+  protected readonly formModalMode = computed<ShopFormModalMode>(() =>
+    this.modalMode() === ShopModalModeEnum.Update
+      ? ShopModalModeEnum.Update
+      : ShopModalModeEnum.Create,
+  );
   protected readonly isDeleteModalOpen = computed(
     () => this.modalMode() === ShopModalModeEnum.Delete,
   );
-  protected readonly formModalMode = computed(() => {
-    const mode = this.modalMode();
-    return mode === ShopModalModeEnum.Create || mode === ShopModalModeEnum.Update
-      ? mode
-      : ShopModalModeEnum.Create;
-  });
-
-  ngOnInit(): void {
-    this.loadShops();
-  }
+  protected readonly selectedShopName = computed(() => this.selectedShop()?.name ?? '');
 
   protected onCreateShop(): void {
-    this.selectedShop.set(null);
-    this.modalMode.set(ShopModalModeEnum.Create);
+    this.openModal(ShopModalModeEnum.Create, null);
   }
 
-  protected onEditShop(shopCard: EntityCardData): void {
-    const selectedShop = this.shops().find((shop) => shop.id === shopCard.id);
-    if (!selectedShop) {
-      return;
-    }
-
-    this.selectedShop.set(selectedShop);
-    this.modalMode.set(ShopModalModeEnum.Update);
+  protected onEditShop(card: EntityCardData): void {
+    this.openModalForCard(ShopModalModeEnum.Update, card);
   }
 
-  protected onDeleteShop(shopCard: EntityCardData): void {
-    const selectedShop = this.shops().find((shop) => shop.id === shopCard.id);
-    if (!selectedShop) {
-      return;
-    }
-
-    this.selectedShop.set(selectedShop);
-    this.modalMode.set(ShopModalModeEnum.Delete);
+  protected onDeleteShop(card: EntityCardData): void {
+    this.openModalForCard(ShopModalModeEnum.Delete, card);
   }
 
   protected onPageChange(page: number): void {
-    if (page === this.currentPage() || page < 1 || page > this.totalPages()) {
-      return;
+    if (isPageChangeAllowed(page, this.currentPage(), this.totalPages())) {
+      this.currentPage.set(page);
     }
-
-    this.currentPage.set(page);
-    this.loadShops();
   }
 
   protected onCloseModal(): void {
-    if (this.isActionLoading()) {
-      return;
+    if (!this.isActionLoading()) {
+      this.closeModal();
     }
-
-    this.closeModal();
   }
 
   protected onConfirmFormModal(payload: ShopCreatePayload): void {
@@ -120,18 +147,19 @@ export class Shops implements OnInit {
       return;
     }
 
-    const mode = this.modalMode();
-    if (mode === ShopModalModeEnum.Create) {
-      this.executeMutation(this.shopsService.createShop(payload), SHOPS_TEXTS.CREATE_SUCCESS_TITLE);
+    const selectedShop = this.selectedShop();
+    if (this.modalMode() === ShopModalModeEnum.Update && selectedShop) {
+      this.updateShopMutation.mutate(
+        { id: selectedShop.id, payload },
+        { onSuccess: () => this.onMutationSuccess(SHOPS_TEXTS.UPDATE_SUCCESS_TITLE) },
+      );
       return;
     }
 
-    const selectedShop = this.selectedShop();
-    if (mode === ShopModalModeEnum.Update && selectedShop) {
-      this.executeMutation(
-        this.shopsService.updateShop(selectedShop.id, payload),
-        SHOPS_TEXTS.UPDATE_SUCCESS_TITLE,
-      );
+    if (this.modalMode() === ShopModalModeEnum.Create) {
+      this.createShopMutation.mutate(payload, {
+        onSuccess: () => this.onMutationSuccess(SHOPS_TEXTS.CREATE_SUCCESS_TITLE),
+      });
     }
   }
 
@@ -141,113 +169,36 @@ export class Shops implements OnInit {
       return;
     }
 
-    this.executeMutation(
-      this.shopsService.deleteShop(selectedShop.id),
-      SHOPS_TEXTS.DELETE_SUCCESS_TITLE,
-    );
+    this.deleteShopMutation.mutate(selectedShop.id, {
+      onSuccess: () => {
+        if (this.shops().length === 1 && this.currentPage() > 1) {
+          this.currentPage.update((page) => page - 1);
+        }
+        this.onMutationSuccess(SHOPS_TEXTS.DELETE_SUCCESS_TITLE);
+      },
+    });
+  }
+
+  private onMutationSuccess(successTitle: string): void {
+    this.toasterService.success(successTitle);
+    this.closeModal();
+    void this.queryClient.invalidateQueries({ queryKey: SHOPS_QUERY_KEYS.scope });
+  }
+
+  private openModalForCard(mode: ShopModalModeEnum, card: EntityCardData): void {
+    const shop = this.shops().find((item) => item.id === card.id);
+    if (shop) {
+      this.openModal(mode, shop);
+    }
+  }
+
+  private openModal(mode: ShopModalModeEnum, shop: Shop | null): void {
+    this.selectedShop.set(shop);
+    this.modalMode.set(mode);
   }
 
   private closeModal(): void {
     this.modalMode.set(null);
     this.selectedShop.set(null);
-  }
-
-  private loadShops(): void {
-    this.isLoading.set(true);
-    this.hasError.set(false);
-
-    this.shopsService
-      .getShops({
-        page: this.currentPage(),
-        limit: this.pageSize(),
-      })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoading.set(false)),
-      )
-      .subscribe({
-        next: (response) => {
-          const mappedResponse = this.mapShopsResponse(response);
-          this.shops.set(mappedResponse.shops);
-          this.currentPage.set(mappedResponse.pagination.page);
-          this.pageSize.set(mappedResponse.pagination.limit);
-          this.totalItems.set(mappedResponse.pagination.total);
-          this.totalPages.set(mappedResponse.pagination.totalPages);
-        },
-        error: () => {
-          this.hasError.set(true);
-        },
-      });
-  }
-
-  private executeMutation(request$: Observable<unknown>, successTitle: string): void {
-    this.isActionLoading.set(true);
-
-    request$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isActionLoading.set(false)),
-      )
-      .subscribe({
-        next: () => {
-          this.toasterService.success(successTitle);
-          this.closeModal();
-          this.loadShops();
-        },
-      });
-  }
-
-  private mapShopsResponse(response: ShopsApiResponse | ShopApiItem[]): ShopsMappedResponse {
-    const shops = Array.isArray(response)
-      ? response
-      : (response.items ?? response.shops ?? response.data ?? []);
-    const mappedShops = shops.map((shop) => this.mapShop(shop));
-
-    return {
-      shops: mappedShops,
-      pagination: this.mapPagination(response, mappedShops.length),
-    };
-  }
-
-  private mapPagination(
-    response: ShopsApiResponse | ShopApiItem[],
-    fallbackTotal: number,
-  ): ShopsPagination {
-    if (Array.isArray(response)) {
-      return {
-        page: this.currentPage(),
-        limit: this.pageSize(),
-        total: response.length,
-        totalPages: Math.max(1, Math.ceil(response.length / this.pageSize())),
-      };
-    }
-
-    const page = Math.max(1, response.page ?? this.currentPage());
-    const limit = Math.max(1, response.limit ?? this.pageSize());
-    const total = Math.max(0, response.total ?? fallbackTotal);
-    const totalPages = Math.max(1, response.totalPages ?? Math.ceil(total / limit));
-
-    return {
-      page,
-      limit,
-      total,
-      totalPages,
-    };
-  }
-
-  private mapShop(shop: ShopApiItem): ShopModel {
-    return {
-      id: String(shop.id ?? crypto.randomUUID()),
-      name: shop.name || '',
-      description: shop.description || '',
-      url: shop.url || '',
-      createdAt: shop.createdAt || '',
-    };
-  }
-
-  private resolveUpdatedBadge(created: string): string {
-    return created && created !== SHOPS_TEXTS.DEFAULT_UPDATED
-      ? `${SHOPS_TEXTS.CREATED_BADGE_PREFIX} ${new Date(created).toISOString().split('T')[0]}`
-      : '';
   }
 }

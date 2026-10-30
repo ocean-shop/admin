@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { LOCAL_STORAGE_LOG_MESSAGES } from '@core/constants/local-storage.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -7,18 +8,18 @@ export class LocalStorageService {
   getItem<T>(key: string): T | null {
     try {
       const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : null;
+      return item ? (JSON.parse(item) as T) : null;
     } catch (error) {
-      console.error(`Error reading ${key} from localStorage`, error);
+      console.error(LOCAL_STORAGE_LOG_MESSAGES.READ_ERROR(key), error);
       return null;
     }
   }
 
-  setItem(key: string, value: any): void {
+  setItem(key: string, value: unknown): void {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      console.error(`Error saving ${key} to localStorage`, error);
+      console.error(LOCAL_STORAGE_LOG_MESSAGES.SAVE_ERROR(key), error);
     }
   }
 
@@ -26,7 +27,7 @@ export class LocalStorageService {
     try {
       localStorage.removeItem(key);
     } catch (error) {
-      console.error(`Error removing ${key} from localStorage`, error);
+      console.error(LOCAL_STORAGE_LOG_MESSAGES.REMOVE_ERROR(key), error);
     }
   }
 
@@ -34,7 +35,7 @@ export class LocalStorageService {
     try {
       localStorage.clear();
     } catch (error) {
-      console.error(`Error clearing localStorage`, error);
+      console.error(LOCAL_STORAGE_LOG_MESSAGES.CLEAR_ERROR, error);
     }
   }
 }

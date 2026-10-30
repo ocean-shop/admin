@@ -1,0 +1,11 @@
+<button class="filter-actions-apply" type="submit" [disabled]="applyDisabled()">
+  {{ applyLabel() }}
+</button>
+<button
+  class="filter-actions-reset"
+  type="button"
+  [disabled]="resetDisabled()"
+  (click)="cleared.emit()"
+>
+  {{ resetLabel() }}
+</button>

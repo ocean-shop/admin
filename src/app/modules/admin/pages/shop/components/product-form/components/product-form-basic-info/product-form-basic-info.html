@@ -1,6 +1,4 @@
-<article class="product-form-card">
-  <h2 class="product-form-card-title">{{ texts().BASIC_INFORMATION_TITLE }}</h2>
-
+<app-product-form-card [title]="texts().BASIC_INFORMATION_TITLE">
   <div class="product-form-field-group">
     <app-input
       [id]="fieldIds().PRODUCT_NAME"
@@ -24,7 +22,7 @@
       name="product-type"
       [label]="texts().PRODUCT_TYPE_LABEL"
       [options]="productTypeOptions()"
-      [selectedValue]="productForm().type().value() ?? productTypeSimple()"
+      [selectedValue]="productForm().type().value()"
       (valueChange)="onProductTypeOptionChange($event)"
     />
   </div>
@@ -50,4 +48,4 @@
     [label]="texts().IS_MAIN_BANNER_LABEL"
     [control]="productForm().isMainBanner"
   />
-</article>
+</app-product-form-card>

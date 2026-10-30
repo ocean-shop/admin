@@ -1,4 +1,3 @@
-export type ProductFormAssignedTag = {
-  id: string;
-  label: string;
-};
+import { ProductFormOption } from './product-form-option.model';
+
+export type ProductFormAssignedTag = ProductFormOption;

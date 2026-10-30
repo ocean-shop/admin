@@ -1,6 +1,0 @@
-export type ProductAttributesToastTexts = {
-  ATTRIBUTE_ASSIGN_SUCCESS_TITLE: string;
-  ATTRIBUTE_UNASSIGN_SUCCESS_TITLE: string;
-  ATTRIBUTE_ASSIGN_ERROR_TITLE: string;
-  ATTRIBUTE_ASSIGN_ERROR_MESSAGE: string;
-};

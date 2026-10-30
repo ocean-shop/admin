@@ -1,4 +1,6 @@
 import { Component, input } from '@angular/core';
+import { ProductFormTree } from '../../models/product-form-tree.model';
+import { ProductFormCard } from '../product-form-card/product-form-card';
 import { Checkbox } from '@ui/checkbox/checkbox';
 import { Input } from '@ui/input/input';
 import { ProductFormFieldIds } from '../../models/product-form-field-ids.model';
@@ -6,12 +8,12 @@ import { ProductFormTexts } from '../../models/product-form-texts.model';
 
 @Component({
   selector: 'app-product-form-pricing-inventory',
-  imports: [Checkbox, Input],
+  imports: [ProductFormCard, Checkbox, Input],
   templateUrl: './product-form-pricing-inventory.html',
   styleUrl: './product-form-pricing-inventory.scss',
 })
 export class ProductFormPricingInventory {
-  readonly productForm = input.required<any>();
+  readonly productForm = input.required<ProductFormTree>();
   readonly texts = input.required<ProductFormTexts>();
   readonly fieldIds = input.required<ProductFormFieldIds>();
 }

@@ -4,7 +4,11 @@
       <span class="material-symbols-outlined">{{ icon() }}</span>
     </div>
     <div class="entity-identity">
-      <p class="entity-title">{{ entity().title }}</p>
+      <p class="entity-title">
+        @if (entity().titleLink; as titleLink) {
+        <a class="entity-title-link" [routerLink]="titleLink">{{ entity().title }}</a>
+        } @else { {{ entity().title }} }
+      </p>
       <p class="entity-subtitle">{{ entity().subtitle }}</p>
     </div>
   </div>

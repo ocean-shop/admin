@@ -1,32 +1,25 @@
-<main class="products-create-page">
-  <form class="products-create-container" (submit)="$event.preventDefault(); onSubmit()">
-    <header class="products-create-header">
-      <div>
-        <app-breadcrumbs [items]="breadcrumbItems()" />
-        <h1 class="products-create-title">{{ textData.PAGE_TITLE }}</h1>
-      </div>
+<app-page-layout>
+  <form class="products-create-form" (submit)="onSubmit($event)">
+    <app-breadcrumbs [items]="breadcrumbItems()" />
+
+    <app-page-header [title]="textData.PAGE_TITLE">
       <app-button
-        class="create-action-button"
         [label]="textData.CREATE_LABEL"
         type="submit"
         variant="create"
-        [fullWidth]="true"
-        [disabled]="!isFormValid() || isSubmitting()"
+        [disabled]="isSubmitDisabled()"
       />
-    </header>
+    </app-page-header>
+
+    @if (!shopId()) {
+    <app-state-message tone="warning" [message]="textData.SHOP_ID_REQUIRED_MESSAGE" />
+    }
 
     <app-product-form
       [productForm]="productForm"
-      [texts]="textData"
-      [toastTexts]="textData"
-      [fieldIds]="fieldIds"
-      [statusOptions]="statusOptions"
-      [productTypeOptions]="productTypeOptions"
-      [productTypeSimple]="productTypeSimple"
       [shopId]="shopId()"
       [productId]="createdProductId()"
       [sidebarDisabled]="isSidebarDisabled()"
-      (productTypeChange)="onProductTypeChange($event)"
     />
   </form>
-</main>
+</app-page-layout>

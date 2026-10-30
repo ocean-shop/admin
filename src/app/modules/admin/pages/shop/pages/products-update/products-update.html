@@ -1,37 +1,31 @@
-<main class="products-update-page">
-  <form class="products-update-container" (submit)="$event.preventDefault(); onSubmit()">
-    <header class="products-update-header">
-      <div>
-        <app-breadcrumbs [items]="breadcrumbItems()" />
-        <h1 class="products-update-title">{{ textData.PAGE_TITLE }}</h1>
-        <p class="products-update-description">{{ textData.PAGE_DESCRIPTION }}</p>
-      </div>
+<app-page-layout>
+  <form class="products-update-form" (submit)="onSubmit($event)">
+    <app-breadcrumbs [items]="breadcrumbItems()" />
+
+    <app-page-header [title]="textData.PAGE_TITLE" [description]="textData.PAGE_DESCRIPTION">
       <app-button
         [label]="textData.UPDATE_LABEL"
         type="submit"
         variant="create"
-        [fullWidth]="false"
-        [disabled]="!isFormValid() || isSubmitting() || isLoadingProduct()"
+        [disabled]="isSubmitDisabled()"
       />
-    </header>
+    </app-page-header>
+
+    @if (!isRouteContextReady()) {
+    <app-state-message tone="warning" [message]="textData.SHOP_CONTEXT_REQUIRED_MESSAGE" />
+    } @else if (productQuery.isError()) {
+    <app-state-message tone="warning" [message]="textData.PRODUCT_NOT_FOUND_MESSAGE" />
+    }
 
     <app-product-form
       [productForm]="productForm"
-      [texts]="textData"
-      [toastTexts]="textData"
-      [fieldIds]="fieldIds"
-      [statusOptions]="statusOptions"
-      [productTypeOptions]="productTypeOptions"
-      [productTypeSimple]="productTypeSimple"
       [shopId]="shopId()"
       [productId]="productId()"
-      [sidebarDisabled]="false"
-      [initialSelectedCategoryIds]="selectedCategoryIds()"
-      [initialAssignedAttributes]="assignedAttributes()"
-      [initialAssignedTags]="assignedTags()"
-      [initialImages]="images()"
-      [initialVariations]="variations()"
-      (productTypeChange)="onProductTypeChange($event)"
+      [initialSelectedCategoryIds]="formSeeds().categoryIds"
+      [initialAssignedAttributes]="formSeeds().attributes"
+      [initialAssignedTags]="formSeeds().tags"
+      [initialImages]="formSeeds().images"
+      [initialVariations]="formSeeds().variations"
     />
   </form>
-</main>
+</app-page-layout>

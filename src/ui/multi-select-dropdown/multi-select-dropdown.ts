@@ -1,4 +1,4 @@
-import { Component, HostListener, computed, input, model, output, signal } from '@angular/core';
+import { Component, computed, input, model, output, signal } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { DropdownTriggerMode } from '@ui/dropdown/models/dropdown-trigger-mode.type';
@@ -10,6 +10,9 @@ import { MultiSelectOptionVariant } from '@ui/multi-select-dropdown/models/multi
   selector: 'app-multi-select-dropdown',
   templateUrl: './multi-select-dropdown.html',
   styleUrl: './multi-select-dropdown.scss',
+  host: {
+    '(document:click)': 'closeMenu()',
+  },
 })
 export class MultiSelectDropdown implements FormValueControl<string[]> {
   public readonly value = model<string[]>([]);
@@ -79,7 +82,6 @@ export class MultiSelectDropdown implements FormValueControl<string[]> {
     return 16 + option.level * 16;
   }
 
-  @HostListener('document:click')
   protected closeMenu(): void {
     if (this.triggerMode() === 'click') {
       this.isOpen.set(false);

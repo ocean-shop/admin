@@ -61,6 +61,15 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ],
+              "outputHashing": "all"
+            },
+            "local": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
@@ -79,9 +88,12 @@
             },
             "development": {
               "buildTarget": "admin:build:development"
+            },
+            "local": {
+              "buildTarget": "admin:build:local"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "local"
         },
         "test": {
           "builder": "@angular/build:unit-test",

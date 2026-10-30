@@ -1,12 +1,13 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { QueryClient } from '@tanstack/angular-query-experimental';
 import Highcharts from 'highcharts';
 import { of, throwError } from 'rxjs';
 import { flushQueries } from '@testing/flush-async';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { SHOP_STATISTICS_TEXTS } from '../../constants/shop-statistics.constants';
 import { ShopStatistic } from '../../models/shop-statistic.model';
-import { ShopStatisticService } from '../../services/shop-statistic.service';
+import { ShopStatisticService } from '../../services/shop-statistic/shop-statistic.service';
 import { ShopStatistics } from './shop-statistics';
 
 describe('ShopStatistics', () => {
@@ -68,14 +69,12 @@ describe('ShopStatistics', () => {
 
   it('updates existing chart instead of creating a new one', async () => {
     await createComponent();
-    const container = document.createElement('div');
+    mockStatisticService.getStatistic.mockReturnValue(
+      of({ ...statistic, users: [{ year: 2026, month: 'Mar', monthNumber: 3, count: 5 }] }),
+    );
 
-    (fixture.componentInstance as any).renderChart(container, {
-      categories: ['Jan 2026'],
-      orders: [1],
-      products: [1],
-      users: [1],
-    });
+    await TestBed.inject(QueryClient).invalidateQueries();
+    await flushQueries(fixture);
 
     expect(Highcharts.chart).toHaveBeenCalledTimes(1);
     expect(chartMock.update).toHaveBeenCalled();

@@ -1,12 +1,14 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { ToasterService } from '@core/services/toaster/toaster.service';
 import { BehaviorSubject, of, throwError } from 'rxjs';
+import { ToasterService } from '@core/services/toaster/toaster.service';
+import { flushQueries } from '@testing/flush-async';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
+import { CategoriesService } from '../categories/services/categories/categories.service';
 import { ProductStatus } from '../products/models/product-status.enum';
 import { ProductType } from '../products/models/product-type.enum';
-import { ProductsService } from '../products/services/products.service';
+import { ProductsService } from '../products/services/products/products.service';
 import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
 import { ProductsUpdate } from './products-update';
 
@@ -18,36 +20,20 @@ describe('ProductsUpdate', () => {
     getProductById: ReturnType<typeof vi.fn>;
     updateProduct: ReturnType<typeof vi.fn>;
   };
-  let mockToasterService: {
-    success: ReturnType<typeof vi.fn>;
-    danger: ReturnType<typeof vi.fn>;
+  let toaster: { success: ReturnType<typeof vi.fn> };
+
+  const product = {
+    id: 'product-1',
+    name: 'Coastal Shirt',
+    type: ProductType.Simple,
+    status: ProductStatus.Active,
+    price: 45.1,
+    categories: ['cat-1'],
+    tags: ['tag-1'],
   };
 
-  beforeEach(async () => {
-    paramMap$ = new BehaviorSubject(
-      convertToParamMap({ shopId: 'shop-1', productId: 'product-1' }),
-    );
-    mockProductsService = {
-      getProductById: vi.fn().mockReturnValue(
-        of({
-          id: 'product-1',
-          name: 'Coastal Shirt',
-          type: ProductType.Simple,
-          status: ProductStatus.Active,
-          available: true,
-          categories: [],
-          attributes: [],
-          tags: [],
-          images: [],
-          variations: [],
-        }),
-      ),
-      updateProduct: vi.fn().mockReturnValue(of({ id: 'product-1' })),
-    };
-    mockToasterService = {
-      success: vi.fn(),
-      danger: vi.fn(),
-    };
+  const setup = async (params: Record<string, string>): Promise<void> => {
+    paramMap$ = new BehaviorSubject(convertToParamMap(params));
 
     await TestBed.configureTestingModule({
       imports: [ProductsUpdate],
@@ -55,11 +41,15 @@ describe('ProductsUpdate', () => {
         provideZonelessChangeDetection(),
         ...provideTestQueryClient(),
         { provide: ProductsService, useValue: mockProductsService },
-        { provide: ToasterService, useValue: mockToasterService },
+        {
+          provide: CategoriesService,
+          useValue: { getCategories: vi.fn().mockReturnValue(of([])) },
+        },
+        { provide: ToasterService, useValue: toaster },
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { paramMap: convertToParamMap({ shopId: 'shop-1', productId: 'product-1' }) },
+            snapshot: { paramMap: convertToParamMap(params) },
             paramMap: paramMap$.asObservable(),
           },
         },
@@ -68,113 +58,88 @@ describe('ProductsUpdate', () => {
 
     fixture = TestBed.createComponent(ProductsUpdate);
     component = fixture.componentInstance;
-    await fixture.whenStable();
-    fixture.detectChanges();
+    await flushQueries(fixture);
+  };
+
+  const submit = async (): Promise<void> => {
+    (component as any).onSubmit(new Event('submit'));
+    await flushQueries(fixture);
+  };
+
+  beforeEach(() => {
+    mockProductsService = {
+      getProductById: vi.fn().mockReturnValue(of(product)),
+      updateProduct: vi.fn().mockReturnValue(of(product)),
+    };
+    toaster = { success: vi.fn() };
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('loads product by current id', () => {
-    expect(mockProductsService.getProductById).toHaveBeenCalledWith('product-1');
-  });
-
-  it('submits valid form and shows success toast', async () => {
-    (component as any).productId.set('product-1');
-    (component as any).productFormModel.set({
-      name: 'Updated shirt',
-      type: ProductType.Simple,
-      description: 'Updated description',
-      price: '45.10',
-      oldPrice: '55.10',
-      sku: 'UPDATED-1',
-      status: ProductStatus.Draft,
-      available: true,
-      isPopular: true,
-      isMainBanner: false,
-      slug: '',
-      metaTitle: '',
-      metaDescription: '',
-      canonicalUrl: '',
-      noIndex: false,
+  describe('with a loaded product', () => {
+    beforeEach(async () => {
+      await setup({ shopId: 'shop-1', productId: 'product-1' });
     });
 
-    (component as any).onSubmit();
-    await fixture.whenStable();
-
-    expect(mockProductsService.updateProduct).toHaveBeenCalledWith('product-1', {
-      name: 'Updated shirt',
-      type: ProductType.Simple,
-      description: 'Updated description',
-      sku: 'UPDATED-1',
-      status: ProductStatus.Draft,
-      available: true,
-      isPopular: true,
-      isMainBanner: false,
-      price: 45.1,
-      oldPrice: 55.1,
-      metaTitle: null,
-      metaDescription: null,
-      canonicalUrl: null,
-      noIndex: false,
+    it('loads the product into the form and the section seeds', () => {
+      expect(mockProductsService.getProductById).toHaveBeenCalledWith('product-1');
+      expect((component as any).productFormModel()).toMatchObject({
+        name: 'Coastal Shirt',
+        price: '45.10',
+        status: ProductStatus.Active,
+      });
+      expect((component as any).formSeeds().categoryIds).toEqual(new Set(['cat-1']));
+      expect((component as any).formSeeds().tags).toEqual([{ id: 'tag-1', label: 'tag-1' }]);
     });
-    expect(mockToasterService.success).toHaveBeenCalledWith(
-      PRODUCTS_UPDATE_TEXTS.UPDATE_SUCCESS_TITLE,
+
+    it('submits the edited form and refreshes the product', async () => {
+      (component as any).productFormModel.update((value: object) => ({
+        ...value,
+        name: 'Updated shirt',
+      }));
+
+      await submit();
+
+      expect(mockProductsService.updateProduct).toHaveBeenCalledWith(
+        'product-1',
+        expect.objectContaining({ name: 'Updated shirt', price: 45.1 }),
+      );
+      expect(toaster.success).toHaveBeenCalledWith(PRODUCTS_UPDATE_TEXTS.UPDATE_SUCCESS_TITLE);
+      expect(mockProductsService.getProductById).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not submit an invalid form', async () => {
+      (component as any).productFormModel.update((value: object) => ({ ...value, name: '' }));
+
+      await submit();
+
+      expect(mockProductsService.updateProduct).not.toHaveBeenCalled();
+    });
+
+    it('does not toast success when the update fails', async () => {
+      mockProductsService.updateProduct.mockReturnValueOnce(throwError(() => new Error('failed')));
+
+      await submit();
+
+      expect(toaster.success).not.toHaveBeenCalled();
+    });
+  });
+
+  it('shows the not-found message when the product fails to load', async () => {
+    mockProductsService.getProductById.mockReturnValue(throwError(() => new Error('404')));
+
+    await setup({ shopId: 'shop-1', productId: 'missing' });
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      PRODUCTS_UPDATE_TEXTS.PRODUCT_NOT_FOUND_MESSAGE,
     );
+    expect((component as any).isSubmitDisabled()).toBe(true);
   });
 
-  it('does not submit when name is empty', () => {
-    (component as any).productFormModel.set({
-      name: '',
-      type: ProductType.Simple,
-      description: '',
-      price: '',
-      oldPrice: '',
-      sku: '',
-      status: ProductStatus.Draft,
-      available: true,
-      isPopular: false,
-      isMainBanner: false,
-      slug: '',
-      metaTitle: '',
-      metaDescription: '',
-      canonicalUrl: '',
-      noIndex: false,
-    });
+  it('shows the route warning and skips loading without a product id', async () => {
+    await setup({ shopId: 'shop-1' });
 
-    (component as any).onSubmit();
-
-    expect(mockProductsService.updateProduct).not.toHaveBeenCalled();
-  });
-
-  it('shows error toast when update fails', async () => {
-    mockProductsService.updateProduct.mockReturnValueOnce(throwError(() => new Error('failed')));
-    (component as any).productId.set('product-1');
-    (component as any).productFormModel.set({
-      name: 'Updated hat',
-      type: ProductType.Variable,
-      description: '',
-      price: '',
-      oldPrice: '',
-      sku: 'SKU-2',
-      status: ProductStatus.Active,
-      available: false,
-      isPopular: false,
-      isMainBanner: false,
-      slug: '',
-      metaTitle: '',
-      metaDescription: '',
-      canonicalUrl: '',
-      noIndex: false,
-    });
-
-    (component as any).onSubmit();
-    await fixture.whenStable();
-
-    expect(mockToasterService.danger).toHaveBeenCalledWith(
-      PRODUCTS_UPDATE_TEXTS.UPDATE_ERROR_TITLE,
-      PRODUCTS_UPDATE_TEXTS.UPDATE_ERROR_MESSAGE,
+    expect(mockProductsService.getProductById).not.toHaveBeenCalled();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      PRODUCTS_UPDATE_TEXTS.SHOP_CONTEXT_REQUIRED_MESSAGE,
     );
   });
 });

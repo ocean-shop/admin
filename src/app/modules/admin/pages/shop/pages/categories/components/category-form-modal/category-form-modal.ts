@@ -4,7 +4,10 @@ import { Checkbox } from '@ui/checkbox/checkbox';
 import { Input } from '@ui/input/input';
 import { Modal } from '@ui/modal/modal';
 import { Textarea } from '@ui/textarea/textarea';
-import { applySeoValidators, toNullableSeoText } from '../../../../helpers/seo-form.helper';
+import {
+  applySeoValidators,
+  toNullableSeoText,
+} from '../../../../helpers/seo-form/seo-form.helper';
 import {
   CATEGORIES_CANONICAL_URL_FIELD_ID,
   CATEGORIES_EMPTY_FORM,

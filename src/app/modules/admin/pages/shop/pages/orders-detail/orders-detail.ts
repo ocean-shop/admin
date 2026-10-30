@@ -1,80 +1,93 @@
-import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, inject, linkedSignal } from '@angular/core';
 import {
   injectMutation,
   injectQuery,
   injectQueryClient,
 } from '@tanstack/angular-query-experimental';
-import { lastValueFrom, map } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { Button } from '@ui/button/button';
-import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
-import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
+import { Button } from '@ui/button/button';
 import { Dropdown } from '@ui/dropdown/dropdown';
+import { isDropdownOptionValue } from '@ui/dropdown/helpers/dropdown-option.helper';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
+import { InfoList } from '@ui/info-list/info-list';
+import { PageHeader } from '@ui/page-header/page-header';
+import { PageLayout } from '@ui/page-layout/page-layout';
+import { SectionCard } from '@ui/section-card/section-card';
+import { StateMessage } from '@ui/state-message/state-message';
 import { Table } from '@ui/table/table';
-import { TableRowData } from '@ui/table/models/table-column.model';
-import {
-  buildShopBreadcrumb,
-  buildShopSectionBreadcrumb,
-} from '../../constants/shop-breadcrumbs.constants';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
+import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import {
+  ORDERS_SECTION_PATH,
+  ORDER_ITEMS_TABLE_COLUMNS,
+  ORDER_PAYMENT_STATUS_ICON,
   ORDER_PAYMENT_STATUS_OPTIONS,
+  ORDER_STATUS_ICON,
   ORDER_STATUS_OPTIONS,
   ORDERS_TEXTS,
 } from '../orders/constants/orders.constants';
+import {
+  buildOrderExtraRows,
+  buildOrderInfoRows,
+  buildOrderItemRows,
+  buildOrderUserRows,
+  resolveOrderItems,
+  resolveOrderPaymentStatus,
+  resolveOrderStatus,
+} from '../orders/helpers/order-mapping/order-mapping.helper';
 import { OrderPaymentStatus } from '../orders/models/order-payment-status.enum';
-import { OrderApiItem, OrderProductApiItem, OrderUserApiItem } from '../orders/models/order.model';
 import { OrderStatus } from '../orders/models/order-status.enum';
 import { UpdateOrderPaymentStatusVariables } from '../orders/models/update-order-payment-status-payload.model';
 import { UpdateOrderStatusVariables } from '../orders/models/update-order-status-payload.model';
-import { OrdersService } from '../orders/services/orders.service';
-import { ITEM_COLUMNS } from '../../constants/order.constants';
-import { OrderDetailInfoRow } from '../../models/order.models';
-import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
+import { OrdersService } from '../orders/services/orders/orders.service';
 
 @Component({
   selector: 'app-orders-detail',
-  imports: [Button, Dropdown, Table, Breadcrumbs],
+  imports: [
+    PageLayout,
+    PageHeader,
+    Breadcrumbs,
+    StateMessage,
+    SectionCard,
+    InfoList,
+    Table,
+    Dropdown,
+    Button,
+  ],
   templateUrl: './orders-detail.html',
   styleUrl: './orders-detail.scss',
 })
-export class OrdersDetail implements OnInit {
+export class OrdersDetail {
   private readonly ordersService = inject(OrdersService);
-  private readonly activatedRoute = inject(ActivatedRoute);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly queryClient = injectQueryClient();
   private readonly toasterService = inject(ToasterService);
 
   protected readonly textData = ORDERS_TEXTS;
   protected readonly paymentStatusOptions = ORDER_PAYMENT_STATUS_OPTIONS;
   protected readonly statusOptions = ORDER_STATUS_OPTIONS;
-  protected readonly itemColumns = ITEM_COLUMNS;
-  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    DASHBOARD_BREADCRUMB,
-    buildShopBreadcrumb(this.shopId()),
-    buildShopSectionBreadcrumb(this.shopId(), 'orders', ORDERS_TEXTS.PAGE_TITLE),
-    { label: this.textData.DETAILS_TITLE },
-  ]);
+  protected readonly paymentStatusIcon = ORDER_PAYMENT_STATUS_ICON;
+  protected readonly statusIcon = ORDER_STATUS_ICON;
+  protected readonly itemColumns = ORDER_ITEMS_TABLE_COLUMNS;
 
-  protected readonly shopId = signal<string | null>(
-    this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null,
+  protected readonly shopId = injectRouteParam('shopId');
+  protected readonly orderId = injectRouteParam('orderId');
+
+  protected readonly breadcrumbItems = computed(() =>
+    buildShopSectionPageBreadcrumbs(
+      this.shopId(),
+      ORDERS_SECTION_PATH,
+      ORDERS_TEXTS.PAGE_TITLE,
+      ORDERS_TEXTS.DETAILS_TITLE,
+    ),
   );
-  protected readonly orderId = signal<string | null>(
-    this.activatedRoute.snapshot?.paramMap?.get('orderId') ?? null,
-  );
-  protected readonly selectedPaymentStatus = signal<OrderPaymentStatus>(OrderPaymentStatus.Unpaid);
-  protected readonly selectedOrderStatus = signal<OrderStatus>(OrderStatus.Pending);
 
   protected readonly orderQuery = injectQuery(() => {
     const orderId = this.orderId();
     return {
-      queryKey: orderId
-        ? SHOP_QUERY_KEYS.orderById(orderId)
-        : ['shop', 'orders', 'missing-order-id'],
+      queryKey: orderId ? SHOP_QUERY_KEYS.orderById(orderId) : SHOP_QUERY_KEYS.disabled('order'),
       enabled: Boolean(this.shopId() && orderId),
       queryFn: () => lastValueFrom(this.ordersService.getOrderById(orderId ?? '')),
     };
@@ -82,386 +95,98 @@ export class OrdersDetail implements OnInit {
 
   protected readonly updatePaymentStatusMutation = injectMutation(() => ({
     mutationFn: ({ orderId, paymentStatus }: UpdateOrderPaymentStatusVariables) =>
-      lastValueFrom(
-        this.ordersService.updateOrderPaymentStatus(orderId, {
-          paymentStatus,
-        }),
-      ),
+      lastValueFrom(this.ordersService.updateOrderPaymentStatus(orderId, { paymentStatus })),
   }));
 
   protected readonly updateStatusMutation = injectMutation(() => ({
     mutationFn: ({ orderId, status }: UpdateOrderStatusVariables) =>
-      lastValueFrom(
-        this.ordersService.updateOrderStatus(orderId, {
-          status,
-        }),
-      ),
+      lastValueFrom(this.ordersService.updateOrderStatus(orderId, { status })),
   }));
+
+  protected readonly order = computed(() => this.orderQuery.data() ?? null);
+  private readonly savedPaymentStatus = computed(() =>
+    resolveOrderPaymentStatus(this.order()?.paymentStatus),
+  );
+  private readonly savedOrderStatus = computed(() => resolveOrderStatus(this.order()?.status));
+
+  /** Editable copies that reset whenever the server value changes. */
+  protected readonly selectedPaymentStatus = linkedSignal(() => this.savedPaymentStatus());
+  protected readonly selectedOrderStatus = linkedSignal(() => this.savedOrderStatus());
 
   protected readonly isLoading = computed(
     () => this.orderQuery.isPending() || this.orderQuery.isFetching(),
   );
   protected readonly hasError = computed(() => this.orderQuery.isError());
-  protected readonly order = computed(() => this.orderQuery.data() ?? null);
-  protected readonly paymentStatusValue = computed(() => this.selectedPaymentStatus());
-  protected readonly statusValue = computed(() => this.selectedOrderStatus());
   protected readonly isPaymentUpdating = computed(() =>
     this.updatePaymentStatusMutation.isPending(),
   );
   protected readonly isStatusUpdating = computed(() => this.updateStatusMutation.isPending());
-  protected readonly canSavePaymentStatus = computed(() => {
-    const order = this.order();
-    if (!order) {
-      return false;
-    }
-
-    return this.resolvePaymentStatus(order.paymentStatus) !== this.selectedPaymentStatus();
-  });
-  protected readonly canSaveStatus = computed(() => {
-    const order = this.order();
-    if (!order) {
-      return false;
-    }
-
-    return this.resolveOrderStatus(order.status) !== this.selectedOrderStatus();
-  });
-  protected readonly orderItems = computed<OrderProductApiItem[]>(() => {
-    const order = this.order();
-    if (!order) {
-      return [];
-    }
-
-    return this.resolveOrderItems(order);
-  });
-  protected readonly orderItemRows = computed<TableRowData[]>(() =>
-    this.orderItems().map((item) => ({
-      name: item.product?.name?.trim() || EMPTY_VALUE_PLACEHOLDER,
-      sku: item.product?.sku?.trim() || EMPTY_VALUE_PLACEHOLDER,
-      quantity: this.resolveNumberLabel(item.quantity),
-      price: this.resolveAmountLabel(item.unitPrice),
-      total: this.resolveAmountLabel((item.quantity || 1) * Number(item.unitPrice)),
-    })),
+  protected readonly canSavePaymentStatus = computed(
+    () => Boolean(this.order()) && this.savedPaymentStatus() !== this.selectedPaymentStatus(),
   );
-  protected readonly orderInfoRows = computed<OrderDetailInfoRow[]>(() => {
+  protected readonly canSaveStatus = computed(
+    () => Boolean(this.order()) && this.savedOrderStatus() !== this.selectedOrderStatus(),
+  );
+  protected readonly orderItemRows = computed(() => {
     const order = this.order();
-    if (!order) {
-      return [];
-    }
-
-    return [
-      {
-        label: ORDERS_TEXTS.INFO_ORDER_NUMBER_LABEL,
-        value: this.resolveOrderNumber(order.orderNumber),
-      },
-      { label: ORDERS_TEXTS.INFO_AMOUNT_LABEL, value: this.resolveAmountLabel(order.totalAmount) },
-      {
-        label: ORDERS_TEXTS.INFO_PAYMENT_STATUS_LABEL,
-        value: this.resolveStatusLabel(order.paymentStatus),
-      },
-      { label: ORDERS_TEXTS.INFO_ORDER_STATUS_LABEL, value: this.resolveStatusLabel(order.status) },
-      { label: ORDERS_TEXTS.INFO_CREATED_LABEL, value: this.resolveDateLabel(order.createdAt) },
-      { label: ORDERS_TEXTS.INFO_UPDATED_LABEL, value: this.resolveDateLabel(order.updatedAt) },
-    ];
+    return order ? buildOrderItemRows(resolveOrderItems(order)) : [];
   });
-  protected readonly userInfoRows = computed<OrderDetailInfoRow[]>(() => {
+  protected readonly orderInfoRows = computed(() => {
     const order = this.order();
-    if (!order) {
-      return [];
-    }
-
-    const user = this.resolveOrderUser(order);
-    return [
-      {
-        label: ORDERS_TEXTS.USER_EMAIL_LABEL,
-        value: user?.email?.trim() || EMPTY_VALUE_PLACEHOLDER,
-      },
-      {
-        label: ORDERS_TEXTS.USER_FIRST_NAME_LABEL,
-        value: user?.firstName?.trim() || EMPTY_VALUE_PLACEHOLDER,
-      },
-      {
-        label: ORDERS_TEXTS.USER_LAST_NAME_LABEL,
-        value: user?.lastName?.trim() || EMPTY_VALUE_PLACEHOLDER,
-      },
-      {
-        label: ORDERS_TEXTS.USER_PHONE_LABEL,
-        value: user?.phone?.trim() || EMPTY_VALUE_PLACEHOLDER,
-      },
-    ];
+    return order ? buildOrderInfoRows(order) : [];
   });
-  protected readonly extraDataRows = computed<OrderDetailInfoRow[]>(() => {
+  protected readonly userInfoRows = computed(() => {
     const order = this.order();
-    if (!order) {
-      return [];
-    }
-
-    return Object.entries(order)
-      .filter(([key]) => !this.isKnownOrderField(key))
-      .map(([key, value]) => ({
-        label: key,
-        value: this.stringifyValue(value),
-      }));
+    return order ? buildOrderUserRows(order) : [];
   });
-
-  constructor() {
-    effect(() => {
-      const order = this.order();
-      if (!order) {
-        return;
-      }
-
-      this.selectedPaymentStatus.set(this.resolvePaymentStatus(order.paymentStatus));
-      this.selectedOrderStatus.set(this.resolveOrderStatus(order.status));
-    });
-  }
-
-  ngOnInit(): void {
-    this.watchRouteContext();
-  }
+  protected readonly extraDataRows = computed(() => {
+    const order = this.order();
+    return order ? buildOrderExtraRows(order) : [];
+  });
 
   protected onPaymentStatusSelected(option: DropdownOption): void {
-    if (!this.isOrderPaymentStatus(option.value)) {
-      return;
+    if (isDropdownOptionValue<OrderPaymentStatus>(option.value, this.paymentStatusOptions)) {
+      this.selectedPaymentStatus.set(option.value);
     }
-
-    this.selectedPaymentStatus.set(option.value);
   }
 
   protected onStatusSelected(option: DropdownOption): void {
-    if (!this.isOrderStatus(option.value)) {
-      return;
+    if (isDropdownOptionValue<OrderStatus>(option.value, this.statusOptions)) {
+      this.selectedOrderStatus.set(option.value);
     }
-
-    this.selectedOrderStatus.set(option.value);
   }
 
   protected onSavePaymentStatus(): void {
     const orderId = this.orderId();
-    const paymentStatus = this.selectedPaymentStatus();
     if (!orderId || this.isPaymentUpdating() || !this.canSavePaymentStatus()) {
       return;
     }
 
     this.updatePaymentStatusMutation.mutate(
-      { orderId, paymentStatus },
-      {
-        onSuccess: () => {
-          this.toasterService.success(ORDERS_TEXTS.PAYMENT_STATUS_UPDATED_TITLE);
-          this.invalidateOrderQueries(orderId);
-        },
-        onError: () => {
-          this.toasterService.danger(
-            ORDERS_TEXTS.UPDATE_PAYMENT_STATUS_ERROR_TITLE,
-            ORDERS_TEXTS.UPDATE_PAYMENT_STATUS_ERROR_MESSAGE,
-          );
-        },
-      },
+      { orderId, paymentStatus: this.selectedPaymentStatus() },
+      { onSuccess: () => this.onOrderUpdated(orderId, ORDERS_TEXTS.PAYMENT_STATUS_UPDATED_TITLE) },
     );
   }
 
   protected onSaveStatus(): void {
     const orderId = this.orderId();
-    const status = this.selectedOrderStatus();
     if (!orderId || this.isStatusUpdating() || !this.canSaveStatus()) {
       return;
     }
 
     this.updateStatusMutation.mutate(
-      { orderId, status },
-      {
-        onSuccess: () => {
-          this.toasterService.success(ORDERS_TEXTS.ORDER_STATUS_UPDATED_TITLE);
-          this.invalidateOrderQueries(orderId);
-        },
-        onError: () => {
-          this.toasterService.danger(
-            ORDERS_TEXTS.UPDATE_STATUS_ERROR_TITLE,
-            ORDERS_TEXTS.UPDATE_STATUS_ERROR_MESSAGE,
-          );
-        },
-      },
+      { orderId, status: this.selectedOrderStatus() },
+      { onSuccess: () => this.onOrderUpdated(orderId, ORDERS_TEXTS.ORDER_STATUS_UPDATED_TITLE) },
     );
   }
 
-  private watchRouteContext(): void {
-    this.shopId.set(this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null);
-    this.orderId.set(this.activatedRoute.snapshot?.paramMap?.get('orderId') ?? null);
-
-    this.activatedRoute.paramMap
-      .pipe(
-        map((params) => ({
-          shopId: params.get('shopId'),
-          orderId: params.get('orderId'),
-        })),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(({ shopId, orderId }) => {
-        this.shopId.set(shopId);
-        this.orderId.set(orderId);
-      });
-  }
-
-  private invalidateOrderQueries(orderId: string): void {
-    this.queryClient.invalidateQueries({
-      queryKey: SHOP_QUERY_KEYS.orderById(orderId),
-    });
+  private onOrderUpdated(orderId: string, successTitle: string): void {
+    this.toasterService.success(successTitle);
+    this.queryClient.invalidateQueries({ queryKey: SHOP_QUERY_KEYS.orderById(orderId) });
 
     const shopId = this.shopId();
-    if (!shopId) {
-      return;
+    if (shopId) {
+      this.queryClient.invalidateQueries({ queryKey: SHOP_QUERY_KEYS.ordersScope(shopId) });
     }
-
-    this.queryClient.invalidateQueries({
-      queryKey: ['shop', shopId, 'orders'],
-    });
-  }
-
-  private resolveOrderItems(order: OrderApiItem): OrderProductApiItem[] {
-    if (Array.isArray(order.items)) {
-      return order.items;
-    }
-
-    if (Array.isArray(order.products)) {
-      return order.products;
-    }
-
-    return [];
-  }
-
-  private resolveOrderUser(order: OrderApiItem): OrderUserApiItem | null {
-    return order.user ?? order.createdBy ?? null;
-  }
-
-  private isKnownOrderField(key: string): boolean {
-    return [
-      'id',
-      'shopId',
-      'orderNumber',
-      'totalAmount',
-      'paymentStatus',
-      'status',
-      'createdAt',
-      'updatedAt',
-      'items',
-      'products',
-      'user',
-      'createdBy',
-    ].includes(key);
-  }
-
-  private stringifyValue(value: unknown): string {
-    if (value === null || value === undefined) {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    if (typeof value === 'string') {
-      const normalized = value.trim();
-      return normalized || EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    if (typeof value === 'number' || typeof value === 'boolean') {
-      return String(value);
-    }
-
-    try {
-      return JSON.stringify(value);
-    } catch {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-  }
-
-  private resolveOrderNumber(orderNumber: OrderApiItem['orderNumber']): string {
-    if (typeof orderNumber === 'number' && Number.isFinite(orderNumber)) {
-      return String(orderNumber);
-    }
-
-    if (typeof orderNumber === 'string') {
-      const normalized = orderNumber.trim();
-      return normalized || EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    return EMPTY_VALUE_PLACEHOLDER;
-  }
-
-  private resolveAmountLabel(value: number | string | null | undefined): string {
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      return value.toFixed(2);
-    }
-
-    if (typeof value === 'string') {
-      const normalized = value.trim();
-      return normalized || EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    return EMPTY_VALUE_PLACEHOLDER;
-  }
-
-  private resolveNumberLabel(value: number | null | undefined): string {
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      return String(value);
-    }
-
-    return EMPTY_VALUE_PLACEHOLDER;
-  }
-
-  private resolveDateLabel(value: string | null | undefined): string {
-    if (!value?.trim()) {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) {
-      return value.trim();
-    }
-
-    return parsed.toLocaleString();
-  }
-
-  private resolveStatusLabel(value: string | null | undefined): string {
-    const normalized = String(value ?? '')
-      .trim()
-      .toLowerCase();
-    if (!normalized) {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    return normalized
-      .split(/[\s_-]+/)
-      .filter(Boolean)
-      .map((part) => part[0].toUpperCase() + part.slice(1))
-      .join(' ');
-  }
-
-  private resolvePaymentStatus(value: string | null | undefined): OrderPaymentStatus {
-    return value === OrderPaymentStatus.Paid ? OrderPaymentStatus.Paid : OrderPaymentStatus.Unpaid;
-  }
-
-  private resolveOrderStatus(value: string | null | undefined): OrderStatus {
-    if (value === OrderStatus.Processing) {
-      return OrderStatus.Processing;
-    }
-
-    if (value === OrderStatus.Shipped) {
-      return OrderStatus.Shipped;
-    }
-
-    if (value === OrderStatus.Cancelled) {
-      return OrderStatus.Cancelled;
-    }
-
-    return OrderStatus.Pending;
-  }
-
-  private isOrderPaymentStatus(value: string): value is OrderPaymentStatus {
-    return value === OrderPaymentStatus.Paid || value === OrderPaymentStatus.Unpaid;
-  }
-
-  private isOrderStatus(value: string): value is OrderStatus {
-    return (
-      value === OrderStatus.Pending ||
-      value === OrderStatus.Processing ||
-      value === OrderStatus.Shipped ||
-      value === OrderStatus.Cancelled
-    );
   }
 }

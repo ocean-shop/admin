@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { Chip } from '@ui/chip/chip';
+import { ChipVariant } from '@ui/chip/models/chip-variant.type';
 import { Input } from '@ui/input/input';
 import { ProductFormAttributeOption } from '../../models/product-form-attribute-option.model';
 import { ProductFormAttributeItem } from '../../models/product-form-attribute-item.model';
@@ -24,6 +25,7 @@ export class ProductFormSharedAttributes {
   readonly searchResults = input<ProductFormAttributeOption[]>([]);
   readonly assignedAttributes = input<ProductFormAttributeItem[]>([]);
   readonly compactLayout = input<boolean>(false);
+  readonly chipVariant = input<ChipVariant>('attribute');
 
   readonly searchChange = output<string>();
   readonly assign = output<string>();

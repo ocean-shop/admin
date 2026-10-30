@@ -1,8 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PRODUCTS_CREATE_TEXTS } from '../../../../pages/products-create/constants/products-create.constants';
+import { PRODUCT_FORM_TEXTS } from '../../constants/product-form.constants';
 import { ProductFormImageItem } from '../../models/product-form-image-item.model';
-import { ProductImagesService } from './services/product-images.service';
+import { ProductImagesService } from './services/product-images/product-images.service';
 import { ProductFormImages } from './product-form-images';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 
@@ -34,8 +34,7 @@ describe('ProductFormImages', () => {
     component = fixture.componentInstance;
     imagesService = fixture.debugElement.injector.get(ProductImagesService);
 
-    fixture.componentRef.setInput('texts', PRODUCTS_CREATE_TEXTS);
-    fixture.componentRef.setInput('toastTexts', PRODUCTS_CREATE_TEXTS);
+    fixture.componentRef.setInput('texts', PRODUCT_FORM_TEXTS);
     fixture.componentRef.setInput('productId', 'product-1');
     fixture.componentRef.setInput('sidebarDisabled', false);
     fixture.componentRef.setInput('initialImages', images);

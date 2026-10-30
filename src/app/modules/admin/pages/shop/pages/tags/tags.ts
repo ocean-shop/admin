@@ -1,65 +1,89 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import {
   injectMutation,
   injectQuery,
   injectQueryClient,
 } from '@tanstack/angular-query-experimental';
-import { lastValueFrom, map } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
+import {
+  isPageChangeAllowed,
+  prependPageItem,
+  removePageItem,
+  resolveTotalItems,
+  resolveTotalPages,
+} from '@core/helpers/pagination/pagination.helper';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
+import { matchesSearch } from '@core/helpers/search/search.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { Button } from '@ui/button/button';
-import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
-import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
-import { Modal } from '@ui/modal/modal';
+import { Button } from '@ui/button/button';
+import { ConfirmModal } from '@ui/confirm-modal/confirm-modal';
+import { FilterActions } from '@ui/filter-actions/filter-actions';
+import { FilterBar } from '@ui/filter-bar/filter-bar';
+import { FilterInput } from '@ui/filter-input/filter-input';
+import { PageHeader } from '@ui/page-header/page-header';
+import { PageLayout } from '@ui/page-layout/page-layout';
 import { Pagination } from '@ui/pagination/pagination';
-import { Table } from '@ui/table/table';
+import { StateMessage } from '@ui/state-message/state-message';
+import { resolveTableRowId } from '@ui/table/helpers/table-row.helper';
 import { TableRowData } from '@ui/table/models/table-column.model';
-import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
+import { Table } from '@ui/table/table';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
+import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
+import { TagFormModal } from './components/tag-form-modal/tag-form-modal';
 import {
   TAGS_CREATE_ICON,
-  TAGS_DEFAULT_NAME,
   TAGS_PAGE_SIZE,
+  TAGS_SEARCH_INPUT_ID,
   TAGS_TABLE_COLUMNS,
   TAGS_TEXTS,
 } from './constants/tags.constants';
-import { TagFormModal } from './components/tag-form-modal/tag-form-modal';
+import { mapTag } from './helpers/tag-mapping/tag-mapping.helper';
 import { TagModalMode, TagModalModeEnum } from './models/tag-modal-mode.type';
 import { CreateTagPayload, TagFormSubmitPayload } from './models/tag-payload.model';
 import { Tag, TagApiItem, TagListResponse } from './models/tag.model';
-import { TagsService } from './services/tags.service';
+import { TagsService } from './services/tags/tags.service';
 
 @Component({
   selector: 'app-tags',
-  imports: [Button, Table, Pagination, Modal, TagFormModal, Breadcrumbs],
+  imports: [
+    PageLayout,
+    PageHeader,
+    Breadcrumbs,
+    Button,
+    StateMessage,
+    FilterBar,
+    FilterInput,
+    FilterActions,
+    Table,
+    Pagination,
+    TagFormModal,
+    ConfirmModal,
+  ],
   templateUrl: './tags.html',
   styleUrl: './tags.scss',
 })
-export class Tags implements OnInit {
+export class Tags {
   private readonly tagsService = inject(TagsService);
   private readonly toasterService = inject(ToasterService);
-  private readonly activatedRoute = inject(ActivatedRoute);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly queryClient = injectQueryClient();
 
   protected readonly textData = TAGS_TEXTS;
   protected readonly createTagIcon = TAGS_CREATE_ICON;
-  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    DASHBOARD_BREADCRUMB,
-    buildShopBreadcrumb(this.shopId()),
-    { label: this.textData.PAGE_TITLE },
-  ]);
+  protected readonly searchInputId = TAGS_SEARCH_INPUT_ID;
   protected readonly pageSize = TAGS_PAGE_SIZE;
   protected readonly tableColumns = TAGS_TABLE_COLUMNS;
 
-  protected readonly shopId = signal<string | null>(null);
-  protected readonly currentPage = signal(1);
+  protected readonly shopId = injectRouteParam('shopId');
+  protected readonly currentPage = linkedSignal({ source: this.shopId, computation: () => 1 });
   protected readonly selectedTag = signal<Tag | null>(null);
   protected readonly modalMode = signal<TagModalMode>(null);
   protected readonly searchInput = signal('');
   protected readonly searchName = signal('');
+
+  protected readonly breadcrumbItems = computed(() =>
+    buildShopPageBreadcrumbs(this.shopId(), TAGS_TEXTS.PAGE_TITLE),
+  );
 
   protected readonly tagsQuery = injectQuery(() => {
     const shopId = this.shopId();
@@ -68,7 +92,7 @@ export class Tags implements OnInit {
     return {
       queryKey: shopId
         ? SHOP_QUERY_KEYS.tags(shopId, page, this.pageSize, name)
-        : ['shop', 'tags', 'missing-shop-id'],
+        : SHOP_QUERY_KEYS.disabled('tags'),
       enabled: Boolean(shopId),
       queryFn: () =>
         lastValueFrom(
@@ -95,41 +119,25 @@ export class Tags implements OnInit {
   protected readonly isActionLoading = computed(
     () => this.createTagMutation.isPending() || this.deleteTagMutation.isPending(),
   );
+  protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
+  protected readonly isSearchDisabled = computed(
+    () => !this.isShopContextReady() || this.isLoading(),
+  );
   protected readonly tags = computed<Tag[]>(() => {
     const shopId = this.shopId();
-    if (!shopId) {
-      return [];
-    }
-
-    return (this.tagsQuery.data()?.items ?? []).map((item) => this.mapTag(item, shopId));
+    return shopId ? (this.tagsQuery.data()?.items ?? []).map((item) => mapTag(item, shopId)) : [];
   });
-  protected readonly totalItems = computed(() => Math.max(0, this.tagsQuery.data()?.total ?? 0));
-  protected readonly totalPages = computed(() =>
-    Math.max(1, this.tagsQuery.data()?.totalPages ?? 1),
+  protected readonly tagRows = computed<TableRowData[]>(() =>
+    this.tags().map((tag) => ({ id: tag.id, name: tag.name })),
   );
-  protected readonly hasTags = computed(() => this.tags().length > 0);
-  protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
+  protected readonly totalItems = computed(() => resolveTotalItems(this.tagsQuery.data()));
+  protected readonly totalPages = computed(() => resolveTotalPages(this.tagsQuery.data()));
   protected readonly isCreateModalOpen = computed(
     () => this.modalMode() === TagModalModeEnum.Create,
   );
   protected readonly isDeleteModalOpen = computed(
     () => this.modalMode() === TagModalModeEnum.Delete,
   );
-  protected readonly tagRows = computed<TableRowData[]>(() =>
-    this.tags().map((tag) => ({
-      id: tag.id,
-      name: tag.name,
-    })),
-  );
-
-  ngOnInit(): void {
-    this.watchShopId();
-  }
-
-  protected onSearchInput(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
-    this.searchInput.set(target?.value ?? '');
-  }
 
   protected onSearchSubmit(): void {
     const nextSearchName = this.searchInput().trim();
@@ -161,10 +169,8 @@ export class Tags implements OnInit {
   }
 
   protected onDeleteTag(row: TableRowData): void {
-    const rowId = row['id'];
-    const tagId = typeof rowId === 'string' ? rowId : '';
+    const tagId = resolveTableRowId(row);
     const selectedTag = this.tags().find((tag) => tag.id === tagId);
-
     if (!selectedTag) {
       return;
     }
@@ -174,49 +180,40 @@ export class Tags implements OnInit {
   }
 
   protected onPageChange(page: number): void {
-    if (page === this.currentPage() || page < 1 || page > this.totalPages()) {
-      return;
+    if (isPageChangeAllowed(page, this.currentPage(), this.totalPages())) {
+      this.currentPage.set(page);
     }
-
-    this.currentPage.set(page);
   }
 
   protected onCloseModal(): void {
-    if (this.isActionLoading()) {
-      return;
+    if (!this.isActionLoading()) {
+      this.closeModal();
     }
-
-    this.closeModal();
   }
 
   protected onConfirmCreate(payload: TagFormSubmitPayload): void {
-    if (this.isActionLoading()) {
-      return;
-    }
-
     const shopId = this.shopId();
-    if (!shopId) {
+    if (!shopId || this.isActionLoading()) {
       return;
     }
 
-    const createPayload: CreateTagPayload = {
-      shopId,
-      name: payload.name,
-    };
-
-    this.createTagMutation.mutate(createPayload, {
-      onSuccess: (createdTag) => {
-        this.toasterService.success(TAGS_TEXTS.CREATE_SUCCESS_TITLE);
-        this.closeModal();
-        this.insertCreatedTag(createdTag);
-        this.refetchTagsInBackground();
+    this.createTagMutation.mutate(
+      { shopId, name: payload.name },
+      {
+        onSuccess: (createdTag) => {
+          this.toasterService.success(TAGS_TEXTS.CREATE_SUCCESS_TITLE);
+          this.closeModal();
+          this.insertCreatedTag(shopId, createdTag);
+          this.invalidateTags(shopId);
+        },
       },
-    });
+    );
   }
 
   protected onConfirmDelete(): void {
     const selectedTag = this.selectedTag();
-    if (!selectedTag || this.isActionLoading()) {
+    const shopId = this.shopId();
+    if (!selectedTag || !shopId || this.isActionLoading()) {
       return;
     }
 
@@ -224,126 +221,36 @@ export class Tags implements OnInit {
       onSuccess: () => {
         this.toasterService.success(TAGS_TEXTS.DELETE_SUCCESS_TITLE);
         this.closeModal();
-        this.removeDeletedTag(selectedTag.id);
-        this.adjustPageAfterDelete();
-        this.refetchTagsInBackground();
+        this.queryClient.setQueryData<TagListResponse>(this.currentQueryKey(shopId), (data) =>
+          removePageItem(data, selectedTag.id),
+        );
+        this.currentPage.update((page) => Math.min(page, this.totalPages()));
+        this.invalidateTags(shopId);
       },
     });
   }
 
-  private watchShopId(): void {
-    const initialShopId = this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null;
-    this.shopId.set(initialShopId);
-    this.currentPage.set(1);
-
-    this.activatedRoute.paramMap
-      .pipe(
-        map((params) => params.get('shopId')),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((shopId) => {
-        this.shopId.set(shopId);
-        this.currentPage.set(1);
-      });
-  }
-
-  private refetchTagsInBackground(): void {
-    const shopId = this.shopId();
-    if (!shopId) {
+  private insertCreatedTag(shopId: string, createdTag: TagApiItem): void {
+    const mappedTag = mapTag(createdTag, shopId);
+    if (!matchesSearch(mappedTag.name, this.searchName())) {
       return;
     }
 
-    this.queryClient.invalidateQueries({
-      queryKey: ['shop', shopId, 'tags'],
-    });
-  }
-
-  private insertCreatedTag(createdTag: TagApiItem): void {
-    const shopId = this.shopId();
-    if (!shopId) {
-      return;
-    }
-
-    const normalizedSearchName = this.searchName().trim().toLowerCase();
-    const mappedTag = this.mapTag(createdTag, shopId);
-    const matchesSearch =
-      !normalizedSearchName || mappedTag.name.toLowerCase().includes(normalizedSearchName);
-    if (!matchesSearch) {
-      return;
-    }
-
-    this.queryClient.setQueryData<TagListResponse>(
-      this.resolveCurrentQueryKey(shopId),
-      (currentData) => {
-        if (!currentData) {
-          return currentData;
-        }
-
-        const nextItems = [mappedTag, ...currentData.items].slice(0, currentData.limit);
-        const nextTotal = currentData.total + 1;
-        return {
-          ...currentData,
-          items: nextItems,
-          total: nextTotal,
-          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
-        };
-      },
+    this.queryClient.setQueryData<TagListResponse>(this.currentQueryKey(shopId), (data) =>
+      prependPageItem<TagApiItem>(data, mappedTag),
     );
   }
 
-  private removeDeletedTag(tagId: string): void {
-    const shopId = this.shopId();
-    if (!shopId) {
-      return;
-    }
-
-    this.queryClient.setQueryData<TagListResponse>(
-      this.resolveCurrentQueryKey(shopId),
-      (currentData) => {
-        if (!currentData) {
-          return currentData;
-        }
-
-        const nextItems = currentData.items.filter((tag) => tag.id !== tagId);
-        if (nextItems.length === currentData.items.length) {
-          return currentData;
-        }
-
-        const nextTotal = Math.max(0, currentData.total - 1);
-        return {
-          ...currentData,
-          items: nextItems,
-          total: nextTotal,
-          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
-        };
-      },
-    );
+  private invalidateTags(shopId: string): void {
+    this.queryClient.invalidateQueries({ queryKey: SHOP_QUERY_KEYS.tagsScope(shopId) });
   }
 
-  private adjustPageAfterDelete(): void {
-    if (this.currentPage() <= this.totalPages()) {
-      return;
-    }
-
-    this.currentPage.set(this.totalPages());
-  }
-
-  private resolveCurrentQueryKey(shopId: string) {
+  private currentQueryKey(shopId: string): readonly unknown[] {
     return SHOP_QUERY_KEYS.tags(shopId, this.currentPage(), this.pageSize, this.searchName());
   }
 
   private closeModal(): void {
     this.modalMode.set(null);
     this.selectedTag.set(null);
-  }
-
-  private mapTag(tag: TagApiItem, fallbackShopId: string): Tag {
-    return {
-      id: tag.id?.trim() || crypto.randomUUID(),
-      shopId: tag.shopId?.trim() || fallbackShopId,
-      name: tag.name?.trim() || TAGS_DEFAULT_NAME,
-      ...(tag.createdAt?.trim() ? { createdAt: tag.createdAt } : {}),
-      ...(tag.updatedAt?.trim() ? { updatedAt: tag.updatedAt } : {}),
-    };
   }
 }

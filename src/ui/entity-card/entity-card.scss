@@ -24,6 +24,10 @@
   @apply font-bold text-on-surface leading-tight;
 }
 
+.entity-title-link {
+  @apply hover:text-primary hover:underline transition-colors;
+}
+
 .entity-subtitle {
   @apply text-sm text-on-surface-variant break-all leading-tight;
 }

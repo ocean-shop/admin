@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { AuthService } from '../../../../../core/services/auth/auth.service';
 import { Menu } from './menu';
-import { LayoutService } from '../../services/layout.service';
+import { LayoutService } from '../../services/layout/layout.service';
 
 describe('Menu', () => {
   let component: Menu;
@@ -16,7 +16,7 @@ describe('Menu', () => {
       imports: [Menu],
       providers: [
         LayoutService,
-        provideRouter([]),
+        provideRouter([{ path: '**', children: [] }]),
         { provide: AuthService, useValue: { logout: vi.fn() } },
       ],
     }).compileComponents();
@@ -85,5 +85,28 @@ describe('Menu', () => {
 
     expect(setSidebarStateSpy).not.toHaveBeenCalledWith(false);
     expect(layoutService.isSidebarOpen()).toBe(true);
+  });
+
+  it('navigates to the route of a footer item', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    (component as any).onFooterItemClick({
+      icon: 'dashboard',
+      label: 'Home',
+      route: '/admin/shops',
+      buttonClass: 'footer-btn',
+    });
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/admin/shops']);
+  });
+
+  it('fills the current shop id into the shop menu routes after navigation', async () => {
+    await router.navigateByUrl('/admin/shop/shop-1/tags?page=2');
+
+    const routes = (component as any)
+      .resolvedMenuItems()
+      .map((item: { route: string }) => item.route);
+    expect(routes).toContain('/admin/shop/shop-1/tags');
+    expect((component as any).useExactMatch('/admin/shop/shop-1')).toBe(true);
   });
 });

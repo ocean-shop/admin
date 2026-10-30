@@ -100,4 +100,42 @@ describe('ProductFormSharedImages', () => {
     expect(filesSelectedSpy).not.toHaveBeenCalled();
     expect(moveUpSpy).not.toHaveBeenCalled();
   });
+
+  describe('drag and drop', () => {
+    const imageFile = new File(['image'], 'one.jpg', { type: 'image/jpeg' });
+    const buildDragEvent = (files: File[]): DragEvent =>
+      ({
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+        dataTransfer: { files },
+      }) as unknown as DragEvent;
+
+    it('emits dropped images when dropping is allowed', () => {
+      const emitSpy = vi.spyOn((component as any).filesSelected, 'emit');
+      const event = buildDragEvent([imageFile]);
+
+      (component as any).onDrop(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(emitSpy).toHaveBeenCalledWith([imageFile]);
+    });
+
+    it('ignores drops when dropping is not allowed', () => {
+      fixture.componentRef.setInput('allowDrop', false);
+      const emitSpy = vi.spyOn((component as any).filesSelected, 'emit');
+
+      (component as any).onDrop(buildDragEvent([imageFile]));
+
+      expect(emitSpy).not.toHaveBeenCalled();
+    });
+
+    it('keeps the browser from opening dragged files', () => {
+      const event = buildDragEvent([]);
+
+      (component as any).onDragOver(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(event.stopPropagation).toHaveBeenCalled();
+    });
+  });
 });

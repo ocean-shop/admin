@@ -1,8 +1,7 @@
-<section class="admins-page">
-  <header class="admins-header">
-    <h3 class="admins-title">{{ title }}</h3>
+<app-page-layout>
+  <app-page-header [title]="textData.PAGE_TITLE">
     <app-button
-      [label]="createAdminLabel"
+      [label]="textData.CREATE_LABEL"
       [icon]="createAdminIcon"
       [iconLeading]="true"
       [fullWidth]="false"
@@ -10,33 +9,33 @@
       type="button"
       (click)="onCreateAdmin()"
     />
-  </header>
+  </app-page-header>
 
-  @if (!isLoading() && !hasAdmins()) {
-  <p class="state-text">{{ emptyState }}</p>
+  @if (adminsQuery.isError()) {
+  <app-state-message tone="warning" [message]="textData.LOAD_ERROR_MESSAGE" />
+  } @else if (isEmpty()) {
+  <app-state-message [message]="textData.EMPTY_STATE" />
   } @else {
   <div class="admins-list">
     @for (adminCard of adminCards(); track adminCard.id) {
     <app-entity-card
       [entity]="adminCard"
-      [icon]="'person'"
+      [icon]="cardIcon"
       (edit)="onEditAdmin(adminCard)"
       (removed)="onDeleteAdmin(adminCard)"
     />
     }
   </div>
-
-  @if (totalItems() > ADMINS_PAGE_SIZE) {
+  } @if (hasPagination()) {
   <app-pagination
-    class="admins-pagination"
     [currentPage]="currentPage()"
-    [pageSize]="pageSize()"
+    [pageSize]="pageSize"
     [totalItems]="totalItems()"
     [totalPages]="totalPages()"
-    [label]="paginationLabel"
+    [label]="textData.PAGINATION_LABEL"
     (pageChange)="onPageChange($event)"
   />
-  } }
+  }
 
   <app-admin-form-modal
     [isOpen]="isFormModalOpen()"
@@ -49,16 +48,15 @@
     (confirmed)="onConfirmFormModal($event)"
   />
 
-  <app-modal
+  <app-confirm-modal
     [isOpen]="isDeleteModalOpen()"
-    [title]="deleteModalTitle"
-    [confirmLabel]="deleteModalConfirmLabel"
-    [confirmLoading]="isActionLoading()"
-    [confirmDisabled]="isActionLoading()"
-    [isDanger]="true"
+    [title]="textData.MODAL_DELETE_TITLE"
+    [confirmLabel]="textData.MODAL_DELETE_CONFIRM_LABEL"
+    [message]="textData.MODAL_DELETE_MESSAGE"
+    [highlight]="selectedAdminName()"
+    [suffix]="textData.MODAL_DELETE_SUFFIX"
+    [loading]="isActionLoading()"
     (closed)="onCloseModal()"
     (confirmed)="onConfirmDelete()"
-  >
-    <p class="admins-delete-message">{{ deleteModalMessage }}</p>
-  </app-modal>
-</section>
+  />
+</app-page-layout>

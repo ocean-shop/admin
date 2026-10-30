@@ -1,69 +1,92 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import {
   injectMutation,
   injectQuery,
   injectQueryClient,
 } from '@tanstack/angular-query-experimental';
-import { lastValueFrom, map } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
+import {
+  isPageChangeAllowed,
+  prependPageItem,
+  removePageItem,
+  resolveTotalItems,
+  resolveTotalPages,
+} from '@core/helpers/pagination/pagination.helper';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
+import { matchesSearch } from '@core/helpers/search/search.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { Button } from '@ui/button/button';
-import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.constants';
-import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
-import { Modal } from '@ui/modal/modal';
+import { Button } from '@ui/button/button';
+import { ConfirmModal } from '@ui/confirm-modal/confirm-modal';
+import { FilterActions } from '@ui/filter-actions/filter-actions';
+import { FilterBar } from '@ui/filter-bar/filter-bar';
+import { FilterInput } from '@ui/filter-input/filter-input';
+import { PageHeader } from '@ui/page-header/page-header';
+import { PageLayout } from '@ui/page-layout/page-layout';
 import { Pagination } from '@ui/pagination/pagination';
-import { Table } from '@ui/table/table';
+import { StateMessage } from '@ui/state-message/state-message';
+import { resolveTableRowId } from '@ui/table/helpers/table-row.helper';
 import { TableRowData } from '@ui/table/models/table-column.model';
-import { buildShopBreadcrumb } from '../../constants/shop-breadcrumbs.constants';
+import { Table } from '@ui/table/table';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
+import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
+import { AttributeFormModal } from './components/attribute-form-modal/attribute-form-modal';
 import {
   ATTRIBUTES_CREATE_ICON,
-  ATTRIBUTES_DEFAULT_NAME,
-  ATTRIBUTES_DEFAULT_VALUE,
   ATTRIBUTES_PAGE_SIZE,
+  ATTRIBUTES_SEARCH_INPUT_ID,
   ATTRIBUTES_TABLE_COLUMNS,
   ATTRIBUTES_TEXTS,
 } from './constants/attributes.constants';
-import { AttributeFormModal } from './components/attribute-form-modal/attribute-form-modal';
+import { mapAttribute } from './helpers/attribute-mapping/attribute-mapping.helper';
 import { AttributeModalMode, AttributeModalModeEnum } from './models/attribute-modal-mode.type';
 import {
   AttributeFormSubmitPayload,
   CreateAttributePayload,
 } from './models/attribute-payload.model';
 import { Attribute, AttributeApiItem, AttributeListResponse } from './models/attribute.model';
-import { AttributesService } from './services/attributes.service';
+import { AttributesService } from './services/attributes/attributes.service';
 
 @Component({
   selector: 'app-attributes',
-  imports: [Button, Table, Pagination, Modal, AttributeFormModal, Breadcrumbs],
+  imports: [
+    PageLayout,
+    PageHeader,
+    Breadcrumbs,
+    Button,
+    StateMessage,
+    FilterBar,
+    FilterInput,
+    FilterActions,
+    Table,
+    Pagination,
+    AttributeFormModal,
+    ConfirmModal,
+  ],
   templateUrl: './attributes.html',
   styleUrl: './attributes.scss',
 })
-export class Attributes implements OnInit {
+export class Attributes {
   private readonly attributesService = inject(AttributesService);
   private readonly toasterService = inject(ToasterService);
-  private readonly activatedRoute = inject(ActivatedRoute);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly queryClient = injectQueryClient();
 
   protected readonly textData = ATTRIBUTES_TEXTS;
   protected readonly createAttributeIcon = ATTRIBUTES_CREATE_ICON;
-  protected readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    DASHBOARD_BREADCRUMB,
-    buildShopBreadcrumb(this.shopId()),
-    { label: this.textData.PAGE_TITLE },
-  ]);
+  protected readonly searchInputId = ATTRIBUTES_SEARCH_INPUT_ID;
   protected readonly pageSize = ATTRIBUTES_PAGE_SIZE;
   protected readonly tableColumns = ATTRIBUTES_TABLE_COLUMNS;
 
-  protected readonly shopId = signal<string | null>(null);
-  protected readonly currentPage = signal(1);
+  protected readonly shopId = injectRouteParam('shopId');
+  protected readonly currentPage = linkedSignal({ source: this.shopId, computation: () => 1 });
   protected readonly selectedAttribute = signal<Attribute | null>(null);
   protected readonly modalMode = signal<AttributeModalMode>(null);
   protected readonly searchInput = signal('');
   protected readonly searchName = signal('');
+
+  protected readonly breadcrumbItems = computed(() =>
+    buildShopPageBreadcrumbs(this.shopId(), ATTRIBUTES_TEXTS.PAGE_TITLE),
+  );
 
   protected readonly attributesQuery = injectQuery(() => {
     const shopId = this.shopId();
@@ -72,7 +95,7 @@ export class Attributes implements OnInit {
     return {
       queryKey: shopId
         ? SHOP_QUERY_KEYS.attributes(shopId, page, this.pageSize, name)
-        : ['shop', 'attributes', 'missing-shop-id'],
+        : SHOP_QUERY_KEYS.disabled('attributes'),
       enabled: Boolean(shopId),
       queryFn: () =>
         lastValueFrom(
@@ -100,29 +123,16 @@ export class Attributes implements OnInit {
   protected readonly isActionLoading = computed(
     () => this.createAttributeMutation.isPending() || this.deleteAttributeMutation.isPending(),
   );
+  protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
+  protected readonly isSearchDisabled = computed(
+    () => !this.isShopContextReady() || this.isLoading(),
+  );
   protected readonly attributes = computed<Attribute[]>(() => {
     const shopId = this.shopId();
-    if (!shopId) {
-      return [];
-    }
-
-    return (this.attributesQuery.data()?.items ?? []).map((item) =>
-      this.mapAttribute(item, shopId),
-    );
+    return shopId
+      ? (this.attributesQuery.data()?.items ?? []).map((item) => mapAttribute(item, shopId))
+      : [];
   });
-  protected readonly totalItems = computed(() =>
-    Math.max(0, this.attributesQuery.data()?.total ?? 0),
-  );
-  protected readonly totalPages = computed(() =>
-    Math.max(1, this.attributesQuery.data()?.totalPages ?? 1),
-  );
-  protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
-  protected readonly isCreateModalOpen = computed(
-    () => this.modalMode() === AttributeModalModeEnum.Create,
-  );
-  protected readonly isDeleteModalOpen = computed(
-    () => this.modalMode() === AttributeModalModeEnum.Delete,
-  );
   protected readonly attributeRows = computed<TableRowData[]>(() =>
     this.attributes().map((attribute) => ({
       id: attribute.id,
@@ -130,15 +140,14 @@ export class Attributes implements OnInit {
       value: attribute.value,
     })),
   );
-
-  ngOnInit(): void {
-    this.watchShopId();
-  }
-
-  protected onSearchInput(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
-    this.searchInput.set(target?.value ?? '');
-  }
+  protected readonly totalItems = computed(() => resolveTotalItems(this.attributesQuery.data()));
+  protected readonly totalPages = computed(() => resolveTotalPages(this.attributesQuery.data()));
+  protected readonly isCreateModalOpen = computed(
+    () => this.modalMode() === AttributeModalModeEnum.Create,
+  );
+  protected readonly isDeleteModalOpen = computed(
+    () => this.modalMode() === AttributeModalModeEnum.Delete,
+  );
 
   protected onSearchSubmit(): void {
     const nextSearchName = this.searchInput().trim();
@@ -170,10 +179,8 @@ export class Attributes implements OnInit {
   }
 
   protected onDeleteAttribute(row: TableRowData): void {
-    const rowId = row['id'];
-    const attributeId = typeof rowId === 'string' ? rowId : '';
+    const attributeId = resolveTableRowId(row);
     const selectedAttribute = this.attributes().find((attribute) => attribute.id === attributeId);
-
     if (!selectedAttribute) {
       return;
     }
@@ -183,50 +190,40 @@ export class Attributes implements OnInit {
   }
 
   protected onPageChange(page: number): void {
-    if (page === this.currentPage() || page < 1 || page > this.totalPages()) {
-      return;
+    if (isPageChangeAllowed(page, this.currentPage(), this.totalPages())) {
+      this.currentPage.set(page);
     }
-
-    this.currentPage.set(page);
   }
 
   protected onCloseModal(): void {
-    if (this.isActionLoading()) {
-      return;
+    if (!this.isActionLoading()) {
+      this.closeModal();
     }
-
-    this.closeModal();
   }
 
   protected onConfirmCreate(payload: AttributeFormSubmitPayload): void {
-    if (this.isActionLoading()) {
-      return;
-    }
-
     const shopId = this.shopId();
-    if (!shopId) {
+    if (!shopId || this.isActionLoading()) {
       return;
     }
 
-    const createPayload: CreateAttributePayload = {
-      shopId,
-      name: payload.name,
-      value: payload.value,
-    };
-
-    this.createAttributeMutation.mutate(createPayload, {
-      onSuccess: (createdAttribute) => {
-        this.toasterService.success(ATTRIBUTES_TEXTS.CREATE_SUCCESS_TITLE);
-        this.closeModal();
-        this.insertCreatedAttribute(createdAttribute);
-        this.refetchAttributesInBackground();
+    this.createAttributeMutation.mutate(
+      { shopId, name: payload.name, value: payload.value },
+      {
+        onSuccess: (createdAttribute) => {
+          this.toasterService.success(ATTRIBUTES_TEXTS.CREATE_SUCCESS_TITLE);
+          this.closeModal();
+          this.insertCreatedAttribute(shopId, createdAttribute);
+          this.invalidateAttributes(shopId);
+        },
       },
-    });
+    );
   }
 
   protected onConfirmDelete(): void {
     const selectedAttribute = this.selectedAttribute();
-    if (!selectedAttribute || this.isActionLoading()) {
+    const shopId = this.shopId();
+    if (!selectedAttribute || !shopId || this.isActionLoading()) {
       return;
     }
 
@@ -234,127 +231,36 @@ export class Attributes implements OnInit {
       onSuccess: () => {
         this.toasterService.success(ATTRIBUTES_TEXTS.DELETE_SUCCESS_TITLE);
         this.closeModal();
-        this.removeDeletedAttribute(selectedAttribute.id);
-        this.adjustPageAfterDelete();
-        this.refetchAttributesInBackground();
+        this.queryClient.setQueryData<AttributeListResponse>(this.currentQueryKey(shopId), (data) =>
+          removePageItem(data, selectedAttribute.id),
+        );
+        this.currentPage.update((page) => Math.min(page, this.totalPages()));
+        this.invalidateAttributes(shopId);
       },
     });
   }
 
-  private watchShopId(): void {
-    const initialShopId = this.activatedRoute.snapshot?.paramMap?.get('shopId') ?? null;
-    this.shopId.set(initialShopId);
-    this.currentPage.set(1);
-
-    this.activatedRoute.paramMap
-      .pipe(
-        map((params) => params.get('shopId')),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((shopId) => {
-        this.shopId.set(shopId);
-        this.currentPage.set(1);
-      });
-  }
-
-  private refetchAttributesInBackground(): void {
-    const shopId = this.shopId();
-    if (!shopId) {
+  private insertCreatedAttribute(shopId: string, createdAttribute: AttributeApiItem): void {
+    const mappedAttribute = mapAttribute(createdAttribute, shopId);
+    if (!matchesSearch(mappedAttribute.name, this.searchName())) {
       return;
     }
 
-    this.queryClient.invalidateQueries({
-      queryKey: ['shop', shopId, 'attributes'],
-    });
-  }
-
-  private insertCreatedAttribute(createdAttribute: AttributeApiItem): void {
-    const shopId = this.shopId();
-    if (!shopId) {
-      return;
-    }
-
-    const normalizedSearchName = this.searchName().trim().toLowerCase();
-    const mappedAttribute = this.mapAttribute(createdAttribute, shopId);
-    const matchesSearch =
-      !normalizedSearchName || mappedAttribute.name.toLowerCase().includes(normalizedSearchName);
-    if (!matchesSearch) {
-      return;
-    }
-
-    this.queryClient.setQueryData<AttributeListResponse>(
-      this.resolveCurrentQueryKey(shopId),
-      (currentData) => {
-        if (!currentData) {
-          return currentData;
-        }
-
-        const nextItems = [mappedAttribute, ...currentData.items].slice(0, currentData.limit);
-        const nextTotal = currentData.total + 1;
-        return {
-          ...currentData,
-          items: nextItems,
-          total: nextTotal,
-          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
-        };
-      },
+    this.queryClient.setQueryData<AttributeListResponse>(this.currentQueryKey(shopId), (data) =>
+      prependPageItem<AttributeApiItem>(data, mappedAttribute),
     );
   }
 
-  private removeDeletedAttribute(attributeId: string): void {
-    const shopId = this.shopId();
-    if (!shopId) {
-      return;
-    }
-
-    this.queryClient.setQueryData<AttributeListResponse>(
-      this.resolveCurrentQueryKey(shopId),
-      (currentData) => {
-        if (!currentData) {
-          return currentData;
-        }
-
-        const nextItems = currentData.items.filter((attribute) => attribute.id !== attributeId);
-        if (nextItems.length === currentData.items.length) {
-          return currentData;
-        }
-
-        const nextTotal = Math.max(0, currentData.total - 1);
-        return {
-          ...currentData,
-          items: nextItems,
-          total: nextTotal,
-          totalPages: Math.max(1, Math.ceil(nextTotal / currentData.limit)),
-        };
-      },
-    );
+  private invalidateAttributes(shopId: string): void {
+    this.queryClient.invalidateQueries({ queryKey: SHOP_QUERY_KEYS.attributesScope(shopId) });
   }
 
-  private adjustPageAfterDelete(): void {
-    if (this.currentPage() <= this.totalPages()) {
-      return;
-    }
-
-    this.currentPage.set(this.totalPages());
-  }
-
-  private resolveCurrentQueryKey(shopId: string) {
+  private currentQueryKey(shopId: string): readonly unknown[] {
     return SHOP_QUERY_KEYS.attributes(shopId, this.currentPage(), this.pageSize, this.searchName());
   }
 
   private closeModal(): void {
     this.modalMode.set(null);
     this.selectedAttribute.set(null);
-  }
-
-  private mapAttribute(attribute: AttributeApiItem, fallbackShopId: string): Attribute {
-    return {
-      id: attribute.id?.trim() || crypto.randomUUID(),
-      shopId: attribute.shopId?.trim() || fallbackShopId,
-      name: attribute.name?.trim() || ATTRIBUTES_DEFAULT_NAME,
-      value: attribute.value?.trim() || ATTRIBUTES_DEFAULT_VALUE,
-      ...(attribute.createdAt?.trim() ? { createdAt: attribute.createdAt } : {}),
-      ...(attribute.updatedAt?.trim() ? { updatedAt: attribute.updatedAt } : {}),
-    };
   }
 }

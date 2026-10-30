@@ -17,10 +17,17 @@ export const USERS_TEXTS = {
     'Відкрийте сторінку з коректним шляхом магазину (/shop/:shopId/users), щоб керувати користувачами.',
   EMPTY_STATE: 'Користувачів не знайдено.',
   TABLE_LOADING_TEXT: 'Завантаження користувачів...',
-  TABLE_EMAIL_HEADER: 'email',
-  TABLE_MOBILE_NUMBER_HEADER: 'mobile_number',
-  TABLE_IS_ACTIVE_HEADER: 'is_active',
-  TABLE_CREATED_AT_HEADER: 'created_at',
+  EMAIL_LABEL: 'Email',
+  MOBILE_NUMBER_LABEL: 'Телефон',
+  IS_ACTIVE_LABEL: 'Активний',
+  CREATED_AT_LABEL: 'Створено',
+  OTP_CHANNEL_LABEL: 'Канал',
+  OTP_PURPOSE_LABEL: 'Призначення',
+  OTP_ATTEMPTS_LABEL: 'Спроби',
+  SESSION_USER_AGENT_LABEL: 'User agent',
+  SESSION_IP_ADDRESS_LABEL: 'IP-адреса',
+  SESSION_DEVICE_NAME_LABEL: 'Пристрій',
+  ROLE_VALUE_LABEL: 'Значення',
   TABLE_ACTIONS_LABEL: 'Дії',
   TABLE_SHOW_LABEL: 'Переглянути користувача',
   PAGINATION_LABEL: 'користувачів',
@@ -28,16 +35,21 @@ export const USERS_TEXTS = {
   DETAILS_TITLE: 'Деталі користувача',
   DETAILS_DESCRIPTION: 'Перегляд інформації користувача, OTP, сесій та ролі.',
   USER_INFO_TITLE: 'Дані користувача',
-  USER_OTPS_TITLE: 'OTPS коди',
+  USER_OTPS_TITLE: 'OTP-коди',
   USER_SESSIONS_TITLE: 'Сесії',
   USER_ROLE_TITLE: 'Роль',
   USER_DETAIL_LOAD_ERROR: 'Не вдалося завантажити деталі користувача.',
   USER_ROLE_EMPTY_STATE: 'Роль користувача відсутня.',
-};
+} as const;
 
+export const USERS_SECTION_PATH = 'users';
 export const USERS_PAGE_SIZE = 20;
 export const USERS_EMAIL_FILTER_ID = 'users-email-filter';
 export const USERS_PHONE_FILTER_ID = 'users-phone-filter';
+export const USERS_SORT_ICON = 'swap_vert';
+export const USERS_SHOW_ICON = 'visibility';
+/** Role object keys hidden from the role section. */
+export const USER_ROLE_HIDDEN_FIELDS: readonly string[] = ['id'];
 
 export const USERS_SORT_OPTIONS: DropdownOption[] = [
   { label: 'Спочатку новіші', value: 'newest' },
@@ -45,8 +57,20 @@ export const USERS_SORT_OPTIONS: DropdownOption[] = [
 ];
 
 export const USERS_TABLE_COLUMNS: TableColumn[] = [
-  { key: 'email', header: USERS_TEXTS.TABLE_EMAIL_HEADER },
-  { key: 'mobile_number', header: USERS_TEXTS.TABLE_MOBILE_NUMBER_HEADER },
-  { key: 'is_active', header: USERS_TEXTS.TABLE_IS_ACTIVE_HEADER },
-  { key: 'created_at', header: USERS_TEXTS.TABLE_CREATED_AT_HEADER },
+  { key: 'email', header: USERS_TEXTS.EMAIL_LABEL },
+  { key: 'mobileNumber', header: USERS_TEXTS.MOBILE_NUMBER_LABEL },
+  { key: 'isActive', header: USERS_TEXTS.IS_ACTIVE_LABEL },
+  { key: 'createdAt', header: USERS_TEXTS.CREATED_AT_LABEL },
+];
+
+export const USER_OTP_TABLE_COLUMNS: TableColumn[] = [
+  { key: 'channel', header: USERS_TEXTS.OTP_CHANNEL_LABEL },
+  { key: 'purpose', header: USERS_TEXTS.OTP_PURPOSE_LABEL },
+  { key: 'attempts', header: USERS_TEXTS.OTP_ATTEMPTS_LABEL, align: 'right' },
+];
+
+export const USER_SESSION_TABLE_COLUMNS: TableColumn[] = [
+  { key: 'userAgent', header: USERS_TEXTS.SESSION_USER_AGENT_LABEL },
+  { key: 'ipAddress', header: USERS_TEXTS.SESSION_IP_ADDRESS_LABEL },
+  { key: 'deviceName', header: USERS_TEXTS.SESSION_DEVICE_NAME_LABEL },
 ];

@@ -4,28 +4,8 @@
   @apply block;
 }
 
-.product-form-card {
-  @apply flex h-[465px] flex-col rounded-lg border border-outline-variant bg-surface-container-lowest p-6 shadow-sm;
-}
-
-.product-form-card-disabled {
-  @apply opacity-70;
-}
-
-.product-form-card-title {
-  @apply mb-4 border-b border-surface-container pb-2 text-lg font-semibold text-on-surface;
-}
-
-.product-form-card-title-icon {
-  @apply inline-flex items-center gap-2;
-}
-
-.product-form-card-title-icon .material-symbols-outlined {
-  @apply text-[20px] text-primary;
-}
-
 .product-form-static-scroll {
-  @apply min-h-0 flex-1 space-y-2 overflow-y-auto pr-2;
+  @apply max-h-[380px] space-y-2 overflow-y-auto pr-2;
 }
 
 .product-form-tree-row {
