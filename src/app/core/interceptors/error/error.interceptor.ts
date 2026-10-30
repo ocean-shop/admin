@@ -3,16 +3,20 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import {
+  HTTP_ERROR_LOG_MESSAGES,
   HTTP_ERROR_LOG_SCOPE,
-  HTTP_ERROR_TEXTS,
   RETRIED_AFTER_REFRESH,
 } from '@core/constants/http-error.constants';
 import { APP_ROUTES } from '@core/constants/routes.constants';
-import { isApiUrl, isAuthApiUrl, isAuthTokenLifecycleUrl } from '@core/helpers/api-url.helper';
-import { logDebug } from '@core/helpers/debug-log.helper';
-import { buildHttpErrorToast, isHttpErrorStatus } from '@core/helpers/http-error.helper';
-import { AuthService } from '../services/auth/auth.service';
-import { ToasterService } from '../services/toaster/toaster.service';
+import {
+  isApiUrl,
+  isAuthApiUrl,
+  isAuthTokenLifecycleUrl,
+} from '@core/helpers/api-url/api-url.helper';
+import { logDebug } from '@core/helpers/debug-log/debug-log.helper';
+import { buildHttpErrorToast, isHttpErrorStatus } from '@core/helpers/http-error/http-error.helper';
+import { AuthService } from '../../services/auth/auth.service';
+import { ToasterService } from '../../services/toaster/toaster.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toasterService = inject(ToasterService);
@@ -22,7 +26,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      logDebug(HTTP_ERROR_LOG_SCOPE, 'Request failed', {
+      logDebug(HTTP_ERROR_LOG_SCOPE, HTTP_ERROR_LOG_MESSAGES.REQUEST_FAILED, {
         status: error.status,
         url: req.url,
         alreadyRetried,
@@ -39,8 +43,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return authService.refreshToken().pipe(
           switchMap((response) => {
             if (!response?.accessToken) {
-              logDebug(HTTP_ERROR_LOG_SCOPE, 'Refresh response is missing access token');
-              return throwError(() => new Error(HTTP_ERROR_TEXTS.MISSING_ACCESS_TOKEN));
+              logDebug(HTTP_ERROR_LOG_SCOPE, HTTP_ERROR_LOG_MESSAGES.MISSING_ACCESS_TOKEN);
+              return throwError(() => new Error(HTTP_ERROR_LOG_MESSAGES.MISSING_ACCESS_TOKEN));
             }
 
             return next(

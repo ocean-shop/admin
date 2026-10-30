@@ -4,7 +4,7 @@ import {
   formatNumber,
   formatText,
   stringifyValue,
-} from '@core/helpers/value-format.helper';
+} from '@core/helpers/value-format/value-format.helper';
 import { InfoListRow } from '@ui/info-list/models/info-list-row.model';
 import { TableRowData } from '@ui/table/models/table-column.model';
 import { SortOrder } from '../../../models/sort-order.type';

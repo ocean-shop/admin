@@ -8,10 +8,10 @@ import {
   UrlTree,
 } from '@angular/router';
 import { firstValueFrom, Observable, of, throwError } from 'rxjs';
-import { AuthService } from '../services/auth/auth.service';
-import { authGuard } from './auth.guard';
+import { AuthService } from '../../services/auth/auth.service';
+import { guestGuard } from './guest.guard';
 
-describe('authGuard', () => {
+describe('guestGuard', () => {
   let mockAuthService: {
     isAuthenticated: ReturnType<typeof vi.fn>;
     hasSessionHint: ReturnType<typeof vi.fn>;
@@ -21,7 +21,7 @@ describe('authGuard', () => {
 
   const runGuard = () =>
     TestBed.runInInjectionContext(() =>
-      authGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
+      guestGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
     );
 
   const serializeUrl = (tree: UrlTree): string => TestBed.inject(Router).serializeUrl(tree);
@@ -43,36 +43,33 @@ describe('authGuard', () => {
     });
   });
 
-  it('allows access when user is authenticated', () => {
+  it('redirects authenticated user to admin', () => {
     mockAuthService.isAuthenticated.mockReturnValue(true);
 
+    expect(serializeUrl(runGuard() as UrlTree)).toBe('/admin');
+  });
+
+  it('allows guest without session hint', () => {
     expect(runGuard()).toBe(true);
     expect(mockAuthService.refreshToken).not.toHaveBeenCalled();
   });
 
-  it('redirects to login when there is no session hint', () => {
-    const result = runGuard() as UrlTree;
-
-    expect(serializeUrl(result)).toBe('/login');
-  });
-
-  it('allows access after successful token refresh', async () => {
+  it('redirects to admin after successful token refresh', async () => {
     mockAuthService.hasSessionHint.mockReturnValue(true);
     mockAuthService.refreshToken.mockReturnValue(of({ accessToken: 'token' }));
 
     const result = await firstValueFrom(runGuard() as Observable<boolean | UrlTree>);
 
-    expect(result).toBe(true);
-    expect(mockAuthService.clearSession).not.toHaveBeenCalled();
+    expect(serializeUrl(result as UrlTree)).toBe('/admin');
   });
 
-  it('clears session and redirects to login when refresh fails', async () => {
+  it('clears session and allows access when refresh fails', async () => {
     mockAuthService.hasSessionHint.mockReturnValue(true);
     mockAuthService.refreshToken.mockReturnValue(throwError(() => new Error('expired')));
 
     const result = await firstValueFrom(runGuard() as Observable<boolean | UrlTree>);
 
+    expect(result).toBe(true);
     expect(mockAuthService.clearSession).toHaveBeenCalled();
-    expect(serializeUrl(result as UrlTree)).toBe('/login');
   });
 });

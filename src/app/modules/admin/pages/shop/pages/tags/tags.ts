@@ -11,9 +11,9 @@ import {
   removePageItem,
   resolveTotalItems,
   resolveTotalPages,
-} from '@core/helpers/pagination.helper';
-import { injectRouteParam } from '@core/helpers/route-param.helper';
-import { matchesSearch } from '@core/helpers/search.helper';
+} from '@core/helpers/pagination/pagination.helper';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
+import { matchesSearch } from '@core/helpers/search/search.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Button } from '@ui/button/button';

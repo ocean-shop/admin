@@ -1,6 +1,6 @@
 import { APP_ROUTES } from '@core/constants/routes.constants';
-import { normalizePaginationMeta } from '@core/helpers/pagination.helper';
-import { toTrimmedString } from '@core/helpers/value-format.helper';
+import { normalizePaginationMeta } from '@core/helpers/pagination/pagination.helper';
+import { toTrimmedString } from '@core/helpers/value-format/value-format.helper';
 import { PaginatedResponse } from '@core/models/paginated-response.model';
 import { PaginationQuery } from '@core/models/pagination-query.model';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';

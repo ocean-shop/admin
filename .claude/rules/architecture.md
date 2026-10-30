@@ -7,10 +7,12 @@ src/
 ├─ app/
 │  ├─ core/            # app-wide singletons (alias @core)
 │  │  ├─ constants/    # API_URL, storage keys, ...
-│  │  ├─ guards/       # functional guards (CanActivateFn)
-│  │  ├─ interceptors/ # functional interceptors (HttpInterceptorFn)
+│  │  ├─ guards/<name>/<name>.guard.ts             # functional guards (CanActivateFn)
+│  │  ├─ helpers/<name>/<name>.helper.ts           # app-wide pure functions
+│  │  ├─ interceptors/<name>/<name>.interceptor.ts # functional interceptors (HttpInterceptorFn)
 │  │  ├─ models/
 │  │  └─ services/<name>/<name>.service.ts
+│  │     # each item in guards/helpers/interceptors/services has its own folder: file + .spec.ts
 │  ├─ pages/           # public (unauthenticated) pages, e.g. login
 │  └─ modules/admin/   # authenticated area
 │     ├─ layout/       # shell: header, menu

@@ -2,8 +2,8 @@ import { Component, computed, inject, linkedSignal, signal } from '@angular/core
 import { form } from '@angular/forms/signals';
 import { injectMutation, injectQueryClient } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-import { injectRouteParam } from '@core/helpers/route-param.helper';
-import { toTrimmedString } from '@core/helpers/value-format.helper';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
+import { toTrimmedString } from '@core/helpers/value-format/value-format.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Button } from '@ui/button/button';

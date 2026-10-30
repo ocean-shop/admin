@@ -7,10 +7,10 @@ import { API_URL } from '@core/constants/api.constant';
 import { APP_ROUTES } from '@core/constants/routes.constants';
 import { AuthService } from '@core/services/auth/auth.service';
 import { ToasterService } from '@core/services/toaster/toaster.service';
-import { authInterceptor } from './auth.interceptor';
+import { authInterceptor } from '../auth/auth.interceptor';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { buildAuthSession } from '@testing/auth-session.fixture';
-import { HTTP_ERROR_TEXTS } from '../constants/http-error.constants';
+import { HTTP_ERROR_TEXTS } from '../../constants/http-error.constants';
 import { errorInterceptor } from './error.interceptor';
 
 class ToasterServiceStub {

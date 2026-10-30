@@ -1,6 +1,6 @@
 import { Component, input, output, OutputEmitterRef } from '@angular/core';
 import { IMAGE_UPLOAD_ACCEPT } from '@core/constants/image-upload.constants';
-import { filterAllowedImageFiles } from '@core/helpers/image-file.helper';
+import { filterAllowedImageFiles } from '@core/helpers/image-file/image-file.helper';
 import {
   PRODUCT_FORM_IMAGE_ICONS,
   PRODUCT_FORM_TEXTS,

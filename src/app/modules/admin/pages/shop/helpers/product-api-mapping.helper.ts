@@ -1,5 +1,5 @@
-import { uniqueBy } from '@core/helpers/array.helper';
-import { toTrimmedString } from '@core/helpers/value-format.helper';
+import { uniqueBy } from '@core/helpers/array/array.helper';
+import { toTrimmedString } from '@core/helpers/value-format/value-format.helper';
 import { ImageFileItem } from '@core/models/image-file-item.model';
 import { ProductFormAssignedAttribute } from '../components/product-form/models/product-form-assigned-attribute.model';
 import { ProductFormAssignedTag } from '../components/product-form/models/product-form-assigned-tag.model';

@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-import { injectRouteParam } from '@core/helpers/route-param.helper';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { InfoList } from '@ui/info-list/info-list';
 import { PageHeader } from '@ui/page-header/page-header';

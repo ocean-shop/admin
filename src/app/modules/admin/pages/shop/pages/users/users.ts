@@ -7,8 +7,8 @@ import {
   isPageChangeAllowed,
   resolveTotalItems,
   resolveTotalPages,
-} from '@core/helpers/pagination.helper';
-import { injectRouteParam } from '@core/helpers/route-param.helper';
+} from '@core/helpers/pagination/pagination.helper';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { isDropdownOptionValue } from '@ui/dropdown/helpers/dropdown-option.helper';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';

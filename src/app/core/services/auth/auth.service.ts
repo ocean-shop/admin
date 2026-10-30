@@ -6,7 +6,7 @@ import { injectQueryClient } from '@tanstack/angular-query-experimental';
 import { Observable, catchError, defer, finalize, lastValueFrom, of, shareReplay, tap } from 'rxjs';
 import { AUTH_API_ENDPOINTS } from '@core/constants/api.constant';
 import { APP_ROUTES } from '@core/constants/routes.constants';
-import { logDebug } from '@core/helpers/debug-log.helper';
+import { logDebug } from '@core/helpers/debug-log/debug-log.helper';
 import { AuthResponse, AuthUser } from '@core/models/auth.model';
 import { AuthBroadcastMessage } from '@core/models/auth-broadcast.model';
 import { AUTH_BROADCAST_EVENTS } from '@core/models/auth-broadcast.enum';
@@ -14,6 +14,7 @@ import { AUTH_ROLES } from '@core/models/auth-role.enum';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import {
   AUTH_BROADCAST_CHANNEL,
+  AUTH_LOG_MESSAGES,
   AUTH_LOG_SCOPE,
   AUTH_REFRESH_LOCK,
   AUTH_STORAGE_KEYS,
@@ -78,23 +79,23 @@ export class AuthService {
 
     const refreshVersion = this.sessionVersion;
     const tokenBeforeRefresh = this.getAccessToken();
-    this.logAuthDebug('Starting refresh request');
+    this.logAuthDebug(AUTH_LOG_MESSAGES.REFRESH_STARTED);
 
     this.refreshInFlight = this.withRefreshLock(this.requestRefresh(tokenBeforeRefresh)).pipe(
       tap((session) => {
         if (this.sessionVersion !== refreshVersion) {
-          this.logAuthDebug('Ignoring stale refresh response');
+          this.logAuthDebug(AUTH_LOG_MESSAGES.REFRESH_STALE_IGNORED);
           return;
         }
 
         if (session?.accessToken) {
           this.handleAuthSuccess(session);
-          this.logAuthDebug('Refresh succeeded and token updated');
+          this.logAuthDebug(AUTH_LOG_MESSAGES.REFRESH_SUCCEEDED);
         }
       }),
       finalize(() => {
         this.refreshInFlight = null;
-        this.logAuthDebug('Refresh request finalized');
+        this.logAuthDebug(AUTH_LOG_MESSAGES.REFRESH_FINALIZED);
       }),
       shareReplay(1),
     );
@@ -119,7 +120,7 @@ export class AuthService {
     return defer(() => {
       const current = this.session();
       if (current && current.accessToken !== tokenBeforeRefresh) {
-        this.logAuthDebug('Reusing session refreshed by another tab');
+        this.logAuthDebug(AUTH_LOG_MESSAGES.SESSION_REUSED_FROM_TAB);
         return of(current);
       }
 
@@ -174,14 +175,14 @@ export class AuthService {
 
     if (message?.type === AUTH_BROADCAST_EVENTS.SESSION) {
       this.session.set(message.session);
-      this.logAuthDebug('Synced session from another tab');
+      this.logAuthDebug(AUTH_LOG_MESSAGES.SESSION_SYNCED_FROM_TAB);
       return;
     }
 
     if (message?.type === AUTH_BROADCAST_EVENTS.LOGOUT) {
       this.resetSession();
       this.router.navigate([APP_ROUTES.LOGIN]);
-      this.logAuthDebug('Logged out from another tab');
+      this.logAuthDebug(AUTH_LOG_MESSAGES.LOGGED_OUT_FROM_TAB);
     }
   };
 

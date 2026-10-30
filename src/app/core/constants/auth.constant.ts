@@ -15,6 +15,16 @@ export const AUTH_STORAGE_KEYS = [
 
 export const AUTH_LOG_SCOPE = 'AuthService';
 
+export const AUTH_LOG_MESSAGES = {
+  REFRESH_STARTED: 'Starting refresh request',
+  REFRESH_STALE_IGNORED: 'Ignoring stale refresh response',
+  REFRESH_SUCCEEDED: 'Refresh succeeded and token updated',
+  REFRESH_FINALIZED: 'Refresh request finalized',
+  SESSION_REUSED_FROM_TAB: 'Reusing session refreshed by another tab',
+  SESSION_SYNCED_FROM_TAB: 'Synced session from another tab',
+  LOGGED_OUT_FROM_TAB: 'Logged out from another tab',
+} as const;
+
 export const AUTH_BROADCAST_CHANNEL = 'ocean-admin-auth';
 /** Web Lock that serializes refreshes across tabs: the API rotates the refresh cookie on each one. */
 export const AUTH_REFRESH_LOCK = 'ocean-admin-auth-refresh';

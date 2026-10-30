@@ -1,12 +1,12 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, Observable, switchMap } from 'rxjs';
-import { moveItemByOffset } from '@core/helpers/array.helper';
+import { moveItemByOffset } from '@core/helpers/array/array.helper';
 import {
   filterAllowedImageFiles,
   mapFilesToImageItems,
   mapImagesToSortPayload,
-} from '@core/helpers/image-file.helper';
+} from '@core/helpers/image-file/image-file.helper';
 import { extractProductImages } from '../../../../../helpers/product-api-mapping.helper';
 import { ChangeProductImageSortPayload } from '../../../../../pages/products/models/change-product-image-sort-payload.model';
 import {

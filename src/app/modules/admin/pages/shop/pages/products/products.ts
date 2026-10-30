@@ -7,13 +7,13 @@ import {
 } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { APP_ROUTES } from '@core/constants/routes.constants';
-import { areStringListsEqual, toggleListValue } from '@core/helpers/array.helper';
+import { areStringListsEqual, toggleListValue } from '@core/helpers/array/array.helper';
 import {
   isPageChangeAllowed,
   resolveTotalItems,
   resolveTotalPages,
-} from '@core/helpers/pagination.helper';
-import { injectRouteParam } from '@core/helpers/route-param.helper';
+} from '@core/helpers/pagination/pagination.helper';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Button } from '@ui/button/button';
 import { ConfirmModal } from '@ui/confirm-modal/confirm-modal';

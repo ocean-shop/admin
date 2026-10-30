@@ -1,6 +1,6 @@
-import { uniqueBy } from '@core/helpers/array.helper';
-import { normalizePaginationMeta } from '@core/helpers/pagination.helper';
-import { toTrimmedString } from '@core/helpers/value-format.helper';
+import { uniqueBy } from '@core/helpers/array/array.helper';
+import { normalizePaginationMeta } from '@core/helpers/pagination/pagination.helper';
+import { toTrimmedString } from '@core/helpers/value-format/value-format.helper';
 import { PaginatedResponse } from '@core/models/paginated-response.model';
 import { PaginationQuery } from '@core/models/pagination-query.model';
 import { EntityCardData } from '@ui/entity-card/models/entity-card.model';

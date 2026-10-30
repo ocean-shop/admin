@@ -3,7 +3,7 @@ import {
   formatStatus,
   formatText,
   joinOrPlaceholder,
-} from '@core/helpers/value-format.helper';
+} from '@core/helpers/value-format/value-format.helper';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { DropdownTreeOption } from '@ui/multi-select-dropdown/models/dropdown-tree-option.type';
 import { PRODUCT_FALLBACK_LABELS } from '../../../constants/product-fallback-labels.constants';

@@ -1,9 +1,12 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-import { moveItemByOffset } from '@core/helpers/array.helper';
-import { createDebouncedScheduler } from '@core/helpers/debounced-scheduler.helper';
-import { filterAllowedImageFiles, mapFilesToImageItems } from '@core/helpers/image-file.helper';
+import { moveItemByOffset } from '@core/helpers/array/array.helper';
+import { createDebouncedScheduler } from '@core/helpers/debounced-scheduler/debounced-scheduler.helper';
+import {
+  filterAllowedImageFiles,
+  mapFilesToImageItems,
+} from '@core/helpers/image-file/image-file.helper';
 import { PRODUCT_VARIATION_IMAGE_ID_PREFIX } from '../../../../../constants/product-api-mapping.constants';
 import { mapAttributeSearchResults } from '../../../../../helpers/product-search-results.helper';
 import { createEmptyProductFormVariation } from '../../../../../helpers/product-variation-mapping.helper';

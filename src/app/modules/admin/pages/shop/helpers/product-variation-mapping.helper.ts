@@ -1,4 +1,4 @@
-import { toTrimmedString } from '@core/helpers/value-format.helper';
+import { toTrimmedString } from '@core/helpers/value-format/value-format.helper';
 import { ProductFormVariationAttribute } from '../components/product-form/models/product-form-variation-attribute.model';
 import { ProductFormVariation } from '../components/product-form/models/product-form-variation.model';
 import {

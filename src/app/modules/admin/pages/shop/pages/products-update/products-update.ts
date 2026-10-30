@@ -6,7 +6,7 @@ import {
   injectQueryClient,
 } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-import { injectRouteParam } from '@core/helpers/route-param.helper';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Button } from '@ui/button/button';

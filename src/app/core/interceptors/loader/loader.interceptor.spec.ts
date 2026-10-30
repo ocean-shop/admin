@@ -2,7 +2,7 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { LoaderService } from '../services/loader/loader.service';
+import { LoaderService } from '../../services/loader/loader.service';
 import { loaderInterceptor } from './loader.interceptor';
 
 describe('loaderInterceptor', () => {

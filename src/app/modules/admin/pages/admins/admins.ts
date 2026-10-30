@@ -9,7 +9,7 @@ import {
   isPageChangeAllowed,
   resolveTotalItems,
   resolveTotalPages,
-} from '@core/helpers/pagination.helper';
+} from '@core/helpers/pagination/pagination.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Button } from '@ui/button/button';
 import { ConfirmModal } from '@ui/confirm-modal/confirm-modal';

@@ -1,7 +1,7 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { lastValueFrom, Observable } from 'rxjs';
-import { createDebouncedScheduler } from '@core/helpers/debounced-scheduler.helper';
+import { createDebouncedScheduler } from '@core/helpers/debounced-scheduler/debounced-scheduler.helper';
 import {
   removeProductFormOption,
   upsertProductFormOption,

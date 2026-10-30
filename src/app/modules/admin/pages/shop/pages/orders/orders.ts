@@ -11,8 +11,8 @@ import {
   isPageChangeAllowed,
   resolveTotalItems,
   resolveTotalPages,
-} from '@core/helpers/pagination.helper';
-import { injectRouteParam } from '@core/helpers/route-param.helper';
+} from '@core/helpers/pagination/pagination.helper';
+import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { ConfirmModal } from '@ui/confirm-modal/confirm-modal';
 import { isDropdownOptionValue } from '@ui/dropdown/helpers/dropdown-option.helper';

@@ -1,5 +1,5 @@
-import { mapImagesToSortPayload } from '@core/helpers/image-file.helper';
-import { toTrimmedString } from '@core/helpers/value-format.helper';
+import { mapImagesToSortPayload } from '@core/helpers/image-file/image-file.helper';
+import { toTrimmedString } from '@core/helpers/value-format/value-format.helper';
 import { parseProductPrice } from '../../../../../helpers/product-price.helper';
 import { CreateProductVariationPayload } from '../../../../../pages/products/models/create-product-variation-payload.model';
 import { ProductVariationApiItem } from '../../../../../pages/products/models/product-variation.model';
