@@ -27,13 +27,13 @@ import {
   SHOPS_PAGE_SIZE,
   SHOPS_TEXTS,
 } from './constants/shops.constants';
-import { mapShopsResponse, mapShopToCard } from './helpers/shop-mapping.helper';
+import { mapShopsResponse, mapShopToCard } from './helpers/shop-mapping/shop-mapping.helper';
 import { ShopFormModalMode } from './models/shop-form-modal-mode.type';
 import { ShopModalMode, ShopModalModeEnum } from './models/shop-modal-mode.type';
 import { Shop } from './models/shop.model';
 import { ShopCreatePayload } from './models/shop-payload.model';
 import { ShopUpdateVariables } from './models/shop-update-variables.model';
-import { ShopsService } from './services/shops.service';
+import { ShopsService } from './services/shops/shops.service';
 
 @Component({
   selector: 'app-shops',

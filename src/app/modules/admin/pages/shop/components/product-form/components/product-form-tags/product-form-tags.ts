@@ -7,7 +7,7 @@ import { ProductFormAssignedTag } from '../../models/product-form-assigned-tag.m
 import { ProductFormTexts } from '../../models/product-form-texts.model';
 import { ProductFormCard } from '../product-form-card/product-form-card';
 import { ProductFormSharedAttributes } from '../product-form-shared-attributes/product-form-shared-attributes';
-import { ProductTagsService } from './services/product-tags.service';
+import { ProductTagsService } from './services/product-tags/product-tags.service';
 
 @Component({
   selector: 'app-product-form-tags',

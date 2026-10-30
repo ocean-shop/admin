@@ -24,7 +24,7 @@ import { resolveTableRowId } from '@ui/table/helpers/table-row.helper';
 import { TableRowData } from '@ui/table/models/table-column.model';
 import { Table } from '@ui/table/table';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import {
   USERS_EMAIL_FILTER_ID,
   USERS_PAGE_SIZE,
@@ -36,10 +36,10 @@ import {
   USERS_TABLE_COLUMNS,
   USERS_TEXTS,
 } from './constants/users.constants';
-import { mapUser, resolveUserSortOrder } from './helpers/user-mapping.helper';
+import { mapUser, resolveUserSortOrder } from './helpers/user-mapping/user-mapping.helper';
 import { User } from './models/user.model';
 import { UserSortValue } from './models/user-sort-value.type';
-import { UsersService } from './services/users.service';
+import { UsersService } from './services/users/users.service';
 
 @Component({
   selector: 'app-users',

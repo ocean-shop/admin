@@ -9,7 +9,7 @@ import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { SHOPS_PAGE_SIZE, SHOPS_TEXTS } from './constants/shops.constants';
 import { ShopModalModeEnum } from './models/shop-modal-mode.type';
 import { ShopsApiResponse } from './models/shop.model';
-import { ShopsService } from './services/shops.service';
+import { ShopsService } from './services/shops/shops.service';
 import { Shops } from './shops';
 
 const buildPage = (id: string, page: number): ShopsApiResponse => ({

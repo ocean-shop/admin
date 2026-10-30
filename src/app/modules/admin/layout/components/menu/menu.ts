@@ -14,10 +14,10 @@ import {
   isShopRootRoute,
   resolveShopMenuItems,
   stripUrlQueryAndHash,
-} from '../../helpers/menu-url.helper';
-import { isCompactScreen } from '../../helpers/viewport.helper';
+} from '../../helpers/menu-url/menu-url.helper';
+import { isCompactScreen } from '../../helpers/viewport/viewport.helper';
 import { MenuFooterItem } from '../../models/menu.model';
-import { LayoutService } from '../../services/layout.service';
+import { LayoutService } from '../../services/layout/layout.service';
 
 @Component({
   selector: 'app-menu',

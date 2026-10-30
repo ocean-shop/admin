@@ -29,7 +29,7 @@ import { resolveTableRowId } from '@ui/table/helpers/table-row.helper';
 import { TableRowData } from '@ui/table/models/table-column.model';
 import { Table } from '@ui/table/table';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import { AttributeFormModal } from './components/attribute-form-modal/attribute-form-modal';
 import {
   ATTRIBUTES_CREATE_ICON,
@@ -38,14 +38,14 @@ import {
   ATTRIBUTES_TABLE_COLUMNS,
   ATTRIBUTES_TEXTS,
 } from './constants/attributes.constants';
-import { mapAttribute } from './helpers/attribute-mapping.helper';
+import { mapAttribute } from './helpers/attribute-mapping/attribute-mapping.helper';
 import { AttributeModalMode, AttributeModalModeEnum } from './models/attribute-modal-mode.type';
 import {
   AttributeFormSubmitPayload,
   CreateAttributePayload,
 } from './models/attribute-payload.model';
 import { Attribute, AttributeApiItem, AttributeListResponse } from './models/attribute.model';
-import { AttributesService } from './services/attributes.service';
+import { AttributesService } from './services/attributes/attributes.service';
 
 @Component({
   selector: 'app-attributes',

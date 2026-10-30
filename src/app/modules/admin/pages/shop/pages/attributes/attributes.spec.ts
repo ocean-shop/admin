@@ -10,7 +10,7 @@ import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { ATTRIBUTES_PAGE_SIZE, ATTRIBUTES_TEXTS } from './constants/attributes.constants';
 import { AttributeModalModeEnum } from './models/attribute-modal-mode.type';
 import { AttributeListResponse } from './models/attribute.model';
-import { AttributesService } from './services/attributes.service';
+import { AttributesService } from './services/attributes/attributes.service';
 import { Attributes } from './attributes';
 
 const buildList = (

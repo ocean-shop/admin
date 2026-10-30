@@ -29,7 +29,7 @@ import { resolveTableRowId } from '@ui/table/helpers/table-row.helper';
 import { TableRowData } from '@ui/table/models/table-column.model';
 import { Table } from '@ui/table/table';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import { TagFormModal } from './components/tag-form-modal/tag-form-modal';
 import {
   TAGS_CREATE_ICON,
@@ -38,11 +38,11 @@ import {
   TAGS_TABLE_COLUMNS,
   TAGS_TEXTS,
 } from './constants/tags.constants';
-import { mapTag } from './helpers/tag-mapping.helper';
+import { mapTag } from './helpers/tag-mapping/tag-mapping.helper';
 import { TagModalMode, TagModalModeEnum } from './models/tag-modal-mode.type';
 import { CreateTagPayload, TagFormSubmitPayload } from './models/tag-payload.model';
 import { Tag, TagApiItem, TagListResponse } from './models/tag.model';
-import { TagsService } from './services/tags.service';
+import { TagsService } from './services/tags/tags.service';
 
 @Component({
   selector: 'app-tags',

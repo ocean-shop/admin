@@ -6,7 +6,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { OrderPaymentStatus } from '../orders/models/order-payment-status.enum';
 import { OrderStatus } from '../orders/models/order-status.enum';
-import { OrdersService } from '../orders/services/orders.service';
+import { OrdersService } from '../orders/services/orders/orders.service';
 import { OrdersDetail } from './orders-detail';
 
 describe('OrdersDetail', () => {

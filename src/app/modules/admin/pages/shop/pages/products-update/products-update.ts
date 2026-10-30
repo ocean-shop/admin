@@ -17,15 +17,15 @@ import { PRODUCT_FORM_DEFAULT_VALUE } from '../../components/product-form/consta
 import { ProductFormModel } from '../../components/product-form/models/product-form.model';
 import { ProductForm } from '../../components/product-form/product-form';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { mapProductToFormModel } from '../../helpers/product-api-mapping.helper';
-import { buildUpdateProductPayload } from '../../helpers/product-form-payload.helper';
-import { applyProductFormValidators } from '../../helpers/product-form-schema.helper';
-import { buildProductFormSeeds } from '../../helpers/product-form-seeds.helper';
-import { invalidateProductQueries } from '../../helpers/product-query.helper';
-import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+import { mapProductToFormModel } from '../../helpers/product-api-mapping/product-api-mapping.helper';
+import { buildUpdateProductPayload } from '../../helpers/product-form-payload/product-form-payload.helper';
+import { applyProductFormValidators } from '../../helpers/product-form-schema/product-form-schema.helper';
+import { buildProductFormSeeds } from '../../helpers/product-form-seeds/product-form-seeds.helper';
+import { invalidateProductQueries } from '../../helpers/product-query/product-query.helper';
+import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import { PRODUCTS_SECTION_PATH, PRODUCTS_TEXTS } from '../products/constants/products.constants';
 import { UpdateProductVariables } from '../products/models/update-product-payload.model';
-import { ProductsService } from '../products/services/products.service';
+import { ProductsService } from '../products/services/products/products.service';
 import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
 
 @Component({

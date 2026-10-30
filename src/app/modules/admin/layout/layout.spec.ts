@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Layout } from './layout';
-import { LayoutService } from './services/layout.service';
+import { LayoutService } from './services/layout/layout.service';
 import { provideRouter } from '@angular/router';
 import { AuthService } from '@core/services/auth/auth.service';
 

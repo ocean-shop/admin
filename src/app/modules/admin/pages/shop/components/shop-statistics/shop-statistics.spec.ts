@@ -7,7 +7,7 @@ import { flushQueries } from '@testing/flush-async';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { SHOP_STATISTICS_TEXTS } from '../../constants/shop-statistics.constants';
 import { ShopStatistic } from '../../models/shop-statistic.model';
-import { ShopStatisticService } from '../../services/shop-statistic.service';
+import { ShopStatisticService } from '../../services/shop-statistic/shop-statistic.service';
 import { ShopStatistics } from './shop-statistics';
 
 describe('ShopStatistics', () => {

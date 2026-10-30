@@ -19,7 +19,7 @@ import { SectionCard } from '@ui/section-card/section-card';
 import { StateMessage } from '@ui/state-message/state-message';
 import { Table } from '@ui/table/table';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import {
   ORDERS_SECTION_PATH,
   ORDER_ITEMS_TABLE_COLUMNS,
@@ -37,12 +37,12 @@ import {
   resolveOrderItems,
   resolveOrderPaymentStatus,
   resolveOrderStatus,
-} from '../orders/helpers/order-mapping.helper';
+} from '../orders/helpers/order-mapping/order-mapping.helper';
 import { OrderPaymentStatus } from '../orders/models/order-payment-status.enum';
 import { OrderStatus } from '../orders/models/order-status.enum';
 import { UpdateOrderPaymentStatusVariables } from '../orders/models/update-order-payment-status-payload.model';
 import { UpdateOrderStatusVariables } from '../orders/models/update-order-status-payload.model';
-import { OrdersService } from '../orders/services/orders.service';
+import { OrdersService } from '../orders/services/orders/orders.service';
 
 @Component({
   selector: 'app-orders-detail',

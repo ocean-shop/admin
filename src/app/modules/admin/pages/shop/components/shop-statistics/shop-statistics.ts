@@ -16,8 +16,8 @@ import { SHOP_STATISTICS_TEXTS } from '../../constants/shop-statistics.constants
 import {
   buildStatisticChartData,
   buildStatisticChartOptions,
-} from '../../helpers/shop-statistics-chart.helper';
-import { ShopStatisticService } from '../../services/shop-statistic.service';
+} from '../../helpers/shop-statistics-chart/shop-statistics-chart.helper';
+import { ShopStatisticService } from '../../services/shop-statistic/shop-statistic.service';
 
 @Component({
   selector: 'app-shop-statistics',

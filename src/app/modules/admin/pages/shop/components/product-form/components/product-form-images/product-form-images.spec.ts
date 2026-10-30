@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PRODUCT_FORM_TEXTS } from '../../constants/product-form.constants';
 import { ProductFormImageItem } from '../../models/product-form-image-item.model';
-import { ProductImagesService } from './services/product-images.service';
+import { ProductImagesService } from './services/product-images/product-images.service';
 import { ProductFormImages } from './product-form-images';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 

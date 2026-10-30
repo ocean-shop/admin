@@ -16,15 +16,15 @@ import { ProductForm } from '../../components/product-form/product-form';
 import {
   buildCreateProductPayload,
   buildUpdateProductPayload,
-} from '../../helpers/product-form-payload.helper';
-import { applyProductFormValidators } from '../../helpers/product-form-schema.helper';
-import { invalidateProductQueries } from '../../helpers/product-query.helper';
-import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+} from '../../helpers/product-form-payload/product-form-payload.helper';
+import { applyProductFormValidators } from '../../helpers/product-form-schema/product-form-schema.helper';
+import { invalidateProductQueries } from '../../helpers/product-query/product-query.helper';
+import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import { PRODUCTS_SECTION_PATH, PRODUCTS_TEXTS } from '../products/constants/products.constants';
 import { CreateProductPayload } from '../products/models/create-product-payload.model';
 import { ProductApiItem } from '../products/models/product.model';
 import { UpdateProductVariables } from '../products/models/update-product-payload.model';
-import { ProductsService } from '../products/services/products.service';
+import { ProductsService } from '../products/services/products/products.service';
 import { PRODUCTS_CREATE_TEXTS } from './constants/products-create.constants';
 
 /**

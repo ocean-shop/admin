@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import { UsersService } from '../users/services/users.service';
+import { UsersService } from '../users/services/users/users.service';
 import { UsersDetail } from './users-detail';
 
 describe('UsersDetail', () => {

@@ -10,7 +10,7 @@ import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { TAGS_PAGE_SIZE, TAGS_TEXTS } from './constants/tags.constants';
 import { TagModalModeEnum } from './models/tag-modal-mode.type';
 import { TagListResponse } from './models/tag.model';
-import { TagsService } from './services/tags.service';
+import { TagsService } from './services/tags/tags.service';
 import { Tags } from './tags';
 
 const buildList = (items: TagListResponse['items'], total = items.length): TagListResponse => ({

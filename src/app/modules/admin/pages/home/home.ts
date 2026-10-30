@@ -8,11 +8,14 @@ import { AuthService } from '@core/services/auth/auth.service';
 import { ShopOverviewCard } from '@ui/shop-overview-card/shop-overview-card';
 import { StateMessage } from '@ui/state-message/state-message';
 import { ADMINS_QUERY_KEYS } from '../admins/constants/admins-query-keys.constants';
-import { AdminsService } from '../admins/services/admins.service';
+import { AdminsService } from '../admins/services/admins/admins.service';
 import { SHOP_QUERY_KEYS } from '../shop/constants/shop-query-keys.constants';
-import { ShopStatisticService } from '../shop/services/shop-statistic.service';
+import { ShopStatisticService } from '../shop/services/shop-statistic/shop-statistic.service';
 import { HOME_TEXTS } from './constants/home.constants';
-import { mapAdminShopsToCards, resolveAdminShops } from './helpers/home-shop-cards.helper';
+import {
+  mapAdminShopsToCards,
+  resolveAdminShops,
+} from './helpers/home-shop-cards/home-shop-cards.helper';
 
 @Component({
   selector: 'app-home',

@@ -5,7 +5,7 @@ import { AuthService } from '@core/services/auth/auth.service';
 import { SimpleMenu } from '@ui/simple-menu/simple-menu';
 import { SimpleMenuItem } from '@ui/simple-menu/models/simple-menu.type';
 import { ACCOUNT_MENU_ITEMS, HEADER_TEXTS } from '../../constants/header.constants';
-import { LayoutService } from '../../services/layout.service';
+import { LayoutService } from '../../services/layout/layout.service';
 
 @Component({
   selector: 'app-header',

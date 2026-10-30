@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { createEmptyProductFormVariation } from '../../../../../../helpers/product-variation-mapping.helper';
+import { createEmptyProductFormVariation } from '../../../../../../helpers/product-variation-mapping/product-variation-mapping.helper';
 import {
   PRODUCT_FORM_TEXTS,
   PRODUCT_FORM_VARIATION_FIELD_ID_PREFIXES,

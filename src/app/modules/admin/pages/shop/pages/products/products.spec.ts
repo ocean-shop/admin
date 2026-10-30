@@ -3,11 +3,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import { CategoriesService } from '../categories/services/categories.service';
+import { CategoriesService } from '../categories/services/categories/categories.service';
 import { PRODUCTS_TEXTS } from './constants/products.constants';
 import { ProductListResponse } from './models/product.model';
 import { Products } from './products';
-import { ProductsService } from './services/products.service';
+import { ProductsService } from './services/products/products.service';
 
 describe('Products', () => {
   let fixture: ComponentFixture<Products>;

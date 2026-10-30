@@ -29,7 +29,7 @@ import { resolveTableRowId } from '@ui/table/helpers/table-row.helper';
 import { TableRowData } from '@ui/table/models/table-column.model';
 import { Table } from '@ui/table/table';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import {
   ORDER_NUMBER_PREFIX,
   ORDERS_NUMBER_FILTER_ID,
@@ -40,10 +40,10 @@ import {
   ORDERS_TABLE_COLUMNS,
   ORDERS_TEXTS,
 } from './constants/orders.constants';
-import { mapOrder, resolveOrderSortQuery } from './helpers/order-mapping.helper';
+import { mapOrder, resolveOrderSortQuery } from './helpers/order-mapping/order-mapping.helper';
 import { Order } from './models/order.model';
 import { OrderSortValue } from './models/order-sort-value.type';
-import { OrdersService } from './services/orders.service';
+import { OrdersService } from './services/orders/orders.service';
 
 @Component({
   selector: 'app-orders',

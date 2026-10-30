@@ -4,7 +4,7 @@ import { ProductFormImageItem } from '../../models/product-form-image-item.model
 import { ProductFormTexts } from '../../models/product-form-texts.model';
 import { ProductFormCard } from '../product-form-card/product-form-card';
 import { ProductFormSharedImages } from '../product-form-shared-images/product-form-shared-images';
-import { ProductImagesService } from './services/product-images.service';
+import { ProductImagesService } from './services/product-images/product-images.service';
 
 @Component({
   selector: 'app-product-form-images',

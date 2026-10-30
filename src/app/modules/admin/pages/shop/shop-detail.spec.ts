@@ -8,7 +8,7 @@ import {
   SHOP_DETAIL_SHOP_ID_PLACEHOLDER,
   SHOP_DETAIL_TEXTS,
 } from './constants/shop-detail.constants';
-import { ShopStatisticService } from './services/shop-statistic.service';
+import { ShopStatisticService } from './services/shop-statistic/shop-statistic.service';
 import { ShopDetail } from './shop-detail';
 
 describe('ShopDetail', () => {

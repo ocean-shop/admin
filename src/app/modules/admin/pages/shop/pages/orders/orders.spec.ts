@@ -6,7 +6,7 @@ import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { ORDERS_TEXTS } from './constants/orders.constants';
 import { OrderListResponse } from './models/order.model';
 import { Orders } from './orders';
-import { OrdersService } from './services/orders.service';
+import { OrdersService } from './services/orders/orders.service';
 
 describe('Orders', () => {
   let fixture: ComponentFixture<Orders>;

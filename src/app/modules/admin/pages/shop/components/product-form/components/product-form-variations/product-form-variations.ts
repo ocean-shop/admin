@@ -5,7 +5,7 @@ import { ProductFormVariationFieldChange } from '../../models/product-form-varia
 import { ProductFormVariation } from '../../models/product-form-variation.model';
 import { ProductFormCard } from '../product-form-card/product-form-card';
 import { ProductFormVariationCard } from './components/product-form-variation-card/product-form-variation-card';
-import { ProductVariationsService } from './services/product-variations.service';
+import { ProductVariationsService } from './services/product-variations/product-variations.service';
 
 @Component({
   selector: 'app-product-form-variations',

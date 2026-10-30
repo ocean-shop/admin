@@ -9,7 +9,7 @@ import { Categories } from './categories';
 import { CATEGORIES_TEXTS } from './constants/categories.constants';
 import { CategoryModalModeEnum } from './models/category-modal-mode.type';
 import { VisibleCategoryNode } from './models/category-tree.model';
-import { CategoriesService } from './services/categories.service';
+import { CategoriesService } from './services/categories/categories.service';
 
 const buildNode = (overrides: Partial<VisibleCategoryNode> = {}): VisibleCategoryNode => ({
   category: { id: 'cat-1', name: 'Electronics', slug: 'electronics', sort: 0 },

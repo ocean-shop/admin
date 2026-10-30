@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { PRODUCT_FORM_TEXTS } from '../../constants/product-form.constants';
 import { ProductFormVariation } from '../../models/product-form-variation.model';
-import { ProductVariationsService } from './services/product-variations.service';
+import { ProductVariationsService } from './services/product-variations/product-variations.service';
 import { ProductFormVariations } from './product-form-variations';
 
 describe('ProductFormVariations', () => {

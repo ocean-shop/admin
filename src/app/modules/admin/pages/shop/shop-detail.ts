@@ -6,7 +6,7 @@ import { DASHBOARD_BREADCRUMB } from '@ui/breadcrumbs/constants/breadcrumbs.cons
 import { BreadcrumbItem } from '@ui/breadcrumbs/models/breadcrumb-item.model';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { ShopStatistics } from './components/shop-statistics/shop-statistics';
-import { buildShopBreadcrumb } from './helpers/shop-breadcrumbs.helper';
+import { buildShopBreadcrumb } from './helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import {
   SHOP_DETAIL_LINK_ICON,
   SHOP_DETAIL_ROUTE_PREFIX,

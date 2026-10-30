@@ -32,9 +32,9 @@ import { resolveTableRowId } from '@ui/table/helpers/table-row.helper';
 import { TableRowData } from '@ui/table/models/table-column.model';
 import { Table } from '@ui/table/table';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { extractCategoriesFromResponse } from '../../helpers/categories-response.helper';
-import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
-import { CategoriesService } from '../categories/services/categories.service';
+import { extractCategoriesFromResponse } from '../../helpers/categories-response/categories-response.helper';
+import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
+import { CategoriesService } from '../categories/services/categories/categories.service';
 import {
   PRODUCTS_CATEGORY_FILTER_ICON,
   PRODUCTS_CREATE_ICON,
@@ -53,10 +53,10 @@ import {
   buildCategoryFilterOptions,
   mapProduct,
   resolveProductSortQuery,
-} from './helpers/product-list-mapping.helper';
+} from './helpers/product-list-mapping/product-list-mapping.helper';
 import { Product } from './models/product.model';
 import { ProductSortValue } from './models/product-sort-value.type';
-import { ProductsService } from './services/products.service';
+import { ProductsService } from './services/products/products.service';
 
 @Component({
   selector: 'app-products',

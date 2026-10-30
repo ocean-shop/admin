@@ -10,7 +10,7 @@ import { SectionCard } from '@ui/section-card/section-card';
 import { StateMessage } from '@ui/state-message/state-message';
 import { Table } from '@ui/table/table';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+import { buildShopSectionPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import {
   USER_OTP_TABLE_COLUMNS,
   USER_SESSION_TABLE_COLUMNS,
@@ -22,8 +22,8 @@ import {
   buildUserOtpRows,
   buildUserRoleRows,
   buildUserSessionRows,
-} from '../users/helpers/user-mapping.helper';
-import { UsersService } from '../users/services/users.service';
+} from '../users/helpers/user-mapping/user-mapping.helper';
+import { UsersService } from '../users/services/users/users.service';
 
 @Component({
   selector: 'app-users-detail',

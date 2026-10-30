@@ -5,10 +5,10 @@ import { BehaviorSubject, of, throwError } from 'rxjs';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { flushQueries } from '@testing/flush-async';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import { CategoriesService } from '../categories/services/categories.service';
+import { CategoriesService } from '../categories/services/categories/categories.service';
 import { ProductStatus } from '../products/models/product-status.enum';
 import { ProductType } from '../products/models/product-type.enum';
-import { ProductsService } from '../products/services/products.service';
+import { ProductsService } from '../products/services/products/products.service';
 import { PRODUCTS_UPDATE_TEXTS } from './constants/products-update.constants';
 import { ProductsUpdate } from './products-update';
 

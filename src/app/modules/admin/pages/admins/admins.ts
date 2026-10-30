@@ -21,8 +21,8 @@ import { Pagination } from '@ui/pagination/pagination';
 import { StateMessage } from '@ui/state-message/state-message';
 import { SHOPS_QUERY_KEYS } from '../shops/constants/shops-query-keys.constants';
 import { SHOPS_ALL_PAGE_SIZE } from '../shops/constants/shops.constants';
-import { mapShopOptions } from '../shops/helpers/shop-mapping.helper';
-import { ShopsService } from '../shops/services/shops.service';
+import { mapShopOptions } from '../shops/helpers/shop-mapping/shop-mapping.helper';
+import { ShopsService } from '../shops/services/shops/shops.service';
 import { AdminFormModal } from './components/admin-form-modal/admin-form-modal';
 import { ADMINS_QUERY_KEYS } from './constants/admins-query-keys.constants';
 import {
@@ -32,13 +32,13 @@ import {
   ADMINS_ROLE_OPTIONS,
   ADMINS_TEXTS,
 } from './constants/admins.constants';
-import { mapAdminsResponse, mapAdminToCard } from './helpers/admin-mapping.helper';
+import { mapAdminsResponse, mapAdminToCard } from './helpers/admin-mapping/admin-mapping.helper';
 import { AdminFormModalMode } from './models/admin-form-modal-mode.type';
 import { AdminModalMode, AdminModalModeEnum } from './models/admin-modal-mode.type';
 import { Admin } from './models/admin.model';
 import { AdminCreatePayload } from './models/admin-payload.model';
 import { AdminUpdateVariables } from './models/admin-update-variables.model';
-import { AdminsService } from './services/admins.service';
+import { AdminsService } from './services/admins/admins.service';
 
 @Component({
   selector: 'app-admins',

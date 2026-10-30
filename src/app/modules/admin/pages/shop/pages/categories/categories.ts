@@ -15,8 +15,8 @@ import { PageHeader } from '@ui/page-header/page-header';
 import { PageLayout } from '@ui/page-layout/page-layout';
 import { StateMessage } from '@ui/state-message/state-message';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
-import { extractCategoriesFromResponse } from '../../helpers/categories-response.helper';
-import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs.helper';
+import { extractCategoriesFromResponse } from '../../helpers/categories-response/categories-response.helper';
+import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import { CategoryFormModal } from './components/category-form-modal/category-form-modal';
 import {
   CATEGORIES_CREATE_ICON,
@@ -29,7 +29,7 @@ import {
   flattenVisibleCategoryNodes,
   mapCategory,
   resolveCategoriesStats,
-} from './helpers/category-mapping.helper';
+} from './helpers/category-mapping/category-mapping.helper';
 import { CategoryModalMode, CategoryModalModeEnum } from './models/category-modal-mode.type';
 import { Category } from './models/category.model';
 import {
@@ -43,7 +43,7 @@ import {
   CategorySortDirection,
   ChangeCategorySortVariables,
 } from './models/change-category-sort.model';
-import { CategoriesService } from './services/categories.service';
+import { CategoriesService } from './services/categories/categories.service';
 
 @Component({
   selector: 'app-categories',

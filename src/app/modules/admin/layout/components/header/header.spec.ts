@@ -5,7 +5,7 @@ import { APP_ROUTES } from '@core/constants/routes.constants';
 import { AuthService } from '@core/services/auth/auth.service';
 import { HEADER_TEXTS } from '../../constants/header.constants';
 import { Header } from './header';
-import { LayoutService } from '../../services/layout.service';
+import { LayoutService } from '../../services/layout/layout.service';
 
 describe('Header', () => {
   let component: Header;

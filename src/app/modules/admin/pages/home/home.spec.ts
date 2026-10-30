@@ -6,8 +6,8 @@ import { APP_ROUTES } from '@core/constants/routes.constants';
 import { AuthService } from '@core/services/auth/auth.service';
 import { flushQueries } from '@testing/flush-async';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import { AdminsService } from '../admins/services/admins.service';
-import { ShopStatisticService } from '../shop/services/shop-statistic.service';
+import { AdminsService } from '../admins/services/admins/admins.service';
+import { ShopStatisticService } from '../shop/services/shop-statistic/shop-statistic.service';
 import { HOME_TEXTS } from './constants/home.constants';
 import { Home } from './home';
 

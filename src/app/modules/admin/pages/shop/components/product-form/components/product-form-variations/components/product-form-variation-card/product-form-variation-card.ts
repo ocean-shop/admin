@@ -5,7 +5,7 @@ import {
   PRODUCT_FORM_VARIATION_FIELD_ID_PREFIXES,
   PRODUCT_FORM_VARIATION_REMOVE_ICON,
 } from '../../../../constants/product-form.constants';
-import { buildVariationFieldIds } from '../../helpers/product-variation-field-ids.helper';
+import { buildVariationFieldIds } from '../../helpers/product-variation-field-ids/product-variation-field-ids.helper';
 import { ProductFormTexts } from '../../../../models/product-form-texts.model';
 import { ProductFormVariationChangeEvent } from '../../../../models/product-form-variation-change-event.model';
 import { ProductFormVariationFieldChange } from '../../../../models/product-form-variation-field-change.model';

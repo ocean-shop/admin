@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { AuthService } from '../../../../../core/services/auth/auth.service';
 import { Menu } from './menu';
-import { LayoutService } from '../../services/layout.service';
+import { LayoutService } from '../../services/layout/layout.service';
 
 describe('Menu', () => {
   let component: Menu;

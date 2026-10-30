@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { PRODUCT_FORM_TEXTS } from '../../constants/product-form.constants';
-import { ProductCategoriesService } from './services/product-categories.service';
+import { ProductCategoriesService } from './services/product-categories/product-categories.service';
 import { ProductFormCategories } from './product-form-categories';
 
 describe('ProductFormCategories', () => {

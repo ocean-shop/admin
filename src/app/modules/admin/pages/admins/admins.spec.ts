@@ -5,12 +5,12 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
 import { flushQueries } from '@testing/flush-async';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { SHOPS_ALL_PAGE_SIZE } from '../shops/constants/shops.constants';
-import { ShopsService } from '../shops/services/shops.service';
+import { ShopsService } from '../shops/services/shops/shops.service';
 import { Admins } from './admins';
 import { ADMINS_PAGE_SIZE, ADMINS_TEXTS } from './constants/admins.constants';
 import { AdminModalModeEnum } from './models/admin-modal-mode.type';
 import { AdminsApiResponse } from './models/admin.model';
-import { AdminsService } from './services/admins.service';
+import { AdminsService } from './services/admins/admins.service';
 
 const buildPage = (id: string, page: number): AdminsApiResponse => ({
   items: [{ id, fullName: `Admin ${id}`, email: `${id}@ocean.dev`, role: 'admin' }],

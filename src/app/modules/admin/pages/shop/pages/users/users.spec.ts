@@ -7,7 +7,7 @@ import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { USERS_TEXTS } from './constants/users.constants';
 import { UserListResponse } from './models/user.model';
 import { Users } from './users';
-import { UsersService } from './services/users.service';
+import { UsersService } from './services/users/users.service';
 
 describe('Users', () => {
   let fixture: ComponentFixture<Users>;

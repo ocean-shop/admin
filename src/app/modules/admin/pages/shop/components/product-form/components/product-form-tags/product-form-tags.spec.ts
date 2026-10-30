@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { PRODUCT_FORM_TEXTS } from '../../constants/product-form.constants';
 import { ProductFormAssignedTag } from '../../models/product-form-assigned-tag.model';
-import { ProductTagsService } from './services/product-tags.service';
+import { ProductTagsService } from './services/product-tags/product-tags.service';
 import { ProductFormTags } from './product-form-tags';
 
 describe('ProductFormTags', () => {

@@ -6,7 +6,7 @@ import {
 } from '../../constants/product-form.constants';
 import { ProductFormTexts } from '../../models/product-form-texts.model';
 import { ProductFormCard } from '../product-form-card/product-form-card';
-import { ProductCategoriesService } from './services/product-categories.service';
+import { ProductCategoriesService } from './services/product-categories/product-categories.service';
 
 @Component({
   selector: 'app-product-form-categories',

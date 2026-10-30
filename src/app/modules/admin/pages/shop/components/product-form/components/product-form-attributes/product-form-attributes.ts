@@ -7,7 +7,7 @@ import { ProductFormAssignedAttribute } from '../../models/product-form-assigned
 import { ProductFormTexts } from '../../models/product-form-texts.model';
 import { ProductFormCard } from '../product-form-card/product-form-card';
 import { ProductFormSharedAttributes } from '../product-form-shared-attributes/product-form-shared-attributes';
-import { ProductAttributesService } from './services/product-attributes.service';
+import { ProductAttributesService } from './services/product-attributes/product-attributes.service';
 
 @Component({
   selector: 'app-product-form-attributes',

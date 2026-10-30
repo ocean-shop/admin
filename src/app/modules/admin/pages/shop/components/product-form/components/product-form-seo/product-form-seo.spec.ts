@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { form } from '@angular/forms/signals';
-import { applyProductSeoValidators } from '../../../../helpers/product-form-schema.helper';
+import { applyProductSeoValidators } from '../../../../helpers/product-form-schema/product-form-schema.helper';
 import {
   PRODUCT_FORM_DEFAULT_VALUE,
   PRODUCT_FORM_FIELD_IDS,

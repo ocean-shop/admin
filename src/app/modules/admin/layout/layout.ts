@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from './components/header/header';
 import { Menu } from './components/menu/menu';
-import { isCompactScreen } from './helpers/viewport.helper';
-import { LayoutService } from './services/layout.service';
+import { isCompactScreen } from './helpers/viewport/viewport.helper';
+import { LayoutService } from './services/layout/layout.service';
 
 @Component({
   selector: 'app-admin-layout',

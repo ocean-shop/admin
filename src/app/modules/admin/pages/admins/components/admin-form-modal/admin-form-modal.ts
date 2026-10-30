@@ -13,7 +13,7 @@ import {
   ADMINS_SHOPS_ICON,
   ADMINS_TEXTS,
 } from '../../constants/admins.constants';
-import { buildAdminPayload, mapAdminToFormData } from '../../helpers/admin-form.helper';
+import { buildAdminPayload, mapAdminToFormData } from '../../helpers/admin-form/admin-form.helper';
 import { AdminFormData } from '../../models/admin-form.model';
 import { AdminFormModalMode } from '../../models/admin-form-modal-mode.type';
 import { AdminModalModeEnum } from '../../models/admin-modal-mode.type';

@@ -7,10 +7,10 @@ import { flushQueries } from '@testing/flush-async';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { PRODUCT_FORM_DEFAULT_VALUE } from '../../components/product-form/constants/product-form.constants';
 import { ProductFormModel } from '../../components/product-form/models/product-form.model';
-import { CategoriesService } from '../categories/services/categories.service';
+import { CategoriesService } from '../categories/services/categories/categories.service';
 import { ProductStatus } from '../products/models/product-status.enum';
 import { ProductType } from '../products/models/product-type.enum';
-import { ProductsService } from '../products/services/products.service';
+import { ProductsService } from '../products/services/products/products.service';
 import { PRODUCTS_CREATE_TEXTS } from './constants/products-create.constants';
 import { ProductsCreate } from './products-create';
 
