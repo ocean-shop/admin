@@ -1,3 +1,4 @@
+import { APP_ROUTES } from '@core/constants/routes.constants';
 import { normalizePaginationMeta } from '@core/helpers/pagination.helper';
 import { toTrimmedString } from '@core/helpers/value-format.helper';
 import { PaginatedResponse } from '@core/models/paginated-response.model';
@@ -43,6 +44,7 @@ export const mapShopToCard = (shop: Shop): EntityCardData => ({
   subtitle: shop.description,
   detail: shop.url,
   badge: formatShopCreatedBadge(shop.createdAt),
+  titleLink: `${APP_ROUTES.ADMIN_SHOP}/${shop.id}`,
 });
 
 /** Unique shops sorted by name; nameless shops get a fallback label with their id. */

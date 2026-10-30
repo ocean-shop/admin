@@ -1,6 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
+import { APP_ROUTES } from '@core/constants/routes.constants';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { flushQueries } from '@testing/flush-async';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
@@ -54,6 +56,7 @@ describe('Shops', () => {
       imports: [Shops],
       providers: [
         provideZonelessChangeDetection(),
+        provideRouter([]),
         ...provideTestQueryClient(),
         { provide: ShopsService, useValue: shopsService },
         { provide: ToasterService, useValue: toaster },
@@ -71,6 +74,13 @@ describe('Shops', () => {
       expect(element.querySelectorAll('app-entity-card')).toHaveLength(1);
       expect(element.textContent).toContain('Shop shop-1');
       expect(element.querySelector('app-pagination')).not.toBeNull();
+    });
+
+    it('links the shop name to the shop detail page', () => {
+      const link = element.querySelector('.entity-title-link') as HTMLAnchorElement;
+
+      expect(link.textContent?.trim()).toBe('Shop shop-1');
+      expect(link.getAttribute('href')).toBe(`${APP_ROUTES.ADMIN_SHOP}/shop-1`);
     });
 
     it('loads another page and ignores impossible page changes', async () => {

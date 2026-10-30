@@ -1,3 +1,4 @@
+import { APP_ROUTES } from '@core/constants/routes.constants';
 import { SHOPS_TEXTS } from '../constants/shops.constants';
 import {
   extractShopItems,
@@ -51,10 +52,17 @@ describe('shop-mapping.helper', () => {
     expect(formatShopCreatedBadge('not-a-date')).toBe('');
   });
 
-  it('maps a shop to an entity card', () => {
+  it('maps a shop to an entity card linking to the shop page', () => {
     expect(
       mapShopToCard({ id: '1', name: 'A', description: 'B', url: 'C', createdAt: '' }),
-    ).toEqual({ id: '1', title: 'A', subtitle: 'B', detail: 'C', badge: '' });
+    ).toEqual({
+      id: '1',
+      title: 'A',
+      subtitle: 'B',
+      detail: 'C',
+      badge: '',
+      titleLink: `${APP_ROUTES.ADMIN_SHOP}/1`,
+    });
   });
 
   it('builds unique, sorted shop options with fallback labels', () => {

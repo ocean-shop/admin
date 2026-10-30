@@ -91,7 +91,7 @@ describe('category-mapping.helper', () => {
     });
 
     it('hides children of collapsed nodes', () => {
-      const nodes = flattenVisibleCategoryNodes(buildCategoryTree(categories), new Set());
+      const nodes = flattenVisibleCategoryNodes(buildCategoryTree(categories), new Set(['a']));
 
       expect(nodes.map((node) => node.category.id)).toEqual(['a', 'b', 'c']);
       expect(nodes[0]).toMatchObject({
@@ -104,9 +104,10 @@ describe('category-mapping.helper', () => {
       expect(nodes[2]).toMatchObject({ canMoveUp: true, canMoveDown: false });
     });
 
-    it('shows children of expanded nodes with depth', () => {
-      const nodes = flattenVisibleCategoryNodes(buildCategoryTree(categories), new Set(['a']));
+    it('expands every node by default and shows children with depth', () => {
+      const nodes = flattenVisibleCategoryNodes(buildCategoryTree(categories), new Set());
 
+      expect(nodes[0].isExpanded).toBe(true);
       expect(nodes.map((node) => [node.category.id, node.depth])).toEqual([
         ['a', 0],
         ['a1', 1],

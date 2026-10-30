@@ -4,4 +4,6 @@ export type EntityCardData = {
   subtitle: string;
   detail: string;
   badge: string;
+  /** When set, the title is rendered as a router link to this URL. */
+  titleLink?: string;
 };

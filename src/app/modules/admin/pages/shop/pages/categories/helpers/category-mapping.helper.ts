@@ -61,7 +61,7 @@ const appendVisibleNodes = (
   output: VisibleCategoryNode[],
   nodes: CategoryTreeNode[],
   depth: number,
-  expandedIds: Set<string>,
+  collapsedIds: Set<string>,
   visited: Set<string>,
 ): void => {
   nodes.forEach((node, index) => {
@@ -72,7 +72,7 @@ const appendVisibleNodes = (
 
     visited.add(id);
     const hasChildren = node.children.length > 0;
-    const isExpanded = expandedIds.has(id);
+    const isExpanded = !collapsedIds.has(id);
     output.push({
       category: node.category,
       depth,
@@ -83,17 +83,20 @@ const appendVisibleNodes = (
     });
 
     if (hasChildren && isExpanded) {
-      appendVisibleNodes(output, node.children, depth + 1, expandedIds, visited);
+      appendVisibleNodes(output, node.children, depth + 1, collapsedIds, visited);
     }
   });
 };
 
-/** Depth-first list of rows the user can currently see (children of collapsed nodes are skipped). */
+/**
+ * Depth-first list of rows the user can currently see. Nodes are expanded by default;
+ * children of nodes listed in `collapsedIds` are skipped.
+ */
 export const flattenVisibleCategoryNodes = (
   tree: CategoryTreeNode[],
-  expandedIds: Set<string>,
+  collapsedIds: Set<string>,
 ): VisibleCategoryNode[] => {
   const output: VisibleCategoryNode[] = [];
-  appendVisibleNodes(output, tree, 0, expandedIds, new Set());
+  appendVisibleNodes(output, tree, 0, collapsedIds, new Set());
   return output;
 };

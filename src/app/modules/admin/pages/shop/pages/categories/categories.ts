@@ -70,8 +70,8 @@ export class Categories {
   protected readonly treeIndentPx = CATEGORIES_TREE_INDENT_PX;
 
   protected readonly shopId = injectRouteParam('shopId');
-  /** Collapses the whole tree whenever the shop changes. */
-  protected readonly expandedCategoryIds = linkedSignal<string | null, Set<string>>({
+  /** Nodes are expanded by default; the whole tree is re-expanded whenever the shop changes. */
+  protected readonly collapsedCategoryIds = linkedSignal<string | null, Set<string>>({
     source: this.shopId,
     computation: () => new Set(),
   });
@@ -139,7 +139,7 @@ export class Categories {
     this.categories().some((category) => category.productCount !== undefined),
   );
   protected readonly visibleNodes = computed(() =>
-    flattenVisibleCategoryNodes(buildCategoryTree(this.categories()), this.expandedCategoryIds()),
+    flattenVisibleCategoryNodes(buildCategoryTree(this.categories()), this.collapsedCategoryIds()),
   );
   protected readonly isFormModalOpen = computed(() => {
     const mode = this.modalMode();
@@ -192,7 +192,7 @@ export class Categories {
 
   protected onToggleNode(node: VisibleCategoryNode): void {
     if (node.hasChildren) {
-      this.expandedCategoryIds.update((ids) => toggleSetValue(ids, node.category.id));
+      this.collapsedCategoryIds.update((ids) => toggleSetValue(ids, node.category.id));
     }
   }
 

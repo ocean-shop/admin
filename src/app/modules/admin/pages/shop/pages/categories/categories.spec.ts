@@ -84,38 +84,40 @@ describe('Categories', () => {
     await flushQueries(fixture);
   });
 
-  it('loads categories for the current shop and renders the root level', () => {
+  it('loads categories for the current shop and renders the tree expanded', () => {
     expect(categoriesService.getCategories).toHaveBeenCalledWith('shop-1');
     expect(element().textContent).toContain(CATEGORIES_TEXTS.PAGE_TITLE);
     expect(element().textContent).toContain('Electronics');
-    expect(element().textContent).not.toContain('Phones');
+    expect(element().textContent).toContain('Phones');
     expect(element().textContent).toContain(CATEGORIES_TEXTS.TOTAL_CATEGORIES_LABEL);
     expect(component.hasProductCounts()).toBe(true);
   });
 
-  it('expands and collapses nodes with children', async () => {
+  it('collapses and expands nodes with children', async () => {
     const [root] = component.visibleNodes();
 
     component.onToggleNode(root);
     await flushQueries(fixture);
-    expect(element().textContent).toContain('Phones');
+    expect(element().textContent).not.toContain('Phones');
 
     component.onToggleNode(component.visibleNodes()[0]);
-    expect(component.expandedCategoryIds().has('cat-1')).toBe(false);
+    await flushQueries(fixture);
+    expect(component.collapsedCategoryIds().has('cat-1')).toBe(false);
+    expect(element().textContent).toContain('Phones');
   });
 
   it('ignores toggles on leaf nodes', () => {
     component.onToggleNode(buildNode({ hasChildren: false }));
 
-    expect(component.expandedCategoryIds().size).toBe(0);
+    expect(component.collapsedCategoryIds().size).toBe(0);
   });
 
-  it('collapses the tree when the shop changes', async () => {
+  it('expands the tree again when the shop changes', async () => {
     component.onToggleNode(component.visibleNodes()[0]);
     paramMap$.next(convertToParamMap({ shopId: 'shop-2' }));
     await flushQueries(fixture);
 
-    expect(component.expandedCategoryIds().size).toBe(0);
+    expect(component.collapsedCategoryIds().size).toBe(0);
   });
 
   it('shows the empty state and the shop warning without a shop', async () => {
