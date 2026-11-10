@@ -1,0 +1,29 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.empty-state {
+  @apply flex flex-col items-center gap-2 rounded-lg border border-outline-variant bg-surface-container-lowest px-6 py-12 text-center shadow-xs;
+}
+
+.empty-state-icon {
+  @apply mb-2 inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary;
+
+  .material-symbols-outlined {
+    @apply text-[32px];
+  }
+}
+
+.empty-state-title {
+  @apply m-0 text-title-md text-on-surface;
+}
+
+.empty-state-text {
+  @apply m-0 max-w-[380px] text-body text-on-surface-variant;
+}
+
+.empty-state-actions {
+  @apply mt-3 empty:hidden;
+}

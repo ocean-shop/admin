@@ -5,17 +5,17 @@
 }
 
 .product-form-grid {
-  @apply grid grid-cols-1 gap-6 lg:grid-cols-12;
+  @apply grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_var(--spacing-aside)];
 }
 
 .product-form-main {
-  @apply flex flex-col gap-6 lg:col-span-8;
+  @apply flex min-w-0 flex-col gap-6;
 }
 
 .product-form-sidebar {
-  @apply flex flex-col gap-6 lg:col-span-4;
+  @apply flex min-w-0 flex-col gap-6;
 }
 
 .product-form-sidebar-hint {
-  @apply mb-3 text-sm text-on-surface-variant;
+  @apply mb-4 flex items-center gap-2 rounded-md border border-warning-outline bg-warning-container px-4 py-3 text-body-sm text-on-warning-container;
 }

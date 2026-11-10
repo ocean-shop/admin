@@ -3,7 +3,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import { ORDERS_TEXTS } from './constants/orders.constants';
+import {
+  ORDER_PAYMENT_STATUS_LABELS,
+  ORDER_STATUS_LABELS,
+  ORDERS_TEXTS,
+} from './constants/orders.constants';
+import { OrderPaymentStatus } from './models/order-payment-status.enum';
+import { OrderStatus } from './models/order-status.enum';
 import { OrderListResponse } from './models/order.model';
 import { Orders } from './orders';
 import { OrdersService } from './services/orders/orders.service';
@@ -98,8 +104,8 @@ describe('Orders', () => {
     const rows = (component as any).orderRows();
     expect(rows).toHaveLength(1);
     expect(rows[0]['orderNumber']).toBe('1001');
-    expect(rows[0]['paymentStatus']).toBe('Paid');
-    expect(rows[0]['status']).toBe('Processing');
+    expect(rows[0]['paymentStatus']).toBe(ORDER_PAYMENT_STATUS_LABELS[OrderPaymentStatus.Paid]);
+    expect(rows[0]['status']).toBe(ORDER_STATUS_LABELS[OrderStatus.Processing]);
   });
 
   it('navigates to order details on show action', () => {

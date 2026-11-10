@@ -1,21 +1,5 @@
 @reference "../../../../../styles.scss";
 
-.home-container {
-  @apply max-w-7xl mx-auto;
-}
-
-.home-header {
-  @apply mb-10;
-}
-
-.home-title {
-  @apply text-3xl font-semibold text-on-surface tracking-tight mb-2;
-}
-
-.home-subtitle {
-  @apply text-on-surface-variant text-lg;
-}
-
 .cards-grid {
-  @apply grid grid-cols-1 lg:grid-cols-2 gap-8;
+  @apply grid grid-cols-1 gap-6 lg:grid-cols-2;
 }

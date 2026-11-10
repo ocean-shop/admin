@@ -1,5 +1,9 @@
 import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
-import { ORDERS_TEXTS } from '../../constants/orders.constants';
+import {
+  ORDER_PAYMENT_STATUS_LABELS,
+  ORDER_STATUS_LABELS,
+  ORDERS_TEXTS,
+} from '../../constants/orders.constants';
 import { OrderPaymentStatus } from '../../models/order-payment-status.enum';
 import { OrderStatus } from '../../models/order-status.enum';
 import { OrderApiItem } from '../../models/order.model';
@@ -8,6 +12,8 @@ import {
   buildOrderInfoRows,
   buildOrderItemRows,
   buildOrderUserRows,
+  formatOrderPaymentStatusLabel,
+  formatOrderStatusLabel,
   mapOrder,
   resolveOrderItems,
   resolveOrderPaymentStatus,
@@ -36,7 +42,7 @@ describe('order-mapping.helper', () => {
         shopId: 'shop-1',
         orderNumber: '1001',
         totalAmount: '12.00',
-        paymentStatus: 'Paid',
+        paymentStatus: ORDER_PAYMENT_STATUS_LABELS[OrderPaymentStatus.Paid],
         status: 'In Progress',
         createdAt: 'not-a-date',
       });
@@ -100,7 +106,10 @@ describe('order-mapping.helper', () => {
     const rows = buildOrderInfoRows({ orderNumber: 'A-1', status: 'shipped' });
 
     expect(rows[0]).toEqual({ label: ORDERS_TEXTS.INFO_ORDER_NUMBER_LABEL, value: 'A-1' });
-    expect(rows[3]).toEqual({ label: ORDERS_TEXTS.INFO_ORDER_STATUS_LABEL, value: 'Shipped' });
+    expect(rows[3]).toEqual({
+      label: ORDERS_TEXTS.INFO_ORDER_STATUS_LABEL,
+      value: ORDER_STATUS_LABELS[OrderStatus.Shipped],
+    });
     expect(rows).toHaveLength(6);
   });
 
@@ -117,5 +126,18 @@ describe('order-mapping.helper', () => {
       { label: 'note', value: 'Fragile' },
       { label: 'meta', value: '{"a":1}' },
     ]);
+  });
+});
+
+describe('order status labels', () => {
+  it('translates known statuses and title-cases unknown ones', () => {
+    expect(formatOrderPaymentStatusLabel(OrderPaymentStatus.Unpaid)).toBe(
+      ORDER_PAYMENT_STATUS_LABELS[OrderPaymentStatus.Unpaid],
+    );
+    expect(formatOrderStatusLabel(OrderStatus.Cancelled)).toBe(
+      ORDER_STATUS_LABELS[OrderStatus.Cancelled],
+    );
+    expect(formatOrderStatusLabel('in_progress')).toBe('In Progress');
+    expect(formatOrderPaymentStatusLabel(null)).toBe(EMPTY_VALUE_PLACEHOLDER);
   });
 });

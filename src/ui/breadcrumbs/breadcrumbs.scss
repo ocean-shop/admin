@@ -1,0 +1,21 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.breadcrumbs {
+  @apply flex flex-wrap items-center gap-1 text-label font-normal text-on-surface-variant;
+}
+
+.breadcrumbs-link {
+  @apply -mx-1 rounded-sm px-1 py-0.5 transition-ui hover:text-primary hover:underline hover:underline-offset-[3px];
+}
+
+.breadcrumbs-current {
+  @apply font-medium text-on-surface;
+}
+
+.breadcrumbs-separator {
+  @apply text-[16px] text-outline;
+}

@@ -5,25 +5,28 @@
 }
 
 .admin-radio-group {
-  @apply border-none p-0 m-0;
+  @apply m-0 flex flex-col gap-3 border-none p-0;
 }
 
 .admin-radio-group-legend {
-  @apply text-xs uppercase tracking-wider font-semibold text-on-surface-variant mb-2;
+  @apply mb-3 p-0 text-label text-on-surface;
 }
 
+/* Segmented control: 2–4 mutually exclusive options. */
 .admin-radio-group-options {
-  @apply flex flex-wrap gap-4;
+  @apply inline-flex flex-wrap gap-1 self-start rounded-md bg-surface-container p-1;
 }
 
 .admin-radio-option {
-  @apply inline-flex items-center gap-2 cursor-pointer text-sm text-on-surface;
+  @apply relative inline-flex h-9 cursor-pointer items-center gap-2 rounded-sm px-4 text-label text-on-surface-variant transition-ui hover:text-on-surface;
+  @apply has-checked:bg-surface-container-lowest has-checked:text-primary has-checked:shadow-xs;
+  @apply has-focus-visible:outline-2 has-focus-visible:outline-offset-1 has-focus-visible:outline-primary;
 }
 
 .admin-radio-option input {
-  @apply w-4 h-4 accent-primary;
+  @apply pointer-events-none absolute opacity-0;
 }
 
 .admin-radio-option-disabled {
-  @apply opacity-60 cursor-not-allowed;
+  @apply cursor-not-allowed text-outline hover:text-outline;
 }

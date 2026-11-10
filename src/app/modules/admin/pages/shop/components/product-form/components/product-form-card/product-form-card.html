@@ -2,7 +2,9 @@
   <header class="product-form-card-header">
     <h2 class="product-form-card-title">
       @if (icon()) {
-      <span class="product-form-card-icon material-symbols-outlined">{{ icon() }}</span>
+      <span class="product-form-card-icon material-symbols-outlined" aria-hidden="true"
+        >{{ icon() }}</span
+      >
       } {{ title() }}
     </h2>
     <ng-content select="[cardActions]" />

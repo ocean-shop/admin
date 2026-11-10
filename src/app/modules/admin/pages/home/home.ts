@@ -5,13 +5,16 @@ import { injectQueries } from '@tanstack/angular-query-experimental/inject-queri
 import { lastValueFrom } from 'rxjs';
 import { APP_ROUTES } from '@core/constants/routes.constants';
 import { AuthService } from '@core/services/auth/auth.service';
+import { EmptyState } from '@ui/empty-state/empty-state';
+import { PageHeader } from '@ui/page-header/page-header';
+import { PageLayout } from '@ui/page-layout/page-layout';
 import { ShopOverviewCard } from '@ui/shop-overview-card/shop-overview-card';
 import { StateMessage } from '@ui/state-message/state-message';
 import { ADMINS_QUERY_KEYS } from '../admins/constants/admins-query-keys.constants';
 import { AdminsService } from '../admins/services/admins/admins.service';
 import { SHOP_QUERY_KEYS } from '../shop/constants/shop-query-keys.constants';
 import { ShopStatisticService } from '../shop/services/shop-statistic/shop-statistic.service';
-import { HOME_TEXTS } from './constants/home.constants';
+import { HOME_EMPTY_ICON, HOME_TEXTS } from './constants/home.constants';
 import {
   mapAdminShopsToCards,
   resolveAdminShops,
@@ -19,7 +22,7 @@ import {
 
 @Component({
   selector: 'app-home',
-  imports: [ShopOverviewCard, StateMessage],
+  imports: [ShopOverviewCard, StateMessage, PageLayout, PageHeader, EmptyState],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -30,6 +33,7 @@ export class Home {
   private readonly router = inject(Router);
 
   protected readonly textData = HOME_TEXTS;
+  protected readonly emptyIcon = HOME_EMPTY_ICON;
 
   private readonly userId = computed(() => this.authService.getUserId());
 

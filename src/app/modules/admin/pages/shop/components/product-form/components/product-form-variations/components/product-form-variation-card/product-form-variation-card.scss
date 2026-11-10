@@ -5,45 +5,45 @@
 }
 
 .variation-card {
-  @apply mb-4 rounded-md border border-surface-dim bg-surface p-4;
+  @apply flex flex-col gap-5 rounded-lg border border-outline-variant bg-surface-container-low p-5;
 }
 
 .variation-card-header {
-  @apply mb-3 flex items-center justify-between;
+  @apply flex items-center justify-between;
 }
 
 .variation-card-title {
-  @apply text-base font-semibold text-on-surface;
+  @apply m-0 text-title-sm text-on-surface;
 }
 
 .variation-card-remove {
-  @apply text-outline transition-colors hover:text-error disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex size-control-sm items-center justify-center rounded-sm text-on-surface-variant transition-ui hover:bg-error/10 hover:text-error disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent;
 }
 
 .variation-card-remove-icon {
-  @apply text-[18px];
+  @apply text-[20px];
 }
 
 .variation-card-field {
-  @apply mb-4 flex flex-col gap-2;
+  @apply flex flex-col gap-2;
 }
 
 .variation-card-columns {
-  @apply grid grid-cols-1 gap-4 md:grid-cols-2;
+  @apply grid grid-cols-1 gap-5 md:grid-cols-2;
 }
 
 .variation-card-checkboxes {
-  @apply justify-center gap-2;
+  @apply justify-center gap-3;
 }
 
 .variation-card-section {
-  @apply mb-4 rounded-sm border border-surface-dim bg-surface-container-lowest p-3;
+  @apply rounded-md border border-outline-variant bg-surface-container-lowest p-4;
 }
 
 .variation-card-section-title {
-  @apply mb-2 text-sm font-semibold text-on-surface;
+  @apply mt-0 mb-3 text-label-sm text-on-surface-variant;
 }
 
 .variation-card-save {
-  @apply w-full rounded-sm bg-primary px-3 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70;
+  @apply inline-flex h-control-md w-full items-center justify-center rounded-md bg-primary/10 px-4 text-button text-primary transition-ui hover:bg-primary/15 disabled:cursor-not-allowed disabled:bg-surface-container disabled:text-outline;
 }

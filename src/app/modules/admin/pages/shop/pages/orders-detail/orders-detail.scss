@@ -1,33 +1,17 @@
 @reference "../../../../../../../styles.scss";
 
 .order-details-layout {
-  @apply grid gap-6 xl:grid-cols-12;
+  @apply grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_var(--spacing-aside)];
 }
 
 .order-details-main-content {
-  @apply flex flex-col gap-6 xl:col-span-8;
+  @apply flex min-w-0 flex-col gap-6;
 }
 
 .order-details-side-content {
-  @apply grid content-start gap-4 xl:col-span-4;
+  @apply flex flex-col gap-6 xl:sticky xl:top-[calc(64px+32px)];
 }
 
 .order-details-status-actions {
-  @apply flex flex-row items-stretch gap-3;
-}
-
-.order-details-status-actions app-dropdown {
-  @apply w-[230px] shrink-0;
-}
-
-.order-details-status-actions app-button {
-  @apply shrink-0;
-}
-
-.order-details-status-actions ::ng-deep .admin-dropdown-trigger-bordered {
-  @apply w-full h-11 text-body-md;
-}
-
-.order-details-status-actions ::ng-deep .admin-btn {
-  @apply h-11 px-4 py-0 text-body-md font-medium whitespace-nowrap;
+  @apply flex flex-col gap-3;
 }

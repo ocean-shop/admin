@@ -73,14 +73,14 @@
     </div>
 
     <div class="variation-card-field variation-card-checkboxes">
-      <app-checkbox
+      <app-switch
         [id]="fieldIds().AVAILABLE"
         [label]="texts().VARIATION_AVAILABLE_LABEL"
         [checked]="variation().available"
         [disabled]="disabled()"
         (checkedChange)="onFieldChange('available', $event)"
       />
-      <app-checkbox
+      <app-switch
         [id]="fieldIds().IS_MAIN"
         [label]="texts().VARIATION_IS_MAIN_LABEL"
         [checked]="variation().isMain"

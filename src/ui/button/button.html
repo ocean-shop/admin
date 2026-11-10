@@ -1,14 +1,24 @@
 <button
-  class="ripple m3-elevation-2"
-  [class.admin-btn]="true"
+  class="admin-btn"
   [class.admin-btn-full-width]="fullWidth()"
-  [class.admin-btn-create]="variant() === 'create'"
+  [class.admin-btn-secondary]="variant() === 'secondary'"
+  [class.admin-btn-outline]="variant() === 'outline'"
+  [class.admin-btn-ghost]="variant() === 'ghost'"
+  [class.admin-btn-danger]="variant() === 'danger'"
+  [class.admin-btn-sm]="size() === 'sm'"
+  [class.admin-btn-lg]="size() === 'lg'"
+  [class.admin-btn-trailing]="!!icon() && !iconLeading()"
   [type]="type()"
-  [disabled]="disabled()"
+  [disabled]="disabled() || loading()"
+  [attr.aria-busy]="loading() || null"
 >
-  @if (icon() && iconLeading()) {
-  <span class="admin-btn-icon material-symbols-outlined"> {{ icon() }} </span>
-  } {{ label() }} @if (icon() && !iconLeading()) {
-  <span class="admin-btn-icon material-symbols-outlined"> {{ icon() }} </span>
+  @if (loading()) {
+  <span class="admin-btn-spin" aria-hidden="true"></span>
+  } @else if (icon() && iconLeading()) {
+  <span class="admin-btn-icon material-symbols-outlined" aria-hidden="true">{{ icon() }}</span>
+  }
+  <span class="admin-btn-label">{{ label() }}</span>
+  @if (icon() && !iconLeading() && !loading()) {
+  <span class="admin-btn-icon material-symbols-outlined" aria-hidden="true">{{ icon() }}</span>
   }
 </button>

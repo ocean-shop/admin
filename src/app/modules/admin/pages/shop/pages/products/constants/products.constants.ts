@@ -1,4 +1,5 @@
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
+import { BadgeTone } from '@ui/badge/models/badge-tone.type';
 import { TableColumn } from '@ui/table/models/table-column.model';
 import { ProductStatus } from '../models/product-status.enum';
 import { ProductType } from '../models/product-type.enum';
@@ -64,11 +65,22 @@ export const PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
   [ProductStatus.Archived]: 'В архіві',
 };
 
+/** Badge tones keyed by the translated status label. */
+export const PRODUCT_STATUS_BADGE_TONES: Record<string, BadgeTone> = {
+  [PRODUCT_STATUS_LABELS[ProductStatus.Active]]: 'primary',
+  [PRODUCT_STATUS_LABELS[ProductStatus.Draft]]: 'neutral',
+  [PRODUCT_STATUS_LABELS[ProductStatus.Archived]]: 'info',
+};
+
 export const PRODUCTS_TABLE_COLUMNS: TableColumn[] = [
-  { key: 'title', header: PRODUCTS_TEXTS.TABLE_TITLE_HEADER },
-  { key: 'sku', header: PRODUCTS_TEXTS.TABLE_SKU_HEADER },
+  { key: 'title', header: PRODUCTS_TEXTS.TABLE_TITLE_HEADER, emphasis: true },
+  { key: 'sku', header: PRODUCTS_TEXTS.TABLE_SKU_HEADER, mono: true },
   { key: 'type', header: PRODUCTS_TEXTS.TABLE_TYPE_HEADER },
-  { key: 'status', header: PRODUCTS_TEXTS.TABLE_STATUS_HEADER },
+  {
+    key: 'status',
+    header: PRODUCTS_TEXTS.TABLE_STATUS_HEADER,
+    badgeTones: PRODUCT_STATUS_BADGE_TONES,
+  },
   { key: 'price', header: PRODUCTS_TEXTS.TABLE_PRICE_HEADER, align: 'right' },
   { key: 'categories', header: PRODUCTS_TEXTS.TABLE_CATEGORIES_HEADER },
 ];

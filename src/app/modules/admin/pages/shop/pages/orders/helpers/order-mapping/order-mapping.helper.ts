@@ -13,6 +13,8 @@ import { SortOrder } from '../../../../models/sort-order.type';
 import {
   ORDER_ITEM_DEFAULT_QUANTITY,
   ORDER_KNOWN_FIELDS,
+  ORDER_PAYMENT_STATUS_LABELS,
+  ORDER_STATUS_LABELS,
   ORDERS_TEXTS,
 } from '../../constants/orders.constants';
 import { OrderPaymentStatus } from '../../models/order-payment-status.enum';
@@ -21,13 +23,21 @@ import { OrderSortValue } from '../../models/order-sort-value.type';
 import { OrderStatus } from '../../models/order-status.enum';
 import { Order, OrderApiItem, OrderProductApiItem } from '../../models/order.model';
 
+/** Translated payment status; unknown values fall back to a title-cased raw value. */
+export const formatOrderPaymentStatusLabel = (value: unknown): string =>
+  ORDER_PAYMENT_STATUS_LABELS[value as OrderPaymentStatus] ?? formatStatus(value);
+
+/** Translated order status; unknown values fall back to a title-cased raw value. */
+export const formatOrderStatusLabel = (value: unknown): string =>
+  ORDER_STATUS_LABELS[value as OrderStatus] ?? formatStatus(value);
+
 export const mapOrder = (order: OrderApiItem, fallbackShopId: string): Order => ({
   id: order.id?.trim() || crypto.randomUUID(),
   shopId: order.shopId?.trim() || fallbackShopId,
   orderNumber: formatNumberOrText(order.orderNumber),
   totalAmount: formatAmount(order.totalAmount),
-  paymentStatus: formatStatus(order.paymentStatus),
-  status: formatStatus(order.status),
+  paymentStatus: formatOrderPaymentStatusLabel(order.paymentStatus),
+  status: formatOrderStatusLabel(order.status),
   createdAt: formatDate(order.createdAt),
 });
 
@@ -62,8 +72,11 @@ export const buildOrderItemRows = (items: OrderProductApiItem[]): TableRowData[]
 export const buildOrderInfoRows = (order: OrderApiItem): InfoListRow[] => [
   { label: ORDERS_TEXTS.INFO_ORDER_NUMBER_LABEL, value: formatNumberOrText(order.orderNumber) },
   { label: ORDERS_TEXTS.INFO_AMOUNT_LABEL, value: formatAmount(order.totalAmount) },
-  { label: ORDERS_TEXTS.INFO_PAYMENT_STATUS_LABEL, value: formatStatus(order.paymentStatus) },
-  { label: ORDERS_TEXTS.INFO_ORDER_STATUS_LABEL, value: formatStatus(order.status) },
+  {
+    label: ORDERS_TEXTS.INFO_PAYMENT_STATUS_LABEL,
+    value: formatOrderPaymentStatusLabel(order.paymentStatus),
+  },
+  { label: ORDERS_TEXTS.INFO_ORDER_STATUS_LABEL, value: formatOrderStatusLabel(order.status) },
   { label: ORDERS_TEXTS.INFO_CREATED_LABEL, value: formatDate(order.createdAt) },
   { label: ORDERS_TEXTS.INFO_UPDATED_LABEL, value: formatDate(order.updatedAt) },
 ];

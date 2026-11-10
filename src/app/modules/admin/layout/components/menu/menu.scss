@@ -1,9 +1,9 @@
 @reference "../../../../../../styles.scss";
 
 .admin-menu {
-  @apply fixed z-40 bg-inverse-surface dark:bg-surface-container-highest flex flex-col shadow-md transition-transform duration-300 ease-in-out overflow-y-auto;
-  @apply top-16 inset-x-0 w-full max-h-[calc(100dvh-4rem)] pt-4 pb-6;
-  @apply lg:top-0 lg:left-0 lg:inset-x-auto lg:w-[280px] lg:h-full lg:max-h-none lg:pt-20 lg:overflow-visible;
+  @apply fixed z-40 flex flex-col overflow-y-auto bg-inverse-surface px-3 py-4 text-secondary-fixed-dim transition-transform duration-300 ease-in-out;
+  @apply inset-x-0 top-header max-h-[calc(100dvh-64px)] w-full shadow-md;
+  @apply lg:right-auto lg:bottom-0 lg:left-0 lg:h-[calc(100dvh-64px)] lg:max-h-none lg:w-sidebar lg:shadow-none;
 }
 
 .menu-open {
@@ -11,49 +11,66 @@
 }
 
 .menu-closed {
-  @apply -translate-y-full lg:translate-y-0 lg:-translate-x-[280px];
+  @apply -translate-y-full lg:translate-y-0 lg:-translate-x-full;
 }
 
 .store-manager-container {
-  @apply px-6 mb-8;
+  @apply mb-5 flex items-center gap-3 rounded-md bg-white/8 p-3;
+}
+
+.store-manager-avatar {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-sm bg-primary-fixed text-inverse-surface;
+}
+
+.store-manager-text {
+  @apply flex min-w-0 flex-col;
 }
 
 .store-manager-title {
-  @apply text-primary-fixed font-bold text-lg;
+  @apply truncate text-[15px] leading-5 font-semibold text-secondary-container;
 }
 
 .store-manager-subtitle {
-  @apply text-secondary-fixed-dim text-xs uppercase tracking-wider font-medium mt-1;
+  @apply text-caption text-primary-fixed;
+}
+
+.nav-group {
+  @apply mx-3 mt-5 mb-2 text-overline text-secondary-fixed-dim uppercase first-of-type:mt-0;
 }
 
 .nav-container {
-  @apply flex-1 space-y-1 uppercase;
-}
-
-.nav-item-active {
-  @apply flex items-center gap-3 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 mx-4 transition-all;
+  @apply flex flex-col gap-0.5;
 }
 
 .nav-item {
-  @apply flex items-center gap-3 text-secondary-fixed-dim hover:text-secondary-fixed hover:bg-primary/10 px-4 py-3 mx-4 rounded-lg transition-all;
+  @apply flex h-control-md items-center gap-3 rounded-md px-3 text-nav text-secondary-fixed-dim transition-ui hover:bg-white/8 hover:text-secondary-container;
+}
+
+.nav-item-active {
+  @apply bg-primary-container font-semibold text-on-primary-container hover:bg-primary-container hover:text-on-primary-container;
+
+  .nav-icon {
+    @apply icon-fill;
+  }
 }
 
 .nav-text {
-  @apply font-medium;
-}
-
-.nav-text-small {
-  @apply font-medium text-sm uppercase tracking-wider;
+  @apply truncate;
 }
 
 .menu-footer {
-  @apply mt-auto px-4 pt-4 border-t border-outline/20;
+  @apply mt-auto border-t border-outline/20 pt-3;
+}
+
+.footer-btn,
+.footer-btn-danger {
+  @apply flex h-control-md w-full items-center gap-3 rounded-md px-3 text-nav transition-ui;
 }
 
 .footer-btn {
-  @apply w-full flex items-center gap-3 text-secondary-fixed-dim hover:text-secondary-fixed hover:bg-primary/10 px-4 py-3 rounded-lg transition-all cursor-pointer;
+  @apply text-secondary-fixed-dim hover:bg-white/8 hover:text-secondary-container;
 }
 
 .footer-btn-danger {
-  @apply w-full flex items-center gap-3 text-error-container hover:bg-error/10 px-4 py-3 rounded-lg transition-all mt-1 cursor-pointer;
+  @apply text-error-container hover:bg-white/8;
 }

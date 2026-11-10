@@ -1,8 +1,16 @@
-<section class="table-wrapper">
+<section class="table-wrapper" [class.table-wrapper-flat]="flat()">
   @if (loading()) {
-  <p class="table-state">{{ loadingText() }}</p>
+  <div class="table-loading" role="status">
+    <span class="table-loading-bar" aria-hidden="true"></span>
+    <p class="table-state">{{ loadingText() }}</p>
+  </div>
   } @else if (rows().length === 0) {
-  <p class="table-state">{{ emptyText() }}</p>
+  <div class="table-empty">
+    <span class="table-empty-icon" aria-hidden="true">
+      <span class="material-symbols-outlined">{{ emptyIcon }}</span>
+    </span>
+    <p class="table-state">{{ emptyText() }}</p>
+  </div>
   } @else {
   <div class="table-scroll">
     <table class="table-content">
@@ -11,6 +19,7 @@
           @for (column of columns(); track column.key) {
           <th
             class="table-head-cell"
+            scope="col"
             [style.width]="column.width || null"
             [class.table-cell-center]="resolveAlignment(column.align) === 'center'"
             [class.table-cell-right]="resolveAlignment(column.align) === 'right'"
@@ -18,7 +27,9 @@
             {{ column.header }}
           </th>
           } @if (hasActions()) {
-          <th class="table-head-cell table-actions-head">{{ resolveActionsLabel() }}</th>
+          <th class="table-head-cell table-actions-head" scope="col">
+            <span class="sr-only">{{ resolveActionsLabel() }}</span>
+          </th>
           }
         </tr>
       </thead>
@@ -31,8 +42,12 @@
             class="table-cell"
             [class.table-cell-center]="resolveAlignment(column.align) === 'center'"
             [class.table-cell-right]="resolveAlignment(column.align) === 'right'"
+            [class.table-cell-emphasis]="!!column.emphasis"
+            [class.table-cell-mono]="!!column.mono"
           >
-            {{ resolveCellValue(row, column) }}
+            @let tone = resolveBadgeTone(row, column); @if (tone) {
+            <app-badge [label]="resolveCellValue(row, column)" [tone]="tone" />
+            } @else { {{ resolveCellValue(row, column) }} }
           </td>
           } @if (hasActions()) {
           <td class="table-cell table-actions-cell">
@@ -45,7 +60,7 @@
                 [attr.aria-label]="updateLabel()"
                 (click)="onUpdate(row)"
               >
-                <span class="material-symbols-outlined">{{ updateIcon() }}</span>
+                <span class="material-symbols-outlined" aria-hidden="true">{{ updateIcon() }}</span>
               </button>
               } @if (deleteEnabled()) {
               <button
@@ -55,7 +70,7 @@
                 [attr.aria-label]="deleteLabel()"
                 (click)="onDelete(row)"
               >
-                <span class="material-symbols-outlined">delete</span>
+                <span class="material-symbols-outlined" aria-hidden="true">{{ deleteIcon }}</span>
               </button>
               }
             </div>

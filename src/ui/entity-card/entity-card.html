@@ -1,6 +1,6 @@
 <article class="entity-card">
   <div class="entity-meta">
-    <div class="entity-icon">
+    <div class="entity-icon" aria-hidden="true">
       <span class="material-symbols-outlined">{{ icon() }}</span>
     </div>
     <div class="entity-identity">
@@ -14,23 +14,35 @@
   </div>
 
   <div class="entity-actions-row">
+    @if (entity().detail) {
     <div class="entity-detail">
-      @if (entity().detail) {
-      <span class="material-symbols-outlined text-sm">link</span>
+      <span class="material-symbols-outlined entity-detail-icon" aria-hidden="true"
+        >{{ icons.DETAIL }}</span
+      >
       <span class="entity-detail-text">{{ entity().detail }}</span>
-      }
     </div>
-
-    @if (entity().badge) {
-    <span class="entity-badge">{{ entity().badge }}</span>
+    } @if (entity().badge) {
+    <app-badge class="entity-badge" tone="primary" [plain]="true" [label]="entity().badge" />
     }
 
     <div class="action-buttons">
-      <button class="icon-btn-edit" type="button" (click)="onEdit()">
-        <span class="material-symbols-outlined">edit</span>
+      <button
+        class="icon-btn-edit"
+        type="button"
+        [attr.aria-label]="textData.EDIT_LABEL"
+        [attr.title]="textData.EDIT_LABEL"
+        (click)="onEdit()"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">{{ icons.EDIT }}</span>
       </button>
-      <button class="icon-btn-delete" type="button" (click)="onDelete()">
-        <span class="material-symbols-outlined">delete</span>
+      <button
+        class="icon-btn-delete"
+        type="button"
+        [attr.aria-label]="textData.DELETE_LABEL"
+        [attr.title]="textData.DELETE_LABEL"
+        (click)="onDelete()"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">{{ icons.DELETE }}</span>
       </button>
     </div>
   </div>

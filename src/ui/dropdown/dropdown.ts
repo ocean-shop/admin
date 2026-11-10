@@ -1,5 +1,6 @@
 import { Component, computed, input, model, output, signal } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
+import { DROPDOWN_CHECK_ICON, DROPDOWN_EXPAND_ICON } from './constants/dropdown.constants';
 import { DropdownOption } from './models/dropdown.type';
 import { DropdownTriggerMode } from './models/dropdown-trigger-mode.type';
 import { DropdownVariant } from './models/dropdown-variant.type';
@@ -22,6 +23,8 @@ export class Dropdown implements FormValueControl<string> {
   public readonly optionSelected = output<DropdownOption>();
 
   protected readonly isOpen = signal(false);
+  protected readonly expandIcon = DROPDOWN_EXPAND_ICON;
+  protected readonly checkIcon = DROPDOWN_CHECK_ICON;
 
   protected readonly displayLabel = computed(() => {
     const selected = this.options().find((option) => option.value === this.value());

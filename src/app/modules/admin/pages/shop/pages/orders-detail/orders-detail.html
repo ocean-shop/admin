@@ -13,6 +13,7 @@
 
       <app-section-card [title]="textData.PRODUCTS_TITLE">
         <app-table
+          [flat]="true"
           [columns]="itemColumns"
           [rows]="orderItemRows()"
           [emptyText]="textData.ORDER_ITEMS_EMPTY_STATE"
@@ -43,7 +44,8 @@
           />
           <app-button
             [label]="textData.SAVE_PAYMENT_STATUS_LABEL"
-            [fullWidth]="false"
+            [loading]="isPaymentUpdating()"
+            [fullWidth]="true"
             [disabled]="!canSavePaymentStatus() || isPaymentUpdating()"
             (click)="onSavePaymentStatus()"
           />
@@ -62,7 +64,8 @@
           />
           <app-button
             [label]="textData.SAVE_STATUS_LABEL"
-            [fullWidth]="false"
+            [loading]="isStatusUpdating()"
+            [fullWidth]="true"
             [disabled]="!canSaveStatus() || isStatusUpdating()"
             (click)="onSaveStatus()"
           />

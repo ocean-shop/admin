@@ -9,19 +9,19 @@
 }
 
 .product-form-dropzone {
-  @apply mb-4 flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-outline-variant bg-surface p-6 text-center transition-colors hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-70;
+  @apply mb-4 flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-[1.5px] border-dashed border-outline-variant bg-surface-container-low px-4 py-6 text-center transition-ui hover:border-primary/50 hover:bg-primary/5 disabled:cursor-not-allowed disabled:hover:border-outline-variant disabled:hover:bg-surface-container-low;
 }
 
 .product-form-dropzone-compact {
-  @apply mb-3 p-4;
+  @apply mb-3 py-4;
 }
 
-.product-form-dropzone .material-symbols-outlined {
-  @apply text-2xl text-outline;
+.product-form-dropzone-icon {
+  @apply inline-flex size-avatar items-center justify-center rounded-full bg-surface-container-lowest text-primary shadow-xs;
 }
 
 .product-form-dropzone p {
-  @apply text-sm text-on-surface-variant;
+  @apply m-0 text-body-sm text-on-surface-variant;
 }
 
 .product-form-images-list {
@@ -29,15 +29,15 @@
 }
 
 .product-form-images-list-sub {
-  @apply text-sm;
+  @apply m-0 text-caption text-on-surface-variant;
 }
 
 .product-form-images-empty {
-  @apply rounded-sm border border-surface-dim bg-surface p-3 text-sm text-on-surface-variant;
+  @apply m-0 rounded-md border border-outline-variant bg-surface-container-low px-3 py-3 text-body-sm text-on-surface-variant;
 }
 
 .product-form-image-row {
-  @apply flex min-h-20 items-center justify-between gap-3 rounded-sm border border-surface-dim bg-surface p-2;
+  @apply flex items-center justify-between gap-3 rounded-md border border-outline-variant bg-surface-container-lowest p-2;
 }
 
 .product-form-image-row-content {
@@ -45,7 +45,7 @@
 }
 
 .product-form-image-preview {
-  @apply h-14 w-14 rounded-sm object-cover;
+  @apply size-thumb shrink-0 rounded-sm border border-surface-dim bg-surface-container object-cover;
 }
 
 .product-form-image-meta {
@@ -53,23 +53,23 @@
 }
 
 .product-form-image-meta .material-symbols-outlined {
-  @apply text-primary;
+  @apply text-[18px] text-secondary;
 }
 
 .product-form-image-name {
-  @apply truncate text-sm text-on-surface;
+  @apply truncate text-label text-on-surface;
 }
 
 .product-form-image-actions {
-  @apply flex items-center gap-1;
+  @apply flex shrink-0 items-center gap-0.5;
 }
 
 .product-form-image-actions button {
-  @apply text-outline transition-colors hover:text-primary disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex size-8 items-center justify-center rounded-sm text-on-surface-variant transition-ui hover:bg-on-surface-variant/10 hover:text-on-surface disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent;
 }
 
-.product-form-image-delete {
-  @apply ml-1 hover:text-error;
+.product-form-image-actions .product-form-image-delete {
+  @apply hover:bg-error/10 hover:text-error;
 }
 
 .image-action-icon {

@@ -1,9 +1,13 @@
 @reference "../../styles.scss";
 
+:host {
+  @apply block;
+}
+
 .page-layout {
-  @apply min-h-screen;
+  @apply block;
 }
 
 .page-layout-container {
-  @apply max-w-[1440px] mx-auto py-8 lg:px-8 flex flex-col gap-6;
+  @apply mx-auto flex max-w-content flex-col gap-6;
 }

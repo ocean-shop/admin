@@ -1,13 +1,13 @@
 @reference "../../styles.scss";
 
 :host {
-  @apply flex gap-2;
+  @apply flex gap-3;
 }
 
 .filter-actions-apply {
-  @apply h-11 px-4 rounded-lg bg-primary text-on-primary font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex h-control-md items-center justify-center rounded-md bg-primary px-4 text-button text-on-primary shadow-xs transition-ui hover:bg-primary-container active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-surface-container disabled:text-outline disabled:shadow-none disabled:active:scale-100;
 }
 
 .filter-actions-reset {
-  @apply h-11 px-4 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex h-control-md items-center justify-center rounded-md px-4 text-button text-on-surface-variant transition-ui hover:bg-on-surface-variant/10 hover:text-on-surface disabled:cursor-not-allowed disabled:text-outline disabled:hover:bg-transparent;
 }

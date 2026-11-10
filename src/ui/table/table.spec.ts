@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { vi } from 'vitest';
 import { Table } from './table';
 import { TableColumn, TableRowData } from './models/table-column.model';
+import { TABLE_TEXTS } from './constants/table.constants';
 
 describe('Table', () => {
   let fixture: ComponentFixture<Table>;
@@ -130,7 +131,7 @@ describe('Table', () => {
     const updateButtons = fixture.debugElement.queryAll(By.css('.table-update-button'));
     const deleteButtons = fixture.debugElement.queryAll(By.css('.table-delete-button'));
 
-    expect(actionHead.nativeElement.textContent).toContain('Actions');
+    expect(actionHead.nativeElement.textContent).toContain(TABLE_TEXTS.ACTIONS_LABEL);
     expect(updateButtons.length).toBe(2);
     expect(deleteButtons.length).toBe(2);
 
@@ -147,5 +148,27 @@ describe('Table', () => {
     expect((component as any).resolveRowKey({ id: '' }, 2)).toBe('row-2');
     expect((component as any).resolveRowKey({}, 3)).toBe('row-3');
     expect((component as any).resolveAlignment()).toBe('left');
+  });
+
+  it('renders badge cells for columns with tones and plain text otherwise', async () => {
+    fixture.componentRef.setInput('columns', [
+      { key: 'name', header: 'Name', emphasis: true },
+      { key: 'status', header: 'Status', badgeTones: { Paid: 'success' } },
+    ]);
+    fixture.componentRef.setInput('rows', [
+      { id: 'a', name: 'One', status: 'Paid' },
+      { id: 'b', name: 'Two', status: 'Unknown' },
+    ]);
+    await fixture.whenStable();
+
+    const badges = fixture.debugElement.queryAll(By.css('app-badge'));
+    const firstCell = fixture.debugElement.query(By.css('td.table-cell')).nativeElement;
+
+    expect(badges.length).toBe(1);
+    expect(badges[0].nativeElement.textContent).toContain('Paid');
+    expect(firstCell.classList).toContain('table-cell-emphasis');
+    expect(
+      (component as any).resolveBadgeTone({ status: 'x' }, { key: 'status', header: '' }),
+    ).toBe(null);
   });
 });

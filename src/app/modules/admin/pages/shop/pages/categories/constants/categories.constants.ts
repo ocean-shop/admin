@@ -14,7 +14,7 @@ export const CATEGORIES_TEXTS = {
     'Відкрийте цю сторінку з коректним шляхом магазину (/shop/:shopId/categories), щоб створювати категорії.',
   TOTAL_CATEGORIES_LABEL: 'Всього категорій',
   DEEPEST_LEVEL_LABEL: 'Найглибший рівень',
-  LEVEL_SUFFIX: 'Рівні',
+  LEVEL_SUFFIX: 'рівні',
   MODAL_CREATE_ROOT_TITLE: 'Створити кореневу категорію',
   MODAL_CREATE_CHILD_TITLE: 'Створити підкатегорію',
   MODAL_UPDATE_TITLE: 'Оновити категорію',
@@ -61,15 +61,21 @@ export const CATEGORIES_TREE_INDENT_PX = 24;
 
 export const CATEGORIES_ICONS = {
   TOGGLE: 'chevron_right',
-  CATEGORY: 'category',
-  MOVE_UP: 'keyboard_arrow_up',
-  MOVE_DOWN: 'keyboard_arrow_down',
+  CATEGORY: 'folder',
+  LEAF: 'label',
+  MOVE_UP: 'arrow_upward',
+  MOVE_DOWN: 'arrow_downward',
   EDIT: 'edit',
   ADD_CHILD: 'add',
   DELETE: 'delete',
 } as const;
 
-export const CATEGORIES_CREATE_ICON = 'add_circle';
+export const CATEGORIES_CREATE_ICON = 'add';
+export const CATEGORIES_STATS_ICONS = {
+  TOTAL: 'account_tree',
+  DEPTH: 'stacked_bar_chart',
+} as const;
+export const CATEGORIES_EMPTY_ICON = 'account_tree';
 export const CATEGORIES_NAME_FIELD_ID = 'category-name';
 export const CATEGORIES_SLUG_FIELD_ID = 'category-slug';
 export const CATEGORIES_META_TITLE_FIELD_ID = 'category-meta-title';

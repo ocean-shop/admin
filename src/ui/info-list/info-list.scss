@@ -1,21 +1,21 @@
 @reference "../../styles.scss";
 
 .info-list {
-  @apply grid gap-3 sm:grid-cols-2;
+  @apply m-0 grid gap-x-6 gap-y-5 sm:grid-cols-2;
 }
 
 .info-list-item {
-  @apply flex flex-col gap-1;
+  @apply flex min-w-0 flex-col gap-1;
 }
 
 .info-list-key {
-  @apply text-xs uppercase tracking-wide text-on-surface-variant;
+  @apply text-label-sm text-on-surface-variant;
 }
 
 .info-list-value {
-  @apply text-sm text-on-surface break-words;
+  @apply m-0 text-body text-on-surface [overflow-wrap:anywhere];
 }
 
 .info-list-value-mono {
-  @apply font-mono text-xs;
+  @apply font-mono text-mono;
 }

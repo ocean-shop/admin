@@ -16,3 +16,4 @@ export const HOME_TEXTS = {
 export const HOME_METRIC_PENDING_ICON = 'schedule';
 export const HOME_SALES_METRIC_ICON = 'shopping_cart';
 export const HOME_PRODUCTS_METRIC_ICON = 'inventory_2';
+export const HOME_EMPTY_ICON = 'storefront';

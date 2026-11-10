@@ -1,13 +1,13 @@
 @reference "../../../../../../../styles.scss";
 
 .form-container {
-  @apply space-y-lg;
+  @apply flex max-w-[420px] flex-col gap-5;
 }
 
 .field-group {
-  @apply space-y-sm;
+  @apply flex flex-col gap-2;
 }
 
 .field-label {
-  @apply block font-body-md text-on-surface-variant;
+  @apply block text-label text-on-surface;
 }

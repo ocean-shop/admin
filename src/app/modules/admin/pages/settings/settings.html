@@ -1,25 +1,26 @@
-<div class="settings-container">
-  <header class="settings-header">
-    <h3 class="settings-title">{{ pageTitle }}</h3>
-  </header>
+<app-page-layout>
+  <app-page-header [title]="pageTitle" />
 
-  <section class="settings-card">
-    <app-settings-form />
-  </section>
+  <div class="settings-content">
+    <section class="settings-card">
+      <app-settings-form />
+    </section>
 
-  <section class="settings-card settings-cache">
-    <div class="settings-cache-info">
-      <h4 class="settings-cache-title">{{ cacheTitle }}</h4>
-      <p class="settings-cache-description">{{ cacheDescription }}</p>
-    </div>
-    <app-button
-      [label]="cacheInvalidateLabel"
-      [icon]="cacheInvalidateIcon"
-      [iconLeading]="true"
-      [fullWidth]="false"
-      [disabled]="isCacheInvalidating()"
-      type="button"
-      (click)="onInvalidateCache()"
-    />
-  </section>
-</div>
+    <section class="settings-card settings-cache">
+      <div class="settings-cache-info">
+        <h2 class="settings-cache-title">{{ cacheTitle }}</h2>
+        <p class="settings-cache-description">{{ cacheDescription }}</p>
+      </div>
+      <app-button
+        [label]="cacheInvalidateLabel"
+        [icon]="cacheInvalidateIcon"
+        [iconLeading]="true"
+        [fullWidth]="false"
+        [loading]="isCacheInvalidating()"
+        variant="outline"
+        type="button"
+        (click)="onInvalidateCache()"
+      />
+    </section>
+  </div>
+</app-page-layout>

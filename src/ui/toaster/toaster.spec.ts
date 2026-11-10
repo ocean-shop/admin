@@ -35,9 +35,9 @@ describe('Toaster', () => {
   });
 
   it('should return correct icon fill based on type', () => {
-    expect(component.getIconFill('info')).toBe("'FILL' 0");
-    expect(component.getIconFill('success')).toBe("'FILL' 0");
-    expect(component.getIconFill('warning')).toBe("'FILL' 0");
+    expect(component.getIconFill('info')).toBe("'FILL' 1");
+    expect(component.getIconFill('success')).toBe("'FILL' 1");
+    expect(component.getIconFill('warning')).toBe("'FILL' 1");
     expect(component.getIconFill('danger')).toBe("'FILL' 1");
   });
 

@@ -7,6 +7,7 @@ import { BreadcrumbItem } from './models/breadcrumb-item.model';
   selector: 'app-breadcrumbs',
   imports: [RouterLink],
   templateUrl: './breadcrumbs.html',
+  styleUrl: './breadcrumbs.scss',
 })
 export class Breadcrumbs {
   public readonly items = input.required<BreadcrumbItem[]>();

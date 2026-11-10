@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { Pagination } from './pagination';
+import { PAGINATION_TEXTS } from './constants/pagination.constants';
 
 describe('Pagination', () => {
   let fixture: ComponentFixture<Pagination>;
@@ -30,7 +31,9 @@ describe('Pagination', () => {
     await fixture.whenStable();
 
     const hostElement = fixture.nativeElement as HTMLElement;
-    expect(hostElement.textContent).toContain('Showing 1 to 10 of 25 admins');
+    expect(hostElement.textContent?.replace(/\s+/g, ' ')).toContain(
+      `${PAGINATION_TEXTS.SHOWING} 1–10 ${PAGINATION_TEXTS.OF} 25 admins`,
+    );
   });
 
   it('emits pageChange when clicking next and previous buttons', async () => {

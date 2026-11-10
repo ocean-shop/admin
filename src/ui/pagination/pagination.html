@@ -1,17 +1,18 @@
 <div class="pagination-container">
   <p class="pagination-summary">
-    Showing {{ startItem() }} to {{ endItem() }} of {{ totalItems() }} {{ label() }}
+    {{ textData.SHOWING }} {{ startItem() }}–{{ endItem() }} {{ textData.OF }} {{ totalItems() }} {{
+    label() }}
   </p>
 
-  <div class="pagination-controls">
+  <nav class="pagination-controls" [attr.aria-label]="textData.NAV_LABEL">
     <button
       class="pagination-arrow-button"
       type="button"
       [disabled]="isPrevDisabled()"
-      aria-label="Previous page"
+      [attr.aria-label]="textData.PREVIOUS_LABEL"
       (click)="previousPage()"
     >
-      <span class="material-symbols-outlined">chevron_left</span>
+      <span class="material-symbols-outlined" aria-hidden="true">{{ prevIcon }}</span>
     </button>
 
     @for (page of visiblePages(); track page) {
@@ -20,7 +21,7 @@
       [class.pagination-page-button-active]="page === currentPage()"
       type="button"
       [attr.aria-current]="page === currentPage() ? 'page' : null"
-      [attr.aria-label]="'Page ' + page"
+      [attr.aria-label]="textData.PAGE_LABEL + ' ' + page"
       (click)="changePage(page)"
     >
       {{ page }}
@@ -31,10 +32,10 @@
       class="pagination-arrow-button"
       type="button"
       [disabled]="isNextDisabled()"
-      aria-label="Next page"
+      [attr.aria-label]="textData.NEXT_LABEL"
       (click)="nextPage()"
     >
-      <span class="material-symbols-outlined">chevron_right</span>
+      <span class="material-symbols-outlined" aria-hidden="true">{{ nextIcon }}</span>
     </button>
-  </div>
+  </nav>
 </div>

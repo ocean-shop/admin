@@ -1,4 +1,10 @@
 import { Component, computed, input, output } from '@angular/core';
+import {
+  PAGINATION_MAX_VISIBLE_PAGES,
+  PAGINATION_NEXT_ICON,
+  PAGINATION_PREV_ICON,
+  PAGINATION_TEXTS,
+} from './constants/pagination.constants';
 
 @Component({
   selector: 'app-pagination',
@@ -10,9 +16,12 @@ export class Pagination {
   public readonly pageSize = input.required<number>();
   public readonly totalItems = input.required<number>();
   public readonly totalPages = input.required<number>();
-  public readonly label = input<string>('admins');
+  public readonly label = input<string>('');
   public readonly pageChange = output<number>();
 
+  protected readonly textData = PAGINATION_TEXTS;
+  protected readonly prevIcon = PAGINATION_PREV_ICON;
+  protected readonly nextIcon = PAGINATION_NEXT_ICON;
   protected readonly isPrevDisabled = computed(() => this.currentPage() <= 1);
   protected readonly isNextDisabled = computed(
     () => this.currentPage() >= this.totalPages() || this.totalPages() <= 1,
@@ -37,7 +46,7 @@ export class Pagination {
   protected readonly visiblePages = computed(() => {
     const totalPages = this.totalPages();
     const currentPage = this.currentPage();
-    const maxVisible = 5;
+    const maxVisible = PAGINATION_MAX_VISIBLE_PAGES;
 
     if (totalPages <= maxVisible) {
       return Array.from({ length: totalPages }, (_, index) => index + 1);

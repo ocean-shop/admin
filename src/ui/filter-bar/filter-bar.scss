@@ -1,7 +1,11 @@
 @reference "../../styles.scss";
 
+:host {
+  @apply block;
+}
+
 .filter-bar {
-  @apply flex flex-col gap-4 xl:flex-row xl:flex-wrap xl:items-end;
+  @apply flex flex-col gap-4 rounded-lg border border-outline-variant bg-surface-container-lowest px-5 py-4 shadow-xs xl:flex-row xl:flex-wrap xl:items-end;
 }
 
 .filter-bar-fields {
@@ -9,5 +13,5 @@
 }
 
 .filter-bar-controls {
-  @apply flex flex-col gap-4 sm:flex-row sm:items-end;
+  @apply flex flex-col gap-3 sm:flex-row sm:items-end;
 }

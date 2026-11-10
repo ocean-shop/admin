@@ -13,6 +13,7 @@
     <app-section-card [title]="textData.USER_OTPS_TITLE">
       <div class="users-detail-scroll-area">
         <app-table
+          [flat]="true"
           [columns]="otpColumns"
           [rows]="otpRows()"
           [emptyText]="textData.USER_OTPS_EMPTY_STATE"
@@ -23,6 +24,7 @@
     <app-section-card [title]="textData.USER_SESSIONS_TITLE">
       <div class="users-detail-scroll-area">
         <app-table
+          [flat]="true"
           [columns]="sessionColumns"
           [rows]="sessionRows()"
           [emptyText]="textData.USER_SESSIONS_EMPTY_STATE"

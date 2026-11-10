@@ -13,6 +13,8 @@ import { Button } from '@ui/button/button';
 import { ConfirmModal } from '@ui/confirm-modal/confirm-modal';
 import { PageHeader } from '@ui/page-header/page-header';
 import { PageLayout } from '@ui/page-layout/page-layout';
+import { EmptyState } from '@ui/empty-state/empty-state';
+import { StatCard } from '@ui/stat-card/stat-card';
 import { StateMessage } from '@ui/state-message/state-message';
 import { SHOP_QUERY_KEYS } from '../../constants/shop-query-keys.constants';
 import { extractCategoriesFromResponse } from '../../helpers/categories-response/categories-response.helper';
@@ -20,6 +22,8 @@ import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-br
 import { CategoryFormModal } from './components/category-form-modal/category-form-modal';
 import {
   CATEGORIES_CREATE_ICON,
+  CATEGORIES_EMPTY_ICON,
+  CATEGORIES_STATS_ICONS,
   CATEGORIES_ICONS,
   CATEGORIES_TEXTS,
   CATEGORIES_TREE_INDENT_PX,
@@ -53,6 +57,8 @@ import { CategoriesService } from './services/categories/categories.service';
     Breadcrumbs,
     Button,
     StateMessage,
+    StatCard,
+    EmptyState,
     CategoryFormModal,
     ConfirmModal,
   ],
@@ -68,6 +74,8 @@ export class Categories {
   protected readonly createIcon = CATEGORIES_CREATE_ICON;
   protected readonly icons = CATEGORIES_ICONS;
   protected readonly treeIndentPx = CATEGORIES_TREE_INDENT_PX;
+  protected readonly statsIcons = CATEGORIES_STATS_ICONS;
+  protected readonly emptyIcon = CATEGORIES_EMPTY_ICON;
 
   protected readonly shopId = injectRouteParam('shopId');
   /** Nodes are expanded by default; the whole tree is re-expanded whenever the shop changes. */
@@ -130,6 +138,9 @@ export class Categories {
     extractCategoriesFromResponse(this.categoriesQuery.data()).map(mapCategory),
   );
   protected readonly stats = computed(() => resolveCategoriesStats(this.categoriesQuery.data()));
+  protected readonly deepestLevelLabel = computed(
+    () => `${this.stats().deepestLevel ?? ''} ${CATEGORIES_TEXTS.LEVEL_SUFFIX}`,
+  );
   protected readonly hasCategories = computed(() => this.categories().length > 0);
   protected readonly hasVisibleStats = computed(() => {
     const { totalCategories, deepestLevel } = this.stats();

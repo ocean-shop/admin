@@ -18,6 +18,7 @@ import { LoginForm } from './components/login-form/login-form';
 import { OtpForm } from './components/otp-form/otp-form';
 import {
   LOGIN_OTP_LIFETIME_MS,
+  LOGIN_MARK_ICON,
   LOGIN_TEXTS,
   LOGIN_THROTTLE_COOLDOWN_MS,
 } from './constants/login.constants';
@@ -38,8 +39,8 @@ export class Login implements OnInit {
 
   protected readonly LoginView = LoginView;
   protected readonly pageTexts = LOGIN_TEXTS.PAGE;
+  protected readonly markIcon = LOGIN_MARK_ICON;
 
-  protected readonly isFocused = signal(false);
   protected readonly currentView = signal<LoginView>(LoginView.Login);
   protected readonly isLoading = signal(false);
   /** Set after the API answers 429, so the forms stay disabled for a while. */

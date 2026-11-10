@@ -1,18 +1,25 @@
-<div class="m3-textfield group" [class.has-icon]="!!icon()" [class.has-error]="!!errorMessage()">
-  <div class="relative">
+<div
+  class="m3-textfield admin-field"
+  [class.has-icon]="!!icon()"
+  [class.has-error]="!!errorMessage()"
+  [class.is-disabled]="disabled()"
+>
+  @if (label()) {
+  <label class="admin-field-label" [for]="id()">{{ label() }}</label>
+  }
+  <div class="admin-field-control">
     @if (icon()) {
-    <div class="input-icon-container">
-      <span class="material-symbols-outlined">{{ icon() }}</span>
-    </div>
+    <span class="material-symbols-outlined input-icon" aria-hidden="true">{{ icon() }}</span>
     } @if (control()) {
     <input
       class="admin-input"
       [class.has-icon]="!!icon()"
       [class.has-error]="!!errorMessage()"
       [id]="id()"
-      [placeholder]="placeholder() || ' '"
+      [placeholder]="placeholder()"
       [type]="type()"
       [formField]="control()"
+      [attr.aria-invalid]="!!errorMessage() || null"
       (focus)="focusEvent.emit($event)"
       (blur)="blurEvent.emit($event)"
       (input)="onInput($event)"
@@ -22,7 +29,7 @@
       class="admin-input"
       [class.has-icon]="!!icon()"
       [id]="id()"
-      [placeholder]="placeholder() || ' '"
+      [placeholder]="placeholder()"
       [type]="type()"
       [value]="value()"
       [disabled]="disabled()"
@@ -30,11 +37,9 @@
       (blur)="blurEvent.emit($event)"
       (input)="onInput($event)"
     />
-    } @if (label()) {
-    <label class="font-body-md" [for]="id()">{{ label() }}</label>
     }
   </div>
   @if (errorMessage()) {
-  <div class="text-error text-xs mt-1 pl-4">{{ errorMessage() }}</div>
+  <p class="admin-field-error" role="alert">{{ errorMessage() }}</p>
   }
 </div>

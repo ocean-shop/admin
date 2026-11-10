@@ -1,14 +1,15 @@
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
+import { BadgeTone } from '@ui/badge/models/badge-tone.type';
 import { TableColumn } from '@ui/table/models/table-column.model';
 import { OrderPaymentStatus } from '../models/order-payment-status.enum';
 import { OrderStatus } from '../models/order-status.enum';
 
 export const ORDERS_TEXTS = {
   ORDER_ITEMS_EMPTY_STATE: 'Товари замовлення відсутні.',
-  INFO_ORDER_NUMBER_LABEL: 'Номер Замовлення',
+  INFO_ORDER_NUMBER_LABEL: 'Номер замовлення',
   INFO_AMOUNT_LABEL: 'Сума',
   INFO_PAYMENT_STATUS_LABEL: 'Статус оплати',
-  INFO_ORDER_STATUS_LABEL: 'Статус Замовлення',
+  INFO_ORDER_STATUS_LABEL: 'Статус замовлення',
   INFO_CREATED_LABEL: 'Створено',
   INFO_UPDATED_LABEL: 'Оновлено',
   USER_EMAIL_LABEL: 'Email',
@@ -75,29 +76,59 @@ export const ORDERS_SORT_OPTIONS: DropdownOption[] = [
   { label: 'Спочатку старіші', value: 'older' },
 ];
 
+export const ORDER_PAYMENT_STATUS_LABELS: Record<OrderPaymentStatus, string> = {
+  [OrderPaymentStatus.Unpaid]: 'Не оплачено',
+  [OrderPaymentStatus.Paid]: 'Оплачено',
+};
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  [OrderStatus.Pending]: 'Очікує',
+  [OrderStatus.Processing]: 'В обробці',
+  [OrderStatus.Shipped]: 'Відправлено',
+  [OrderStatus.Cancelled]: 'Скасовано',
+};
+
 export const ORDER_PAYMENT_STATUS_OPTIONS: DropdownOption[] = [
-  { label: 'Не оплачено', value: OrderPaymentStatus.Unpaid },
-  { label: 'Оплачено', value: OrderPaymentStatus.Paid },
+  {
+    label: ORDER_PAYMENT_STATUS_LABELS[OrderPaymentStatus.Unpaid],
+    value: OrderPaymentStatus.Unpaid,
+  },
+  { label: ORDER_PAYMENT_STATUS_LABELS[OrderPaymentStatus.Paid], value: OrderPaymentStatus.Paid },
 ];
 
-export const ORDER_STATUS_OPTIONS: DropdownOption[] = [
-  { label: 'Очікує', value: OrderStatus.Pending },
-  { label: 'В обробці', value: OrderStatus.Processing },
-  { label: 'Відправлено', value: OrderStatus.Shipped },
-  { label: 'Скасовано', value: OrderStatus.Cancelled },
-];
+export const ORDER_STATUS_OPTIONS: DropdownOption[] = Object.values(OrderStatus).map((status) => ({
+  label: ORDER_STATUS_LABELS[status],
+  value: status,
+}));
+
+/** Badge tones keyed by the translated label shown in the cell. */
+export const ORDER_PAYMENT_STATUS_BADGE_TONES: Record<string, BadgeTone> = {
+  [ORDER_PAYMENT_STATUS_LABELS[OrderPaymentStatus.Paid]]: 'success',
+  [ORDER_PAYMENT_STATUS_LABELS[OrderPaymentStatus.Unpaid]]: 'danger',
+};
+
+export const ORDER_STATUS_BADGE_TONES: Record<string, BadgeTone> = {
+  [ORDER_STATUS_LABELS[OrderStatus.Pending]]: 'warning',
+  [ORDER_STATUS_LABELS[OrderStatus.Processing]]: 'info',
+  [ORDER_STATUS_LABELS[OrderStatus.Shipped]]: 'info',
+  [ORDER_STATUS_LABELS[OrderStatus.Cancelled]]: 'danger',
+};
 
 export const ORDERS_TABLE_COLUMNS: TableColumn[] = [
-  { key: 'orderNumber', header: ORDERS_TEXTS.TABLE_NUMBER_HEADER },
-  { key: 'totalAmount', header: ORDERS_TEXTS.TABLE_TOTAL_HEADER, align: 'right' },
-  { key: 'paymentStatus', header: ORDERS_TEXTS.TABLE_PAYMENT_STATUS_HEADER },
-  { key: 'status', header: ORDERS_TEXTS.TABLE_STATUS_HEADER },
+  { key: 'orderNumber', header: ORDERS_TEXTS.TABLE_NUMBER_HEADER, emphasis: true },
+  { key: 'totalAmount', header: ORDERS_TEXTS.TABLE_TOTAL_HEADER, align: 'right', emphasis: true },
+  {
+    key: 'paymentStatus',
+    header: ORDERS_TEXTS.TABLE_PAYMENT_STATUS_HEADER,
+    badgeTones: ORDER_PAYMENT_STATUS_BADGE_TONES,
+  },
+  { key: 'status', header: ORDERS_TEXTS.TABLE_STATUS_HEADER, badgeTones: ORDER_STATUS_BADGE_TONES },
   { key: 'createdAt', header: ORDERS_TEXTS.TABLE_CREATED_AT_HEADER },
 ];
 
 export const ORDER_ITEMS_TABLE_COLUMNS: TableColumn[] = [
-  { key: 'name', header: ORDERS_TEXTS.ITEMS_PRODUCT_HEADER },
-  { key: 'sku', header: ORDERS_TEXTS.ITEMS_SKU_HEADER },
+  { key: 'name', header: ORDERS_TEXTS.ITEMS_PRODUCT_HEADER, emphasis: true },
+  { key: 'sku', header: ORDERS_TEXTS.ITEMS_SKU_HEADER, mono: true },
   { key: 'quantity', header: ORDERS_TEXTS.ITEMS_QUANTITY_HEADER, align: 'right' },
   { key: 'price', header: ORDERS_TEXTS.ITEMS_PRICE_HEADER, align: 'right' },
   { key: 'total', header: ORDERS_TEXTS.ITEMS_TOTAL_HEADER, align: 'right' },

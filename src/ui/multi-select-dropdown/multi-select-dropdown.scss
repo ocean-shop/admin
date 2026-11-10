@@ -9,23 +9,28 @@
 }
 
 .multi-select-trigger {
-  @apply flex items-center gap-sm px-md py-sm rounded-full hover:bg-primary/10 text-primary transition-colors font-body-sm;
+  @apply inline-flex h-control-sm items-center gap-2 rounded-md px-3 text-label font-medium text-primary transition-ui hover:bg-primary/10;
 }
 
-.multi-select-trigger-form {
-  @apply w-full justify-between rounded-lg border border-outline-variant bg-transparent px-md py-[12px] text-on-surface font-body-md hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all;
-}
-
+.multi-select-trigger-form,
 .multi-select-trigger-bordered {
-  @apply h-11 rounded-lg border border-[#bcc9c6] px-4;
+  @apply flex h-control-md w-full justify-between gap-2 rounded-md border border-outline-variant bg-surface-container-lowest pr-3 pl-4 text-body font-normal text-on-surface hover:border-outline hover:bg-surface-container-lowest;
 }
 
-.multi-select-container-form .multi-select-menu {
-  @apply left-0 right-0 w-full;
+.multi-select-container-open .multi-select-trigger-form,
+.multi-select-container-open .multi-select-trigger-bordered,
+.multi-select-trigger-form:focus-visible,
+.multi-select-trigger-bordered:focus-visible {
+  @apply field-focus outline-none;
+}
+
+.multi-select-container-form .multi-select-menu,
+.multi-select-container:has(.multi-select-trigger-bordered) .multi-select-menu {
+  @apply right-0 left-0 w-full;
 }
 
 .multi-select-trigger-icon {
-  @apply text-outline;
+  @apply text-secondary;
 }
 
 .multi-select-container-form.multi-select-container-open .multi-select-trigger-icon {
@@ -33,11 +38,11 @@
 }
 
 .multi-select-trigger-label {
-  @apply flex-1 text-left truncate;
+  @apply flex-1 truncate text-left;
 }
 
 .multi-select-icon-small {
-  @apply text-body-sm transition-transform duration-200;
+  @apply text-secondary transition-transform duration-150;
 }
 
 .multi-select-icon-rotated {
@@ -45,29 +50,41 @@
 }
 
 .multi-select-menu {
-  @apply absolute right-0 mt-xs w-56 bg-surface-container-lowest rounded-lg border border-outline-variant opacity-0 invisible transition-all duration-200 z-10;
+  @apply invisible absolute right-0 z-30 mt-1 w-64 rounded-lg border border-outline-variant bg-surface-container-lowest p-1 opacity-0 shadow-md transition-ui;
 }
 
 .multi-select-container:not(.multi-select-container-click):hover .multi-select-menu {
-  @apply opacity-100 visible;
+  @apply visible opacity-100;
 }
 
 .multi-select-container-open .multi-select-menu {
-  @apply opacity-100 visible;
+  @apply visible opacity-100;
 }
 
 .multi-select-list {
-  @apply py-xs max-h-56 overflow-auto;
+  @apply flex max-h-72 flex-col overflow-auto;
 }
 
 .multi-select-item {
-  @apply w-full flex items-center justify-between gap-sm px-md py-sm text-body-sm text-on-surface hover:bg-primary/10 transition-colors;
+  @apply flex h-10 w-full items-center gap-3 rounded-sm pr-3 text-label font-normal text-on-surface transition-ui hover:bg-surface-container-low;
+}
+
+.multi-select-item-selected {
+  @apply text-primary;
+}
+
+.multi-select-item-box {
+  @apply inline-flex size-[18px] shrink-0 items-center justify-center rounded-sm border-[1.5px] border-outline bg-surface-container-lowest;
+}
+
+.multi-select-item-selected .multi-select-item-box {
+  @apply border-primary bg-primary;
 }
 
 .multi-select-item-label {
-  @apply text-left;
+  @apply truncate text-left;
 }
 
 .multi-select-item-icon {
-  @apply text-body-sm text-primary;
+  @apply text-[14px] font-bold text-on-primary;
 }

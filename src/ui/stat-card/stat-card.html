@@ -1,0 +1,14 @@
+<article class="stat-card">
+  <div class="stat-card-top">
+    <span class="stat-card-label">{{ label() }}</span>
+    @if (icon()) {
+    <span class="stat-card-icon" aria-hidden="true">
+      <span class="material-symbols-outlined">{{ icon() }}</span>
+    </span>
+    }
+  </div>
+  <p class="stat-card-value">{{ value() }}</p>
+  @if (helper()) {
+  <p class="stat-card-helper">{{ helper() }}</p>
+  }
+</article>
