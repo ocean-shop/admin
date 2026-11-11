@@ -47,6 +47,17 @@
           >
             @let tone = resolveBadgeTone(row, column); @if (tone) {
             <app-badge [label]="resolveCellValue(row, column)" [tone]="tone" />
+            } @else if (column.thumbnailKey) {
+            <span class="table-cell-media">
+              @let thumbnail = resolveThumbnail(row, column); @if (thumbnail) {
+              <img class="table-thumb" [src]="thumbnail" alt="" />
+              } @else {
+              <span class="table-thumb" aria-hidden="true">
+                <span class="material-symbols-outlined">{{ thumbnailPlaceholderIcon }}</span>
+              </span>
+              }
+              <span>{{ resolveCellValue(row, column) }}</span>
+            </span>
             } @else { {{ resolveCellValue(row, column) }} }
           </td>
           } @if (hasActions()) {

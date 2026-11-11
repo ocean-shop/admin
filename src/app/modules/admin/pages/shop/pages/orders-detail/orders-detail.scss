@@ -1,7 +1,7 @@
 @reference "../../../../../../../styles.scss";
 
 .order-details-layout {
-  @apply grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_var(--spacing-aside)];
+  @apply grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_theme(--spacing-aside)];
 }
 
 .order-details-main-content {
@@ -9,9 +9,41 @@
 }
 
 .order-details-side-content {
-  @apply flex flex-col gap-6 xl:sticky xl:top-[calc(64px+32px)];
+  @apply flex min-w-0 flex-col gap-6 lg:sticky lg:top-[calc(theme(--spacing-header)+32px)];
+}
+
+.order-details-summary {
+  @apply rounded-md border border-outline-variant bg-surface-container-low px-5 py-4;
 }
 
 .order-details-status-actions {
-  @apply flex flex-col gap-3;
+  @apply flex flex-col gap-4;
+}
+
+.order-details-field {
+  @apply flex min-w-0 flex-col gap-2;
+}
+
+.order-details-field-label {
+  @apply text-label text-on-surface;
+}
+
+.order-details-buyer {
+  @apply flex items-center gap-3;
+}
+
+.order-details-buyer-avatar {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-full bg-primary/10 text-label text-primary;
+}
+
+.order-details-buyer-info {
+  @apply flex min-w-0 flex-col;
+}
+
+.order-details-buyer-name {
+  @apply truncate text-title-sm text-on-surface;
+}
+
+.order-details-buyer-email {
+  @apply truncate text-caption text-on-surface-variant;
 }

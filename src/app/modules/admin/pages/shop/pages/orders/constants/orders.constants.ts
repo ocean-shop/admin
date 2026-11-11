@@ -1,7 +1,9 @@
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { BadgeTone } from '@ui/badge/models/badge-tone.type';
 import { TableColumn } from '@ui/table/models/table-column.model';
+import { OrderPaymentMethod } from '../models/order-payment-method.enum';
 import { OrderPaymentStatus } from '../models/order-payment-status.enum';
+import { OrderShippingMethod } from '../models/order-shipping-method.enum';
 import { OrderStatus } from '../models/order-status.enum';
 
 export const ORDERS_TEXTS = {
@@ -12,10 +14,13 @@ export const ORDERS_TEXTS = {
   INFO_ORDER_STATUS_LABEL: 'Статус замовлення',
   INFO_CREATED_LABEL: 'Створено',
   INFO_UPDATED_LABEL: 'Оновлено',
-  USER_EMAIL_LABEL: 'Email',
-  USER_FIRST_NAME_LABEL: "Ім'я",
-  USER_LAST_NAME_LABEL: 'Прізвище',
-  USER_PHONE_LABEL: 'Телефон',
+  CUSTOMER_NAME_LABEL: "Ім'я",
+  CUSTOMER_MIDDLE_NAME_LABEL: 'По батькові',
+  CUSTOMER_EMAIL_LABEL: 'Email',
+  CUSTOMER_PHONE_LABEL: 'Телефон',
+  CUSTOMER_SHIPPING_LABEL: 'Доставка',
+  CUSTOMER_PAYMENT_METHOD_LABEL: 'Оплата',
+  CUSTOMER_USER_ID_LABEL: 'ID користувача',
   PAGE_TITLE: 'Замовлення',
   PAGE_DESCRIPTION: 'Переглядайте замовлення магазину, відкривайте деталі та керуйте статусами.',
   ORDER_NUMBER_FILTER_LABEL: 'Номер замовлення',
@@ -37,9 +42,9 @@ export const ORDERS_TEXTS = {
   TABLE_DELETE_LABEL: 'Видалити замовлення',
   ITEMS_PRODUCT_HEADER: 'Товар',
   ITEMS_SKU_HEADER: 'SKU',
-  ITEMS_QUANTITY_HEADER: 'Кількість',
-  ITEMS_PRICE_HEADER: 'Ціна Товару',
-  ITEMS_TOTAL_HEADER: 'Загальна Сума',
+  ITEMS_QUANTITY_HEADER: 'К-сть',
+  ITEMS_PRICE_HEADER: 'Ціна',
+  ITEMS_TOTAL_HEADER: 'Сума',
   MODAL_DELETE_TITLE: 'Видалити замовлення',
   MODAL_DELETE_MESSAGE: 'Ви справді хочете видалити замовлення ',
   MODAL_DELETE_MESSAGE_SUFFIX: '? Цю дію не можна скасувати.',
@@ -48,16 +53,20 @@ export const ORDERS_TEXTS = {
   LOAD_ERROR_MESSAGE: 'Не вдалося завантажити замовлення. Спробуйте ще раз.',
   DETAILS_TITLE: 'Деталі замовлення',
   DETAILS_DESCRIPTION: 'Перегляд повної інформації про замовлення та його товари.',
+  DETAILS_ORDER_TITLE: 'Замовлення',
+  DETAILS_CREATED_PREFIX: 'Створено',
   GENERAL_INFO_TITLE: 'Загальна інформація',
-  PRODUCTS_TITLE: 'Товари замовлення',
-  USER_TITLE: 'Користувач',
-  EXTRA_DATA_TITLE: 'Додаткові дані',
-  PAYMENT_STATUS_LABEL: 'Статус оплати',
-  ORDER_STATUS_LABEL: 'Статус замовлення',
-  SAVE_PAYMENT_STATUS_LABEL: 'Зберегти оплату',
-  SAVE_STATUS_LABEL: 'Зберегти статус',
-  PAYMENT_STATUS_UPDATED_TITLE: 'Статус оплати оновлено',
-  ORDER_STATUS_UPDATED_TITLE: 'Статус замовлення оновлено',
+  PRODUCTS_TITLE: 'Товари',
+  SUMMARY_SUBTOTAL_LABEL: 'Проміжна сума',
+  SUMMARY_DISCOUNT_LABEL: 'Знижка',
+  SUMMARY_TOTAL_LABEL: 'Разом',
+  CUSTOMER_TITLE: 'Клієнт і доставка',
+  STATUSES_TITLE: 'Статуси',
+  PAYMENT_STATUS_FIELD_LABEL: 'Оплата',
+  ORDER_STATUS_FIELD_LABEL: 'Замовлення',
+  SAVE_STATUSES_LABEL: 'Зберегти статуси',
+  STATUSES_UPDATED_TITLE: 'Статуси замовлення оновлено',
+  BUYER_TITLE: 'Покупець',
   ORDER_DETAILS_LOAD_ERROR: 'Не вдалося завантажити деталі замовлення.',
 } as const;
 
@@ -65,11 +74,29 @@ export const ORDERS_SECTION_PATH = 'orders';
 export const ORDERS_PAGE_SIZE = 20;
 export const ORDERS_NUMBER_FILTER_ID = 'orders-number-filter';
 export const ORDERS_SORT_ICON = 'swap_vert';
+export const ORDERS_SHOW_ICON = 'visibility';
 export const ORDER_NUMBER_PREFIX = '#';
 export const ORDER_PAYMENT_STATUS_ICON = 'credit_card';
 export const ORDER_STATUS_ICON = 'sync';
+/** Prefix of the order number in the details title and breadcrumbs (`№4`). */
+export const ORDER_DETAILS_NUMBER_PREFIX = '№';
+/** Joins parts of the details description and the delivery value. */
+export const ORDER_DETAILS_SEPARATOR = ' · ';
+export const ORDER_DISCOUNT_SIGN = '−';
+export const ORDER_NAME_SEPARATOR = ' ';
 /** Item quantity used for the line total when the API omits it. */
 export const ORDER_ITEM_DEFAULT_QUANTITY = 1;
+
+export const ORDER_PAYMENT_METHOD_LABELS: Record<OrderPaymentMethod, string> = {
+  [OrderPaymentMethod.Card]: 'Картка',
+  [OrderPaymentMethod.Cod]: 'Накладений платіж',
+  [OrderPaymentMethod.Manual]: 'Ручна оплата',
+};
+
+export const ORDER_SHIPPING_METHOD_LABELS: Record<OrderShippingMethod, string> = {
+  [OrderShippingMethod.Nova]: 'Нова Пошта',
+  [OrderShippingMethod.Ukr]: 'Укрпошта',
+};
 
 export const ORDERS_SORT_OPTIONS: DropdownOption[] = [
   { label: 'Спочатку новіші', value: 'newest' },
@@ -127,25 +154,14 @@ export const ORDERS_TABLE_COLUMNS: TableColumn[] = [
 ];
 
 export const ORDER_ITEMS_TABLE_COLUMNS: TableColumn[] = [
-  { key: 'name', header: ORDERS_TEXTS.ITEMS_PRODUCT_HEADER, emphasis: true },
+  {
+    key: 'name',
+    header: ORDERS_TEXTS.ITEMS_PRODUCT_HEADER,
+    emphasis: true,
+    thumbnailKey: 'image',
+  },
   { key: 'sku', header: ORDERS_TEXTS.ITEMS_SKU_HEADER, mono: true },
   { key: 'quantity', header: ORDERS_TEXTS.ITEMS_QUANTITY_HEADER, align: 'right' },
   { key: 'price', header: ORDERS_TEXTS.ITEMS_PRICE_HEADER, align: 'right' },
-  { key: 'total', header: ORDERS_TEXTS.ITEMS_TOTAL_HEADER, align: 'right' },
-];
-
-/** Order fields rendered in dedicated sections; everything else goes to "extra data". */
-export const ORDER_KNOWN_FIELDS: readonly string[] = [
-  'id',
-  'shopId',
-  'orderNumber',
-  'totalAmount',
-  'paymentStatus',
-  'status',
-  'createdAt',
-  'updatedAt',
-  'items',
-  'products',
-  'user',
-  'createdBy',
+  { key: 'total', header: ORDERS_TEXTS.ITEMS_TOTAL_HEADER, align: 'right', emphasis: true },
 ];

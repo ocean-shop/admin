@@ -11,3 +11,4 @@ export const TABLE_TEXTS = {
 export const TABLE_UPDATE_ICON = 'edit';
 export const TABLE_DELETE_ICON = 'delete';
 export const TABLE_EMPTY_ICON = 'inbox';
+export const TABLE_THUMBNAIL_PLACEHOLDER_ICON = 'image';

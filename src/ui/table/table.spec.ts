@@ -171,4 +171,27 @@ describe('Table', () => {
       (component as any).resolveBadgeTone({ status: 'x' }, { key: 'status', header: '' }),
     ).toBe(null);
   });
+
+  it('renders thumbnails or a placeholder for columns with a thumbnail key', async () => {
+    fixture.componentRef.setInput('columns', [
+      { key: 'name', header: 'Name', thumbnailKey: 'image' },
+    ]);
+    fixture.componentRef.setInput('rows', [
+      { id: 'a', name: 'One', image: ' https://cdn/one.png ' },
+      { id: 'b', name: 'Two', image: null },
+    ]);
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const images = element.querySelectorAll('img.table-thumb');
+    const thumbs = element.querySelectorAll('.table-thumb');
+
+    expect(images).toHaveLength(1);
+    expect(images[0].getAttribute('src')).toBe('https://cdn/one.png');
+    expect(thumbs).toHaveLength(2);
+    expect(element.querySelectorAll('.table-cell-media')[1].textContent).toContain('Two');
+    expect((component as any).resolveThumbnail({ image: 'x' }, { key: 'name', header: '' })).toBe(
+      null,
+    );
+  });
 });

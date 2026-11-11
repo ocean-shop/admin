@@ -1,6 +1,9 @@
 <header class="page-header">
   <div>
-    <h1 class="page-header-title">{{ title() }}</h1>
+    <h1 class="page-header-title">
+      <span>{{ title() }}</span>
+      <ng-content select="[pageHeaderTitleAddon]" />
+    </h1>
     @if (description()) {
     <p class="page-header-description">{{ description() }}</p>
     }

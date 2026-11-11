@@ -7,6 +7,7 @@ import {
   TABLE_EMPTY_CELL_FALLBACK,
   TABLE_EMPTY_ICON,
   TABLE_TEXTS,
+  TABLE_THUMBNAIL_PLACEHOLDER_ICON,
   TABLE_UPDATE_ICON,
 } from './constants/table.constants';
 
@@ -36,6 +37,7 @@ export class Table {
 
   protected readonly deleteIcon = TABLE_DELETE_ICON;
   protected readonly emptyIcon = TABLE_EMPTY_ICON;
+  protected readonly thumbnailPlaceholderIcon = TABLE_THUMBNAIL_PLACEHOLDER_ICON;
 
   protected resolveCellValue(row: TableRowData, column: TableColumn): string {
     const value = row[column.key];
@@ -60,6 +62,11 @@ export class Table {
     }
 
     return column.badgeTones[this.resolveCellValue(row, column)] ?? null;
+  }
+
+  protected resolveThumbnail(row: TableRowData, column: TableColumn): string | null {
+    const value = column.thumbnailKey ? row[column.thumbnailKey] : null;
+    return typeof value === 'string' && value.trim() ? value.trim() : null;
   }
 
   protected resolveRowKey(row: TableRowData, index: number): string {

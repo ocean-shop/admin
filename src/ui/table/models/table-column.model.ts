@@ -14,6 +14,8 @@ export type TableColumn = {
   emphasis?: boolean;
   /** Technical value (ids, slugs, SKU) — rendered in the mono family. */
   mono?: boolean;
+  /** Row key holding an image URL shown as a thumbnail before the value (placeholder when empty). */
+  thumbnailKey?: string;
 };
 
 export type TableRowData = Record<string, unknown>;

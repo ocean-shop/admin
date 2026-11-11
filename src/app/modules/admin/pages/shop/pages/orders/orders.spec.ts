@@ -6,6 +6,7 @@ import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import {
   ORDER_PAYMENT_STATUS_LABELS,
   ORDER_STATUS_LABELS,
+  ORDERS_SHOW_ICON,
   ORDERS_TEXTS,
 } from './constants/orders.constants';
 import { OrderPaymentStatus } from './models/order-payment-status.enum';
@@ -106,6 +107,15 @@ describe('Orders', () => {
     expect(rows[0]['orderNumber']).toBe('1001');
     expect(rows[0]['paymentStatus']).toBe(ORDER_PAYMENT_STATUS_LABELS[OrderPaymentStatus.Paid]);
     expect(rows[0]['status']).toBe(ORDER_STATUS_LABELS[OrderStatus.Processing]);
+  });
+
+  it('renders the show (view) icon for the row action', async () => {
+    await flush();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('.table-update-button')?.textContent?.trim()).toBe(
+      ORDERS_SHOW_ICON,
+    );
   });
 
   it('navigates to order details on show action', () => {

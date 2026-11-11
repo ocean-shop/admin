@@ -1,8 +1,20 @@
-<dl class="info-list">
+<dl
+  class="info-list"
+  [class.info-list-rows]="layout() === 'rows'"
+  [class.info-list-values-right]="valueAlign() === 'right'"
+>
   @for (row of rows(); track row.label) {
   <div class="info-list-item">
-    <dt class="info-list-key">{{ row.label }}</dt>
-    <dd class="info-list-value" [class.info-list-value-mono]="monospace()">{{ row.value }}</dd>
+    <dt class="info-list-key" [class.info-list-key-emphasis]="!!row.emphasis">{{ row.label }}</dt>
+    <dd
+      class="info-list-value"
+      [class.info-list-value-mono]="monospace() || !!row.mono"
+      [class.info-list-value-emphasis]="!!row.emphasis"
+    >
+      @if (row.tone) {
+      <app-badge [label]="row.value" [tone]="row.tone" />
+      } @else { {{ row.value }} }
+    </dd>
   </div>
   }
 </dl>

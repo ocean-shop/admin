@@ -44,6 +44,14 @@
   @apply font-mono text-mono text-on-surface-variant;
 }
 
+.table-cell-media {
+  @apply flex items-center gap-3;
+}
+
+.table-thumb {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-sm border border-surface-dim bg-surface-container-low object-cover text-outline;
+}
+
 .table-cell-center {
   @apply text-center;
 }
