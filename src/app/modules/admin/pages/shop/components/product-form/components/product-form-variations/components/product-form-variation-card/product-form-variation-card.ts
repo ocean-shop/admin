@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
-import { Checkbox } from '@ui/checkbox/checkbox';
+import { Switch } from '@ui/switch/switch';
 import { Input } from '@ui/input/input';
 import {
   PRODUCT_FORM_VARIATION_FIELD_ID_PREFIXES,
@@ -16,7 +16,7 @@ import { ProductFormSharedImages } from '../../../product-form-shared-images/pro
 /** Editor of a single variation: fields, attributes and images; the parent owns the state. */
 @Component({
   selector: 'app-product-form-variation-card',
-  imports: [Checkbox, Input, ProductFormSharedAttributes, ProductFormSharedImages],
+  imports: [Switch, Input, ProductFormSharedAttributes, ProductFormSharedImages],
   templateUrl: './product-form-variation-card.html',
   styleUrl: './product-form-variation-card.scss',
 })

@@ -1,35 +1,27 @@
 @reference "../../../../../../../styles.scss";
 
 .categories-stats {
-  @apply grid grid-cols-1 md:grid-cols-3 gap-6;
-}
-
-.categories-stat-card {
-  @apply bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm;
-}
-
-.categories-stat-label {
-  @apply text-sm text-secondary uppercase tracking-widest mb-1;
-}
-
-.categories-stat-value {
-  @apply text-3xl font-bold text-primary;
+  @apply grid grid-cols-1 gap-6 md:grid-cols-3;
 }
 
 .categories-tree {
-  @apply space-y-3;
+  @apply flex flex-col gap-0.5 rounded-lg border border-outline-variant bg-surface-container-lowest p-2 shadow-xs;
 }
 
 .category-tree-row {
-  @apply flex items-center gap-4 bg-surface-container-lowest hover:bg-white hover:shadow-md transition-all px-4 py-4 rounded-lg border border-transparent hover:border-primary/20;
+  @apply flex min-h-[52px] items-center gap-3 rounded-md p-2 transition-colors duration-100 hover:bg-primary/5;
+}
+
+.category-tree-row-nested {
+  @apply border-l border-dashed border-outline-variant;
 }
 
 .category-info {
-  @apply flex-1 flex items-center gap-3 min-w-0;
+  @apply flex min-w-0 flex-1 items-center gap-3;
 }
 
 .toggle-button {
-  @apply text-primary p-1 rounded transition-transform;
+  @apply inline-flex size-7 items-center justify-center rounded-sm text-on-surface-variant transition-transform duration-150 hover:bg-on-surface-variant/10;
 }
 
 .toggle-button-expanded {
@@ -37,11 +29,11 @@
 }
 
 .toggle-spacer {
-  @apply block w-8;
+  @apply block size-7 shrink-0;
 }
 
 .category-icon {
-  @apply text-primary-container;
+  @apply inline-flex size-8 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary;
 }
 
 .category-name-group {
@@ -49,25 +41,38 @@
 }
 
 .category-name {
-  @apply font-semibold text-on-surface truncate;
+  @apply m-0 truncate text-body font-semibold text-on-surface;
 }
 
 .category-slug {
-  @apply text-xs text-on-surface-variant truncate;
+  @apply m-0 truncate font-mono text-[12px] leading-4 text-on-surface-variant;
 }
 
 .category-count {
-  @apply w-32 text-center text-on-surface-variant font-medium;
+  @apply w-28 text-center text-caption whitespace-nowrap text-on-surface-variant;
 }
 
 .category-actions {
-  @apply w-56 flex justify-end gap-2;
+  @apply flex items-center gap-0.5 opacity-55 transition-opacity duration-150;
+}
+
+.category-tree-row:hover .category-actions,
+.category-tree-row:focus-within .category-actions {
+  @apply opacity-100;
 }
 
 .category-actions button {
-  @apply p-2 rounded transition-colors text-primary hover:bg-primary-container hover:text-on-primary-container disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-primary;
+  @apply inline-flex size-control-sm items-center justify-center rounded-sm text-on-surface-variant transition-ui hover:bg-on-surface-variant/10 hover:text-on-surface disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent;
 }
 
-.category-actions button:last-child {
-  @apply text-error hover:bg-error-container hover:text-on-error-container disabled:hover:bg-transparent disabled:hover:text-error;
+.category-actions .category-action-primary {
+  @apply text-primary hover:bg-primary/10 hover:text-primary;
+}
+
+.category-actions .category-action-danger {
+  @apply hover:bg-error/10 hover:text-error;
+}
+
+.category-actions-separator {
+  @apply mx-1 h-5 w-px bg-outline-variant;
 }

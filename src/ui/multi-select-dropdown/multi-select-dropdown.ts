@@ -5,6 +5,12 @@ import { DropdownTriggerMode } from '@ui/dropdown/models/dropdown-trigger-mode.t
 import { DropdownVariant } from '@ui/dropdown/models/dropdown-variant.type';
 import { DropdownTreeOption } from '@ui/multi-select-dropdown/models/dropdown-tree-option.type';
 import { MultiSelectOptionVariant } from '@ui/multi-select-dropdown/models/multi-select-option-variant.type';
+import {
+  MULTI_SELECT_BASE_PADDING_PX,
+  MULTI_SELECT_EXPAND_ICON,
+  MULTI_SELECT_LEVEL_INDENT_PX,
+  MULTI_SELECT_TEXTS,
+} from './constants/multi-select-dropdown.constants';
 
 @Component({
   selector: 'app-multi-select-dropdown',
@@ -16,7 +22,7 @@ import { MultiSelectOptionVariant } from '@ui/multi-select-dropdown/models/multi
 })
 export class MultiSelectDropdown implements FormValueControl<string[]> {
   public readonly value = model<string[]>([]);
-  public readonly label = input<string>('Select options');
+  public readonly label = input<string>(MULTI_SELECT_TEXTS.DEFAULT_LABEL);
   public readonly icon = input<string>();
   public readonly options = input.required<(DropdownOption | DropdownTreeOption)[]>();
   public readonly triggerMode = input<DropdownTriggerMode>('click');
@@ -25,6 +31,7 @@ export class MultiSelectDropdown implements FormValueControl<string[]> {
   public readonly optionToggled = output<DropdownOption>();
 
   protected readonly isOpen = signal(false);
+  protected readonly expandIcon = MULTI_SELECT_EXPAND_ICON;
   protected readonly displayOptions = computed<DropdownTreeOption[]>(() =>
     this.normalizeOptions(this.options(), this.optionVariant()),
   );
@@ -46,7 +53,7 @@ export class MultiSelectDropdown implements FormValueControl<string[]> {
       return selectedOptions[0].label;
     }
 
-    return `${selectedOptions.length} selected`;
+    return `${selectedOptions.length} ${MULTI_SELECT_TEXTS.SELECTED_SUFFIX}`;
   });
 
   protected toggleMenu(event: Event): void {
@@ -79,7 +86,7 @@ export class MultiSelectDropdown implements FormValueControl<string[]> {
   }
 
   protected resolveOptionPadding(option: DropdownTreeOption): number {
-    return 16 + option.level * 16;
+    return MULTI_SELECT_BASE_PADDING_PX + option.level * MULTI_SELECT_LEVEL_INDENT_PX;
   }
 
   protected closeMenu(): void {

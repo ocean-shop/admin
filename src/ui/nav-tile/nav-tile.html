@@ -1,0 +1,10 @@
+<a class="nav-tile" [routerLink]="tile().route" [attr.aria-label]="ariaLabel()">
+  <span class="nav-tile-icon" aria-hidden="true">
+    <span class="material-symbols-outlined">{{ tile().icon }}</span>
+  </span>
+  <span class="nav-tile-title">
+    {{ tile().title }}
+    <span class="material-symbols-outlined nav-tile-arrow" aria-hidden="true">{{ arrowIcon }}</span>
+  </span>
+  <span class="nav-tile-text">{{ tile().description }}</span>
+</a>

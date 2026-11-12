@@ -1,6 +1,13 @@
 import { SortOrder } from '../../../models/sort-order.type';
+import { OrderPaymentMethod } from './order-payment-method.enum';
 import { OrderPaymentStatus } from './order-payment-status.enum';
+import { OrderShippingMethod } from './order-shipping-method.enum';
 import { OrderStatus } from './order-status.enum';
+
+export type OrderProductImageApiItem = {
+  id?: string | null;
+  url?: string | null;
+};
 
 export type OrderProductApiItemProduct = {
   id?: string | null;
@@ -16,6 +23,7 @@ export type OrderProductApiItemProduct = {
   status?: string | null;
   type?: string | null;
   updatedAt?: string | null;
+  images?: OrderProductImageApiItem[] | null;
 };
 
 export type OrderProductApiItem = {
@@ -37,9 +45,20 @@ export type OrderUserApiItem = {
 export type OrderApiItem = {
   id?: string | null;
   shopId?: string | null;
+  userId?: string | null;
   orderNumber?: string | number | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  middleName?: string | null;
+  email?: string | null;
+  phoneNumber?: string | null;
+  subtotalAmount?: number | string | null;
+  discountAmount?: number | string | null;
   totalAmount?: number | string | null;
+  paymentMethod?: OrderPaymentMethod | string | null;
   paymentStatus?: OrderPaymentStatus | string | null;
+  shippingMethod?: OrderShippingMethod | string | null;
+  shippingNumber?: string | null;
   status?: OrderStatus | string | null;
   createdAt?: string | null;
   updatedAt?: string | null;

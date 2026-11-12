@@ -1,33 +1,49 @@
 @reference "../../../../../../../styles.scss";
 
 .order-details-layout {
-  @apply grid gap-6 xl:grid-cols-12;
+  @apply grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_theme(--spacing-aside)];
 }
 
 .order-details-main-content {
-  @apply flex flex-col gap-6 xl:col-span-8;
+  @apply flex min-w-0 flex-col gap-6;
 }
 
 .order-details-side-content {
-  @apply grid content-start gap-4 xl:col-span-4;
+  @apply flex min-w-0 flex-col gap-6 lg:sticky lg:top-[calc(theme(--spacing-header)+32px)];
+}
+
+.order-details-summary {
+  @apply rounded-md border border-outline-variant bg-surface-container-low px-5 py-4;
 }
 
 .order-details-status-actions {
-  @apply flex flex-row items-stretch gap-3;
+  @apply flex flex-col gap-4;
 }
 
-.order-details-status-actions app-dropdown {
-  @apply w-[230px] shrink-0;
+.order-details-field {
+  @apply flex min-w-0 flex-col gap-2;
 }
 
-.order-details-status-actions app-button {
-  @apply shrink-0;
+.order-details-field-label {
+  @apply text-label text-on-surface;
 }
 
-.order-details-status-actions ::ng-deep .admin-dropdown-trigger-bordered {
-  @apply w-full h-11 text-body-md;
+.order-details-buyer {
+  @apply flex items-center gap-3;
 }
 
-.order-details-status-actions ::ng-deep .admin-btn {
-  @apply h-11 px-4 py-0 text-body-md font-medium whitespace-nowrap;
+.order-details-buyer-avatar {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-full bg-primary/10 text-label text-primary;
+}
+
+.order-details-buyer-info {
+  @apply flex min-w-0 flex-col;
+}
+
+.order-details-buyer-name {
+  @apply truncate text-title-sm text-on-surface;
+}
+
+.order-details-buyer-email {
+  @apply truncate text-caption text-on-surface-variant;
 }

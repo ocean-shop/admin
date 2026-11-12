@@ -1,3 +1,4 @@
+import { SHOP_OVERVIEW_CARD_TEXTS } from './constants/shop-overview-card.constants';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -54,7 +55,7 @@ describe('ShopOverviewCard', () => {
 
   it('should render helper text and helper icon when metric helper data exists', () => {
     const helpers = fixture.debugElement.queryAll(By.css('.metric-helper'));
-    const helperIcon = fixture.debugElement.query(By.css('.material-symbols-outlined'));
+    const helperIcon = fixture.debugElement.query(By.css('.metric-helper-icon'));
 
     expect(helpers.length).toBe(1);
     expect(helpers[0].nativeElement.textContent).toContain('Last 7 days');
@@ -65,7 +66,7 @@ describe('ShopOverviewCard', () => {
     const button = fixture.debugElement.query(By.css('.btn-primary'))
       .nativeElement as HTMLButtonElement;
 
-    expect(button.textContent).toContain('Manage Store');
+    expect(button.textContent).toContain(SHOP_OVERVIEW_CARD_TEXTS.DEFAULT_ACTION_LABEL);
   });
 
   it('should render custom action label when actionLabel is provided', () => {

@@ -1,0 +1,30 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.admin-switch {
+  @apply inline-flex cursor-pointer items-center gap-3 text-body text-on-surface;
+}
+
+.admin-switch-input {
+  @apply relative m-0 h-6 w-10 shrink-0 cursor-pointer appearance-none rounded-full bg-outline transition-ui checked:bg-primary focus-ring;
+  @apply after:absolute after:top-[3px] after:left-[3px] after:size-[18px] after:rounded-full after:bg-surface-container-lowest after:shadow-xs after:transition-transform after:duration-150 after:content-[''] checked:after:translate-x-4;
+}
+
+.admin-switch-text {
+  @apply flex flex-col;
+}
+
+.admin-switch-description {
+  @apply text-caption text-on-surface-variant;
+}
+
+.admin-switch-disabled {
+  @apply cursor-not-allowed text-on-surface-variant;
+
+  .admin-switch-input {
+    @apply cursor-not-allowed opacity-50;
+  }
+}

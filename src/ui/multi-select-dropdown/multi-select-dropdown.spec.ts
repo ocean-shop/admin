@@ -1,3 +1,4 @@
+import { MULTI_SELECT_TEXTS } from './constants/multi-select-dropdown.constants';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -61,7 +62,7 @@ describe('MultiSelectDropdown', () => {
       .querySelector('.multi-select-trigger-label')
       ?.textContent?.trim();
 
-    expect(triggerText).toBe('2 selected');
+    expect(triggerText).toBe(`2 ${MULTI_SELECT_TEXTS.SELECTED_SUFFIX}`);
   });
 
   it('uses basic variant without tree indentation by default', () => {

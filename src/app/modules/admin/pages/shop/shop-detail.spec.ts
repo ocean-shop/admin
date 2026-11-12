@@ -45,12 +45,13 @@ describe('ShopDetail', () => {
   });
 
   it('renders a card with link for every section', () => {
-    const links = Array.from(getElement().querySelectorAll('a.shop-detail-card-link'));
+    const links = Array.from(getElement().querySelectorAll('a.nav-tile'));
 
     expect(links.length).toBe(SHOP_DETAIL_SECTIONS.length);
     SHOP_DETAIL_SECTIONS.forEach((section, index) => {
       expect(links[index].getAttribute('href')).toBe(`/admin/shop/shop-1/${section.segment}`);
-      expect(links[index].textContent).toContain(section.linkLabel);
+      expect(links[index].getAttribute('aria-label')).toContain(section.linkLabel);
+      expect(links[index].textContent).toContain(section.title);
     });
   });
 

@@ -13,17 +13,17 @@
 }
 
 .product-form-attribute-results {
-  @apply mt-2 flex max-h-48 flex-col gap-1 overflow-y-auto rounded-md border border-outline-variant bg-surface-container-lowest p-2;
+  @apply mt-1 flex max-h-56 flex-col overflow-y-auto rounded-lg border border-outline-variant bg-surface-container-lowest p-1 shadow-md;
 }
 
 .product-form-attribute-result {
-  @apply rounded px-3 py-2 text-left text-sm text-on-surface transition-colors hover:bg-surface-container;
+  @apply flex h-10 shrink-0 items-center rounded-sm px-3 text-left text-label font-normal text-on-surface transition-ui hover:bg-surface-container-low;
 }
 
 .product-form-attribute-state {
-  @apply px-1 py-2 text-sm text-on-surface-variant;
+  @apply m-0 px-3 py-2 text-body-sm text-on-surface-variant;
 }
 
 .product-form-placeholder-chip {
-  @apply text-sm text-on-surface-variant;
+  @apply text-body-sm text-on-surface-variant;
 }

@@ -1,10 +1,11 @@
-<article class="group store-card">
-  <div class="card-bg-primary"></div>
+<article class="store-card">
+  <div class="card-bg-primary" aria-hidden="true"></div>
 
   <div class="card-header">
-    <div class="card-title-container">
-      <h4 class="card-title">{{ card().title }}</h4>
-    </div>
+    <span class="card-avatar" aria-hidden="true">
+      <span class="material-symbols-outlined">{{ icons.STORE }}</span>
+    </span>
+    <h4 class="card-title">{{ card().title }}</h4>
   </div>
 
   <div class="metrics-grid">
@@ -15,7 +16,9 @@
       @if (metric.helperText) {
       <span class="metric-helper">
         @if (metric.helperIcon) {
-        <span class="material-symbols-outlined text-sm">{{ metric.helperIcon }}</span>
+        <span class="material-symbols-outlined metric-helper-icon" aria-hidden="true"
+          >{{ metric.helperIcon }}</span
+        >
         } {{ metric.helperText }}
       </span>
       }
@@ -25,7 +28,10 @@
 
   <div class="card-actions">
     <button class="btn-primary" type="button" (click)="onManageStore()">
-      {{ card().actionLabel || 'Manage Store' }}
+      <span>{{ card().actionLabel || textData.DEFAULT_ACTION_LABEL }}</span>
+      <span class="material-symbols-outlined btn-primary-icon" aria-hidden="true"
+        >{{ icons.ACTION }}</span
+      >
     </button>
   </div>
 </article>

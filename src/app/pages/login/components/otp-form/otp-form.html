@@ -16,10 +16,11 @@
     [label]="texts.SUBMIT_BUTTON_LABEL"
     icon="arrow_forward"
     type="submit"
+    size="lg"
     [disabled]="!isFormValid() || isLoading()"
   ></app-button>
   } @else {
-  <div class="flex justify-center text-label-md text-on-surface-variant">
+  <div class="resend-action">
     <app-button-line
       id="otp-resend"
       [label]="texts.RESEND_BUTTON_LABEL"
@@ -31,6 +32,9 @@
   <app-button
     [label]="texts.BACK_BUTTON_LABEL"
     icon="arrow_back"
+    [iconLeading]="true"
+    variant="outline"
+    size="lg"
     type="button"
     (click)="onBackToLogin()"
   ></app-button>

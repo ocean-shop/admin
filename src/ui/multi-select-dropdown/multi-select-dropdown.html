@@ -9,33 +9,41 @@
     class="multi-select-trigger"
     [class.multi-select-trigger-form]="variant() === 'form'"
     [class.multi-select-trigger-bordered]="variant() === 'bordered'"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="triggerMode() === 'click' ? isOpen() : null"
     (click)="toggleMenu($event)"
   >
     @if (icon()) {
-    <span class="material-symbols-outlined multi-select-trigger-icon">{{ icon() }}</span>
+    <span class="material-symbols-outlined multi-select-trigger-icon" aria-hidden="true"
+      >{{ icon() }}</span
+    >
     }
     <span class="multi-select-trigger-label">{{ displayLabel() }}</span>
     <span
       class="multi-select-icon-small material-symbols-outlined"
+      aria-hidden="true"
       [class.multi-select-icon-rotated]="triggerMode() === 'click' && isOpen()"
     >
-      expand_more
+      {{ expandIcon }}
     </span>
   </button>
-  <div class="multi-select-menu m3-elevation-2">
-    <ul class="multi-select-list">
+  <div class="multi-select-menu">
+    <ul class="multi-select-list" role="listbox" aria-multiselectable="true">
       @for (option of displayOptions(); track option.value) {
-      <li>
+      <li role="option" [attr.aria-selected]="isSelected(option.value)">
         <button
           type="button"
           class="multi-select-item"
+          [class.multi-select-item-selected]="isSelected(option.value)"
           [style.padding-left.px]="resolveOptionPadding(option)"
           (click)="toggleOption(option, $event)"
         >
+          <span class="multi-select-item-box" aria-hidden="true">
+            @if (isSelected(option.value)) {
+            <span class="material-symbols-outlined multi-select-item-icon">check</span>
+            }
+          </span>
           <span class="multi-select-item-label">{{ option.label }}</span>
-          @if (isSelected(option.value)) {
-          <span class="material-symbols-outlined multi-select-item-icon">check</span>
-          }
         </button>
       </li>
       }

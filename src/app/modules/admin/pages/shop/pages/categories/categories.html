@@ -7,7 +7,7 @@
       [icon]="createIcon"
       [iconLeading]="true"
       [disabled]="!isShopContextReady() || isActionLoading()"
-      variant="create"
+      [fullWidth]="false"
       type="button"
       (click)="onCreateRootCategory()"
     />
@@ -18,23 +18,29 @@
   } @if (hasVisibleStats()) {
   <section class="categories-stats">
     @if (stats().totalCategories !== undefined) {
-    <article class="categories-stat-card">
-      <p class="categories-stat-label">{{ textData.TOTAL_CATEGORIES_LABEL }}</p>
-      <p class="categories-stat-value">{{ stats().totalCategories }}</p>
-    </article>
+    <app-stat-card
+      [label]="textData.TOTAL_CATEGORIES_LABEL"
+      [value]="stats().totalCategories ?? 0"
+      [icon]="statsIcons.TOTAL"
+    />
     } @if (stats().deepestLevel !== undefined) {
-    <article class="categories-stat-card">
-      <p class="categories-stat-label">{{ textData.DEEPEST_LEVEL_LABEL }}</p>
-      <p class="categories-stat-value">{{ stats().deepestLevel }} {{ textData.LEVEL_SUFFIX }}</p>
-    </article>
+    <app-stat-card
+      [label]="textData.DEEPEST_LEVEL_LABEL"
+      [value]="deepestLevelLabel()"
+      [icon]="statsIcons.DEPTH"
+    />
     }
   </section>
   } @if (!isLoading() && !hasCategories()) {
-  <app-state-message [message]="textData.EMPTY_STATE" />
+  <app-empty-state [title]="textData.EMPTY_STATE" [icon]="emptyIcon" />
   } @else {
   <section class="categories-tree">
     @for (node of visibleNodes(); track node.category.id) {
-    <article class="category-tree-row" [style.margin-left.px]="node.depth * treeIndentPx">
+    <article
+      class="category-tree-row"
+      [class.category-tree-row-nested]="node.depth > 0"
+      [style.margin-left.px]="node.depth * treeIndentPx"
+    >
       <div class="category-info">
         @if (node.hasChildren) {
         <button
@@ -45,13 +51,17 @@
           [attr.aria-expanded]="node.isExpanded"
           (click)="onToggleNode(node)"
         >
-          <span class="material-symbols-outlined">{{ icons.TOGGLE }}</span>
+          <span class="material-symbols-outlined" aria-hidden="true">{{ icons.TOGGLE }}</span>
         </button>
         } @else {
         <span class="toggle-spacer"></span>
         }
 
-        <span class="material-symbols-outlined category-icon">{{ icons.CATEGORY }}</span>
+        <span class="category-icon" aria-hidden="true">
+          <span class="material-symbols-outlined"
+            >{{ node.hasChildren ? icons.CATEGORY : icons.LEAF }}</span
+          >
+        </span>
         <div class="category-name-group">
           <p class="category-name">{{ node.category.name }}</p>
           <p class="category-slug">{{ node.category.slug }}</p>
@@ -72,7 +82,7 @@
           [disabled]="!node.canMoveUp || isActionLoading()"
           (click)="onChangeSort(node, 'up')"
         >
-          <span class="material-symbols-outlined">{{ icons.MOVE_UP }}</span>
+          <span class="material-symbols-outlined" aria-hidden="true">{{ icons.MOVE_UP }}</span>
         </button>
         <button
           type="button"
@@ -81,34 +91,38 @@
           [disabled]="!node.canMoveDown || isActionLoading()"
           (click)="onChangeSort(node, 'down')"
         >
-          <span class="material-symbols-outlined">{{ icons.MOVE_DOWN }}</span>
+          <span class="material-symbols-outlined" aria-hidden="true">{{ icons.MOVE_DOWN }}</span>
         </button>
+        <span class="category-actions-separator" aria-hidden="true"></span>
         <button
-          type="button"
-          [title]="textData.EDIT_LABEL"
-          [attr.aria-label]="textData.EDIT_LABEL"
-          [disabled]="isActionLoading()"
-          (click)="onEditCategory(node)"
-        >
-          <span class="material-symbols-outlined">{{ icons.EDIT }}</span>
-        </button>
-        <button
+          class="category-action-primary"
           type="button"
           [title]="textData.ADD_CHILD_LABEL"
           [attr.aria-label]="textData.ADD_CHILD_LABEL"
           [disabled]="isActionLoading()"
           (click)="onCreateChildCategory(node)"
         >
-          <span class="material-symbols-outlined">{{ icons.ADD_CHILD }}</span>
+          <span class="material-symbols-outlined" aria-hidden="true">{{ icons.ADD_CHILD }}</span>
         </button>
         <button
+          class="category-action-primary"
+          type="button"
+          [title]="textData.EDIT_LABEL"
+          [attr.aria-label]="textData.EDIT_LABEL"
+          [disabled]="isActionLoading()"
+          (click)="onEditCategory(node)"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">{{ icons.EDIT }}</span>
+        </button>
+        <button
+          class="category-action-danger"
           type="button"
           [title]="textData.DELETE_LABEL"
           [attr.aria-label]="textData.DELETE_LABEL"
           [disabled]="isActionLoading()"
           (click)="onDeleteCategory(node)"
         >
-          <span class="material-symbols-outlined">{{ icons.DELETE }}</span>
+          <span class="material-symbols-outlined" aria-hidden="true">{{ icons.DELETE }}</span>
         </button>
       </div>
     </article>

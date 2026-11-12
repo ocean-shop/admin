@@ -12,7 +12,7 @@ export const LOGIN_SECONDS_PER_MINUTE = 60;
 
 export const LOGIN_TEXTS = {
   PAGE: {
-    TITLE: 'Ocean Shop',
+    TITLE: 'Ocean Breeze Admin',
     WELCOME_TITLE: 'З поверненням!',
     WELCOME_DESCRIPTION: 'Увійдіть, щоб керувати своїми запасами та замовленнями.',
   },
@@ -40,3 +40,5 @@ export const LOGIN_TEXTS = {
     INVALID_MESSAGE: 'Введіть коректний 4-значний OTP код',
   },
 } as const;
+
+export const LOGIN_MARK_ICON = 'waves';

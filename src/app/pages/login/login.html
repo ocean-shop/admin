@@ -1,14 +1,11 @@
 <main class="main-container">
-  <header class="header">
-    <h1 class="title">{{ pageTexts.TITLE }}</h1>
-  </header>
-  <section
-    class="login-card"
-    [class.m3-elevation-3]="isFocused()"
-    [class.m3-elevation-2]="!isFocused()"
-  >
+  <section class="login-card">
+    <span class="login-mark" aria-hidden="true">
+      <span class="material-symbols-outlined">{{ markIcon }}</span>
+    </span>
+    <p class="title">{{ pageTexts.TITLE }}</p>
     <div class="welcome-section">
-      <h2 class="subtitle">{{ pageTexts.WELCOME_TITLE }}</h2>
+      <h1 class="subtitle">{{ pageTexts.WELCOME_TITLE }}</h1>
       <p class="description">{{ pageTexts.WELCOME_DESCRIPTION }}</p>
     </div>
     @if (currentView() === LoginView.Login) {
@@ -23,5 +20,4 @@
     ></app-otp-form>
     }
   </section>
-  <div class="decorative-bar"></div>
 </main>

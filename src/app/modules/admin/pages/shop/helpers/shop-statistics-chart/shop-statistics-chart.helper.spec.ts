@@ -52,6 +52,6 @@ describe('shop-statistics-chart.helper', () => {
       color: SHOP_STATISTICS_SERIES_COLORS.ORDERS,
       data: [1],
     });
-    expect(options.xAxis).toEqual({ categories: ['Jan 2026'] });
+    expect(options.xAxis).toMatchObject({ categories: ['Jan 2026'] });
   });
 });

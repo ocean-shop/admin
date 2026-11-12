@@ -5,6 +5,7 @@ import { PageHeader } from './page-header';
 @Component({
   imports: [PageHeader],
   template: `<app-page-header title="Title" description="Description">
+    <span class="addon" pageHeaderTitleAddon>Badge</span>
     <button class="action" type="button">Action</button>
   </app-page-header>`,
 })
@@ -48,5 +49,14 @@ describe('PageHeader', () => {
 
     const element = hostFixture.nativeElement as HTMLElement;
     expect(element.querySelector('.page-header-actions .action')).not.toBeNull();
+  });
+
+  it('projects the title addon next to the title', async () => {
+    const hostFixture = TestBed.createComponent(HostComponent);
+    await hostFixture.whenStable();
+
+    const element = hostFixture.nativeElement as HTMLElement;
+    expect(element.querySelector('.page-header-title .addon')).not.toBeNull();
+    expect(element.querySelector('.page-header-actions .addon')).toBeNull();
   });
 });

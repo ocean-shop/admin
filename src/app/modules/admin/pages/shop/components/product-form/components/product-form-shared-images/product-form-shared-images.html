@@ -17,7 +17,9 @@
   (drop)="onDrop($event)"
   (dragover)="onDragOver($event)"
 >
-  <span class="material-symbols-outlined">{{ icons.UPLOAD }}</span>
+  <span class="product-form-dropzone-icon" aria-hidden="true">
+    <span class="material-symbols-outlined">{{ icons.UPLOAD }}</span>
+  </span>
   <p>{{ dropzoneHint() }}</p>
 </button>
 

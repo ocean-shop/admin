@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration local",
+    "dev": "ng serve -c local",
     "test": "ng test --watch=false --coverage",
     "lint": "ng lint",
     "format": "prettier --write \"src/**/*.{ts,html,scss,css}\"",

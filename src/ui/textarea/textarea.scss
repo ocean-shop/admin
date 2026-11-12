@@ -4,28 +4,22 @@
   @apply block;
 }
 
+.admin-field {
+  @apply flex min-w-0 flex-col gap-2;
+}
+
+.admin-field-label {
+  @apply text-label text-on-surface;
+}
+
 .admin-textarea {
-  @apply w-full min-h-[112px] resize-y pl-md pr-md py-[18px] bg-transparent border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder-transparent;
+  @apply min-h-[120px] w-full resize-y rounded-md border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-lg text-on-surface outline-none transition-ui placeholder:text-outline hover:border-outline focus:field-focus;
 
   &.has-error {
-    @apply border-error focus:border-error focus:ring-error;
+    @apply border-error focus:field-focus-error;
   }
 }
 
-.m3-textfield label {
-  @apply absolute top-7 left-4 -translate-y-1/2 pointer-events-none transition-all duration-150 ease-in bg-surface-container-lowest px-1 z-10 text-outline;
-}
-
-.m3-textfield:focus-within label,
-.admin-textarea:not(:placeholder-shown) ~ label {
-  @apply top-0 left-3 text-xs -translate-y-1/2;
-}
-
-.m3-textfield:focus-within label {
-  @apply text-primary;
-}
-
-.m3-textfield.has-error label,
-.m3-textfield.has-error:focus-within label {
-  @apply text-error;
+.admin-field-error {
+  @apply text-caption text-error;
 }

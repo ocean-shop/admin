@@ -5,29 +5,21 @@
 }
 
 .chip {
-  @apply inline-flex items-center gap-0.5;
+  @apply inline-flex h-8 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-container-lowest pr-1 pl-3 text-label font-normal text-on-surface;
 }
 
 .chip button {
-  @apply transition-colors hover:text-error;
+  @apply inline-flex size-[22px] items-center justify-center rounded-full text-on-surface-variant transition-ui hover:bg-error/10 hover:text-error;
+}
+
+.chip button .material-symbols-outlined {
+  @apply text-[16px];
 }
 
 .chip button:disabled {
-  @apply cursor-not-allowed opacity-60 hover:text-current;
-}
-
-.chip-attribute {
-  @apply rounded-full border border-surface-dim bg-surface-container px-2.5 py-0.5 text-xs text-on-surface-variant;
-}
-
-.chip-attribute .material-symbols-outlined {
-  @apply text-[14px];
+  @apply cursor-not-allowed text-outline hover:bg-transparent hover:text-outline;
 }
 
 .chip-tag {
-  @apply rounded-sm bg-secondary-fixed px-2 py-0.5 text-[11px] uppercase tracking-wide text-on-secondary-fixed;
-}
-
-.chip-tag .material-symbols-outlined {
-  @apply text-[12px];
+  @apply border-transparent bg-surface-container;
 }

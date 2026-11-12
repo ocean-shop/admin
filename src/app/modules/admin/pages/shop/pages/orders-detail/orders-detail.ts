@@ -7,6 +7,7 @@ import {
 import { lastValueFrom } from 'rxjs';
 import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
 import { ToasterService } from '@core/services/toaster/toaster.service';
+import { Badge } from '@ui/badge/badge';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Button } from '@ui/button/button';
 import { Dropdown } from '@ui/dropdown/dropdown';
@@ -25,23 +26,28 @@ import {
   ORDER_ITEMS_TABLE_COLUMNS,
   ORDER_PAYMENT_STATUS_ICON,
   ORDER_PAYMENT_STATUS_OPTIONS,
+  ORDER_STATUS_BADGE_TONES,
   ORDER_STATUS_ICON,
   ORDER_STATUS_OPTIONS,
   ORDERS_TEXTS,
 } from '../orders/constants/orders.constants';
 import {
-  buildOrderExtraRows,
+  buildOrderCustomer,
+  buildOrderCustomerRows,
+  buildOrderDetailsDescription,
+  buildOrderDetailsTitle,
   buildOrderInfoRows,
   buildOrderItemRows,
-  buildOrderUserRows,
+  buildOrderSummaryRows,
+  formatOrderDetailsNumber,
+  formatOrderStatusLabel,
   resolveOrderItems,
   resolveOrderPaymentStatus,
   resolveOrderStatus,
 } from '../orders/helpers/order-mapping/order-mapping.helper';
 import { OrderPaymentStatus } from '../orders/models/order-payment-status.enum';
 import { OrderStatus } from '../orders/models/order-status.enum';
-import { UpdateOrderPaymentStatusVariables } from '../orders/models/update-order-payment-status-payload.model';
-import { UpdateOrderStatusVariables } from '../orders/models/update-order-status-payload.model';
+import { UpdateOrderStatusesVariables } from '../orders/models/update-order-statuses-variables.model';
 import { OrdersService } from '../orders/services/orders/orders.service';
 
 @Component({
@@ -54,6 +60,7 @@ import { OrdersService } from '../orders/services/orders/orders.service';
     SectionCard,
     InfoList,
     Table,
+    Badge,
     Dropdown,
     Button,
   ],
@@ -75,15 +82,6 @@ export class OrdersDetail {
   protected readonly shopId = injectRouteParam('shopId');
   protected readonly orderId = injectRouteParam('orderId');
 
-  protected readonly breadcrumbItems = computed(() =>
-    buildShopSectionPageBreadcrumbs(
-      this.shopId(),
-      ORDERS_SECTION_PATH,
-      ORDERS_TEXTS.PAGE_TITLE,
-      ORDERS_TEXTS.DETAILS_TITLE,
-    ),
-  );
-
   protected readonly orderQuery = injectQuery(() => {
     const orderId = this.orderId();
     return {
@@ -93,14 +91,22 @@ export class OrdersDetail {
     };
   });
 
-  protected readonly updatePaymentStatusMutation = injectMutation(() => ({
-    mutationFn: ({ orderId, paymentStatus }: UpdateOrderPaymentStatusVariables) =>
-      lastValueFrom(this.ordersService.updateOrderPaymentStatus(orderId, { paymentStatus })),
-  }));
+  protected readonly updateStatusesMutation = injectMutation(() => ({
+    mutationFn: async ({
+      orderId,
+      paymentStatus,
+      status,
+    }: UpdateOrderStatusesVariables): Promise<void> => {
+      if (paymentStatus) {
+        await lastValueFrom(
+          this.ordersService.updateOrderPaymentStatus(orderId, { paymentStatus }),
+        );
+      }
 
-  protected readonly updateStatusMutation = injectMutation(() => ({
-    mutationFn: ({ orderId, status }: UpdateOrderStatusVariables) =>
-      lastValueFrom(this.ordersService.updateOrderStatus(orderId, { status })),
+      if (status) {
+        await lastValueFrom(this.ordersService.updateOrderStatus(orderId, { status }));
+      }
+    },
   }));
 
   protected readonly order = computed(() => this.orderQuery.data() ?? null);
@@ -117,31 +123,59 @@ export class OrdersDetail {
     () => this.orderQuery.isPending() || this.orderQuery.isFetching(),
   );
   protected readonly hasError = computed(() => this.orderQuery.isError());
-  protected readonly isPaymentUpdating = computed(() =>
-    this.updatePaymentStatusMutation.isPending(),
+  protected readonly isStatusesUpdating = computed(() => this.updateStatusesMutation.isPending());
+  private readonly isPaymentStatusChanged = computed(
+    () => this.savedPaymentStatus() !== this.selectedPaymentStatus(),
   );
-  protected readonly isStatusUpdating = computed(() => this.updateStatusMutation.isPending());
-  protected readonly canSavePaymentStatus = computed(
-    () => Boolean(this.order()) && this.savedPaymentStatus() !== this.selectedPaymentStatus(),
+  private readonly isOrderStatusChanged = computed(
+    () => this.savedOrderStatus() !== this.selectedOrderStatus(),
   );
-  protected readonly canSaveStatus = computed(
-    () => Boolean(this.order()) && this.savedOrderStatus() !== this.selectedOrderStatus(),
+  protected readonly canSaveStatuses = computed(
+    () => Boolean(this.order()) && (this.isPaymentStatusChanged() || this.isOrderStatusChanged()),
   );
+
+  protected readonly pageTitle = computed(() => {
+    const order = this.order();
+    return order ? buildOrderDetailsTitle(order) : ORDERS_TEXTS.DETAILS_TITLE;
+  });
+  protected readonly pageDescription = computed(() => {
+    const order = this.order();
+    return order ? buildOrderDetailsDescription(order) : ORDERS_TEXTS.DETAILS_DESCRIPTION;
+  });
+  protected readonly statusLabel = computed(() => formatOrderStatusLabel(this.order()?.status));
+  protected readonly statusTone = computed(
+    () => ORDER_STATUS_BADGE_TONES[this.statusLabel()] ?? 'neutral',
+  );
+  protected readonly breadcrumbItems = computed(() => {
+    const order = this.order();
+    return buildShopSectionPageBreadcrumbs(
+      this.shopId(),
+      ORDERS_SECTION_PATH,
+      ORDERS_TEXTS.PAGE_TITLE,
+      order ? formatOrderDetailsNumber(order.orderNumber) : ORDERS_TEXTS.DETAILS_TITLE,
+    );
+  });
+
   protected readonly orderItemRows = computed(() => {
     const order = this.order();
     return order ? buildOrderItemRows(resolveOrderItems(order)) : [];
   });
+  protected readonly itemsCount = computed(() => String(this.orderItemRows().length));
   protected readonly orderInfoRows = computed(() => {
     const order = this.order();
     return order ? buildOrderInfoRows(order) : [];
   });
-  protected readonly userInfoRows = computed(() => {
+  protected readonly summaryRows = computed(() => {
     const order = this.order();
-    return order ? buildOrderUserRows(order) : [];
+    return order ? buildOrderSummaryRows(order) : [];
   });
-  protected readonly extraDataRows = computed(() => {
+  protected readonly customerRows = computed(() => {
     const order = this.order();
-    return order ? buildOrderExtraRows(order) : [];
+    return order ? buildOrderCustomerRows(order) : [];
+  });
+  protected readonly customer = computed(() => {
+    const order = this.order();
+    return order ? buildOrderCustomer(order) : null;
   });
 
   protected onPaymentStatusSelected(option: DropdownOption): void {
@@ -156,32 +190,24 @@ export class OrdersDetail {
     }
   }
 
-  protected onSavePaymentStatus(): void {
+  protected onSaveStatuses(): void {
     const orderId = this.orderId();
-    if (!orderId || this.isPaymentUpdating() || !this.canSavePaymentStatus()) {
+    if (!orderId || this.isStatusesUpdating() || !this.canSaveStatuses()) {
       return;
     }
 
-    this.updatePaymentStatusMutation.mutate(
-      { orderId, paymentStatus: this.selectedPaymentStatus() },
-      { onSuccess: () => this.onOrderUpdated(orderId, ORDERS_TEXTS.PAYMENT_STATUS_UPDATED_TITLE) },
+    this.updateStatusesMutation.mutate(
+      {
+        orderId,
+        paymentStatus: this.isPaymentStatusChanged() ? this.selectedPaymentStatus() : undefined,
+        status: this.isOrderStatusChanged() ? this.selectedOrderStatus() : undefined,
+      },
+      { onSuccess: () => this.onOrderUpdated(orderId) },
     );
   }
 
-  protected onSaveStatus(): void {
-    const orderId = this.orderId();
-    if (!orderId || this.isStatusUpdating() || !this.canSaveStatus()) {
-      return;
-    }
-
-    this.updateStatusMutation.mutate(
-      { orderId, status: this.selectedOrderStatus() },
-      { onSuccess: () => this.onOrderUpdated(orderId, ORDERS_TEXTS.ORDER_STATUS_UPDATED_TITLE) },
-    );
-  }
-
-  private onOrderUpdated(orderId: string, successTitle: string): void {
-    this.toasterService.success(successTitle);
+  private onOrderUpdated(orderId: string): void {
+    this.toasterService.success(ORDERS_TEXTS.STATUSES_UPDATED_TITLE);
     this.queryClient.invalidateQueries({ queryKey: SHOP_QUERY_KEYS.orderById(orderId) });
 
     const shopId = this.shopId();

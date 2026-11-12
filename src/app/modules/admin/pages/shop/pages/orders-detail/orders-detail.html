@@ -1,6 +1,10 @@
 <app-page-layout>
   <app-breadcrumbs [items]="breadcrumbItems()" />
-  <app-page-header [title]="textData.DETAILS_TITLE" [description]="textData.DETAILS_DESCRIPTION" />
+  <app-page-header [title]="pageTitle()" [description]="pageDescription()">
+    @if (order()) {
+    <app-badge pageHeaderTitleAddon [label]="statusLabel()" [tone]="statusTone()" />
+    }
+  </app-page-header>
 
   @if (hasError()) {
   <app-state-message [message]="textData.ORDER_DETAILS_LOAD_ERROR" />
@@ -12,62 +16,69 @@
       </app-section-card>
 
       <app-section-card [title]="textData.PRODUCTS_TITLE">
+        <app-badge sectionCardTitleAddon [label]="itemsCount()" [plain]="true" />
         <app-table
+          [flat]="true"
           [columns]="itemColumns"
           [rows]="orderItemRows()"
           [emptyText]="textData.ORDER_ITEMS_EMPTY_STATE"
         />
+        <div class="order-details-summary">
+          <app-info-list layout="rows" valueAlign="right" [rows]="summaryRows()" />
+        </div>
       </app-section-card>
 
-      <app-section-card [title]="textData.USER_TITLE">
-        <app-info-list [rows]="userInfoRows()" />
+      <app-section-card [title]="textData.CUSTOMER_TITLE">
+        <app-info-list layout="rows" [rows]="customerRows()" />
       </app-section-card>
-
-      @if (extraDataRows().length) {
-      <app-section-card [title]="textData.EXTRA_DATA_TITLE">
-        <app-info-list [rows]="extraDataRows()" [monospace]="true" />
-      </app-section-card>
-      }
     </div>
 
     <aside class="order-details-side-content">
-      <app-section-card [title]="textData.PAYMENT_STATUS_LABEL">
+      <app-section-card [title]="textData.STATUSES_TITLE">
         <div class="order-details-status-actions">
-          <app-dropdown
-            triggerMode="click"
-            variant="bordered"
-            [icon]="paymentStatusIcon"
-            [options]="paymentStatusOptions"
-            [value]="selectedPaymentStatus()"
-            (optionSelected)="onPaymentStatusSelected($event)"
-          />
+          <div class="order-details-field">
+            <span class="order-details-field-label">{{ textData.PAYMENT_STATUS_FIELD_LABEL }}</span>
+            <app-dropdown
+              triggerMode="click"
+              variant="bordered"
+              [icon]="paymentStatusIcon"
+              [options]="paymentStatusOptions"
+              [value]="selectedPaymentStatus()"
+              (optionSelected)="onPaymentStatusSelected($event)"
+            />
+          </div>
+          <div class="order-details-field">
+            <span class="order-details-field-label">{{ textData.ORDER_STATUS_FIELD_LABEL }}</span>
+            <app-dropdown
+              triggerMode="click"
+              variant="bordered"
+              [icon]="statusIcon"
+              [options]="statusOptions"
+              [value]="selectedOrderStatus()"
+              (optionSelected)="onStatusSelected($event)"
+            />
+          </div>
           <app-button
-            [label]="textData.SAVE_PAYMENT_STATUS_LABEL"
-            [fullWidth]="false"
-            [disabled]="!canSavePaymentStatus() || isPaymentUpdating()"
-            (click)="onSavePaymentStatus()"
+            [label]="textData.SAVE_STATUSES_LABEL"
+            [loading]="isStatusesUpdating()"
+            [fullWidth]="true"
+            [disabled]="!canSaveStatuses() || isStatusesUpdating()"
+            (click)="onSaveStatuses()"
           />
         </div>
       </app-section-card>
 
-      <app-section-card [title]="textData.ORDER_STATUS_LABEL">
-        <div class="order-details-status-actions">
-          <app-dropdown
-            triggerMode="click"
-            variant="bordered"
-            [icon]="statusIcon"
-            [options]="statusOptions"
-            [value]="selectedOrderStatus()"
-            (optionSelected)="onStatusSelected($event)"
-          />
-          <app-button
-            [label]="textData.SAVE_STATUS_LABEL"
-            [fullWidth]="false"
-            [disabled]="!canSaveStatus() || isStatusUpdating()"
-            (click)="onSaveStatus()"
-          />
+      @if (customer(); as customer) {
+      <app-section-card [title]="textData.BUYER_TITLE">
+        <div class="order-details-buyer">
+          <span class="order-details-buyer-avatar" aria-hidden="true">{{ customer.initials }}</span>
+          <div class="order-details-buyer-info">
+            <span class="order-details-buyer-name">{{ customer.name }}</span>
+            <span class="order-details-buyer-email">{{ customer.email }}</span>
+          </div>
         </div>
       </app-section-card>
+      }
     </aside>
   </section>
   } @else if (isLoading()) {

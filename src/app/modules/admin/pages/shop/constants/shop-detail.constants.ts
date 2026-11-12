@@ -1,14 +1,13 @@
 import { ShopDetailSection } from '../models/shop-detail-section.model';
 
 export const SHOP_DETAIL_TEXTS = {
-  PAGE_TITLE: 'Деталі Магазину',
+  PAGE_TITLE: 'Огляд магазину',
   PAGE_DESCRIPTION:
     'Оберіть розділ, щоб керувати контентом магазину: структурою каталогу, фільтрами та продуктами.',
 };
 
 export const SHOP_DETAIL_ROUTE_PREFIX = '/admin/shop';
 export const SHOP_DETAIL_SHOP_ID_PLACEHOLDER = ':shopId';
-export const SHOP_DETAIL_LINK_ICON = 'arrow_forward';
 
 export const SHOP_DETAIL_SECTIONS: ShopDetailSection[] = [
   {

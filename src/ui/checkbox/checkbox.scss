@@ -5,13 +5,17 @@
 }
 
 .admin-checkbox-option {
-  @apply inline-flex items-center gap-3 cursor-pointer text-sm font-medium text-on-surface;
+  @apply inline-flex cursor-pointer items-center gap-3 text-body text-on-surface;
 }
 
 .admin-checkbox-option input {
-  @apply w-5 h-5 text-primary rounded-sm border-outline-variant focus:ring-primary;
+  @apply size-5 shrink-0 cursor-pointer rounded-sm accent-primary focus-ring;
 }
 
 .admin-checkbox-option-disabled {
-  @apply opacity-60 cursor-not-allowed;
+  @apply cursor-not-allowed text-on-surface-variant;
+
+  input {
+    @apply cursor-not-allowed;
+  }
 }

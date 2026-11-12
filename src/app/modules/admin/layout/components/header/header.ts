@@ -4,7 +4,7 @@ import { APP_ROUTES } from '@core/constants/routes.constants';
 import { AuthService } from '@core/services/auth/auth.service';
 import { SimpleMenu } from '@ui/simple-menu/simple-menu';
 import { SimpleMenuItem } from '@ui/simple-menu/models/simple-menu.type';
-import { ACCOUNT_MENU_ITEMS, HEADER_TEXTS } from '../../constants/header.constants';
+import { ACCOUNT_MENU_ITEMS, HEADER_ICONS, HEADER_TEXTS } from '../../constants/header.constants';
 import { LayoutService } from '../../services/layout/layout.service';
 
 @Component({
@@ -20,6 +20,7 @@ export class Header {
   protected readonly layoutService = inject(LayoutService);
   protected readonly accountMenuItems = ACCOUNT_MENU_ITEMS;
   protected readonly textData = HEADER_TEXTS;
+  protected readonly icons = HEADER_ICONS;
   protected readonly adminRoute = APP_ROUTES.ADMIN;
 
   private readonly authService = inject(AuthService);

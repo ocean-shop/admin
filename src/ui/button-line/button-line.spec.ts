@@ -36,7 +36,6 @@ describe('ButtonLine', () => {
       .nativeElement as HTMLButtonElement;
 
     expect(buttonElement.className).toContain('button-line');
-    expect(buttonElement.className).toContain('ripple');
   });
 
   it('should set button type correctly when provided', async () => {

@@ -1,4 +1,7 @@
 <section class="section-card">
-  <h2 class="section-card-title">{{ title() }}</h2>
+  <h2 class="section-card-title">
+    <span>{{ title() }}</span>
+    <ng-content select="[sectionCardTitleAddon]" />
+  </h2>
   <ng-content />
 </section>

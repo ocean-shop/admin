@@ -5,37 +5,57 @@
 }
 
 .modal-overlay {
-  @apply fixed inset-0 z-[60] flex items-start justify-center bg-inverse-surface/60 backdrop-blur-sm;
+  @apply fixed inset-0 z-60 flex items-center justify-center overflow-y-auto bg-inverse-surface/60 p-4 sm:p-6;
 }
 
 .modal-content {
-  @apply bg-surface-container-lowest w-full max-w-[600px] rounded-xl overflow-visible mx-4 mt-[200px];
+  @apply my-auto w-full max-w-modal-md rounded-xl bg-surface-container-lowest shadow-lg;
+}
+
+.modal-content-sm {
+  @apply max-w-modal-sm;
 }
 
 .modal-header {
-  @apply flex items-center justify-between px-6 py-4 border-b border-outline-variant;
+  @apply flex items-start justify-between gap-4 px-6 pt-6 pb-2;
+}
+
+.modal-heading {
+  @apply flex min-w-0 flex-col items-start gap-4;
+}
+
+.modal-danger-icon {
+  @apply inline-flex size-12 items-center justify-center rounded-full bg-error-container text-error;
 }
 
 .modal-title {
-  @apply text-xl font-bold text-on-surface;
+  @apply text-title-md text-on-surface;
 }
 
 .modal-close-button {
-  @apply p-2 hover:bg-secondary-container rounded-full transition-colors;
+  @apply -mt-1 -mr-2 inline-flex size-control-sm shrink-0 items-center justify-center rounded-sm text-on-surface-variant transition-ui hover:bg-on-surface-variant/10 hover:text-on-surface;
 }
 
 .modal-body {
-  @apply p-6 space-y-4;
+  @apply flex flex-col gap-5 px-6 pt-4 pb-6;
 }
 
 .modal-footer {
-  @apply px-6 py-4 bg-surface-container-low flex justify-end;
+  @apply flex justify-end gap-3 rounded-b-xl border-t border-outline-variant bg-surface-container-low px-6 py-4;
+}
+
+.modal-cancel-button {
+  @apply inline-flex h-control-md items-center justify-center rounded-md border border-outline-variant bg-surface-container-lowest px-4 text-button text-on-surface shadow-xs transition-ui hover:border-outline hover:bg-surface-container-low;
 }
 
 .modal-confirm-button {
-  @apply px-6 py-2 bg-primary text-on-primary rounded-lg font-bold hover:bg-primary-container transition-all active:scale-95 shadow-md disabled:opacity-60 disabled:pointer-events-none;
+  @apply inline-flex h-control-md items-center justify-center gap-2 rounded-md bg-primary px-4 text-button text-on-primary shadow-xs transition-ui hover:bg-primary-container active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-surface-container disabled:text-outline disabled:shadow-none disabled:active:scale-100;
 }
 
 .modal-confirm-button-danger {
-  @apply bg-error text-on-error hover:bg-error/90;
+  @apply bg-error text-on-error hover:bg-on-error-container;
+}
+
+.modal-confirm-spin {
+  @apply size-4 animate-spin rounded-full border-2 border-outline/40 border-t-outline;
 }

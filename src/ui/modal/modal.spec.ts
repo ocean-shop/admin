@@ -3,6 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { vi } from 'vitest';
 import { Modal } from './modal';
+import { MODAL_TEXTS } from './constants/modal.constants';
 
 describe('Modal', () => {
   let component: Modal;
@@ -128,7 +129,7 @@ describe('Modal', () => {
       .nativeElement as HTMLButtonElement;
 
     expect(confirmButton.disabled).toBe(true);
-    expect(confirmButton.textContent).toContain('Зачекайте...');
+    expect(confirmButton.textContent).toContain(MODAL_TEXTS.LOADING_LABEL);
   });
 
   it('should emit closed when Enter is pressed on backdrop', () => {
@@ -159,5 +160,40 @@ describe('Modal', () => {
     overlay.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 
     expect(closedSpy).not.toHaveBeenCalled();
+  });
+
+  it('renders a cancel button that closes the modal and can be hidden', async () => {
+    const closedSpy = vi.spyOn(component.closed, 'emit');
+    const cancel = fixture.debugElement.query(By.css('.modal-cancel-button'))
+      .nativeElement as HTMLButtonElement;
+
+    expect(cancel.textContent?.trim()).toBe(MODAL_TEXTS.CANCEL_LABEL);
+    cancel.click();
+    expect(closedSpy).toHaveBeenCalled();
+
+    fixture.componentRef.setInput('showCancel', false);
+    await fixture.whenStable();
+    expect(fixture.debugElement.query(By.css('.modal-cancel-button'))).toBeNull();
+  });
+
+  it('applies the small size and shows the danger icon', async () => {
+    fixture.componentRef.setInput('size', 'sm');
+    fixture.componentRef.setInput('isDanger', true);
+    await fixture.whenStable();
+
+    expect(fixture.debugElement.query(By.css('.modal-content')).nativeElement.classList).toContain(
+      'modal-content-sm',
+    );
+    expect(fixture.debugElement.query(By.css('.modal-danger-icon'))).toBeTruthy();
+  });
+
+  it('shows the loading label while confirming', async () => {
+    fixture.componentRef.setInput('confirmLoading', true);
+    await fixture.whenStable();
+
+    const confirm = fixture.debugElement.query(By.css('.modal-confirm-button'))
+      .nativeElement as HTMLButtonElement;
+    expect(confirm.textContent).toContain(MODAL_TEXTS.LOADING_LABEL);
+    expect(confirm.getAttribute('aria-busy')).toBe('true');
   });
 });

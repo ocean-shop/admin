@@ -12,6 +12,8 @@
   <app-button
     [label]="saveLabel"
     [icon]="saveIcon"
+    [iconLeading]="true"
+    [fullWidth]="false"
     type="submit"
     [disabled]="!isFormValid() || isLoading()"
   />

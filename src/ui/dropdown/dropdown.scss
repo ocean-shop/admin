@@ -8,24 +8,26 @@
   @apply relative;
 }
 
+/* default: compact ghost trigger (toolbars) */
 .admin-dropdown-trigger {
-  @apply flex items-center gap-sm px-md py-sm rounded-full hover:bg-primary/10 text-primary transition-colors font-body-sm;
+  @apply inline-flex h-control-sm items-center gap-2 rounded-md px-3 text-label font-medium text-primary transition-ui hover:bg-primary/10;
 }
 
-.admin-dropdown-trigger-form {
-  @apply w-full justify-between rounded-lg border border-outline-variant bg-transparent px-md py-[12px] text-on-surface font-body-md hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all;
-}
-
+/* form / bordered: Select trigger */
+.admin-dropdown-trigger-form,
 .admin-dropdown-trigger-bordered {
-  @apply h-11 rounded-lg border border-[#bcc9c6] px-4;
+  @apply flex h-control-md w-full justify-between gap-2 rounded-md border border-outline-variant bg-surface-container-lowest pr-3 pl-4 text-body font-normal text-on-surface hover:border-outline hover:bg-surface-container-lowest;
 }
 
-.admin-dropdown-container-form .admin-dropdown-menu {
-  @apply left-0 right-0 w-full;
+.admin-dropdown-container-open .admin-dropdown-trigger-form,
+.admin-dropdown-container-open .admin-dropdown-trigger-bordered,
+.admin-dropdown-trigger-form:focus-visible,
+.admin-dropdown-trigger-bordered:focus-visible {
+  @apply field-focus outline-none;
 }
 
 .admin-dropdown-trigger-icon {
-  @apply text-outline;
+  @apply text-secondary;
 }
 
 .admin-dropdown-container-form.admin-dropdown-container-open .admin-dropdown-trigger-icon {
@@ -33,11 +35,16 @@
 }
 
 .admin-dropdown-trigger-label {
-  @apply flex-1 text-left;
+  @apply flex-1 truncate text-left;
 }
 
 .admin-dropdown-icon-small {
-  @apply text-body-sm transition-transform duration-200;
+  @apply text-secondary transition-transform duration-150;
+}
+
+.admin-dropdown-trigger:not(.admin-dropdown-trigger-form):not(.admin-dropdown-trigger-bordered)
+  .admin-dropdown-icon-small {
+  @apply text-primary;
 }
 
 .admin-dropdown-icon-rotated {
@@ -45,21 +52,38 @@
 }
 
 .admin-dropdown-menu {
-  @apply absolute right-0 mt-xs w-40 bg-surface-container-lowest rounded-lg border border-outline-variant opacity-0 invisible transition-all duration-200 z-30;
+  @apply invisible absolute right-0 z-30 mt-1 min-w-menu rounded-lg border border-outline-variant bg-surface-container-lowest p-1 opacity-0 shadow-md transition-ui;
+}
+
+.admin-dropdown-container-form .admin-dropdown-menu,
+.admin-dropdown-container:has(.admin-dropdown-trigger-bordered) .admin-dropdown-menu {
+  @apply right-0 left-0 w-full min-w-0;
 }
 
 .admin-dropdown-container:not(.admin-dropdown-container-click):hover .admin-dropdown-menu {
-  @apply opacity-100 visible;
+  @apply visible opacity-100;
 }
 
 .admin-dropdown-container-open .admin-dropdown-menu {
-  @apply opacity-100 visible;
+  @apply visible opacity-100;
 }
 
 .admin-dropdown-list {
-  @apply py-xs;
+  @apply flex max-h-72 flex-col overflow-auto;
 }
 
 .admin-dropdown-item {
-  @apply block px-md py-sm text-body-sm text-on-surface hover:bg-primary/10 transition-colors;
+  @apply flex h-10 items-center justify-between gap-3 rounded-sm px-3 text-label font-normal text-on-surface transition-ui hover:bg-surface-container-low;
+}
+
+.admin-dropdown-item-selected {
+  @apply font-semibold text-primary;
+}
+
+.admin-dropdown-item-label {
+  @apply truncate;
+}
+
+.admin-dropdown-item-check {
+  @apply text-[18px] text-primary;
 }

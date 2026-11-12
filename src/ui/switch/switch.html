@@ -1,0 +1,28 @@
+<label class="admin-switch" [class.admin-switch-disabled]="disabled()" [attr.for]="inputId()">
+  @if (control()) {
+  <input
+    class="admin-switch-input"
+    role="switch"
+    type="checkbox"
+    [id]="inputId()"
+    [formField]="control()"
+    (change)="onChange($event)"
+  />
+  } @else {
+  <input
+    class="admin-switch-input"
+    role="switch"
+    type="checkbox"
+    [id]="inputId()"
+    [checked]="checked()"
+    [disabled]="disabled()"
+    (change)="onChange($event)"
+  />
+  }
+  <span class="admin-switch-text">
+    <span class="admin-switch-label">{{ label() }}</span>
+    @if (description()) {
+    <span class="admin-switch-description">{{ description() }}</span>
+    }
+  </span>
+</label>

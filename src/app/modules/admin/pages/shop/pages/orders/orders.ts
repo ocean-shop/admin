@@ -35,6 +35,7 @@ import {
   ORDERS_NUMBER_FILTER_ID,
   ORDERS_PAGE_SIZE,
   ORDERS_SECTION_PATH,
+  ORDERS_SHOW_ICON,
   ORDERS_SORT_ICON,
   ORDERS_SORT_OPTIONS,
   ORDERS_TABLE_COLUMNS,
@@ -72,6 +73,7 @@ export class Orders {
   protected readonly pageSize = ORDERS_PAGE_SIZE;
   protected readonly sortOptions = ORDERS_SORT_OPTIONS;
   protected readonly sortIcon = ORDERS_SORT_ICON;
+  protected readonly showIcon = ORDERS_SHOW_ICON;
   protected readonly orderNumberFilterId = ORDERS_NUMBER_FILTER_ID;
   protected readonly tableColumns = ORDERS_TABLE_COLUMNS;
 

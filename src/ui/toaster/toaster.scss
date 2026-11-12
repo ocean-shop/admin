@@ -1,171 +1,69 @@
 @reference "../../styles.scss";
 
 .toaster-container {
-  @apply fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-4 w-full max-w-[600px] pointer-events-none;
+  @apply pointer-events-none fixed right-4 bottom-4 left-4 z-[9999] flex flex-col items-end gap-3 sm:left-auto sm:w-full sm:max-w-toast;
 }
 
 .toast {
-  @apply w-full flex items-center justify-between px-6 py-4 rounded-xl shadow-sm border-b pointer-events-auto;
-  animation: banner-entrance 0.3s ease-out forwards;
+  @apply pointer-events-auto flex w-full animate-toast-in items-start gap-3 rounded-lg border border-outline-variant bg-surface-container-lowest p-4 shadow-md;
+}
 
-  .toast-content-wrapper {
-    @apply flex items-center gap-4 flex-1 min-w-0;
-  }
+.toast-icon-wrapper {
+  @apply inline-flex size-8 shrink-0 items-center justify-center rounded-sm;
+}
+
+.toast-text-wrapper {
+  @apply flex min-w-0 flex-1 flex-col pt-[5px];
+}
+
+.toast-title {
+  @apply text-body font-semibold text-on-surface;
+}
+
+.toast-message {
+  @apply mt-0.5 line-clamp-2 text-body-sm break-words text-on-surface-variant;
+}
+
+.toast-actions {
+  @apply mt-3 flex gap-2;
+}
+
+.toast-action-btn {
+  @apply inline-flex h-control-sm items-center rounded-sm bg-primary/10 px-3 text-button-sm text-primary transition-ui hover:bg-primary/15;
+}
+
+.toast-close-btn {
+  @apply inline-flex size-8 shrink-0 items-center justify-center rounded-sm text-on-surface-variant transition-ui hover:bg-on-surface-variant/10 hover:text-on-surface;
+}
+
+.toast-success .toast-icon-wrapper {
+  @apply bg-success-container text-primary;
+}
+
+.toast-info .toast-icon-wrapper {
+  @apply bg-surface-container-high text-primary-container;
+}
+
+.toast-warning {
+  @apply border-warning-outline;
 
   .toast-icon-wrapper {
-    @apply p-2 rounded-lg flex items-center justify-center shadow-md shrink-0;
-  }
-
-  .toast-text-wrapper {
-    @apply flex flex-col flex-1 min-w-0;
-  }
-
-  .toast-title {
-    @apply font-semibold truncate;
-  }
-
-  .toast-message {
-    @apply text-sm overflow-hidden text-ellipsis break-words;
-    line-clamp: 2;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-
-  .toast-actions {
-    @apply flex items-center gap-3;
+    @apply bg-warning text-on-warning-container;
   }
 
   .toast-close-btn {
-    @apply p-2 rounded-full transition-all active:scale-90;
-  }
-
-  /* Variations */
-  &.toast-info {
-    @apply bg-surface-container-high border-primary/10;
-
-    .toast-icon-wrapper {
-      @apply bg-primary-container shadow-none;
-    }
-
-    .toast-icon {
-      @apply text-on-primary-container;
-    }
-
-    .toast-text-wrapper {
-      @apply text-on-surface;
-    }
-
-    .toast-message {
-      @apply text-on-surface-variant;
-    }
-
-    .toast-close-btn {
-      @apply hover:bg-on-surface-variant/10;
-
-      span {
-        @apply text-on-surface-variant;
-      }
-    }
-  }
-
-  &.toast-success {
-    @apply bg-[#E6F4F1] border-primary/20;
-
-    .toast-icon-wrapper {
-      @apply bg-primary;
-    }
-
-    .toast-icon {
-      @apply text-white;
-    }
-
-    .toast-text-wrapper {
-      @apply text-on-primary-fixed-variant;
-    }
-
-    .toast-message {
-      @apply opacity-90;
-    }
-
-    .toast-close-btn {
-      @apply hover:bg-primary/10;
-
-      span {
-        @apply text-primary;
-      }
-    }
-  }
-
-  &.toast-warning {
-    @apply bg-[#FFF8E1] border-amber-200;
-
-    .toast-icon-wrapper {
-      @apply bg-amber-500;
-    }
-
-    .toast-icon {
-      @apply text-white;
-    }
-
-    .toast-text-wrapper {
-      @apply text-[#453008];
-    }
-
-    .toast-message {
-      @apply opacity-80;
-    }
-
-    .toast-close-btn {
-      @apply hover:bg-amber-500/10;
-
-      span {
-        @apply text-amber-800;
-      }
-    }
-  }
-
-  &.toast-danger {
-    @apply bg-error-container border-error/20;
-
-    .toast-icon-wrapper {
-      @apply bg-error;
-    }
-
-    .toast-icon {
-      @apply text-on-error;
-    }
-
-    .toast-text-wrapper {
-      @apply text-on-error-container;
-    }
-
-    .toast-message {
-      @apply opacity-90;
-    }
-
-    .toast-action-btn {
-      @apply px-4 py-2 bg-error text-white text-sm font-bold rounded-lg hover:bg-error/90 transition-colors;
-    }
-
-    .toast-close-btn {
-      @apply hover:bg-error/10;
-
-      span {
-        @apply text-error;
-      }
-    }
+    @apply text-on-warning-variant;
   }
 }
 
-/* Keyframes for entrance animation if not defined globally */
-@keyframes banner-entrance {
-  from {
-    opacity: 0;
-    transform: translateY(-1rem);
+.toast-danger {
+  @apply border-error/20;
+
+  .toast-icon-wrapper {
+    @apply bg-error-container text-error;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .toast-action-btn {
+    @apply bg-error text-on-error hover:bg-on-error-container;
   }
 }

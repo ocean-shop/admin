@@ -1,9 +1,16 @@
-<nav class="mb-2 flex items-center gap-2 text-label-md text-outline" aria-label="Breadcrumb">
+<nav class="breadcrumbs" aria-label="Breadcrumb">
   @for (item of breadcrumbs(); track item.label; let isLast = $last) { @if (!isLast && item.href) {
-  <a class="transition-colors hover:text-primary" [routerLink]="item.href">{{ item.label }}</a>
+  <a class="breadcrumbs-link" [routerLink]="item.href">{{ item.label }}</a>
   } @else {
-  <span [class.font-medium]="isLast" [class.text-on-surface]="isLast">{{ item.label }}</span>
+  <span
+    class="breadcrumbs-item"
+    [class.breadcrumbs-current]="isLast"
+    [attr.aria-current]="isLast ? 'page' : null"
+    >{{ item.label }}</span
+  >
   } @if (!isLast) {
-  <span class="material-symbols-outlined text-sm">{{ separatorIcon }}</span>
+  <span class="breadcrumbs-separator material-symbols-outlined" aria-hidden="true"
+    >{{ separatorIcon }}</span
+  >
   } }
 </nav>

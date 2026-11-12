@@ -5,5 +5,5 @@
 }
 
 .product-form-upload-button {
-  @apply rounded-sm bg-primary px-3 py-1 text-sm font-bold text-on-primary transition-all hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70;
+  @apply inline-flex h-control-sm items-center rounded-sm bg-primary/10 px-3 text-button-sm text-primary transition-ui hover:bg-primary/15 disabled:cursor-not-allowed disabled:bg-surface-container disabled:text-outline;
 }

@@ -5,6 +5,8 @@ import {
   DEFAULT_TOAST_ICON_FILL,
   TOAST_ICONS,
   TOAST_ICON_FILLS,
+  TOASTER_CLOSE_ICON,
+  TOASTER_TEXTS,
 } from './constants/toaster.constant';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 
@@ -15,6 +17,8 @@ import { ToasterService } from '@core/services/toaster/toaster.service';
 })
 export class Toaster {
   public readonly toasts = inject(ToasterService).toasts;
+  protected readonly textData = TOASTER_TEXTS;
+  protected readonly closeIcon = TOASTER_CLOSE_ICON;
 
   public getIcon(type: ToastType): string {
     return TOAST_ICONS[type] ?? DEFAULT_TOAST_ICON;

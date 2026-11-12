@@ -12,8 +12,14 @@ export const TOAST_ICONS: Record<ToastType, string> = {
 };
 
 export const TOAST_ICON_FILLS: Record<ToastType, string> = {
-  info: "'FILL' 0",
-  success: "'FILL' 0",
-  warning: "'FILL' 0",
+  info: "'FILL' 1",
+  success: "'FILL' 1",
+  warning: "'FILL' 1",
   danger: "'FILL' 1",
 };
+
+export const TOASTER_TEXTS = {
+  CLOSE_LABEL: 'Закрити сповіщення',
+} as const;
+
+export const TOASTER_CLOSE_ICON = 'close';

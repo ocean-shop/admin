@@ -5,9 +5,9 @@
 }
 
 .product-form-variations-add {
-  @apply rounded-sm bg-primary px-3 py-1 text-sm font-bold text-on-primary transition-all hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70;
+  @apply inline-flex h-control-sm items-center rounded-sm bg-primary/10 px-3 text-button-sm text-primary transition-ui hover:bg-primary/15 disabled:cursor-not-allowed disabled:bg-surface-container disabled:text-outline;
 }
 
 .product-form-variations-empty {
-  @apply rounded-sm border border-surface-dim bg-surface p-3 text-sm text-on-surface-variant;
+  @apply m-0 rounded-md border border-dashed border-outline-variant bg-surface-container-low px-4 py-6 text-center text-body-sm text-on-surface-variant;
 }

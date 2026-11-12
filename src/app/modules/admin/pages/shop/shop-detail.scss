@@ -1,57 +1,5 @@
 @reference "../../../../../styles.scss";
 
-.shop-detail-container {
-  @apply mx-auto py-2 lg:pl-[50px];
-}
-
-.shop-detail-header {
-  @apply mb-8;
-}
-
-.shop-detail-title {
-  @apply text-3xl font-semibold text-on-surface tracking-tight mb-2;
-}
-
-.shop-detail-placeholder {
-  @apply text-on-surface-variant text-base max-w-3xl;
-}
-
 .shop-detail-cards {
-  @apply grid gap-4 sm:grid-cols-2;
-}
-
-.shop-detail-card {
-  @apply flex flex-col rounded-2xl border border-outline-variant bg-surface-container-low p-5 shadow-sm transition-all duration-200 hover:shadow-md;
-}
-
-.shop-detail-card-icon-wrapper {
-  @apply mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary-container text-on-primary-container;
-}
-
-.shop-detail-card-icon {
-  @apply text-xl;
-}
-
-.shop-detail-card-content {
-  @apply flex-1;
-}
-
-.shop-detail-card-title {
-  @apply text-lg font-semibold text-on-surface mb-1;
-}
-
-.shop-detail-card-description {
-  @apply text-sm text-on-surface-variant leading-6;
-}
-
-.shop-detail-card-link {
-  @apply mt-5 inline-flex items-center gap-1.5 w-fit rounded-lg bg-primary px-3 py-2 text-sm font-medium text-on-primary transition-opacity hover:opacity-90;
-}
-
-.shop-detail-card-link-label {
-  @apply leading-none;
-}
-
-.shop-detail-card-link-icon {
-  @apply text-base leading-none;
+  @apply grid gap-4 sm:grid-cols-2 xl:grid-cols-3;
 }

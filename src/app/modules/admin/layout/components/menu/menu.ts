@@ -4,10 +4,13 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/ro
 import { filter, map } from 'rxjs';
 import { AuthService } from '@core/services/auth/auth.service';
 import {
-  ADMIN_MENU_FOOTER_ITEMS,
+  ADMIN_MENU_GENERAL_ITEMS,
+  ADMIN_MENU_LOGOUT_ITEM,
   ADMIN_MENU_ITEMS,
   ADMIN_PRIMARY_ROUTES,
   MENU_LOGOUT_ACTION,
+  MENU_TEXTS,
+  MENU_WORKSPACE_ICON,
 } from '../../constants/menu.constants';
 import {
   extractShopIdFromUrl,
@@ -30,7 +33,10 @@ export class Menu {
   private readonly authService = inject(AuthService);
 
   protected readonly layoutService = inject(LayoutService);
-  protected readonly menuFooterItems = ADMIN_MENU_FOOTER_ITEMS;
+  protected readonly generalItems = ADMIN_MENU_GENERAL_ITEMS;
+  protected readonly logoutItem = ADMIN_MENU_LOGOUT_ITEM;
+  protected readonly textData = MENU_TEXTS;
+  protected readonly workspaceIcon = MENU_WORKSPACE_ICON;
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(

@@ -1,7 +1,10 @@
 import Highcharts from 'highcharts';
 import {
+  SHOP_STATISTICS_AXIS_LABEL_STYLE,
+  SHOP_STATISTICS_CHART_THEME,
   SHOP_STATISTICS_CHART_TYPE,
   SHOP_STATISTICS_COLUMN_BORDER_RADIUS,
+  SHOP_STATISTICS_COLUMN_POINT_WIDTH,
   SHOP_STATISTICS_SERIES_COLORS,
   SHOP_STATISTICS_TEXTS,
 } from '../../constants/shop-statistics.constants';
@@ -55,18 +58,49 @@ export const buildStatisticChartData = (statistic: ShopStatistic | undefined): C
 };
 
 export const buildStatisticChartOptions = (data: ChartData): Highcharts.Options => ({
-  chart: { type: SHOP_STATISTICS_CHART_TYPE, backgroundColor: 'transparent' },
+  chart: {
+    type: SHOP_STATISTICS_CHART_TYPE,
+    backgroundColor: 'transparent',
+    style: { fontFamily: SHOP_STATISTICS_CHART_THEME.FONT_FAMILY },
+  },
   title: { text: undefined },
   credits: { enabled: false },
-  xAxis: { categories: data.categories },
+  xAxis: {
+    categories: data.categories,
+    lineColor: SHOP_STATISTICS_CHART_THEME.GRID_COLOR,
+    labels: { style: SHOP_STATISTICS_AXIS_LABEL_STYLE },
+  },
   yAxis: {
     allowDecimals: false,
     min: 0,
-    title: { text: SHOP_STATISTICS_TEXTS.Y_AXIS_TITLE },
+    gridLineColor: SHOP_STATISTICS_CHART_THEME.GRID_COLOR,
+    labels: { style: SHOP_STATISTICS_AXIS_LABEL_STYLE },
+    title: { text: SHOP_STATISTICS_TEXTS.Y_AXIS_TITLE, style: SHOP_STATISTICS_AXIS_LABEL_STYLE },
   },
   tooltip: { shared: true },
-  legend: { enabled: true },
-  plotOptions: { column: { borderRadius: SHOP_STATISTICS_COLUMN_BORDER_RADIUS } },
+  legend: {
+    enabled: true,
+    itemStyle: {
+      color: SHOP_STATISTICS_CHART_THEME.LABEL_COLOR,
+      fontWeight: '500',
+    },
+  },
+  plotOptions: {
+    column: {
+      borderRadius: SHOP_STATISTICS_COLUMN_BORDER_RADIUS,
+      pointWidth: SHOP_STATISTICS_COLUMN_POINT_WIDTH,
+      borderWidth: 0,
+      dataLabels: {
+        enabled: true,
+        style: {
+          color: SHOP_STATISTICS_CHART_THEME.LABEL_COLOR,
+          fontSize: SHOP_STATISTICS_CHART_THEME.DATA_LABEL_FONT_SIZE,
+          fontWeight: '600',
+          textOutline: 'none',
+        },
+      },
+    },
+  },
   series: [
     {
       type: SHOP_STATISTICS_CHART_TYPE,

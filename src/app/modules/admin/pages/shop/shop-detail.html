@@ -1,9 +1,6 @@
-<section class="shop-detail-container">
-  <header class="shop-detail-header">
-    <app-breadcrumbs [items]="breadcrumbItems()" />
-    <h3 class="shop-detail-title">{{ textData.PAGE_TITLE }}</h3>
-    <p class="shop-detail-placeholder">{{ textData.PAGE_DESCRIPTION }}</p>
-  </header>
+<app-page-layout>
+  <app-breadcrumbs [items]="breadcrumbItems()" />
+  <app-page-header [title]="textData.PAGE_TITLE" [description]="textData.PAGE_DESCRIPTION" />
 
   @if (shopId()) {
   <app-shop-statistics [shopId]="shopId()" />
@@ -11,19 +8,7 @@
 
   <div class="shop-detail-cards">
     @for (section of sections(); track section.segment) {
-    <article class="shop-detail-card">
-      <div class="shop-detail-card-icon-wrapper">
-        <span class="material-symbols-outlined shop-detail-card-icon">{{ section.icon }}</span>
-      </div>
-      <div class="shop-detail-card-content">
-        <h4 class="shop-detail-card-title">{{ section.title }}</h4>
-        <p class="shop-detail-card-description">{{ section.description }}</p>
-      </div>
-      <a class="shop-detail-card-link" [routerLink]="section.route">
-        <span class="shop-detail-card-link-label">{{ section.linkLabel }}</span>
-        <span class="material-symbols-outlined shop-detail-card-link-icon">{{ linkIcon }}</span>
-      </a>
-    </article>
+    <app-nav-tile [tile]="section" />
     }
   </div>
-</section>
+</app-page-layout>

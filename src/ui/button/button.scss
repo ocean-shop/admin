@@ -1,33 +1,61 @@
 @reference "../../styles.scss";
 
 :host {
+  @apply inline-block;
+}
+
+:host(.admin-btn-host-full) {
   @apply block;
 }
 
 .admin-btn {
-  @apply px-lg py-md bg-primary hover:bg-primary-hover hover:cursor-pointer text-white font-title-md text-title-md rounded-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-sm;
+  @apply inline-flex h-control-md items-center justify-center gap-2 whitespace-nowrap rounded-md border border-transparent bg-primary px-4 text-button text-on-primary shadow-xs transition-ui hover:bg-primary-container active:scale-[0.98];
 
   &:disabled {
-    @apply opacity-50 cursor-not-allowed hover:bg-primary active:scale-100;
+    @apply cursor-not-allowed border-transparent bg-surface-container text-outline shadow-none hover:bg-surface-container active:scale-100;
   }
 }
 
 .admin-btn-full-width {
-  @apply w-full;
+  @apply flex w-full;
 }
 
-.admin-btn-create {
-  @apply px-4 py-2.5 sm:px-5 sm:py-3 bg-primary text-on-primary rounded-lg font-bold text-sm sm:text-base leading-tight text-center whitespace-normal hover:bg-primary-container transition-all active:scale-95 shadow-md gap-2.5;
+.admin-btn-secondary {
+  @apply bg-primary/10 text-primary shadow-none hover:bg-primary/15;
+}
 
-  .admin-btn-icon {
-    @apply text-[20px] sm:text-[22px] leading-none;
-  }
+.admin-btn-outline {
+  @apply border-outline-variant bg-surface-container-lowest text-on-surface hover:border-outline hover:bg-surface-container-low;
+}
+
+.admin-btn-ghost {
+  @apply bg-transparent text-on-surface-variant shadow-none hover:bg-on-surface-variant/10 hover:text-on-surface;
+}
+
+.admin-btn-danger {
+  @apply bg-error text-on-error hover:bg-on-error-container;
+}
+
+.admin-btn-sm {
+  @apply h-control-sm rounded-sm px-3 text-button-sm;
+}
+
+.admin-btn-lg {
+  @apply h-control-lg px-5;
+}
+
+.admin-btn-label {
+  @apply truncate;
 }
 
 .admin-btn-icon {
-  @apply transition-transform;
+  @apply transition-transform duration-150;
 }
 
-.admin-btn:hover .admin-btn-icon {
+.admin-btn-trailing:not(:disabled):hover .admin-btn-icon {
   @apply translate-x-1;
+}
+
+.admin-btn-spin {
+  @apply size-4 animate-spin rounded-full border-2 border-primary/50 border-t-on-primary;
 }

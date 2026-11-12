@@ -1,8 +1,9 @@
 @reference "../../../../../../styles.scss";
 
 .system-error-page {
-  @apply p-10 flex justify-center items-center;
+  @apply flex items-center justify-center p-10;
+
   h1 {
-    @apply text-display-lg text-error;
+    @apply m-0 text-[48px] leading-[56px] font-bold tracking-[-0.02em] text-error;
   }
 }

@@ -1,6 +1,8 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Button } from '@ui/button/button';
+import { PageHeader } from '@ui/page-header/page-header';
+import { PageLayout } from '@ui/page-layout/page-layout';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { SettingsForm } from './components/settings-form/settings-form';
 import { SettingsService } from './services/settings.service';
@@ -15,7 +17,7 @@ import {
 
 @Component({
   selector: 'app-settings',
-  imports: [SettingsForm, Button],
+  imports: [SettingsForm, Button, PageLayout, PageHeader],
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
 })

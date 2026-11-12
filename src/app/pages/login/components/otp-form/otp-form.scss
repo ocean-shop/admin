@@ -1,17 +1,21 @@
 @reference "../../../../../styles.scss";
 
 .form-container {
-  @apply space-y-lg;
+  @apply flex flex-col gap-5;
 }
 
 .resend-container {
-  @apply mt-xs text-center;
+  @apply -mt-1 text-center;
 }
 
 .resend-text {
-  @apply font-body-sm text-body-sm text-on-surface-variant;
+  @apply m-0 text-body-sm text-on-surface-variant;
 }
 
 .resend-timer {
-  @apply text-primary font-extrabold;
+  @apply font-semibold text-primary tabular-nums;
+}
+
+.resend-action {
+  @apply flex justify-center;
 }

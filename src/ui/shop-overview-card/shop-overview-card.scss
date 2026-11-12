@@ -5,49 +5,61 @@
 }
 
 .store-card {
-  @apply bg-surface-container-lowest rounded-xl p-8 border border-outline-variant hover:border-primary transition-all duration-300 shadow-[0_4px_20px_-2px_rgba(13,148,136,0.05)] relative overflow-hidden;
+  @apply relative overflow-hidden rounded-lg border border-outline-variant bg-surface-container-lowest p-6 shadow-card transition-shadow duration-200 hover:shadow-sm;
 }
 
 .card-bg-primary {
-  @apply absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110;
+  @apply pointer-events-none absolute top-0 right-0 -mt-20 -mr-20 size-40 rounded-full bg-primary/5;
 }
 
 .card-header {
-  @apply flex justify-between items-start mb-6;
+  @apply relative mb-5 flex items-center gap-3;
 }
 
-.card-title-container {
-  @apply flex flex-col gap-1;
+.card-avatar {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary;
 }
 
 .card-title {
-  @apply text-2xl font-bold text-primary;
+  @apply m-0 truncate text-title-lg text-on-surface;
 }
 
 .metrics-grid {
-  @apply grid grid-cols-2 gap-6 mt-8;
+  @apply relative grid grid-cols-2 gap-3;
 }
 
 .metric-box {
-  @apply p-4 bg-surface-container-low rounded-lg;
+  @apply rounded-md bg-surface-container-low p-4;
 }
 
 .metric-label {
-  @apply text-label-md text-secondary uppercase tracking-widest mb-1;
+  @apply m-0 text-caption font-medium text-on-surface-variant;
 }
 
 .metric-value {
-  @apply text-3xl font-bold text-on-surface;
+  @apply mt-1 mb-0 text-[28px] leading-9 font-bold tracking-[-0.02em] text-on-surface tabular-nums;
 }
 
 .metric-helper {
-  @apply text-on-surface-variant text-sm font-medium flex items-center gap-1 mt-1;
+  @apply mt-1 flex items-center gap-1 text-caption text-on-surface-variant;
+}
+
+.metric-helper-icon {
+  @apply text-[16px];
 }
 
 .card-actions {
-  @apply mt-8 flex gap-3;
+  @apply relative mt-5 flex gap-3;
 }
 
 .btn-primary {
-  @apply flex-1 py-3 px-4 bg-primary text-on-primary rounded-lg font-bold hover:bg-primary-container transition-colors active:scale-95 duration-150;
+  @apply flex h-control-lg flex-1 items-center justify-center gap-2 rounded-md bg-primary px-5 text-button text-on-primary shadow-xs transition-ui hover:bg-primary-container active:scale-[0.98];
+}
+
+.btn-primary-icon {
+  @apply transition-transform duration-150;
+}
+
+.btn-primary:hover .btn-primary-icon {
+  @apply translate-x-1;
 }

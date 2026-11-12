@@ -33,11 +33,11 @@ describe('Breadcrumbs', () => {
   it('renders clickable and current breadcrumb states', () => {
     const element = fixture.nativeElement as HTMLElement;
     const link = element.querySelector('a');
-    const segments = element.querySelectorAll('span');
+    const current = element.querySelector('.breadcrumbs-item');
 
     expect(link?.getAttribute('href')).toBe('/admin');
-    expect(segments[1]?.classList.contains('font-medium')).toBe(true);
-    expect(segments[1]?.classList.contains('text-on-surface')).toBe(true);
+    expect(current?.classList.contains('breadcrumbs-current')).toBe(true);
+    expect(current?.getAttribute('aria-current')).toBe('page');
   });
 
   it('renders all separators between items', async () => {

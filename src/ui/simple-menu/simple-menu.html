@@ -8,7 +8,9 @@
     href="#"
     (click)="selectItem(entry, $event)"
   >
-    <span class="material-symbols-outlined simple-menu-icon">{{ entry.icon }}</span>
+    <span class="material-symbols-outlined simple-menu-icon" aria-hidden="true"
+      >{{ entry.icon }}</span
+    >
     <span class="simple-menu-label">{{ entry.label }}</span>
   </a>
   } }
