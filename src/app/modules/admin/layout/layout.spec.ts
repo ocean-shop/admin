@@ -1,8 +1,14 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Layout } from './layout';
 import { LayoutService } from './services/layout/layout.service';
 import { provideRouter } from '@angular/router';
 import { AuthService } from '@core/services/auth/auth.service';
+import { Header } from './components/header/header';
+import { Notifications } from './components/notifications/notifications';
+
+@Component({ selector: 'app-notifications', template: '' })
+class NotificationsStub {}
 
 describe('Layout', () => {
   let component: Layout;
@@ -17,7 +23,12 @@ describe('Layout', () => {
         provideRouter([]),
         { provide: AuthService, useValue: { logout: vi.fn() } },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(Header, {
+        remove: { imports: [Notifications] },
+        add: { imports: [NotificationsStub] },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(Layout);
     component = fixture.componentInstance;

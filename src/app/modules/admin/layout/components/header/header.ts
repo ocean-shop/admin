@@ -6,10 +6,11 @@ import { SimpleMenu } from '@ui/simple-menu/simple-menu';
 import { SimpleMenuItem } from '@ui/simple-menu/models/simple-menu.type';
 import { ACCOUNT_MENU_ITEMS, HEADER_ICONS, HEADER_TEXTS } from '../../constants/header.constants';
 import { LayoutService } from '../../services/layout/layout.service';
+import { Notifications } from '../notifications/notifications';
 
 @Component({
   selector: 'app-header',
-  imports: [SimpleMenu, RouterLink],
+  imports: [SimpleMenu, RouterLink, Notifications],
   templateUrl: './header.html',
   styleUrl: './header.scss',
   host: {

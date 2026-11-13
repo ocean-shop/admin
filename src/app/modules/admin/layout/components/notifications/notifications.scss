@@ -1,0 +1,117 @@
+@reference "../../../../../../styles.scss";
+
+:host {
+  @apply relative block;
+}
+
+.notifications-bell {
+  @apply relative inline-flex size-control-md items-center justify-center rounded-md text-on-surface-variant transition-ui hover:bg-on-surface-variant/10 hover:text-on-surface;
+}
+
+.notifications-bell-active {
+  @apply bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary;
+}
+
+.notifications-bell-icon {
+  @apply text-[24px];
+}
+
+.notifications-bell-count {
+  @apply absolute top-1 right-0.5 box-border h-[18px] min-w-[18px] rounded-full bg-error px-[5px] text-center text-[11px] leading-[18px] font-bold text-on-error shadow-[0_0_0_2px_theme(--color-background)];
+}
+
+.notifications-panel {
+  @apply absolute top-[calc(100%+12px)] -right-2 z-60 flex w-[440px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-lg border border-outline-variant bg-surface-container-lowest shadow-lg;
+}
+
+.notifications-head {
+  @apply flex items-center justify-between gap-3 pt-4 pr-3 pb-2 pl-5;
+}
+
+.notifications-heading {
+  @apply flex items-center gap-2.5;
+}
+
+.notifications-title {
+  @apply m-0 text-title-md text-on-surface;
+}
+
+.notifications-tabs {
+  @apply flex gap-1 border-b border-outline-variant px-2;
+}
+
+.notifications-tab {
+  @apply -mb-px inline-flex h-10 items-center gap-2 border-b-2 border-transparent px-3 text-label text-on-surface-variant transition-ui hover:text-on-surface focus-visible:focus-ring;
+}
+
+.notifications-tab-active {
+  @apply border-primary text-primary hover:text-primary;
+}
+
+.notifications-list {
+  @apply max-h-[560px] overflow-x-hidden overflow-y-auto overscroll-contain pb-2 [scrollbar-color:theme(--color-outline-variant)_transparent] [scrollbar-width:thin];
+}
+
+.notifications-group {
+  @apply sticky top-0 z-1 m-0 bg-surface-container-lowest px-5 pt-3 pb-2 text-[12px] leading-4 font-semibold tracking-[0.06em] text-on-surface-variant uppercase shadow-[0_1px_0_theme(--color-surface-container)];
+}
+
+.notifications-loading {
+  @apply flex flex-col pb-2;
+}
+
+.notifications-progress {
+  @apply h-0.5 w-full animate-pulse bg-primary/40;
+}
+
+.notifications-skeleton-row {
+  @apply flex gap-3 px-5 py-3.5;
+}
+
+.notifications-skeleton {
+  @apply animate-pulse rounded-sm bg-surface-container;
+}
+
+.notifications-skeleton-icon {
+  @apply size-avatar shrink-0 rounded-md;
+}
+
+.notifications-skeleton-lines {
+  @apply flex flex-1 flex-col gap-2 pt-0.5;
+}
+
+.notifications-skeleton-title {
+  @apply h-3.5 w-1/2;
+}
+
+.notifications-skeleton-text {
+  @apply h-3 w-4/5;
+}
+
+.notifications-skeleton-meta {
+  @apply h-2.5 w-1/3;
+}
+
+.notifications-message {
+  @apply px-5 py-8;
+}
+
+.notifications-empty {
+  @apply flex flex-col items-center gap-2 px-8 pt-12 pb-10 text-center;
+}
+
+.notifications-empty-icon {
+  @apply mb-2 inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary;
+
+  .material-symbols-outlined {
+    @apply text-[32px];
+  }
+}
+
+.notifications-empty-title {
+  @apply m-0 text-title-md text-on-surface;
+}
+
+.notifications-empty-text {
+  @apply m-0 max-w-[340px] text-body text-on-surface-variant;
+}

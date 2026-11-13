@@ -1,7 +1,8 @@
-import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpClient, HttpContext, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { SKIP_GLOBAL_LOADER } from '@core/constants/loader.constants';
 import { LoaderService } from '../../services/loader/loader.service';
 import { loaderInterceptor } from './loader.interceptor';
 
@@ -42,6 +43,18 @@ describe('loaderInterceptor', () => {
     http.get('/api/test').subscribe({ error: () => undefined });
 
     httpMock.expectOne('/api/test').flush({}, { status: 500, statusText: 'Server Error' });
+
+    expect(loaderService.isLoading()).toBe(false);
+  });
+
+  it('does not show loader for requests marked with SKIP_GLOBAL_LOADER', () => {
+    http
+      .get('/api/background', { context: new HttpContext().set(SKIP_GLOBAL_LOADER, true) })
+      .subscribe();
+
+    expect(loaderService.isLoading()).toBe(false);
+
+    httpMock.expectOne('/api/background').flush({});
 
     expect(loaderService.isLoading()).toBe(false);
   });

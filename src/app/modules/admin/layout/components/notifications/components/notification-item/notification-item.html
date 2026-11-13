@@ -1,0 +1,38 @@
+<article class="notification" [class.notification-unread]="!item().isRead">
+  <span
+    class="notification-icon"
+    [class.notification-icon-primary]="item().tone === 'primary'"
+    [class.notification-icon-info]="item().tone === 'info'"
+    aria-hidden="true"
+  >
+    <span class="material-symbols-outlined">{{ item().icon }}</span>
+  </span>
+  <div class="notification-body">
+    <button class="notification-title" type="button" (click)="open()">{{ item().title }}</button>
+    @if (item().text) {
+    <p class="notification-text">{{ item().text }}</p>
+    }
+    <p class="notification-meta">{{ item().meta }}</p>
+    @if (!item().isRead && item().actionLabel) {
+    <div class="notification-actions">
+      <app-button
+        size="sm"
+        [fullWidth]="false"
+        [label]="item().actionLabel ?? ''"
+        (click)="open()"
+      />
+      <app-button
+        size="sm"
+        variant="outline"
+        [fullWidth]="false"
+        [label]="textData.MARK_READ"
+        (click)="markRead()"
+      />
+    </div>
+    }
+  </div>
+  @if (!item().isRead) {
+  <span class="notification-dot" aria-hidden="true"></span>
+  <span class="sr-only">{{ textData.UNREAD_DOT_LABEL }}</span>
+  }
+</article>

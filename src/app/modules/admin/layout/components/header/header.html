@@ -13,10 +13,7 @@
     <a [routerLink]="adminRoute" class="header-title-link">{{ textData.TITLE }}</a>
   </div>
   <div class="header-right">
-    <button class="icon-button" type="button" [attr.aria-label]="textData.NOTIFICATIONS_LABEL">
-      <span class="header-icon header-icon-md" aria-hidden="true">{{ icons.NOTIFICATIONS }}</span>
-      <span class="notification-dot"></span>
-    </button>
+    <app-notifications />
     <div class="account-menu-container">
       <button
         class="account-button"

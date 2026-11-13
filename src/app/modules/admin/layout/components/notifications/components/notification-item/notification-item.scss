@@ -1,0 +1,53 @@
+@reference "../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.notification {
+  @apply relative flex items-start gap-3 py-3 pr-9 pl-5 transition-ui hover:bg-primary/5;
+}
+
+.notification-unread {
+  @apply bg-primary/5;
+
+  .notification-title {
+    @apply font-semibold;
+  }
+}
+
+.notification-icon {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-md bg-surface-container text-secondary;
+}
+
+.notification-icon-primary {
+  @apply bg-primary/10 text-primary;
+}
+
+.notification-icon-info {
+  @apply bg-surface-container-high text-primary-container;
+}
+
+.notification-body {
+  @apply min-w-0 flex-1;
+}
+
+.notification-title {
+  @apply block rounded-sm text-left text-body font-medium text-on-surface transition-ui hover:text-primary hover:underline hover:underline-offset-[3px] focus-visible:focus-ring;
+}
+
+.notification-text {
+  @apply m-0 mt-0.5 text-body-sm wrap-anywhere text-on-surface-variant;
+}
+
+.notification-meta {
+  @apply m-0 mt-1 text-caption text-on-surface-variant;
+}
+
+.notification-actions {
+  @apply mt-2.5 flex flex-wrap gap-2;
+}
+
+.notification-dot {
+  @apply absolute top-5 right-[18px] size-2 rounded-full bg-primary;
+}
