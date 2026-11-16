@@ -5,6 +5,7 @@ import { ProductFormBasicInfo } from './components/product-form-basic-info/produ
 import { ProductFormCategories } from './components/product-form-categories/product-form-categories';
 import { ProductFormImages } from './components/product-form-images/product-form-images';
 import { ProductFormPricingInventory } from './components/product-form-pricing-inventory/product-form-pricing-inventory';
+import { ProductFormRelatedProducts } from './components/product-form-related-products/product-form-related-products';
 import { ProductFormSeo } from './components/product-form-seo/product-form-seo';
 import { ProductFormTags } from './components/product-form-tags/product-form-tags';
 import { ProductFormVariations } from './components/product-form-variations/product-form-variations';
@@ -32,6 +33,7 @@ import { ProductFormVariation } from './models/product-form-variation.model';
     ProductFormCategories,
     ProductFormImages,
     ProductFormPricingInventory,
+    ProductFormRelatedProducts,
     ProductFormSeo,
     ProductFormTags,
     ProductFormVariations,

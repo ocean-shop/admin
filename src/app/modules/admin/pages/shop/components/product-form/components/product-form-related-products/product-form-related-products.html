@@ -1,0 +1,126 @@
+<app-product-form-card
+  [title]="texts().RELATED_PRODUCTS_TITLE"
+  [icon]="icons.SECTION"
+  [disabled]="sidebarDisabled()"
+>
+  <span
+    cardActions
+    class="related-products-counter"
+    [class.related-products-counter-full]="isLimitReached()"
+    >{{ items().length }} / {{ maxItems }}</span
+  >
+
+  <p class="related-products-subtitle">{{ texts().RELATED_PRODUCTS_SUBTITLE }}</p>
+
+  <app-input
+    [id]="inputId"
+    [label]="texts().RELATED_PRODUCTS_SEARCH_LABEL"
+    [placeholder]="texts().RELATED_PRODUCTS_SEARCH_PLACEHOLDER"
+    [icon]="icons.SEARCH"
+    [disabled]="isSearchDisabled()"
+    [value]="searchValue()"
+    (valueChange)="onSearchChange($event)"
+  />
+
+  @if (isLimitReached()) {
+  <p class="related-products-limit">{{ texts().RELATED_PRODUCTS_LIMIT_REACHED }}</p>
+  } @if (isSearchOpen()) {
+  <div class="related-products-results">
+    @if (isSearchLoading()) {
+    <p class="related-products-state">{{ texts().RELATED_PRODUCTS_SEARCH_LOADING }}</p>
+    } @else { @for (result of searchResults(); track result.id) {
+    <button
+      type="button"
+      class="related-products-result"
+      [title]="texts().RELATED_PRODUCTS_ADD_LABEL"
+      (click)="onAdd(result.id)"
+    >
+      @if (result.imageUrl) {
+      <img class="related-products-thumb" [src]="result.imageUrl" [alt]="result.name" />
+      } @else {
+      <span class="related-products-thumb related-products-thumb-empty" aria-hidden="true">
+        <span class="material-symbols-outlined">{{ icons.NO_IMAGE }}</span>
+      </span>
+      }
+      <span class="related-products-meta">
+        <span class="related-products-name">{{ result.name }}</span>
+        <span class="related-products-sku"
+          >{{ result.sku || texts().RELATED_PRODUCTS_NO_SKU }}</span
+        >
+      </span>
+      @if (result.hiddenStatusLabel) {
+      <app-badge [label]="result.hiddenStatusLabel" tone="warning" />
+      }
+      <span class="related-products-add-icon material-symbols-outlined" aria-hidden="true"
+        >{{ icons.ADD }}</span
+      >
+    </button>
+    } @empty {
+    <p class="related-products-state">{{ texts().RELATED_PRODUCTS_SEARCH_EMPTY }}</p>
+    } }
+  </div>
+  } @if (isLoading()) {
+  <p class="related-products-empty">{{ texts().RELATED_PRODUCTS_LOADING }}</p>
+  } @else if (!items().length) {
+  <p class="related-products-empty">{{ texts().RELATED_PRODUCTS_EMPTY }}</p>
+  } @else {
+  <ol class="related-products-list" [attr.aria-busy]="isSaving()">
+    @for (item of items(); track item.id; let index = $index, first = $first, last = $last) {
+    <li class="related-products-row">
+      <span class="related-products-position" aria-hidden="true">{{ index + 1 }}</span>
+      @if (item.imageUrl) {
+      <img class="related-products-thumb" [src]="item.imageUrl" [alt]="item.name" />
+      } @else {
+      <span class="related-products-thumb related-products-thumb-empty" aria-hidden="true">
+        <span class="material-symbols-outlined">{{ icons.NO_IMAGE }}</span>
+      </span>
+      }
+      <span class="related-products-meta">
+        <span class="related-products-name" [title]="item.name">{{ item.name }}</span>
+        <span class="related-products-sku">{{ item.sku || texts().RELATED_PRODUCTS_NO_SKU }}</span>
+        @if (item.hiddenStatusLabel) {
+        <app-badge
+          class="related-products-status"
+          [label]="item.hiddenStatusLabel"
+          tone="warning"
+        />
+        }
+      </span>
+      <span class="related-products-actions">
+        <button
+          type="button"
+          [attr.aria-label]="texts().RELATED_PRODUCTS_MOVE_UP_LABEL"
+          [disabled]="interactionDisabled() || first"
+          (click)="onMoveUp(item.id)"
+        >
+          <span class="related-products-action-icon material-symbols-outlined"
+            >{{ icons.MOVE_UP }}</span
+          >
+        </button>
+        <button
+          type="button"
+          [attr.aria-label]="texts().RELATED_PRODUCTS_MOVE_DOWN_LABEL"
+          [disabled]="interactionDisabled() || last"
+          (click)="onMoveDown(item.id)"
+        >
+          <span class="related-products-action-icon material-symbols-outlined"
+            >{{ icons.MOVE_DOWN }}</span
+          >
+        </button>
+        <button
+          type="button"
+          class="related-products-remove"
+          [attr.aria-label]="texts().RELATED_PRODUCTS_REMOVE_LABEL"
+          [disabled]="interactionDisabled()"
+          (click)="onRemove(item.id)"
+        >
+          <span class="related-products-action-icon material-symbols-outlined"
+            >{{ icons.REMOVE }}</span
+          >
+        </button>
+      </span>
+    </li>
+    }
+  </ol>
+  }
+</app-product-form-card>

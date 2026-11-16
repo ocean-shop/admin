@@ -10,6 +10,9 @@ import { ProductFormFieldIds } from '../models/product-form-field-ids.model';
 import { ProductFormModel } from '../models/product-form.model';
 import { ProductFormTexts } from '../models/product-form-texts.model';
 
+/** Mirrors the API limit (`RELATED_PRODUCTS_MAX`): the storefront shows them in one carousel. */
+export const PRODUCT_FORM_RELATED_PRODUCTS_MAX = 20;
+
 export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   BASIC_INFORMATION_TITLE: 'Основна інформація',
   PRICING_INVENTORY_TITLE: 'Ціна та запаси',
@@ -51,7 +54,7 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   CATEGORIES_SEARCH_PLACEHOLDER: 'Пошук категорій...',
   ATTRIBUTES_SEARCH_PLACEHOLDER: 'Пошук атрибутів...',
   SIDEBAR_DISABLED_HINT:
-    'Спочатку створіть товар, щоб керувати категоріями, варіаціями, атрибутами та тегами.',
+    'Спочатку створіть товар, щоб керувати категоріями, варіаціями, атрибутами, тегами та супутніми товарами.',
   ATTRIBUTES_SEARCH_LOADING: 'Завантаження атрибутів...',
   ATTRIBUTES_SEARCH_EMPTY: 'Атрибути не знайдено.',
   ATTRIBUTES_ASSIGNED_EMPTY: 'Ще немає призначених атрибутів.',
@@ -99,6 +102,21 @@ export const PRODUCT_FORM_TEXTS: ProductFormTexts = {
   VARIATION_IMAGES_TITLE: 'Зображення варіації',
   VARIATION_IMAGES_DROPZONE_HINT: 'Перетягніть зображення для варіації або натисніть для вибору',
   VARIATION_IMAGES_ASSIGNED_EMPTY: 'Ще немає зображень для варіації.',
+  RELATED_PRODUCTS_TITLE: 'Супутні товари',
+  RELATED_PRODUCTS_SUBTITLE:
+    'Показуються на сторінці товару в цьому порядку. Чернетки та архівні товари покупці не бачать.',
+  RELATED_PRODUCTS_SEARCH_LABEL: 'Додати за SKU',
+  RELATED_PRODUCTS_SEARCH_PLACEHOLDER: 'Пошук за SKU...',
+  RELATED_PRODUCTS_SEARCH_LOADING: 'Пошук товарів...',
+  RELATED_PRODUCTS_SEARCH_EMPTY: 'Товари з таким SKU не знайдено.',
+  RELATED_PRODUCTS_LOADING: 'Завантаження супутніх товарів...',
+  RELATED_PRODUCTS_EMPTY: 'Ще немає супутніх товарів.',
+  RELATED_PRODUCTS_LIMIT_REACHED: `Досягнуто максимум — ${PRODUCT_FORM_RELATED_PRODUCTS_MAX} товарів. Видаліть один, щоб додати інший.`,
+  RELATED_PRODUCTS_NO_SKU: 'Без SKU',
+  RELATED_PRODUCTS_ADD_LABEL: 'Додати супутній товар',
+  RELATED_PRODUCTS_MOVE_UP_LABEL: 'Перемістити вище',
+  RELATED_PRODUCTS_MOVE_DOWN_LABEL: 'Перемістити нижче',
+  RELATED_PRODUCTS_REMOVE_LABEL: 'Видалити супутній товар',
 };
 
 export const PRODUCT_FORM_FIELD_IDS: ProductFormFieldIds = {
@@ -167,6 +185,9 @@ export const PRODUCT_FORM_TOAST_TEXTS = {
   TAG_UNASSIGN_SUCCESS_TITLE: 'Тег відв’язано',
   IMAGES_ASSIGN_SUCCESS_TITLE: 'Зображення збережено',
   VARIATION_SAVE_SUCCESS_TITLE: 'Варіацію збережено',
+  RELATED_PRODUCT_ADD_SUCCESS_TITLE: 'Супутній товар додано',
+  RELATED_PRODUCT_REMOVE_SUCCESS_TITLE: 'Супутній товар видалено',
+  RELATED_PRODUCTS_SORT_SUCCESS_TITLE: 'Порядок супутніх товарів збережено',
 } as const;
 
 export const PRODUCT_FORM_SERVICE_NOT_CONFIGURED_ERROR =
@@ -197,6 +218,20 @@ export const PRODUCT_FORM_IMAGE_ICONS = {
   REMOVE: 'delete',
 } as const;
 export const PRODUCT_FORM_VARIATION_REMOVE_ICON = 'delete';
+export const PRODUCT_FORM_RELATED_PRODUCTS_ICONS = {
+  SECTION: 'link',
+  SEARCH: 'search',
+  ADD: 'add',
+  NO_IMAGE: 'inventory_2',
+  MOVE_UP: 'keyboard_arrow_up',
+  MOVE_DOWN: 'keyboard_arrow_down',
+  REMOVE: 'delete',
+} as const;
+export const PRODUCT_FORM_RELATED_PRODUCTS_SEARCH_ID = 'related-products-search';
+/** Key of the debounced SKU search of the related products section. */
+export const PRODUCT_FORM_RELATED_PRODUCTS_SEARCH_KEY = 'related-products-search';
+/** Scope of the disabled related products query (no product yet). */
+export const PRODUCT_FORM_RELATED_PRODUCTS_QUERY_SCOPE = 'related-products';
 /** Prefixes of the per-variation field ids; the variation local id is appended. */
 export const PRODUCT_FORM_VARIATION_FIELD_ID_PREFIXES = {
   TITLE: 'variation-title-',

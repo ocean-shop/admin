@@ -1,0 +1,107 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.related-products-counter {
+  @apply inline-flex h-6 items-center rounded-full bg-surface-container px-2.5 text-caption font-medium text-on-surface-variant tabular-nums;
+}
+
+.related-products-counter-full {
+  @apply bg-warning-container text-on-warning-container;
+}
+
+.related-products-subtitle {
+  @apply m-0 mb-3 text-caption text-on-surface-variant;
+}
+
+.related-products-limit {
+  @apply m-0 mt-2 rounded-md border border-warning-outline bg-warning-container px-3 py-2 text-body-sm text-on-warning-container;
+}
+
+/* Search results */
+
+.related-products-results {
+  @apply mt-1 flex max-h-72 flex-col overflow-y-auto rounded-lg border border-outline-variant bg-surface-container-lowest p-1 shadow-md;
+}
+
+.related-products-result {
+  @apply flex w-full shrink-0 items-center gap-3 rounded-sm px-2 py-1.5 text-left transition-ui hover:bg-surface-container-low;
+}
+
+.related-products-result:hover .related-products-add-icon {
+  @apply bg-primary text-on-primary;
+}
+
+.related-products-add-icon {
+  @apply inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[18px] text-primary transition-ui;
+}
+
+.related-products-state {
+  @apply m-0 px-3 py-2 text-body-sm text-on-surface-variant;
+}
+
+/* Shared row parts */
+
+.related-products-thumb {
+  @apply size-avatar shrink-0 rounded-sm border border-surface-dim bg-surface-container object-cover;
+}
+
+.related-products-thumb-empty {
+  @apply inline-flex items-center justify-center text-outline;
+}
+
+.related-products-thumb-empty .material-symbols-outlined {
+  @apply text-[20px];
+}
+
+.related-products-meta {
+  @apply flex min-w-0 flex-1 flex-col items-start gap-0.5;
+}
+
+.related-products-name {
+  @apply w-full truncate text-label text-on-surface;
+}
+
+.related-products-sku {
+  @apply w-full truncate font-mono text-caption text-on-surface-variant;
+}
+
+.related-products-status {
+  @apply mt-0.5;
+}
+
+/* Assigned list */
+
+.related-products-empty {
+  @apply m-0 mt-4 rounded-md border border-dashed border-outline-variant bg-surface-container-low px-3 py-4 text-center text-body-sm text-on-surface-variant;
+}
+
+.related-products-list {
+  @apply m-0 mt-4 flex list-none flex-col gap-2 p-0 transition-opacity aria-busy:opacity-60;
+}
+
+.related-products-row {
+  @apply flex items-center gap-2 rounded-md border border-outline-variant bg-surface-container-lowest p-2;
+}
+
+.related-products-position {
+  @apply w-4 shrink-0 text-center text-caption font-medium text-outline tabular-nums;
+}
+
+.related-products-actions {
+  @apply flex shrink-0 items-center;
+}
+
+.related-products-actions button {
+  @apply inline-flex size-8 items-center justify-center rounded-sm text-on-surface-variant transition-ui hover:bg-on-surface-variant/10 hover:text-on-surface disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent;
+}
+
+.related-products-actions .related-products-remove {
+  @apply hover:bg-error/10 hover:text-error;
+}
+
+.related-products-action-icon {
+  @apply text-[18px];
+}

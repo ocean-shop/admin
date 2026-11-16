@@ -4,6 +4,8 @@ import { lastValueFrom } from 'rxjs';
 import { SHOP_QUERY_KEYS } from '../../../../constants/shop-query-keys.constants';
 import { AttributeApiItem } from '../../../../pages/attributes/models/attribute.model';
 import { AttributesService } from '../../../../pages/attributes/services/attributes/attributes.service';
+import { ProductApiItem } from '../../../../pages/products/models/product.model';
+import { ProductsService } from '../../../../pages/products/services/products/products.service';
 import { TagApiItem } from '../../../../pages/tags/models/tag.model';
 import { TagsService } from '../../../../pages/tags/services/tags/tags.service';
 import {
@@ -11,11 +13,12 @@ import {
   PRODUCT_FORM_SEARCH_QUERY_PAGE,
 } from '../../constants/product-form.constants';
 
-/** Cached name search used by the editor's tag / attribute pickers. */
+/** Cached search used by the editor's tag / attribute / related product pickers. */
 @Injectable({ providedIn: 'root' })
 export class ProductFormSearchService {
   private readonly attributesService = inject(AttributesService);
   private readonly tagsService = inject(TagsService);
+  private readonly productsService = inject(ProductsService);
   private readonly queryClient = injectQueryClient();
 
   async searchAttributes(shopId: string, name: string): Promise<AttributeApiItem[]> {
@@ -45,6 +48,23 @@ export class ProductFormSearchService {
             limit: PRODUCT_FORM_SEARCH_QUERY_LIMIT,
             shopId,
             name,
+          }),
+        ),
+    });
+
+    return response.items;
+  }
+
+  async searchProductsBySku(shopId: string, sku: string): Promise<ProductApiItem[]> {
+    const response = await this.queryClient.fetchQuery({
+      queryKey: SHOP_QUERY_KEYS.productsSkuSearch(shopId, sku),
+      queryFn: () =>
+        lastValueFrom(
+          this.productsService.getProducts({
+            page: PRODUCT_FORM_SEARCH_QUERY_PAGE,
+            limit: PRODUCT_FORM_SEARCH_QUERY_LIMIT,
+            shopId,
+            sku,
           }),
         ),
     });

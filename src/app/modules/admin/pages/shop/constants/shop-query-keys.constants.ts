@@ -18,6 +18,10 @@ export const SHOP_QUERY_KEYS = {
     categoryIds: string[],
   ) => ['shop', shopId, 'products', page, limit, sort, name, sku, ...categoryIds] as const,
   productById: (productId: string) => ['shop', 'products', productId] as const,
+  /** Nested under `productById`, so refetching the product refetches its related list too. */
+  relatedProducts: (productId: string) => ['shop', 'products', productId, 'related'] as const,
+  productsSkuSearch: (shopId: string, sku: string) =>
+    ['shop', shopId, 'products', 'search', 'sku', sku] as const,
   categories: (shopId: string) => ['shop', shopId, 'categories'] as const,
   categoryById: (categoryId: string) => ['shop', 'categories', 'detail', categoryId] as const,
   attributesScope: (shopId: string) => ['shop', shopId, 'attributes'] as const,

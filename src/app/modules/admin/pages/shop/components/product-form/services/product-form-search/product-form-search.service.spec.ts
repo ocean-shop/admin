@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
 import { AttributesService } from '../../../../pages/attributes/services/attributes/attributes.service';
+import { ProductsService } from '../../../../pages/products/services/products/products.service';
 import { TagsService } from '../../../../pages/tags/services/tags/tags.service';
 import {
   PRODUCT_FORM_SEARCH_QUERY_LIMIT,
@@ -14,6 +15,7 @@ describe('ProductFormSearchService', () => {
   let service: ProductFormSearchService;
   let getAttributes: ReturnType<typeof vi.fn>;
   let getTags: ReturnType<typeof vi.fn>;
+  let getProducts: ReturnType<typeof vi.fn>;
 
   const buildPage = <T>(items: T[]) => ({
     items,
@@ -26,6 +28,7 @@ describe('ProductFormSearchService', () => {
   beforeEach(() => {
     getAttributes = vi.fn().mockReturnValue(of(buildPage([{ id: 'a1', name: 'Color' }])));
     getTags = vi.fn().mockReturnValue(of(buildPage([{ id: 't1', name: 'Linen' }])));
+    getProducts = vi.fn().mockReturnValue(of(buildPage([{ id: 'p1', sku: 'SKU-1' }])));
 
     TestBed.configureTestingModule({
       providers: [
@@ -33,6 +36,7 @@ describe('ProductFormSearchService', () => {
         ...provideTestQueryClient(),
         { provide: AttributesService, useValue: { getAttributes } },
         { provide: TagsService, useValue: { getTags } },
+        { provide: ProductsService, useValue: { getProducts } },
       ],
     });
 
@@ -60,6 +64,18 @@ describe('ProductFormSearchService', () => {
       limit: PRODUCT_FORM_SEARCH_QUERY_LIMIT,
       shopId: 'shop-1',
       name: 'lin',
+    });
+  });
+
+  it('searches products by sku and returns the items', async () => {
+    await expect(service.searchProductsBySku('shop-1', 'SKU')).resolves.toEqual([
+      { id: 'p1', sku: 'SKU-1' },
+    ]);
+    expect(getProducts).toHaveBeenCalledWith({
+      page: PRODUCT_FORM_SEARCH_QUERY_PAGE,
+      limit: PRODUCT_FORM_SEARCH_QUERY_LIMIT,
+      shopId: 'shop-1',
+      sku: 'SKU',
     });
   });
 });
