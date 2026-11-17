@@ -1,0 +1,21 @@
+@reference "../../../../../../../styles.scss";
+
+.quick-orders-card {
+  @apply overflow-hidden rounded-lg border border-outline-variant bg-surface-container-lowest shadow-xs;
+}
+
+.quick-orders-tabs {
+  @apply flex gap-1 overflow-x-auto border-b border-outline-variant px-3 pt-1;
+}
+
+.quick-orders-tab {
+  @apply -mb-px inline-flex h-12 shrink-0 items-center gap-2 border-b-2 border-transparent px-3 text-label whitespace-nowrap text-on-surface-variant transition-ui hover:text-on-surface focus-visible:focus-ring;
+}
+
+.quick-orders-tab-active {
+  @apply border-primary text-primary hover:text-primary;
+}
+
+.quick-orders-pagination {
+  @apply w-full;
+}

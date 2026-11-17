@@ -26,6 +26,7 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
   { icon: 'sell', label: 'Теги', route: '/admin/shop/:shopId/tags' },
   { icon: 'inventory_2', label: 'Продукти', route: '/admin/shop/:shopId/products' },
   { icon: 'receipt_long', label: 'Замовлення', route: '/admin/shop/:shopId/orders' },
+  { icon: 'bolt', label: 'Швидкі замовлення', route: '/admin/shop/:shopId/quick-orders' },
   { icon: 'group', label: 'Користувачі', route: '/admin/shop/:shopId/users' },
 ];
 

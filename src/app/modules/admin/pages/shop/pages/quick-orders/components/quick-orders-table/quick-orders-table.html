@@ -1,0 +1,114 @@
+@if (loading()) {
+<div class="quick-orders-loading" role="status">
+  <span class="quick-orders-loading-bar" aria-hidden="true"></span>
+  <p class="quick-orders-state">{{ textData.TABLE_LOADING_TEXT }}</p>
+</div>
+} @else if (orders().length === 0) {
+<div class="quick-orders-empty">
+  <span class="quick-orders-empty-icon" aria-hidden="true">
+    <span class="material-symbols-outlined">{{ icons.PHONE }}</span>
+  </span>
+  <p class="quick-orders-state">{{ textData.EMPTY_STATE }}</p>
+</div>
+} @else {
+<div class="quick-orders-scroll">
+  <table class="quick-orders-table">
+    <thead>
+      <tr>
+        <th class="quick-orders-head-cell" scope="col">{{ textData.TABLE_CREATED_AT_HEADER }}</th>
+        <th class="quick-orders-head-cell" scope="col">{{ textData.TABLE_NAME_HEADER }}</th>
+        <th class="quick-orders-head-cell" scope="col">{{ textData.TABLE_PHONE_HEADER }}</th>
+        <th class="quick-orders-head-cell" scope="col">{{ textData.TABLE_PRODUCT_HEADER }}</th>
+        <th class="quick-orders-head-cell" scope="col">{{ textData.TABLE_STATUS_HEADER }}</th>
+        <th class="quick-orders-head-cell quick-orders-actions-head" scope="col">
+          {{ textData.TABLE_ACTIONS_HEADER }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (order of orders(); track order.id) { @let isPending = pendingOrderId() === order.id;
+      @let isLocked = !!pendingOrderId();
+      <tr class="quick-orders-row">
+        <td class="quick-orders-cell">
+          <span class="quick-orders-date">{{ order.createdDate }}</span>
+          <span class="quick-orders-time">{{ order.createdTime }}</span>
+        </td>
+        <td class="quick-orders-cell quick-orders-name">{{ order.name }}</td>
+        <td class="quick-orders-cell">
+          @if (order.phoneHref) {
+          <a
+            class="quick-orders-phone"
+            [href]="order.phoneHref"
+            [attr.aria-label]="textData.CALL_LABEL + ' ' + order.phone"
+          >
+            <span class="material-symbols-outlined quick-orders-phone-icon" aria-hidden="true"
+              >{{ icons.PHONE }}</span
+            >
+            {{ order.phone }}
+          </a>
+          } @else { {{ order.phone }} }
+        </td>
+        <td class="quick-orders-cell">
+          <span class="quick-orders-product">
+            <span class="quick-orders-thumb" aria-hidden="true">
+              <span class="material-symbols-outlined">{{ icons.PRODUCT }}</span>
+            </span>
+            @if (order.productId) {
+            <button
+              class="quick-orders-product-link"
+              type="button"
+              [attr.title]="textData.OPEN_PRODUCT_LABEL"
+              (click)="onOpenProduct(order)"
+            >
+              {{ order.productName }}
+            </button>
+            } @else {
+            <span>{{ order.productName }}</span>
+            }
+          </span>
+        </td>
+        <td class="quick-orders-cell">
+          <app-badge [label]="order.statusLabel" [tone]="order.statusTone" />
+        </td>
+        <td class="quick-orders-cell quick-orders-actions-cell">
+          <div class="quick-orders-actions">
+            @if (order.status === statuses.New) {
+            <app-button
+              size="sm"
+              [fullWidth]="false"
+              [iconLeading]="true"
+              [icon]="icons.PROCESS"
+              [label]="textData.PROCESS_LABEL"
+              [loading]="isPending"
+              [disabled]="isLocked"
+              (click)="onStatusChange(order, statuses.Processed)"
+            />
+            <app-button
+              size="sm"
+              variant="outline"
+              [fullWidth]="false"
+              [label]="textData.CANCEL_LABEL"
+              [disabled]="isLocked"
+              (click)="onStatusChange(order, statuses.Cancelled)"
+            />
+            } @else {
+            <app-button
+              size="sm"
+              variant="outline"
+              [fullWidth]="false"
+              [iconLeading]="true"
+              [icon]="icons.RESTORE"
+              [label]="textData.RESTORE_LABEL"
+              [loading]="isPending"
+              [disabled]="isLocked"
+              (click)="onStatusChange(order, statuses.New)"
+            />
+            }
+          </div>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}

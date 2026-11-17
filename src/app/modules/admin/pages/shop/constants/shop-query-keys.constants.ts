@@ -1,6 +1,7 @@
 import { ProductSortValue } from '../pages/products/models/product-sort-value.type';
 import { UserSortValue } from '../pages/users/models/user-sort-value.type';
 import { OrderSortValue } from '../pages/orders/models/order-sort-value.type';
+import { QuickOrderTab } from '../pages/quick-orders/models/quick-order-tab.type';
 
 /** Placeholder key segment for disabled queries that are waiting for a route param. */
 export const SHOP_QUERY_MISSING_ID = 'missing-id';
@@ -42,6 +43,12 @@ export const SHOP_QUERY_KEYS = {
     orderNumber: string,
   ) => ['shop', shopId, 'orders', page, limit, sort, orderNumber] as const,
   orderById: (orderId: string) => ['shop', 'orders', orderId] as const,
+  quickOrdersScope: (shopId: string) => ['shop', shopId, 'quick-orders'] as const,
+  quickOrders: (shopId: string, page: number, limit: number, tab: QuickOrderTab, search: string) =>
+    ['shop', shopId, 'quick-orders', 'list', page, limit, tab, search] as const,
+  /** Under `quickOrdersScope`, so a status change refreshes the tab counters too. */
+  quickOrderCounts: (shopId: string, search: string) =>
+    ['shop', shopId, 'quick-orders', 'counts', search] as const,
   users: (
     shopId: string,
     page: number,

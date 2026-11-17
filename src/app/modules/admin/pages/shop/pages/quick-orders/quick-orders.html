@@ -1,0 +1,72 @@
+<app-page-layout>
+  <app-breadcrumbs [items]="breadcrumbItems()" />
+
+  <app-page-header [title]="textData.PAGE_TITLE" [description]="textData.PAGE_DESCRIPTION" />
+
+  @if (!isShopContextReady()) {
+  <app-state-message tone="warning" [message]="textData.SHOP_ID_REQUIRED_MESSAGE" />
+  }
+
+  <app-filter-bar (applied)="onApplyFilters()">
+    <app-filter-input
+      filterFields
+      [inputId]="searchFilterId"
+      [label]="textData.SEARCH_FILTER_LABEL"
+      [placeholder]="textData.SEARCH_FILTER_PLACEHOLDER"
+      [value]="searchInput()"
+      [disabled]="!isShopContextReady()"
+      (valueChange)="searchInput.set($event)"
+    />
+    <app-filter-actions
+      filterControls
+      [applyLabel]="textData.FILTER_APPLY_LABEL"
+      [resetLabel]="textData.FILTER_RESET_LABEL"
+      [applyDisabled]="isFilterDisabled()"
+      [resetDisabled]="isFilterDisabled()"
+      (cleared)="onResetFilters()"
+    />
+  </app-filter-bar>
+
+  @if (hasError()) {
+  <app-state-message [message]="textData.LOAD_ERROR_MESSAGE" />
+  }
+
+  <section class="quick-orders-card">
+    <div class="quick-orders-tabs" role="tablist" [attr.aria-label]="textData.TABS_LABEL">
+      @for (tab of tabs(); track tab.value) {
+      <button
+        class="quick-orders-tab"
+        type="button"
+        role="tab"
+        [class.quick-orders-tab-active]="activeTab() === tab.value"
+        [attr.aria-selected]="activeTab() === tab.value"
+        (click)="onTabSelect(tab.value)"
+      >
+        {{ tab.label }} @if (tab.countLabel) {
+        <app-badge [plain]="true" [label]="tab.countLabel" />
+        }
+      </button>
+      }
+    </div>
+
+    <app-quick-orders-table
+      [orders]="orders()"
+      [loading]="isLoading()"
+      [pendingOrderId]="pendingOrderId()"
+      (statusChange)="onStatusChange($event)"
+      (openProduct)="onOpenProduct($event)"
+    />
+  </section>
+
+  @if (totalItems() > 0) {
+  <app-pagination
+    class="quick-orders-pagination"
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems()"
+    [totalPages]="totalPages()"
+    [label]="textData.PAGINATION_LABEL"
+    (pageChange)="onPageChange($event)"
+  />
+  }
+</app-page-layout>

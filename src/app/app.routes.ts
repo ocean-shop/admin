@@ -71,6 +71,13 @@ export const routes: Routes = [
           import('./modules/admin/pages/shop/pages/orders/orders').then((m) => m.Orders),
       },
       {
+        path: 'shop/:shopId/quick-orders',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/quick-orders/quick-orders').then(
+            (m) => m.QuickOrders,
+          ),
+      },
+      {
         path: 'shop/:shopId/users',
         loadComponent: () =>
           import('./modules/admin/pages/shop/pages/users/users').then((m) => m.Users),
