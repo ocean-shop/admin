@@ -45,6 +45,31 @@ describe('Switch', () => {
     );
   });
 
+  it('has no aria-label and keeps the label after the toggle by default', () => {
+    expect(input().hasAttribute('aria-label')).toBe(false);
+    expect(element.querySelector('.admin-switch')?.classList).not.toContain(
+      'admin-switch-label-start',
+    );
+  });
+
+  it('applies aria-label and the start label position', async () => {
+    fixture.componentRef.setInput('ariaLabel', 'Доставка Укрпоштою');
+    fixture.componentRef.setInput('labelPosition', 'start');
+    await fixture.whenStable();
+
+    expect(input().getAttribute('aria-label')).toBe('Доставка Укрпоштою');
+    expect(element.querySelector('.admin-switch')?.classList).toContain('admin-switch-label-start');
+  });
+
+  it('applies aria-label to the signal form bound input', async () => {
+    const model = TestBed.runInInjectionContext(() => form(signal({ enabled: false })));
+    fixture.componentRef.setInput('control', model.enabled);
+    fixture.componentRef.setInput('ariaLabel', 'Вхід за телефоном');
+    await fixture.whenStable();
+
+    expect(input().getAttribute('aria-label')).toBe('Вхід за телефоном');
+  });
+
   it('emits checkedChange on toggle', () => {
     const emitSpy = vi.spyOn(fixture.componentInstance.checkedChange, 'emit');
 

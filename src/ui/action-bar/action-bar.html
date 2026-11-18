@@ -1,0 +1,16 @@
+<div class="action-bar">
+  <p
+    class="action-bar-status"
+    role="status"
+    [class.action-bar-status-success]="tone() === 'success'"
+    [class.action-bar-status-error]="tone() === 'error'"
+  >
+    @if (icon()) {
+    <span class="action-bar-icon material-symbols-outlined" aria-hidden="true">{{ icon() }}</span>
+    }
+    <span>{{ message() }}</span>
+  </p>
+  <div class="action-bar-actions">
+    <ng-content />
+  </div>
+</div>

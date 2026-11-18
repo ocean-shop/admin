@@ -1,0 +1,21 @@
+@reference "../../../../../../../styles.scss";
+
+.shop-settings-features {
+  @apply flex flex-col;
+}
+
+.shop-settings-layout {
+  @apply grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_theme(--spacing-aside)];
+}
+
+.shop-settings-colors {
+  @apply flex flex-col;
+}
+
+.shop-settings-color-group {
+  @apply m-0 pt-5 pb-1 text-overline text-on-surface-variant uppercase first:pt-0;
+}
+
+.shop-settings-aside {
+  @apply flex min-w-0 flex-col gap-6 lg:sticky lg:top-[calc(theme(--spacing-header)+32px)];
+}

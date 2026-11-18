@@ -1,0 +1,21 @@
+<div class="shop-feature">
+  <span class="shop-feature-icon material-symbols-outlined" aria-hidden="true"
+    >{{ option().icon }}</span
+  >
+  <div class="shop-feature-info">
+    <div class="shop-feature-heading">
+      <span class="shop-feature-title">{{ option().title }}</span>
+      <code class="shop-feature-code">{{ option().code }}</code>
+    </div>
+    <p class="shop-feature-description">{{ option().description }}</p>
+  </div>
+  <app-switch
+    class="shop-feature-switch"
+    labelPosition="start"
+    [class.shop-feature-switch-on]="isEnabled()"
+    [id]="switchId()"
+    [label]="stateLabel()"
+    [ariaLabel]="option().title"
+    [control]="control()"
+  />
+</div>

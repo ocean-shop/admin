@@ -52,4 +52,11 @@ export const SHOP_DETAIL_SECTIONS: ShopDetailSection[] = [
     description: 'Обробляйте заявки «Купити в один клік»: телефонуйте клієнтам і змінюйте статуси.',
     linkLabel: 'Перейти до швидких замовлень',
   },
+  {
+    segment: 'settings',
+    icon: 'settings',
+    title: 'Налаштування',
+    description: 'Вмикайте функції вітрини й налаштовуйте кольори, які бачать покупці.',
+    linkLabel: 'Перейти до налаштувань',
+  },
 ];

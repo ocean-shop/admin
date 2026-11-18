@@ -1,7 +1,20 @@
 <section class="section-card">
-  <h2 class="section-card-title">
-    <span>{{ title() }}</span>
-    <ng-content select="[sectionCardTitleAddon]" />
-  </h2>
+  <div class="section-card-head">
+    <div class="section-card-heading">
+      <h2 class="section-card-title">
+        @if (icon()) {
+        <span class="section-card-icon material-symbols-outlined" aria-hidden="true"
+          >{{ icon() }}</span
+        >
+        }
+        <span class="section-card-title-text">{{ title() }}</span>
+        <ng-content select="[sectionCardTitleAddon]" />
+      </h2>
+      @if (description()) {
+      <p class="section-card-description">{{ description() }}</p>
+      }
+    </div>
+    <ng-content select="[sectionCardActions]" />
+  </div>
   <ng-content />
 </section>

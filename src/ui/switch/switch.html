@@ -1,4 +1,9 @@
-<label class="admin-switch" [class.admin-switch-disabled]="disabled()" [attr.for]="inputId()">
+<label
+  class="admin-switch"
+  [class.admin-switch-disabled]="disabled()"
+  [class.admin-switch-label-start]="labelPosition() === 'start'"
+  [attr.for]="inputId()"
+>
   @if (control()) {
   <input
     class="admin-switch-input"
@@ -6,6 +11,7 @@
     type="checkbox"
     [id]="inputId()"
     [formField]="control()"
+    [attr.aria-label]="ariaLabel() || null"
     (change)="onChange($event)"
   />
   } @else {
@@ -16,6 +22,7 @@
     [id]="inputId()"
     [checked]="checked()"
     [disabled]="disabled()"
+    [attr.aria-label]="ariaLabel() || null"
     (change)="onChange($event)"
   />
   }

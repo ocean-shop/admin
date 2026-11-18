@@ -1,0 +1,20 @@
+<div class="shop-color-row">
+  <div class="shop-color-info">
+    <div class="shop-color-heading">
+      <span class="shop-color-name">{{ row().name }}</span>
+      <span class="shop-color-usage">{{ row().usageLabel }}</span>
+      @if (row().changed) {
+      <app-badge tone="primary" [plain]="true" [label]="textData.COLOR_CHANGED_BADGE" />
+      }
+    </div>
+    <p class="shop-color-description">{{ row().description }}</p>
+  </div>
+  <app-color-field
+    class="shop-color-field"
+    [id]="fieldId()"
+    [control]="control()"
+    [pickerLabel]="row().pickerLabel"
+    [hexLabel]="row().hexLabel"
+    [fallbackColor]="row().savedColor"
+  />
+</div>

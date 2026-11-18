@@ -1,0 +1,19 @@
+<app-section-card [title]="textData.CONTRAST_TITLE" [icon]="cardIcon">
+  <ul class="contrast-list">
+    @for (row of rows(); track row.label) {
+    <li class="contrast-row">
+      <span
+        class="contrast-sample"
+        aria-hidden="true"
+        [style.background-color]="row.background"
+        [style.color]="row.foreground"
+        >{{ textData.CONTRAST_SAMPLE }}</span
+      >
+      <span class="contrast-label">{{ row.label }}</span>
+      <span class="contrast-ratio">{{ row.ratioLabel }}</span>
+      <app-badge [label]="row.verdict" [tone]="row.tone" />
+    </li>
+    }
+  </ul>
+  <p class="contrast-note">{{ textData.CONTRAST_NOTE }}</p>
+</app-section-card>

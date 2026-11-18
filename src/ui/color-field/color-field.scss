@@ -1,0 +1,53 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.color-field {
+  @apply flex items-start gap-3;
+}
+
+.color-field-swatch {
+  @apply size-control-md shrink-0 cursor-pointer appearance-none overflow-hidden rounded-md border border-outline-variant bg-transparent p-0 transition-ui hover:border-outline focus-ring;
+
+  &::-webkit-color-swatch-wrapper {
+    @apply p-0;
+  }
+
+  &::-webkit-color-swatch {
+    @apply rounded-[9px] border-0;
+  }
+
+  &::-moz-color-swatch {
+    @apply rounded-[9px] border-0;
+  }
+}
+
+.color-field-hex {
+  @apply flex min-w-0 flex-1 flex-col gap-1;
+}
+
+.color-field-control {
+  @apply flex h-control-sm items-center rounded-md border border-outline-variant bg-surface-container-lowest transition-ui hover:border-outline;
+
+  &:focus-within {
+    @apply field-focus;
+  }
+}
+
+.color-field-input {
+  @apply h-full w-full min-w-0 rounded-md border-0 bg-transparent px-3 font-mono text-body-sm text-on-surface lowercase outline-none;
+}
+
+.color-field-invalid .color-field-control {
+  @apply border-error;
+
+  &:focus-within {
+    @apply field-focus-error;
+  }
+}
+
+.color-field-error {
+  @apply m-0 text-caption text-error;
+}

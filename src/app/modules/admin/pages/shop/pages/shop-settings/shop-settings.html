@@ -1,0 +1,76 @@
+<app-page-layout>
+  <app-breadcrumbs [items]="breadcrumbItems()" />
+
+  <app-page-header [title]="textData.PAGE_TITLE" [description]="textData.PAGE_DESCRIPTION" />
+
+  @if (!isShopContextReady()) {
+  <app-state-message tone="warning" [message]="textData.SHOP_ID_REQUIRED_MESSAGE" />
+  } @if (hasError()) {
+  <app-state-message [message]="textData.LOAD_ERROR_MESSAGE" />
+  } @if (isLoading()) {
+  <app-state-message [message]="textData.LOADING_MESSAGE" />
+  } @if (isReady()) {
+  <app-section-card
+    [title]="textData.FEATURES_TITLE"
+    [icon]="icons.FEATURES"
+    [description]="textData.FEATURES_DESCRIPTION"
+  >
+    <div class="shop-settings-features">
+      @for (option of featureOptions; track option.key) {
+      <app-shop-feature-toggle [option]="option" [control]="settingsForm.features[option.key]" />
+      }
+    </div>
+  </app-section-card>
+
+  <div class="shop-settings-layout">
+    <app-section-card
+      [title]="textData.COLORS_TITLE"
+      [icon]="icons.COLORS"
+      [description]="textData.COLORS_DESCRIPTION"
+    >
+      <app-button
+        sectionCardActions
+        variant="ghost"
+        size="sm"
+        [label]="textData.COLORS_RESET_LABEL"
+        [icon]="icons.RESET"
+        [iconLeading]="true"
+        [fullWidth]="false"
+        [disabled]="isColorSchemeDefault()"
+        (click)="onResetColors()"
+      />
+      <div class="shop-settings-colors">
+        @for (group of colorGroups(); track group.label) {
+        <h3 class="shop-settings-color-group">{{ group.label }}</h3>
+        @for (row of group.rows; track row.token) {
+        <app-shop-color-row [row]="row" [control]="settingsForm.colors[row.token]" />
+        } }
+      </div>
+    </app-section-card>
+
+    <aside class="shop-settings-aside">
+      <app-shop-storefront-preview [palette]="effectiveColors()" />
+      <app-shop-color-contrast [palette]="effectiveColors()" />
+    </aside>
+  </div>
+
+  <app-action-bar [message]="status().message" [icon]="status().icon" [tone]="status().tone">
+    <app-button
+      variant="outline"
+      [label]="textData.DISCARD_LABEL"
+      [fullWidth]="false"
+      [disabled]="!isDirty() || isSaving()"
+      (click)="onDiscard()"
+    />
+    <app-button
+      [label]="textData.SAVE_LABEL"
+      [icon]="icons.SAVE"
+      [iconLeading]="true"
+      [fullWidth]="false"
+      [loading]="isSaving()"
+      [disabled]="!canSave()"
+      (click)="onSave()"
+    />
+  </app-action-bar>
+  }
+</app-page-layout>

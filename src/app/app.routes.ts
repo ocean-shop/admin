@@ -83,6 +83,13 @@ export const routes: Routes = [
           import('./modules/admin/pages/shop/pages/users/users').then((m) => m.Users),
       },
       {
+        path: 'shop/:shopId/settings',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/shop-settings/shop-settings').then(
+            (m) => m.ShopSettings,
+          ),
+      },
+      {
         path: 'shop/:shopId/orders/:orderId',
         loadComponent: () =>
           import('./modules/admin/pages/shop/pages/orders-detail/orders-detail').then(

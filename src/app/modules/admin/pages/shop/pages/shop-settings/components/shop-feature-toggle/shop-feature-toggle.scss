@@ -1,0 +1,41 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.shop-feature {
+  @apply -mx-3 flex flex-wrap items-center gap-4 rounded-md px-3 py-4 transition-ui hover:bg-primary/5 sm:flex-nowrap;
+}
+
+.shop-feature-icon {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary;
+}
+
+.shop-feature-info {
+  @apply min-w-0 flex-1;
+}
+
+.shop-feature-heading {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.shop-feature-title {
+  @apply text-title-sm text-on-surface;
+}
+
+.shop-feature-code {
+  @apply rounded-sm bg-surface-container px-1.5 font-mono text-[12px] leading-[18px] text-on-surface-variant;
+}
+
+.shop-feature-description {
+  @apply m-0 mt-0.5 text-body-sm text-on-surface-variant;
+}
+
+.shop-feature-switch {
+  @apply ml-auto shrink-0 text-label text-on-surface-variant;
+}
+
+.shop-feature-switch-on {
+  @apply text-primary;
+}

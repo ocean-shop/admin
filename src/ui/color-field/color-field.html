@@ -1,0 +1,27 @@
+<div class="color-field" [class.color-field-invalid]="!!errorMessage()">
+  <input
+    class="color-field-swatch"
+    type="color"
+    [value]="pickerValue()"
+    [attr.aria-label]="pickerLabel()"
+    (input)="onPick($event)"
+  />
+  <div class="color-field-hex">
+    <div class="color-field-control">
+      <input
+        class="color-field-input"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+        [id]="id()"
+        [formField]="control()"
+        [attr.aria-label]="hexLabel()"
+        [attr.aria-invalid]="!!errorMessage() || null"
+        [attr.aria-describedby]="errorMessage() ? errorId() : null"
+      />
+    </div>
+    @if (errorMessage()) {
+    <p class="color-field-error" role="alert" [id]="errorId()">{{ errorMessage() }}</p>
+    }
+  </div>
+</div>

@@ -59,6 +59,7 @@ export const SHOP_QUERY_KEYS = {
   ) => ['shop', shopId, 'users', page, limit, sort, email, phoneNumber] as const,
   userById: (userId: string) => ['shop', 'users', userId] as const,
   statistic: (shopId: string) => ['shop', shopId, 'statistic'] as const,
+  settings: (shopId: string) => ['shop', shopId, 'settings'] as const,
   /** Key for a query that stays disabled until its id is known. */
   disabled: (scope: string) => ['shop', scope, SHOP_QUERY_MISSING_ID] as const,
 };

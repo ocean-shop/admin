@@ -1,0 +1,29 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply sticky bottom-4 z-20 block;
+}
+
+.action-bar {
+  @apply flex flex-col items-stretch justify-between gap-3 rounded-lg border border-outline-variant bg-surface-container-lowest px-5 py-3 shadow-md sm:flex-row sm:items-center;
+}
+
+.action-bar-status {
+  @apply m-0 flex items-center gap-2 text-body-sm text-on-surface;
+}
+
+.action-bar-status-success {
+  @apply text-primary;
+}
+
+.action-bar-status-error {
+  @apply text-error;
+}
+
+.action-bar-icon {
+  @apply text-[18px];
+}
+
+.action-bar-actions {
+  @apply flex flex-wrap justify-end gap-3;
+}
