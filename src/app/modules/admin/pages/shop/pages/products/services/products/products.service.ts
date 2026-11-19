@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AssignProductImagesPayload } from '../../models/assign-product-images-payload.model';
+import { AssignRelatedProductsPayload } from '../../models/assign-related-products-payload.model';
 import { ChangeProductImageSortPayload } from '../../models/change-product-image-sort-payload.model';
 import { CreateProductVariationPayload } from '../../models/create-product-variation-payload.model';
 import { CreateProductPayload } from '../../models/create-product-payload.model';
@@ -122,6 +123,25 @@ export class ProductsService {
     return this.http.delete<void>(`${API_URL}/catalog/images/${imageId}`, {
       withCredentials: true,
     });
+  }
+
+  getRelatedProducts(productId: string): Observable<ProductApiItem[]> {
+    return this.http.get<ProductApiItem[]>(`${API_URL}/catalog/products/${productId}/related`, {
+      withCredentials: true,
+    });
+  }
+
+  assignRelatedProducts(
+    productId: string,
+    payload: AssignRelatedProductsPayload,
+  ): Observable<ProductApiItem[]> {
+    return this.http.put<ProductApiItem[]>(
+      `${API_URL}/catalog/products/${productId}/related`,
+      payload,
+      {
+        withCredentials: true,
+      },
+    );
   }
 
   deleteProduct(id: string): Observable<void> {

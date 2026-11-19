@@ -1,0 +1,70 @@
+<app-section-card [title]="textData.PREVIEW_TITLE" [icon]="cardIcon">
+  <div class="preview" aria-hidden="true" [style]="cssVars()">
+    <div class="preview-header">
+      <span class="preview-brand">{{ previewTexts.BRAND }}</span>
+      <span class="preview-header-icons">
+        <span class="preview-icon material-symbols-outlined">{{ previewIcons.SEARCH }}</span>
+        <span class="preview-icon material-symbols-outlined">{{ previewIcons.BAG }}</span>
+      </span>
+    </div>
+
+    <div class="preview-breadcrumbs">
+      <span>{{ previewTexts.BREADCRUMB_HOME }}</span>
+      <span>{{ previewTexts.BREADCRUMB_SEPARATOR }}</span>
+      <span>{{ previewTexts.BREADCRUMB_CATEGORY }}</span>
+    </div>
+
+    <div class="preview-product">
+      <div class="preview-product-image">
+        <span class="material-symbols-outlined">{{ previewIcons.PRODUCT }}</span>
+        <span class="preview-product-badge">{{ previewTexts.BADGE }}</span>
+      </div>
+      <div class="preview-product-body">
+        <span class="preview-product-name">{{ previewTexts.PRODUCT_NAME }}</span>
+        <span class="preview-product-specs">{{ previewTexts.PRODUCT_SPECS }}</span>
+        <span class="preview-product-meta">{{ previewTexts.PRODUCT_META }}</span>
+        <span class="preview-product-price">{{ previewTexts.PRICE }}</span>
+        <div class="preview-product-actions">
+          <span class="preview-btn preview-btn-primary">{{ previewTexts.BUY }}</span>
+          <span class="preview-btn preview-btn-soft">{{ previewTexts.ONE_CLICK }}</span>
+        </div>
+        <span class="preview-btn preview-btn-outline">{{ previewTexts.COMPARE }}</span>
+      </div>
+    </div>
+
+    <div class="preview-chips">
+      <span class="preview-chip">{{ previewTexts.CHIP_BRAND }}</span>
+      <span class="preview-chip">{{ previewTexts.CHIP_MEMORY }}</span>
+    </div>
+
+    <div class="preview-field">
+      <span class="preview-field-label">{{ previewTexts.PHONE_LABEL }}</span>
+      <span class="preview-field-input">{{ previewTexts.PHONE_PLACEHOLDER }}</span>
+      <span class="preview-field-error">
+        <span class="preview-icon preview-error-icon material-symbols-outlined"
+          >{{ previewIcons.ERROR }}</span
+        >
+        {{ previewTexts.PHONE_ERROR }}
+      </span>
+    </div>
+
+    <div class="preview-total">
+      <span class="preview-total-label">{{ previewTexts.CART_TOTAL_LABEL }}</span>
+      <span class="preview-total-value">{{ previewTexts.PRICE }}</span>
+    </div>
+
+    <div class="preview-loyalty">
+      <div class="preview-loyalty-title">{{ previewTexts.LOYALTY_TITLE }}</div>
+      <div class="preview-loyalty-text">{{ previewTexts.LOYALTY_TEXT }}</div>
+    </div>
+
+    <div class="preview-toast">
+      <span class="preview-icon preview-error-icon material-symbols-outlined"
+        >{{ previewIcons.TOAST_ERROR }}</span
+      >
+      {{ previewTexts.TOAST_ERROR }}
+    </div>
+
+    <div class="preview-footer">{{ previewTexts.FOOTER }}</div>
+  </div>
+</app-section-card>

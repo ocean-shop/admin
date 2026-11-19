@@ -1,0 +1,143 @@
+@reference "../../../../../../../../../styles.scss";
+
+/* Colors come from the `--preview-*` custom properties set on `.preview` from the edited palette. */
+
+:host {
+  @apply block;
+}
+
+.preview {
+  @apply overflow-hidden rounded-md border border-(--preview-border-soft) bg-(--preview-background) text-[13px] leading-[18px] text-(--preview-foreground);
+}
+
+.preview-header {
+  @apply flex items-center justify-between border-b border-(--preview-border-soft) px-3.5 py-2.5;
+}
+
+.preview-brand {
+  @apply text-[15px] font-bold text-(--preview-accent);
+}
+
+.preview-header-icons {
+  @apply flex gap-2.5;
+}
+
+.preview-icon {
+  @apply text-[18px];
+}
+
+.preview-breadcrumbs {
+  @apply flex gap-1.5 px-3.5 pt-2.5 text-[12px] text-(--preview-muted-light);
+}
+
+.preview-product {
+  @apply mx-3.5 my-2.5 overflow-hidden rounded-md border border-(--preview-border-soft) bg-(--preview-background);
+}
+
+.preview-product-image {
+  @apply relative flex h-[110px] items-center justify-center bg-(--preview-surface-strong) text-(--preview-muted);
+}
+
+.preview-product-badge {
+  @apply absolute top-2 left-2 rounded-full bg-(--preview-accent-soft) px-2 py-0.5 text-[11px] font-semibold text-(--preview-accent-dark);
+}
+
+.preview-product-body {
+  @apply flex flex-col gap-0.5 px-3 pt-2.5 pb-3;
+}
+
+.preview-product-name {
+  @apply text-[14px] font-semibold text-(--preview-foreground);
+}
+
+.preview-product-specs {
+  @apply text-(--preview-muted);
+}
+
+.preview-product-meta {
+  @apply text-[12px] text-(--preview-muted-light);
+}
+
+.preview-product-price {
+  @apply mt-1 text-[17px] font-bold text-(--preview-accent);
+}
+
+.preview-product-actions {
+  @apply mt-2 flex gap-1.5;
+}
+
+.preview-btn {
+  @apply flex-1 rounded-sm py-[7px] text-center font-semibold;
+}
+
+.preview-btn-primary {
+  @apply bg-(--preview-accent) text-white;
+}
+
+.preview-btn-soft {
+  @apply bg-(--preview-accent-soft) text-(--preview-accent-dark);
+}
+
+.preview-btn-outline {
+  @apply mt-1.5 border border-(--preview-footer-border) bg-(--preview-background) py-1.5 font-medium text-(--preview-foreground);
+}
+
+.preview-chips {
+  @apply flex gap-1.5 px-3.5;
+}
+
+.preview-chip {
+  @apply rounded-full bg-(--preview-surface) px-2.5 py-[3px] text-[12px] text-(--preview-foreground);
+}
+
+.preview-field {
+  @apply mx-3.5 mt-2.5 flex flex-col gap-1;
+}
+
+.preview-field-label {
+  @apply text-[12px] font-medium text-(--preview-muted);
+}
+
+.preview-field-input {
+  @apply rounded-sm border border-(--preview-footer-border) bg-(--preview-background) px-2.5 py-[7px] text-(--preview-muted-light);
+}
+
+.preview-field-error {
+  @apply flex items-center gap-1 text-[12px] text-(--preview-error-dark);
+}
+
+.preview-error-icon {
+  @apply text-(--preview-error);
+}
+
+.preview-total {
+  @apply mx-3.5 mt-2.5 flex justify-between rounded-md bg-(--preview-surface-soft) px-3 py-2.5 text-(--preview-foreground);
+}
+
+.preview-total-label {
+  @apply text-(--preview-muted);
+}
+
+.preview-total-value {
+  @apply font-bold;
+}
+
+.preview-loyalty {
+  @apply mx-3.5 mt-2.5 rounded-md bg-(--preview-accent) p-3;
+}
+
+.preview-loyalty-title {
+  @apply text-[14px] font-bold text-(--preview-accent-highlight);
+}
+
+.preview-loyalty-text {
+  @apply mt-0.5 text-[12px] text-(--preview-on-accent-muted);
+}
+
+.preview-toast {
+  @apply mx-3.5 mt-2.5 flex items-center gap-1.5 rounded-sm border border-(--preview-error-border) bg-(--preview-background) px-2.5 py-2 text-[12px] text-(--preview-error-dark);
+}
+
+.preview-footer {
+  @apply mt-3 border-t border-(--preview-footer-border) bg-(--preview-footer) px-3.5 py-2.5 text-[12px] text-(--preview-muted);
+}

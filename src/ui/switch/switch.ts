@@ -1,5 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { FormField } from '@angular/forms/signals';
+import { SwitchLabelPosition } from './models/switch-label-position.type';
 
 /** On/off toggle for instant boolean states ("Доступна", "Не індексувати"). Same API as Checkbox. */
 @Component({
@@ -12,6 +13,9 @@ export class Switch {
   public readonly id = input<string>('');
   public readonly label = input.required<string>();
   public readonly description = input<string>('');
+  /** Accessible name when the visible label is only a state ("Увімкнено"). */
+  public readonly ariaLabel = input<string>('');
+  public readonly labelPosition = input<SwitchLabelPosition>('end');
   public readonly control = input<any>();
   public readonly checked = input<boolean>(false);
   public readonly disabled = input<boolean>(false);

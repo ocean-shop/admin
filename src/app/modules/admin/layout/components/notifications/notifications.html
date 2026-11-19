@@ -1,0 +1,99 @@
+<button
+  class="notifications-bell"
+  id="notifications-toggle"
+  type="button"
+  aria-haspopup="dialog"
+  [class.notifications-bell-active]="isOpen()"
+  [attr.aria-label]="bellLabel()"
+  [attr.aria-expanded]="isOpen()"
+  (click)="toggle()"
+>
+  <span class="material-symbols-outlined notifications-bell-icon" aria-hidden="true"
+    >{{ icons.BELL }}</span
+  >
+  @if (hasUnread()) {
+  <span class="notifications-bell-count" aria-hidden="true">{{ unreadCount() }}</span>
+  }
+</button>
+
+@if (isOpen()) {
+<section class="notifications-panel" role="dialog" [attr.aria-label]="textData.PANEL_TITLE">
+  <div class="notifications-head">
+    <div class="notifications-heading">
+      <h2 class="notifications-title">{{ textData.PANEL_TITLE }}</h2>
+      @if (hasUnread()) {
+      <app-badge tone="primary" [plain]="true" [label]="unreadBadgeLabel()" />
+      }
+    </div>
+    <app-button
+      class="notifications-read-all"
+      variant="ghost"
+      size="sm"
+      [fullWidth]="false"
+      [iconLeading]="true"
+      [icon]="icons.READ_ALL"
+      [label]="textData.READ_ALL"
+      [disabled]="!hasUnread()"
+      [loading]="readAllMutation.isPending()"
+      (click)="readAll()"
+    />
+  </div>
+
+  <div class="notifications-tabs" role="tablist" [attr.aria-label]="textData.TABS_LABEL">
+    @for (tab of tabs; track tab.value) {
+    <button
+      class="notifications-tab"
+      type="button"
+      role="tab"
+      [class.notifications-tab-active]="activeTab() === tab.value"
+      [attr.aria-selected]="activeTab() === tab.value"
+      (click)="selectTab(tab.value)"
+    >
+      {{ tab.label }} @if (tab.value === 'unread' && hasUnread()) {
+      <app-badge [plain]="true" [label]="unreadCountLabel()" />
+      }
+    </button>
+    }
+  </div>
+
+  @if (isLoading()) {
+  <div class="notifications-loading" aria-busy="true" [attr.aria-label]="textData.LOADING_LABEL">
+    <div class="notifications-progress"></div>
+    @for (row of skeletonRows; track row) {
+    <div class="notifications-skeleton-row">
+      <div class="notifications-skeleton notifications-skeleton-icon"></div>
+      <div class="notifications-skeleton-lines">
+        <div class="notifications-skeleton notifications-skeleton-title"></div>
+        <div class="notifications-skeleton notifications-skeleton-text"></div>
+        <div class="notifications-skeleton notifications-skeleton-meta"></div>
+      </div>
+    </div>
+    }
+  </div>
+  } @else if (isError()) {
+  <div class="notifications-message">
+    <app-state-message tone="warning" [message]="textData.ERROR_TEXT" />
+  </div>
+  } @else if (isEmpty()) {
+  <div class="notifications-empty" role="status">
+    <span class="notifications-empty-icon" aria-hidden="true">
+      <span class="material-symbols-outlined">{{ icons.EMPTY }}</span>
+    </span>
+    <h3 class="notifications-empty-title">{{ textData.EMPTY_TITLE }}</h3>
+    <p class="notifications-empty-text">{{ textData.EMPTY_TEXT }}</p>
+  </div>
+  } @else {
+  <div class="notifications-list">
+    @for (group of groups(); track group.label) {
+    <h3 class="notifications-group">{{ group.label }}</h3>
+    @for (item of group.items; track item.id) {
+    <app-notification-item
+      [item]="item"
+      (opened)="openItem($event)"
+      (markedRead)="markRead($event)"
+    />
+    } }
+  </div>
+  }
+</section>
+}

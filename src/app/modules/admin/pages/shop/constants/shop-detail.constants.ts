@@ -45,4 +45,18 @@ export const SHOP_DETAIL_SECTIONS: ShopDetailSection[] = [
     description: 'Переглядайте замовлення магазину, перевіряйте статуси оплати та виконання.',
     linkLabel: 'Перейти до замовлень',
   },
+  {
+    segment: 'quick-orders',
+    icon: 'bolt',
+    title: 'Швидкі замовлення',
+    description: 'Обробляйте заявки «Купити в один клік»: телефонуйте клієнтам і змінюйте статуси.',
+    linkLabel: 'Перейти до швидких замовлень',
+  },
+  {
+    segment: 'settings',
+    icon: 'settings',
+    title: 'Налаштування',
+    description: 'Вмикайте функції вітрини й налаштовуйте кольори, які бачать покупці.',
+    linkLabel: 'Перейти до налаштувань',
+  },
 ];

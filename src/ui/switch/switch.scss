@@ -13,6 +13,14 @@
   @apply after:absolute after:top-[3px] after:left-[3px] after:size-[18px] after:rounded-full after:bg-surface-container-lowest after:shadow-xs after:transition-transform after:duration-150 after:content-[''] checked:after:translate-x-4;
 }
 
+.admin-switch-label-start {
+  @apply flex-row-reverse;
+
+  .admin-switch-text {
+    @apply text-right;
+  }
+}
+
 .admin-switch-text {
   @apply flex flex-col;
 }

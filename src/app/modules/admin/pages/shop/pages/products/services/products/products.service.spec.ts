@@ -239,6 +239,26 @@ describe('ProductsService', () => {
     req.flush({});
   });
 
+  it('requests related products of a product', () => {
+    service.getRelatedProducts('product-1').subscribe();
+
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1/related`);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.withCredentials).toBe(true);
+    req.flush([]);
+  });
+
+  it('replaces related products with the ordered id list', () => {
+    const payload = { productIds: ['product-2', 'product-3'] };
+    service.assignRelatedProducts('product-1', payload).subscribe();
+
+    const req = httpMock.expectOne(`${API_URL}/catalog/products/product-1/related`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual(payload);
+    req.flush([]);
+  });
+
   it('deletes product by id', () => {
     service.deleteProduct('product-1').subscribe();
 

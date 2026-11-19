@@ -1,0 +1,20 @@
+/** Storefront palette tokens, camelCase as in the API (`mutedLight` → `--muted-light`). */
+export type ShopColorToken =
+  | 'background'
+  | 'foreground'
+  | 'muted'
+  | 'mutedLight'
+  | 'accent'
+  | 'accentDark'
+  | 'accentSoft'
+  | 'accentHighlight'
+  | 'onAccentMuted'
+  | 'surfaceSoft'
+  | 'surface'
+  | 'surfaceStrong'
+  | 'borderSoft'
+  | 'footerBorder'
+  | 'footer'
+  | 'error'
+  | 'errorDark'
+  | 'errorBorder';

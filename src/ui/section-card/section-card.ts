@@ -7,4 +7,7 @@ import { Component, input } from '@angular/core';
 })
 export class SectionCard {
   public readonly title = input.required<string>();
+  /** Material Symbols name shown before the title. */
+  public readonly icon = input<string>('');
+  public readonly description = input<string>('');
 }

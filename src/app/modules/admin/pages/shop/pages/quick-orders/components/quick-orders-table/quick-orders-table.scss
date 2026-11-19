@@ -1,0 +1,101 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block w-full;
+}
+
+.quick-orders-scroll {
+  @apply overflow-x-auto;
+}
+
+.quick-orders-table {
+  @apply w-full min-w-[960px] border-separate border-spacing-0;
+}
+
+.quick-orders-head-cell {
+  @apply h-11 border-b border-outline-variant bg-surface-container-low px-4 text-left text-label-sm whitespace-nowrap text-on-surface-variant first:pl-5 last:pr-5;
+}
+
+.quick-orders-actions-head {
+  @apply text-right;
+}
+
+.quick-orders-row {
+  @apply transition-colors duration-100 hover:bg-primary/5;
+}
+
+.quick-orders-cell {
+  @apply h-row border-b border-outline-variant px-4 py-3 align-middle text-body text-on-surface first:pl-5 last:pr-5;
+}
+
+.quick-orders-row:last-child .quick-orders-cell {
+  @apply border-b-0;
+}
+
+.quick-orders-date {
+  @apply block whitespace-nowrap tabular-nums;
+}
+
+.quick-orders-time {
+  @apply block text-caption text-on-surface-variant tabular-nums;
+}
+
+.quick-orders-name {
+  @apply font-medium;
+}
+
+.quick-orders-phone {
+  @apply inline-flex items-center gap-2 whitespace-nowrap text-on-surface tabular-nums transition-ui hover:text-primary focus-visible:focus-ring;
+}
+
+.quick-orders-phone-icon {
+  @apply text-[length:theme(--spacing-icon-xs)] text-on-surface-variant;
+}
+
+.quick-orders-product {
+  @apply flex items-center gap-3;
+}
+
+.quick-orders-thumb {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-sm border border-surface-dim bg-surface-container-low text-outline;
+}
+
+.quick-orders-product-link {
+  @apply text-left text-body text-on-surface transition-ui hover:text-primary hover:underline focus-visible:focus-ring;
+}
+
+.quick-orders-actions-cell {
+  @apply w-[1%] text-right whitespace-nowrap;
+}
+
+.quick-orders-actions {
+  @apply inline-flex items-center justify-end gap-2;
+}
+
+.quick-orders-loading {
+  @apply relative;
+}
+
+.quick-orders-loading-bar {
+  @apply absolute top-0 left-0 block h-[3px] w-2/5 animate-slide rounded-full bg-primary;
+}
+
+.quick-orders-empty {
+  @apply flex flex-col items-center gap-2 px-6 py-12 text-center;
+}
+
+.quick-orders-empty-icon {
+  @apply mb-2 inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary;
+
+  .material-symbols-outlined {
+    @apply text-[32px];
+  }
+}
+
+.quick-orders-state {
+  @apply m-0 px-6 py-6 text-body text-on-surface-variant;
+}
+
+.quick-orders-empty .quick-orders-state {
+  @apply max-w-[380px] p-0;
+}

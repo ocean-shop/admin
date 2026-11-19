@@ -1,4 +1,4 @@
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { APP_ROUTES } from '@core/constants/routes.constants';
@@ -6,6 +6,10 @@ import { AuthService } from '@core/services/auth/auth.service';
 import { HEADER_TEXTS } from '../../constants/header.constants';
 import { Header } from './header';
 import { LayoutService } from '../../services/layout/layout.service';
+import { Notifications } from '../notifications/notifications';
+
+@Component({ selector: 'app-notifications', template: '' })
+class NotificationsStub {}
 
 describe('Header', () => {
   let component: Header;
@@ -23,7 +27,12 @@ describe('Header', () => {
         LayoutService,
         { provide: AuthService, useValue: { logout: vi.fn() } },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(Header, {
+        remove: { imports: [Notifications] },
+        add: { imports: [NotificationsStub] },
+      })
+      .compileComponents();
 
     navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(Header);
@@ -42,6 +51,10 @@ describe('Header', () => {
 
     expect(link.textContent?.trim()).toBe(HEADER_TEXTS.TITLE);
     expect(link.getAttribute('href')).toBe(APP_ROUTES.ADMIN);
+  });
+
+  it('renders the notifications bell', () => {
+    expect(fixture.nativeElement.querySelector('app-notifications')).toBeTruthy();
   });
 
   it('should toggle sidebar on menu button click', () => {

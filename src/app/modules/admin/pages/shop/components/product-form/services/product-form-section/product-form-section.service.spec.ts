@@ -22,6 +22,10 @@ class TestSectionService extends ProductFormSectionService {
     return this.isSidebarEnabled();
   }
 
+  configured(): boolean {
+    return this.isConfigured();
+  }
+
   invalidate(productId: string): void {
     this.invalidateProductQueries(productId);
   }
@@ -50,6 +54,7 @@ describe('ProductFormSectionService', () => {
 
   it('throws when used before configure()', () => {
     expect(() => service.shopId()).toThrowError(PRODUCT_FORM_SERVICE_NOT_CONFIGURED_ERROR);
+    expect(service.configured()).toBe(false);
   });
 
   describe('when configured', () => {
@@ -65,6 +70,7 @@ describe('ProductFormSectionService', () => {
       expect(service.shopId()).toBe('shop-1');
       expect(service.productId()).toBeNull();
       expect(service.enabled()).toBe(true);
+      expect(service.configured()).toBe(true);
     });
 
     it('invalidates the product and the product lists of the shop', () => {

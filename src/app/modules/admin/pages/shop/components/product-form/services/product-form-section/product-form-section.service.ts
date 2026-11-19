@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { injectQueryClient } from '@tanstack/angular-query-experimental';
 import { ToasterService } from '@core/services/toaster/toaster.service';
 import { invalidateProductQueries } from '../../../../helpers/product-query/product-query.helper';
@@ -16,10 +16,15 @@ export abstract class ProductFormSectionService {
   protected readonly queryClient = injectQueryClient();
   protected readonly toasterService = inject(ToasterService);
 
-  private context: ProductFormEditorContext | null = null;
+  /** A signal, so queries built from the context re-run once `configure()` is called. */
+  private readonly context = signal<ProductFormEditorContext | null>(null);
 
   configure(context: ProductFormEditorContext): void {
-    this.context = context;
+    this.context.set(context);
+  }
+
+  protected isConfigured(): boolean {
+    return this.context() !== null;
   }
 
   protected getShopId(): string | null {
@@ -39,10 +44,11 @@ export abstract class ProductFormSectionService {
   }
 
   private requireContext(): ProductFormEditorContext {
-    if (!this.context) {
+    const context = this.context();
+    if (!context) {
       throw new Error(PRODUCT_FORM_SERVICE_NOT_CONFIGURED_ERROR);
     }
 
-    return this.context;
+    return context;
   }
 }
