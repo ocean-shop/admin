@@ -1,0 +1,95 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block w-full;
+}
+
+.reviews-list {
+  @apply m-0 list-none p-0;
+}
+
+.review-item {
+  @apply flex gap-4 border-b border-outline-variant px-6 py-5 transition-colors duration-100 last:border-b-0 hover:bg-primary/5;
+}
+
+.review-avatar {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-full bg-primary/10 text-label-sm text-primary;
+}
+
+.review-body {
+  @apply flex min-w-0 flex-1 flex-col gap-1.5;
+}
+
+.review-head {
+  @apply flex flex-wrap items-center justify-between gap-x-4 gap-y-2;
+}
+
+.review-meta {
+  @apply flex flex-wrap items-center gap-x-3 gap-y-1;
+}
+
+.review-name {
+  @apply text-title-sm text-on-surface;
+}
+
+.review-rating {
+  @apply inline-flex items-center gap-px;
+}
+
+.review-star {
+  @apply text-[length:theme(--spacing-icon-xs)] text-outline-variant;
+}
+
+.review-star-filled {
+  @apply icon-fill text-warning;
+}
+
+.review-rating-text {
+  @apply ml-1.5 text-label font-semibold text-on-surface tabular-nums;
+}
+
+.review-verified,
+.review-useful,
+.review-product {
+  @apply inline-flex items-center gap-1.5 text-caption text-on-surface-variant;
+}
+
+.review-verified {
+  @apply text-primary;
+}
+
+.review-meta-icon {
+  @apply text-[length:theme(--spacing-icon-xs)];
+}
+
+.review-date {
+  @apply text-caption text-on-surface-variant tabular-nums;
+}
+
+.review-text {
+  @apply m-0 max-w-[760px] text-body text-on-surface;
+}
+
+.review-text-label {
+  @apply font-semibold;
+}
+
+.review-foot {
+  @apply flex flex-wrap items-center gap-x-4 gap-y-1;
+}
+
+.review-product-link {
+  @apply text-left transition-ui hover:text-primary hover:underline focus-visible:focus-ring;
+}
+
+.reviews-loading {
+  @apply relative;
+}
+
+.reviews-loading-bar {
+  @apply absolute top-0 left-0 block h-[3px] w-2/5 animate-slide rounded-full bg-primary;
+}
+
+.reviews-state {
+  @apply m-0 px-6 py-6 text-body text-on-surface-variant;
+}

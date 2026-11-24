@@ -1,0 +1,17 @@
+@reference "../../../../../../../styles.scss";
+
+.reviews-card {
+  @apply overflow-hidden rounded-lg border border-outline-variant bg-surface-container-lowest shadow-xs;
+}
+
+.reviews-card-head {
+  @apply flex flex-wrap items-center justify-between gap-3 border-b border-outline-variant px-6 py-4;
+}
+
+.reviews-card-title {
+  @apply m-0 text-title-sm text-on-surface;
+}
+
+.reviews-pagination {
+  @apply w-full;
+}

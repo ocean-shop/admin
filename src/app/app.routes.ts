@@ -78,6 +78,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'shop/:shopId/reviews',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/reviews/reviews').then((m) => m.Reviews),
+      },
+      {
         path: 'shop/:shopId/users',
         loadComponent: () =>
           import('./modules/admin/pages/shop/pages/users/users').then((m) => m.Users),

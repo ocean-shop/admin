@@ -1,0 +1,87 @@
+<app-page-layout>
+  <app-breadcrumbs [items]="breadcrumbItems()" />
+
+  <app-page-header [title]="textData.PAGE_TITLE" [description]="textData.PAGE_DESCRIPTION" />
+
+  @if (!isShopContextReady()) {
+  <app-state-message tone="warning" [message]="textData.SHOP_ID_REQUIRED_MESSAGE" />
+  }
+
+  <app-filter-bar (applied)="onApplyFilters()">
+    <app-filter-dropdown
+      filterFields
+      [label]="textData.STATUS_FILTER_LABEL"
+      [icon]="icons.STATUS"
+      [options]="statusOptions"
+      [value]="draftFilters().status"
+      (optionSelected)="onStatusSelected($event)"
+    />
+    <app-filter-dropdown
+      filterFields
+      [label]="textData.RATING_FILTER_LABEL"
+      [icon]="icons.RATING"
+      [options]="ratingOptions"
+      [value]="draftFilters().rating"
+      (optionSelected)="onRatingSelected($event)"
+    />
+    <app-filter-dropdown
+      filterFields
+      [label]="textData.SORT_LABEL"
+      [icon]="icons.SORT"
+      [options]="sortOptions"
+      [value]="draftFilters().sortOrder"
+      (optionSelected)="onSortSelected($event)"
+    />
+    <app-filter-actions
+      filterControls
+      [applyLabel]="textData.FILTER_APPLY_LABEL"
+      [resetLabel]="textData.FILTER_RESET_LABEL"
+      [applyDisabled]="isFilterDisabled()"
+      [resetDisabled]="isFilterDisabled()"
+      (cleared)="onResetFilters()"
+    />
+  </app-filter-bar>
+
+  @if (hasError()) {
+  <app-state-message [message]="textData.LOAD_ERROR_MESSAGE" />
+  }
+
+  <section class="reviews-card" aria-labelledby="reviews-count-title">
+    <div class="reviews-card-head">
+      <h2 id="reviews-count-title" class="reviews-card-title">{{ countLabel() }}</h2>
+    </div>
+
+    @if (isEmpty()) {
+    <app-empty-state
+      [title]="textData.EMPTY_TITLE"
+      [text]="textData.EMPTY_TEXT"
+      [icon]="icons.EMPTY"
+    >
+      <app-button
+        variant="outline"
+        [fullWidth]="false"
+        [label]="textData.EMPTY_RESET_LABEL"
+        (click)="onResetFilters()"
+      />
+    </app-empty-state>
+    } @else {
+    <app-reviews-list
+      [reviews]="reviews()"
+      [loading]="isLoading()"
+      (openProduct)="onOpenProduct($event)"
+    />
+    }
+  </section>
+
+  @if (totalItems() > pageSize) {
+  <app-pagination
+    class="reviews-pagination"
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems()"
+    [totalPages]="totalPages()"
+    [label]="textData.PAGINATION_LABEL"
+    (pageChange)="onPageChange($event)"
+  />
+  }
+</app-page-layout>

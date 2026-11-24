@@ -1,0 +1,86 @@
+@if (loading()) {
+<div class="reviews-loading" role="status">
+  <span class="reviews-loading-bar" aria-hidden="true"></span>
+  <p class="reviews-state">{{ textData.LIST_LOADING_TEXT }}</p>
+</div>
+} @else {
+<ul class="reviews-list">
+  @for (review of reviews(); track review.id) {
+  <li class="review-item">
+    <span class="review-avatar" aria-hidden="true">{{ review.initials }}</span>
+    <div class="review-body">
+      <div class="review-head">
+        <div class="review-meta">
+          <span class="review-name">{{ review.name }}</span>
+          <span class="review-rating" role="img" [attr.aria-label]="review.ratingLabel">
+            @for (filled of review.stars; track $index) {
+            <span
+              class="material-symbols-outlined review-star"
+              aria-hidden="true"
+              [class.review-star-filled]="filled"
+              >{{ icons.STAR }}</span
+            >
+            }
+            <span class="review-rating-text" aria-hidden="true">{{ review.ratingText }}</span>
+          </span>
+          <app-badge [label]="review.statusLabel" [tone]="review.statusTone" />
+          @if (review.approvedPurchase) {
+          <span class="review-verified">
+            <span class="material-symbols-outlined review-meta-icon" aria-hidden="true"
+              >{{ icons.VERIFIED }}</span
+            >
+            {{ textData.APPROVED_PURCHASE_LABEL }}
+          </span>
+          }
+        </div>
+        <span class="review-date">{{ review.createdDate }}</span>
+      </div>
+
+      <p class="review-text">{{ review.comment }}</p>
+
+      @if (review.advantages) {
+      <p class="review-text">
+        <span class="review-text-label">{{ textData.ADVANTAGES_LABEL }}</span>
+        {{ review.advantages }}
+      </p>
+      } @if (review.drawbacks) {
+      <p class="review-text">
+        <span class="review-text-label">{{ textData.DRAWBACKS_LABEL }}</span>
+        {{ review.drawbacks }}
+      </p>
+      }
+
+      <div class="review-foot">
+        @if (review.productId) {
+        <button
+          class="review-product review-product-link"
+          type="button"
+          [attr.title]="textData.OPEN_PRODUCT_LABEL"
+          (click)="onOpenProduct(review)"
+        >
+          <span class="material-symbols-outlined review-meta-icon" aria-hidden="true"
+            >{{ icons.PRODUCT }}</span
+          >
+          {{ review.productName }}
+        </button>
+        } @else {
+        <span class="review-product">
+          <span class="material-symbols-outlined review-meta-icon" aria-hidden="true"
+            >{{ icons.PRODUCT }}</span
+          >
+          {{ review.productName }}
+        </span>
+        } @if (review.usefulCount > 0) {
+        <span class="review-useful">
+          <span class="material-symbols-outlined review-meta-icon" aria-hidden="true"
+            >{{ icons.USEFUL }}</span
+          >
+          {{ textData.USEFUL_LABEL }} {{ review.usefulCount }}
+        </span>
+        }
+      </div>
+    </div>
+  </li>
+  }
+</ul>
+}
