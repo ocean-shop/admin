@@ -1,4 +1,5 @@
 import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
+import { calculateTotalPages } from '@core/helpers/pagination/pagination.helper';
 import { formatText } from '@core/helpers/value-format/value-format.helper';
 import {
   REVIEW_DATE_FORMAT,
@@ -16,7 +17,13 @@ import {
 } from '../../constants/reviews.constants';
 import { ReviewFilters } from '../../models/review-filters.model';
 import { ReviewStatus } from '../../models/review-status.enum';
-import { Review, ReviewApiItem, ReviewListQueryParams } from '../../models/review.model';
+import { ReviewStatusFilter } from '../../models/review-status-filter.type';
+import {
+  Review,
+  ReviewApiItem,
+  ReviewListQueryParams,
+  ReviewListResponse,
+} from '../../models/review.model';
 
 /** Unknown statuses are treated as pending so the review is never shown as published. */
 export const resolveReviewStatus = (value: string | null | undefined): ReviewStatus =>
@@ -90,6 +97,36 @@ export const areReviewFiltersEqual = (left: ReviewFilters, right: ReviewFilters)
   left.status === right.status &&
   left.rating === right.rating &&
   left.sortOrder === right.sortOrder;
+
+/**
+ * Cached list after a moderation change: the review keeps its place when it still matches
+ * the status filter, otherwise it leaves the page and the total shrinks.
+ */
+export const applyReviewStatusChange = (
+  response: ReviewListResponse | undefined,
+  id: string,
+  status: ReviewStatus,
+  statusFilter: ReviewStatusFilter,
+): ReviewListResponse | undefined => {
+  if (!response || !response.items.some((item) => item.id === id)) {
+    return response;
+  }
+
+  if (statusFilter === REVIEWS_ALL_FILTER || statusFilter === status) {
+    return {
+      ...response,
+      items: response.items.map((item) => (item.id === id ? { ...item, status } : item)),
+    };
+  }
+
+  const total = Math.max(0, response.total - 1);
+  return {
+    ...response,
+    items: response.items.filter((item) => item.id !== id),
+    total,
+    totalPages: calculateTotalPages(total, response.limit),
+  };
+};
 
 /** `1 відгук`, `3 відгуки`, `12 відгуків`. */
 export const formatReviewsCount = (total: number): string =>

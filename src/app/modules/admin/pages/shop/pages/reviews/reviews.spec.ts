@@ -1,10 +1,11 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
+import { ToasterService } from '@core/services/toaster/toaster.service';
 import { flushQueries } from '@testing/flush-async';
 import { provideTestQueryClient } from '@testing/query-client-test.provider';
-import { REVIEWS_TEXTS } from './constants/reviews.constants';
+import { REVIEW_STATUS_SUCCESS_TITLES, REVIEWS_TEXTS } from './constants/reviews.constants';
 import { ReviewStatus } from './models/review-status.enum';
 import { ReviewListQueryParams, ReviewListResponse } from './models/review.model';
 import { Reviews } from './reviews';
@@ -35,7 +36,11 @@ describe('Reviews', () => {
   let fixture: ComponentFixture<Reviews>;
   let component: Reviews;
   let element: HTMLElement;
-  let mockService: { getReviews: ReturnType<typeof vi.fn> };
+  let mockService: {
+    getReviews: ReturnType<typeof vi.fn>;
+    updateReviewStatus: ReturnType<typeof vi.fn>;
+  };
+  let mockToaster: { success: ReturnType<typeof vi.fn> };
   let mockRouter: { navigate: ReturnType<typeof vi.fn> };
 
   const calls = (): ReviewListQueryParams[] =>
@@ -51,6 +56,7 @@ describe('Reviews', () => {
         ...provideTestQueryClient(),
         { provide: ReviewsService, useValue: mockService },
         { provide: Router, useValue: mockRouter },
+        { provide: ToasterService, useValue: mockToaster },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -70,8 +76,10 @@ describe('Reviews', () => {
   beforeEach(() => {
     mockService = {
       getReviews: vi.fn((query: ReviewListQueryParams) => of(buildResponse(query))),
+      updateReviewStatus: vi.fn().mockReturnValue(of({ id: 'r-1' })),
     };
     mockRouter = { navigate: vi.fn() };
+    mockToaster = { success: vi.fn() };
   });
 
   describe('with shop id', () => {
@@ -169,6 +177,48 @@ describe('Reviews', () => {
       ]);
     });
 
+    it('updates the status, patches the row and shows a toast', async () => {
+      (component as any).onStatusChange({ id: 'r-1', status: ReviewStatus.Rejected });
+      await flushQueries(fixture);
+
+      expect(mockService.updateReviewStatus).toHaveBeenCalledWith('r-1', {
+        status: ReviewStatus.Rejected,
+      });
+      expect(mockToaster.success).toHaveBeenCalledWith(
+        REVIEW_STATUS_SUCCESS_TITLES[ReviewStatus.Rejected],
+      );
+      expect(calls().length).toBeGreaterThan(1);
+    });
+
+    it('exposes the pending status change and ignores clicks meanwhile', async () => {
+      const response$ = new Subject<unknown>();
+      mockService.updateReviewStatus.mockReturnValue(response$);
+
+      (component as any).onStatusChange({ id: 'r-1', status: ReviewStatus.Rejected });
+      // `flushQueries` would wait for the open mutation, so only let TanStack notify.
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect((component as any).pendingStatusChange()).toEqual({
+        id: 'r-1',
+        status: ReviewStatus.Rejected,
+      });
+
+      (component as any).onStatusChange({ id: 'r-1', status: ReviewStatus.Pending });
+      expect(mockService.updateReviewStatus).toHaveBeenCalledTimes(1);
+
+      response$.next({ id: 'r-1' });
+      response$.complete();
+      await flushQueries(fixture);
+      expect((component as any).pendingStatusChange()).toBeNull();
+    });
+
+    it('does not show a success toast when the update fails', async () => {
+      mockService.updateReviewStatus.mockReturnValue(throwError(() => new Error('fail')));
+      (component as any).onStatusChange({ id: 'r-1', status: ReviewStatus.Pending });
+      await flushQueries(fixture);
+
+      expect(mockToaster.success).not.toHaveBeenCalled();
+    });
+
     it('shows the empty state', async () => {
       mockService.getReviews.mockImplementation((query: ReviewListQueryParams) =>
         of(buildResponse(query, 0)),
@@ -200,6 +250,12 @@ describe('Reviews', () => {
       expect(element.textContent).toContain(REVIEWS_TEXTS.SHOP_ID_REQUIRED_MESSAGE);
       expect(mockService.getReviews).not.toHaveBeenCalled();
       expect(element.textContent).not.toContain(REVIEWS_TEXTS.EMPTY_TITLE);
+    });
+
+    it('ignores status changes', () => {
+      (component as any).onStatusChange({ id: 'r-1', status: ReviewStatus.Approved });
+
+      expect(mockService.updateReviewStatus).not.toHaveBeenCalled();
     });
 
     it('ignores product navigation', () => {

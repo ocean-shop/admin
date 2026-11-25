@@ -2,7 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_URL } from '@core/constants/api.constant';
-import { ReviewListQueryParams, ReviewListResponse } from '../../models/review.model';
+import {
+  ReviewApiItem,
+  ReviewListQueryParams,
+  ReviewListResponse,
+} from '../../models/review.model';
+import { UpdateReviewStatusPayload } from '../../models/update-review-status-payload.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +27,13 @@ export class ReviewsService {
         ...(query.sortOrder ? { sortOrder: query.sortOrder } : {}),
       },
     });
+  }
+
+  updateReviewStatus(id: string, payload: UpdateReviewStatusPayload): Observable<ReviewApiItem> {
+    return this.http.patch<ReviewApiItem>(
+      `${API_URL}/catalog/product-reviews/${id}/status`,
+      payload,
+      { withCredentials: true },
+    );
   }
 }

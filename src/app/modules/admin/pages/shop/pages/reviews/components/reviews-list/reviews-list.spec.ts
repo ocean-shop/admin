@@ -1,8 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { REVIEWS_TEXTS } from '../../constants/reviews.constants';
+import { REVIEW_STATUS_ACTIONS, REVIEWS_TEXTS } from '../../constants/reviews.constants';
 import { ReviewStatus } from '../../models/review-status.enum';
 import { Review } from '../../models/review.model';
+import { UpdateReviewStatusVariables } from '../../models/update-review-status-variables.model';
 import { ReviewsList } from './reviews-list';
 
 const buildReview = (overrides: Partial<Review> = {}): Review => ({
@@ -97,6 +98,59 @@ describe('ReviewsList', () => {
     element.querySelector<HTMLButtonElement>('.review-product-link')?.click();
 
     expect(emitted).toEqual(['p-1']);
+  });
+
+  it('shows only the actions for statuses other than the current one', async () => {
+    await render([buildReview({ status: ReviewStatus.Pending })]);
+
+    const labels = Array.from(element.querySelectorAll('.review-actions .admin-btn-label')).map(
+      (button) => button.textContent?.trim(),
+    );
+    expect(labels).toEqual(
+      REVIEW_STATUS_ACTIONS.filter((action) => action.status !== ReviewStatus.Pending).map(
+        (action) => action.label,
+      ),
+    );
+  });
+
+  it('emits the status change on action click', async () => {
+    await render([buildReview({ status: ReviewStatus.Approved })]);
+    const emitted: UpdateReviewStatusVariables[] = [];
+    fixture.componentInstance.statusChange.subscribe((value) => emitted.push(value));
+
+    element.querySelectorAll<HTMLButtonElement>('.review-actions button').forEach((button) => {
+      button.click();
+    });
+
+    expect(emitted).toEqual([
+      { id: 'r-1', status: ReviewStatus.Rejected },
+      { id: 'r-1', status: ReviewStatus.Pending },
+    ]);
+  });
+
+  it('locks actions while a status change is pending', async () => {
+    fixture.componentRef.setInput('pendingStatusChange', {
+      id: 'r-1',
+      status: ReviewStatus.Rejected,
+    });
+    await render([buildReview()]);
+    const emitted: UpdateReviewStatusVariables[] = [];
+    fixture.componentInstance.statusChange.subscribe((value) => emitted.push(value));
+
+    const buttons = element.querySelectorAll<HTMLButtonElement>('.review-actions button');
+    expect(Array.from(buttons).every((button) => button.disabled)).toBe(true);
+
+    (fixture.componentInstance as any).onStatusChange(buildReview(), ReviewStatus.Pending);
+    expect(emitted).toEqual([]);
+  });
+
+  it('does not emit the current status', () => {
+    const emitted: UpdateReviewStatusVariables[] = [];
+    fixture.componentInstance.statusChange.subscribe((value) => emitted.push(value));
+
+    (fixture.componentInstance as any).onStatusChange(buildReview(), ReviewStatus.Approved);
+
+    expect(emitted).toEqual([]);
   });
 
   it('does not emit without a product id', () => {

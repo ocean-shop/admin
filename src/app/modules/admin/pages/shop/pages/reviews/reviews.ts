@@ -1,6 +1,10 @@
 import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { injectQuery } from '@tanstack/angular-query-experimental';
+import {
+  injectMutation,
+  injectQuery,
+  injectQueryClient,
+} from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { APP_ROUTES } from '@core/constants/routes.constants';
 import {
@@ -9,6 +13,7 @@ import {
   resolveTotalPages,
 } from '@core/helpers/pagination/pagination.helper';
 import { injectRouteParam } from '@core/helpers/route-param/route-param.helper';
+import { ToasterService } from '@core/services/toaster/toaster.service';
 import { Breadcrumbs } from '@ui/breadcrumbs/breadcrumbs';
 import { Button } from '@ui/button/button';
 import { isDropdownOptionValue } from '@ui/dropdown/helpers/dropdown-option.helper';
@@ -30,6 +35,7 @@ import {
 } from '../products/constants/products.constants';
 import { ReviewsList } from './components/reviews-list/reviews-list';
 import {
+  REVIEW_STATUS_SUCCESS_TITLES,
   REVIEWS_DEFAULT_FILTERS,
   REVIEWS_ICONS,
   REVIEWS_PAGE_SIZE,
@@ -39,14 +45,17 @@ import {
   REVIEWS_TEXTS,
 } from './constants/reviews.constants';
 import {
+  applyReviewStatusChange,
   areReviewFiltersEqual,
   buildReviewFiltersQuery,
   formatReviewsCount,
   mapReview,
 } from './helpers/review-mapping/review-mapping.helper';
 import { ReviewFilters } from './models/review-filters.model';
+import { ReviewListResponse } from './models/review.model';
 import { ReviewRatingFilter } from './models/review-rating-filter.type';
 import { ReviewStatusFilter } from './models/review-status-filter.type';
+import { UpdateReviewStatusVariables } from './models/update-review-status-variables.model';
 import { ReviewsService } from './services/reviews/reviews.service';
 
 @Component({
@@ -70,6 +79,8 @@ import { ReviewsService } from './services/reviews/reviews.service';
 export class Reviews {
   private readonly reviewsService = inject(ReviewsService);
   private readonly router = inject(Router);
+  private readonly toasterService = inject(ToasterService);
+  private readonly queryClient = injectQueryClient();
 
   protected readonly textData = REVIEWS_TEXTS;
   protected readonly icons = REVIEWS_ICONS;
@@ -112,6 +123,11 @@ export class Reviews {
     };
   });
 
+  protected readonly updateStatusMutation = injectMutation(() => ({
+    mutationFn: ({ id, status }: UpdateReviewStatusVariables) =>
+      lastValueFrom(this.reviewsService.updateReviewStatus(id, { status })),
+  }));
+
   protected readonly isLoading = computed(() => this.reviewsQuery.isPending());
   protected readonly hasError = computed(() => this.reviewsQuery.isError());
   protected readonly isShopContextReady = computed(() => Boolean(this.shopId()));
@@ -126,6 +142,9 @@ export class Reviews {
   protected readonly countLabel = computed(() => formatReviewsCount(this.totalItems()));
   protected readonly isEmpty = computed(
     () => this.isShopContextReady() && !this.isLoading() && this.reviews().length === 0,
+  );
+  protected readonly pendingStatusChange = computed(() =>
+    this.updateStatusMutation.isPending() ? (this.updateStatusMutation.variables() ?? null) : null,
   );
 
   protected onStatusSelected(option: DropdownOption): void {
@@ -175,6 +194,28 @@ export class Reviews {
         PRODUCTS_UPDATE_PATH,
       ]);
     }
+  }
+
+  protected onStatusChange(variables: UpdateReviewStatusVariables): void {
+    const shopId = this.shopId();
+    if (!shopId || this.updateStatusMutation.isPending()) {
+      return;
+    }
+
+    const filters = this.filters();
+    const listKey = SHOP_QUERY_KEYS.reviews(shopId, this.currentPage(), this.pageSize, filters);
+
+    this.updateStatusMutation.mutate(variables, {
+      onSuccess: () => {
+        this.queryClient.setQueryData<ReviewListResponse>(listKey, (response) =>
+          applyReviewStatusChange(response, variables.id, variables.status, filters.status),
+        );
+        this.toasterService.success(REVIEW_STATUS_SUCCESS_TITLES[variables.status]);
+        void this.queryClient.invalidateQueries({
+          queryKey: SHOP_QUERY_KEYS.reviewsScope(shopId),
+        });
+      },
+    });
   }
 
   private setFilters(next: ReviewFilters): void {

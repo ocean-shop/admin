@@ -79,6 +79,24 @@
         </span>
         }
       </div>
+
+      @let pending = pendingStatusChange();
+      <div class="review-actions" role="group" [attr.aria-label]="textData.STATUS_ACTIONS_LABEL">
+        @for (action of statusActions; track action.status) { @if (action.status !== review.status)
+        {
+        <app-button
+          size="sm"
+          [variant]="action.variant"
+          [fullWidth]="false"
+          [iconLeading]="true"
+          [icon]="action.icon"
+          [label]="action.label"
+          [loading]="pending?.id === review.id && pending?.status === action.status"
+          [disabled]="!!pending"
+          (click)="onStatusChange(review, action.status)"
+        />
+        } }
+      </div>
     </div>
   </li>
   }

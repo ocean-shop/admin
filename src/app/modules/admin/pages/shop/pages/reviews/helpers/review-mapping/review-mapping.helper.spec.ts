@@ -1,7 +1,9 @@
 import { EMPTY_VALUE_PLACEHOLDER } from '@core/constants/placeholder.constants';
 import { REVIEW_STATUS_LABELS, REVIEWS_DEFAULT_FILTERS } from '../../constants/reviews.constants';
 import { ReviewStatus } from '../../models/review-status.enum';
+import { ReviewListResponse } from '../../models/review.model';
 import {
+  applyReviewStatusChange,
   areReviewFiltersEqual,
   buildReviewFiltersQuery,
   buildReviewInitials,
@@ -162,5 +164,65 @@ describe('review-mapping helper', () => {
     expect(formatReviewsCount(12)).toBe('12 відгуків');
     expect(formatReviewsCount(0)).toBe('0 відгуків');
     expect(formatReviewsCount(21)).toBe('21 відгук');
+  });
+
+  describe('applyReviewStatusChange', () => {
+    const buildResponse = (): ReviewListResponse => ({
+      items: [
+        { id: 'r-1', status: ReviewStatus.Pending },
+        { id: 'r-2', status: ReviewStatus.Pending },
+      ],
+      total: 21,
+      page: 1,
+      limit: 20,
+      totalPages: 2,
+    });
+
+    it('returns an undefined response untouched', () => {
+      expect(
+        applyReviewStatusChange(undefined, 'r-1', ReviewStatus.Approved, 'all'),
+      ).toBeUndefined();
+    });
+
+    it('returns the same response when the id is absent', () => {
+      const response = buildResponse();
+      expect(applyReviewStatusChange(response, 'missing', ReviewStatus.Approved, 'all')).toBe(
+        response,
+      );
+    });
+
+    it('updates the status in place without a status filter', () => {
+      const result = applyReviewStatusChange(buildResponse(), 'r-1', ReviewStatus.Approved, 'all');
+
+      expect(result?.items).toEqual([
+        { id: 'r-1', status: ReviewStatus.Approved },
+        { id: 'r-2', status: ReviewStatus.Pending },
+      ]);
+      expect(result?.total).toBe(21);
+    });
+
+    it('updates the status in place when it matches the filter', () => {
+      const result = applyReviewStatusChange(
+        buildResponse(),
+        'r-1',
+        ReviewStatus.Rejected,
+        ReviewStatus.Rejected,
+      );
+
+      expect(result?.items[0].status).toBe(ReviewStatus.Rejected);
+    });
+
+    it('removes the review and shrinks the total when it leaves the filter', () => {
+      const result = applyReviewStatusChange(
+        buildResponse(),
+        'r-1',
+        ReviewStatus.Approved,
+        ReviewStatus.Pending,
+      );
+
+      expect(result?.items).toEqual([{ id: 'r-2', status: ReviewStatus.Pending }]);
+      expect(result?.total).toBe(20);
+      expect(result?.totalPages).toBe(1);
+    });
   });
 });

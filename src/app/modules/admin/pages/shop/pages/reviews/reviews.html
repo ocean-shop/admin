@@ -68,7 +68,9 @@
     <app-reviews-list
       [reviews]="reviews()"
       [loading]="isLoading()"
+      [pendingStatusChange]="pendingStatusChange()"
       (openProduct)="onOpenProduct($event)"
+      (statusChange)="onStatusChange($event)"
     />
     }
   </section>

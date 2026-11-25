@@ -2,11 +2,12 @@ import { BadgeTone } from '@ui/badge/models/badge-tone.type';
 import { DropdownOption } from '@ui/dropdown/models/dropdown.type';
 import { ReviewFilters } from '../models/review-filters.model';
 import { ReviewStatus } from '../models/review-status.enum';
+import { ReviewStatusAction } from '../models/review-status-action.model';
 
 export const REVIEWS_TEXTS = {
   PAGE_TITLE: 'Відгуки',
   PAGE_DESCRIPTION:
-    'Читайте, що покупці пишуть про товари магазину, і знаходьте відгуки за статусом або оцінкою.',
+    'Читайте, що покупці пишуть про товари магазину, модеруйте відгуки та знаходьте їх за статусом або оцінкою.',
   STATUS_FILTER_LABEL: 'Статус',
   RATING_FILTER_LABEL: 'Оцінка',
   SORT_LABEL: 'Сортування',
@@ -25,6 +26,7 @@ export const REVIEWS_TEXTS = {
   APPROVED_PURCHASE_LABEL: 'Підтверджена покупка',
   USEFUL_LABEL: 'Корисно:',
   OPEN_PRODUCT_LABEL: 'Відкрити товар',
+  STATUS_ACTIONS_LABEL: 'Модерація відгуку',
   PAGINATION_LABEL: 'відгуків',
   LOAD_ERROR_MESSAGE: 'Не вдалося завантажити відгуки. Спробуйте ще раз.',
 } as const;
@@ -46,6 +48,9 @@ export const REVIEWS_ICONS = {
   VERIFIED: 'verified',
   USEFUL: 'thumb_up',
   EMPTY: 'search_off',
+  APPROVE: 'check',
+  REJECT: 'block',
+  RETURN_TO_PENDING: 'undo',
 } as const;
 
 export const REVIEWS_DEFAULT_FILTERS: ReviewFilters = {
@@ -65,6 +70,35 @@ export const REVIEW_STATUS_BADGE_TONES: Record<ReviewStatus, BadgeTone> = {
   [ReviewStatus.Approved]: 'success',
   [ReviewStatus.Rejected]: 'danger',
 };
+
+/** Success toast shown after moving a review to the given status. */
+export const REVIEW_STATUS_SUCCESS_TITLES: Record<ReviewStatus, string> = {
+  [ReviewStatus.Pending]: 'Відгук повернуто на модерацію',
+  [ReviewStatus.Approved]: 'Відгук схвалено',
+  [ReviewStatus.Rejected]: 'Відгук відхилено',
+};
+
+/** Moderation buttons in display order; the one matching the review's current status is hidden. */
+export const REVIEW_STATUS_ACTIONS: ReviewStatusAction[] = [
+  {
+    status: ReviewStatus.Approved,
+    label: 'Схвалити',
+    icon: REVIEWS_ICONS.APPROVE,
+    variant: 'primary',
+  },
+  {
+    status: ReviewStatus.Rejected,
+    label: 'Відхилити',
+    icon: REVIEWS_ICONS.REJECT,
+    variant: 'outline',
+  },
+  {
+    status: ReviewStatus.Pending,
+    label: 'На модерацію',
+    icon: REVIEWS_ICONS.RETURN_TO_PENDING,
+    variant: 'ghost',
+  },
+];
 
 export const REVIEWS_STATUS_OPTIONS: DropdownOption[] = [
   { label: 'Усі статуси', value: REVIEWS_ALL_FILTER },

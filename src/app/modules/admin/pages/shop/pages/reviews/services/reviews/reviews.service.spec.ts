@@ -56,4 +56,14 @@ describe('ReviewsService', () => {
     expect(req.request.params.get('sortOrder')).toBe('asc');
     req.flush({ items: [], total: 0, page: 1, limit: 20, totalPages: 0 });
   });
+
+  it('patches the review status', () => {
+    service.updateReviewStatus('r-1', { status: ReviewStatus.Rejected }).subscribe();
+
+    const req = httpMock.expectOne(`${url}/r-1/status`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.withCredentials).toBe(true);
+    expect(req.request.body).toEqual({ status: ReviewStatus.Rejected });
+    req.flush({ id: 'r-1', status: ReviewStatus.Rejected });
+  });
 });
