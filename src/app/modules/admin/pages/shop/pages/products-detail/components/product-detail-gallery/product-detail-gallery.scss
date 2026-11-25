@@ -1,0 +1,53 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block min-w-0;
+}
+
+.product-gallery {
+  @apply flex flex-col gap-3;
+}
+
+.product-gallery-preview {
+  @apply relative m-0 aspect-square overflow-hidden rounded-lg border border-surface-dim bg-surface-container-low;
+}
+
+.product-gallery-preview-image {
+  @apply size-full object-contain;
+}
+
+.product-gallery-main-badge {
+  @apply absolute top-3 left-3;
+}
+
+.product-gallery-position {
+  @apply absolute right-3 bottom-3 rounded-full bg-surface-container-lowest px-2 py-0.5 text-label-sm text-on-surface-variant tabular-nums;
+}
+
+.product-gallery-empty {
+  @apply flex flex-col items-center justify-center gap-2 text-on-surface-variant;
+}
+
+.product-gallery-empty-icon {
+  @apply text-[48px] text-outline;
+}
+
+.product-gallery-empty-text {
+  @apply text-label;
+}
+
+.product-gallery-thumbnails {
+  @apply m-0 grid list-none grid-cols-5 gap-2 p-0;
+}
+
+.product-gallery-thumbnail {
+  @apply block aspect-square w-full cursor-pointer overflow-hidden rounded-sm border-2 border-transparent bg-surface-container-low p-0 transition-ui focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
+}
+
+.product-gallery-thumbnail-selected {
+  @apply border-primary;
+}
+
+.product-gallery-thumbnail-image {
+  @apply size-full object-cover;
+}

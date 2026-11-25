@@ -142,6 +142,43 @@ describe('Table', () => {
     expect(deleteEmitSpy).toHaveBeenCalledWith(rows[0]);
   });
 
+  it('renders the view action before update and emits viewRow', () => {
+    fixture.componentRef.setInput('viewEnabled', true);
+    fixture.componentRef.setInput('viewLabel', 'Open row');
+    fixture.componentRef.setInput('updateEnabled', true);
+    fixture.detectChanges();
+
+    const viewEmitSpy = vi.spyOn(component.viewRow, 'emit');
+    const firstActions = fixture.debugElement.query(By.css('.table-actions-list'));
+    const buttons = firstActions.queryAll(By.css('button'));
+
+    expect(buttons[0].nativeElement.classList).toContain('table-view-button');
+    expect(buttons[0].nativeElement.getAttribute('aria-label')).toBe('Open row');
+    expect(buttons[1].nativeElement.classList).toContain('table-update-button');
+
+    buttons[0].nativeElement.click();
+
+    expect(viewEmitSpy).toHaveBeenCalledWith(rows[0]);
+  });
+
+  it('labels the actions column by the single enabled action or a custom label', () => {
+    fixture.componentRef.setInput('viewEnabled', true);
+    fixture.componentRef.setInput('viewLabel', 'Open row');
+    fixture.detectChanges();
+
+    expect((component as any).resolveActionsLabel()).toBe('Open row');
+
+    fixture.componentRef.setInput('updateEnabled', true);
+    fixture.detectChanges();
+
+    expect((component as any).resolveActionsLabel()).toBe(TABLE_TEXTS.ACTIONS_LABEL);
+
+    fixture.componentRef.setInput('actionsLabel', ' Custom ');
+    fixture.detectChanges();
+
+    expect((component as any).resolveActionsLabel()).toBe('Custom');
+  });
+
   it('should resolve row keys and alignment defaults', () => {
     expect((component as any).resolveRowKey({ id: 'shop-x' }, 0)).toBe('shop-x');
     expect((component as any).resolveRowKey({ id: 11 }, 1)).toBe('11');

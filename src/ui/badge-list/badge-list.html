@@ -1,0 +1,9 @@
+@if (labels().length) {
+<ul class="badge-list">
+  @for (label of labels(); track $index) {
+  <li><app-badge [label]="label" [tone]="tone()" [plain]="true" /></li>
+  }
+</ul>
+} @else if (emptyText()) {
+<p class="badge-list-empty">{{ emptyText() }}</p>
+}

@@ -27,6 +27,7 @@ export const PRODUCTS_TEXTS = {
   TABLE_PRICE_HEADER: 'Ціна',
   TABLE_CATEGORIES_HEADER: 'Категорії',
   TABLE_ACTIONS_LABEL: 'Дії',
+  TABLE_VIEW_LABEL: 'Переглянути продукт',
   TABLE_UPDATE_LABEL: 'Оновити продукт',
   TABLE_DELETE_LABEL: 'Видалити продукт',
   MODAL_DELETE_TITLE: 'Видалити продукт',

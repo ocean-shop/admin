@@ -1,0 +1,42 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.related-list {
+  @apply -mx-2 m-0 flex list-none flex-col p-0;
+}
+
+.related-list-link {
+  @apply flex items-center gap-3 rounded-md px-2 py-2.5 text-on-surface no-underline transition-ui hover:bg-primary/5;
+}
+
+.related-list-position {
+  @apply w-4 shrink-0 text-right text-caption text-on-surface-variant tabular-nums;
+}
+
+.related-list-thumb {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-sm border border-surface-dim bg-surface-container-low object-cover text-outline;
+}
+
+.related-list-info {
+  @apply flex min-w-0 flex-1 flex-col;
+}
+
+.related-list-title {
+  @apply truncate text-label;
+}
+
+.related-list-price {
+  @apply text-label-sm text-primary tabular-nums;
+}
+
+.related-list-hint,
+.related-list-empty {
+  @apply m-0 text-caption text-on-surface-variant;
+}
+
+.related-list-hint {
+  @apply mt-2;
+}

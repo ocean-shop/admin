@@ -1,0 +1,118 @@
+<app-page-layout>
+  <app-breadcrumbs [items]="breadcrumbItems()" />
+
+  <app-page-header [title]="pageTitle()" [description]="pageSubtitle()">
+    @if (product()) {
+    <span pageHeaderTitleAddon class="products-detail-title-badges">
+      <app-badge [label]="statusLabel()" [tone]="statusTone()" />
+      <app-badge [label]="typeLabel()" [plain]="true" />
+      @if (isPopular()) {
+      <app-badge tone="success" [plain]="true" [label]="textData.POPULAR_BADGE" />
+      }
+    </span>
+    }
+    <app-button
+      [label]="textData.EDIT_LABEL"
+      [icon]="icons.EDIT"
+      [iconLeading]="true"
+      [fullWidth]="false"
+      [disabled]="!product()"
+      (click)="onEdit()"
+    />
+  </app-page-header>
+
+  @if (!isRouteContextReady()) {
+  <app-state-message tone="warning" [message]="textData.SHOP_CONTEXT_REQUIRED_MESSAGE" />
+  } @else if (hasError()) {
+  <app-state-message [message]="textData.PRODUCT_LOAD_ERROR" />
+  } @else if (isLoading()) {
+  <app-state-message [message]="textData.LOADING_TEXT" />
+  } @else if (product()) {
+  <section class="products-detail-layout">
+    <div class="products-detail-main">
+      <app-section-card [title]="textData.OVERVIEW_TITLE" [icon]="icons.OVERVIEW">
+        <div class="products-detail-overview">
+          <app-product-detail-gallery [images]="images()" />
+
+          <div class="products-detail-summary">
+            @if (price(); as price) {
+            <div class="products-detail-price">
+              <span class="products-detail-price-label">{{ textData.PRICE_LABEL }}</span>
+              <div class="products-detail-price-values">
+                <span class="products-detail-price-current">{{ price.current }}</span>
+                @if (price.old) {
+                <s class="products-detail-price-old">{{ price.old }}</s>
+                }
+              </div>
+            </div>
+            }
+            <app-info-list [rows]="overviewRows()" />
+          </div>
+        </div>
+      </app-section-card>
+
+      <app-section-card [title]="textData.DESCRIPTION_TITLE" [icon]="icons.DESCRIPTION">
+        @if (description()) {
+        <p class="products-detail-description">{{ description() }}</p>
+        } @else {
+        <p class="products-detail-muted">{{ textData.DESCRIPTION_EMPTY }}</p>
+        }
+      </app-section-card>
+
+      @if (isVariable()) {
+      <app-section-card [title]="textData.VARIATIONS_TITLE" [icon]="icons.VARIATIONS">
+        <app-badge sectionCardTitleAddon [label]="variationsCount()" [plain]="true" />
+        <app-table
+          [flat]="true"
+          [columns]="variationColumns"
+          [rows]="variationRows()"
+          [emptyText]="textData.VARIATIONS_EMPTY"
+        />
+      </app-section-card>
+      } @else {
+      <app-section-card [title]="textData.PRICING_TITLE" [icon]="icons.PRICING">
+        <app-info-list [rows]="pricingRows()" />
+      </app-section-card>
+      }
+
+      <app-section-card [title]="textData.SEO_TITLE" [icon]="icons.SEO">
+        @if (missingSeoFieldsLabel()) {
+        <app-badge sectionCardActions tone="warning" [label]="missingSeoFieldsLabel()" />
+        }
+        <app-info-list layout="rows" [rows]="seoRows()" />
+      </app-section-card>
+    </div>
+
+    <aside class="products-detail-aside">
+      <app-section-card [title]="textData.STATUS_TITLE" [icon]="icons.STATUS">
+        <app-info-list [rows]="statusRows()" />
+      </app-section-card>
+
+      <app-section-card [title]="textData.CATEGORIES_TITLE" [icon]="icons.CATEGORIES">
+        <app-badge-list
+          tone="info"
+          [labels]="categoryLabels()"
+          [emptyText]="textData.CATEGORIES_EMPTY"
+        />
+      </app-section-card>
+
+      <app-section-card [title]="textData.TAGS_TITLE" [icon]="icons.TAGS">
+        <app-badge-list [labels]="tagLabels()" [emptyText]="textData.TAGS_EMPTY" />
+      </app-section-card>
+
+      <app-section-card [title]="textData.ATTRIBUTES_TITLE" [icon]="icons.ATTRIBUTES">
+        <app-badge-list
+          tone="neutral"
+          [labels]="attributeLabels()"
+          [emptyText]="textData.ATTRIBUTES_EMPTY"
+        />
+      </app-section-card>
+
+      <app-section-card [title]="textData.RELATED_TITLE" [icon]="icons.RELATED">
+        <app-badge sectionCardTitleAddon [label]="relatedCount()" [plain]="true" />
+        <app-product-detail-related-list [items]="relatedItems()" />
+      </app-section-card>
+    </aside>
+  </section>
+  }
+</app-page-layout>

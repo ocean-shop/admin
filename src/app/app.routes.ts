@@ -116,6 +116,14 @@ export const routes: Routes = [
           ),
       },
       {
+        // After `products/create`, so `create` is not matched as a product id.
+        path: 'shop/:shopId/products/:productId',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/products-detail/products-detail').then(
+            (m) => m.ProductsDetail,
+          ),
+      },
+      {
         path: 'shop/:shopId/products/:productId/update',
         loadComponent: () =>
           import('./modules/admin/pages/shop/pages/products-update/products-update').then(

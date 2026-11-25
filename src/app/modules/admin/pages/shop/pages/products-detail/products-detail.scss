@@ -1,0 +1,50 @@
+@reference "../../../../../../../styles.scss";
+
+.products-detail-title-badges {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.products-detail-layout {
+  @apply grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_theme(--spacing-aside)];
+}
+
+.products-detail-main,
+.products-detail-aside {
+  @apply flex min-w-0 flex-col gap-6;
+}
+
+.products-detail-overview {
+  @apply grid gap-7 xl:grid-cols-[theme(--spacing-aside)_minmax(0,1fr)];
+}
+
+.products-detail-summary {
+  @apply flex min-w-0 flex-col gap-5;
+}
+
+.products-detail-price {
+  @apply flex flex-col gap-1;
+}
+
+.products-detail-price-label {
+  @apply text-label-sm text-on-surface-variant;
+}
+
+.products-detail-price-values {
+  @apply flex flex-wrap items-baseline gap-x-3 gap-y-1;
+}
+
+.products-detail-price-current {
+  @apply text-metric-value text-primary tabular-nums;
+}
+
+.products-detail-price-old {
+  @apply text-body-lg text-on-surface-variant tabular-nums;
+}
+
+.products-detail-description {
+  @apply m-0 max-w-description text-body whitespace-pre-line text-on-surface;
+}
+
+.products-detail-muted {
+  @apply m-0 text-body-sm text-on-surface-variant;
+}

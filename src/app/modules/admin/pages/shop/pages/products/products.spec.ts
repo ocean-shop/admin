@@ -106,6 +106,21 @@ describe('Products', () => {
     ]);
   });
 
+  it('navigates to detail page', () => {
+    (component as any).onViewProduct({ id: 'product-1' });
+    expect(mockRouter.navigate).toHaveBeenCalledWith([
+      '/admin/shop',
+      'shop-1',
+      'products',
+      'product-1',
+    ]);
+  });
+
+  it('ignores view for rows without an id', () => {
+    (component as any).onViewProduct({ id: null });
+    expect(mockRouter.navigate).not.toHaveBeenCalled();
+  });
+
   it('navigates to update page', () => {
     (component as any).onUpdateProduct({ id: 'product-1' });
     expect(mockRouter.navigate).toHaveBeenCalledWith([

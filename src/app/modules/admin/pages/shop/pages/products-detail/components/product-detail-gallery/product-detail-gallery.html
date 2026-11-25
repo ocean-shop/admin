@@ -1,0 +1,41 @@
+<div class="product-gallery">
+  @if (activeImage(); as image) {
+  <figure class="product-gallery-preview">
+    <img class="product-gallery-preview-image" [src]="image.imageDataUrl" [alt]="image.name" />
+    @if (isMainSelected()) {
+    <app-badge
+      class="product-gallery-main-badge"
+      tone="primary"
+      [plain]="true"
+      [label]="textData.GALLERY_MAIN_BADGE"
+    />
+    }
+    <span class="product-gallery-position">{{ positionLabel() }}</span>
+  </figure>
+
+  @if (thumbnails().length > 1) {
+  <ul class="product-gallery-thumbnails" [attr.aria-label]="textData.GALLERY_THUMBNAILS_LABEL">
+    @for (thumbnail of thumbnails(); track thumbnail.id; let index = $index) {
+    <li>
+      <button
+        class="product-gallery-thumbnail"
+        type="button"
+        [class.product-gallery-thumbnail-selected]="thumbnail.selected"
+        [attr.aria-label]="thumbnail.ariaLabel"
+        [attr.aria-pressed]="thumbnail.selected"
+        (click)="onSelect(index)"
+      >
+        <img class="product-gallery-thumbnail-image" [src]="thumbnail.url" alt="" />
+      </button>
+    </li>
+    }
+  </ul>
+  } } @else {
+  <div class="product-gallery-preview product-gallery-empty">
+    <span class="product-gallery-empty-icon material-symbols-outlined" aria-hidden="true"
+      >{{ placeholderIcon }}</span
+    >
+    <span class="product-gallery-empty-text">{{ textData.GALLERY_EMPTY }}</span>
+  </div>
+  }
+</div>

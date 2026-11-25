@@ -1,0 +1,25 @@
+@if (items().length) {
+<ol class="related-list">
+  @for (item of items(); track item.id; let position = $index) {
+  <li>
+    <a class="related-list-link" [routerLink]="item.href">
+      <span class="related-list-position">{{ position + 1 }}</span>
+      @if (item.image) {
+      <img class="related-list-thumb" [src]="item.image" alt="" />
+      } @else {
+      <span class="related-list-thumb" aria-hidden="true">
+        <span class="material-symbols-outlined">{{ placeholderIcon }}</span>
+      </span>
+      }
+      <span class="related-list-info">
+        <span class="related-list-title">{{ item.title }}</span>
+        <span class="related-list-price">{{ item.price }}</span>
+      </span>
+    </a>
+  </li>
+  }
+</ol>
+<p class="related-list-hint">{{ textData.RELATED_HINT }}</p>
+} @else {
+<p class="related-list-empty">{{ textData.RELATED_EMPTY }}</p>
+}

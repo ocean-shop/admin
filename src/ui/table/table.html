@@ -63,7 +63,17 @@
           } @if (hasActions()) {
           <td class="table-cell table-actions-cell">
             <div class="table-actions-list">
-              @if (updateEnabled()) {
+              @if (viewEnabled()) {
+              <button
+                class="table-view-button"
+                type="button"
+                [attr.title]="viewLabel()"
+                [attr.aria-label]="viewLabel()"
+                (click)="onView(row)"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true">{{ viewIcon() }}</span>
+              </button>
+              } @if (updateEnabled()) {
               <button
                 class="table-update-button"
                 type="button"

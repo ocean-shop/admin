@@ -9,6 +9,7 @@ import {
   TABLE_TEXTS,
   TABLE_THUMBNAIL_PLACEHOLDER_ICON,
   TABLE_UPDATE_ICON,
+  TABLE_VIEW_ICON,
 } from './constants/table.constants';
 
 @Component({
@@ -24,6 +25,9 @@ export class Table {
   public readonly loadingText = input<string>(TABLE_TEXTS.LOADING);
   public readonly emptyText = input<string>(TABLE_TEXTS.EMPTY);
   public readonly rowIdKey = input<string>('id');
+  public readonly viewEnabled = input<boolean>(false);
+  public readonly viewLabel = input<string>(TABLE_TEXTS.VIEW_LABEL);
+  public readonly viewIcon = input<string>(TABLE_VIEW_ICON);
   public readonly updateEnabled = input<boolean>(false);
   public readonly updateLabel = input<string>(TABLE_TEXTS.UPDATE_LABEL);
   public readonly updateIcon = input<string>(TABLE_UPDATE_ICON);
@@ -32,6 +36,7 @@ export class Table {
   public readonly actionsLabel = input<string>('');
   /** Renders without its own border/shadow (e.g. nested inside a card). */
   public readonly flat = input<boolean>(false);
+  public readonly viewRow = output<TableRowData>();
   public readonly updateRow = output<TableRowData>();
   public readonly deleteRow = output<TableRowData>();
 
@@ -87,24 +92,27 @@ export class Table {
   }
 
   protected hasActions(): boolean {
-    return this.updateEnabled() || this.deleteEnabled();
+    return this.viewEnabled() || this.updateEnabled() || this.deleteEnabled();
   }
 
+  /** Custom label, the single action's own label, or the generic one for several actions. */
   protected resolveActionsLabel(): string {
     const actionsLabel = this.actionsLabel().trim();
     if (actionsLabel) {
       return actionsLabel;
     }
 
-    if (this.updateEnabled() && this.deleteEnabled()) {
-      return TABLE_TEXTS.ACTIONS_LABEL;
-    }
+    const enabledLabels = [
+      this.viewEnabled() ? this.viewLabel() : '',
+      this.updateEnabled() ? this.updateLabel() : '',
+      this.deleteEnabled() ? this.deleteLabel() : '',
+    ].filter(Boolean);
 
-    if (this.updateEnabled()) {
-      return this.updateLabel();
-    }
+    return enabledLabels.length === 1 ? enabledLabels[0] : TABLE_TEXTS.ACTIONS_LABEL;
+  }
 
-    return this.deleteLabel();
+  protected onView(row: TableRowData): void {
+    this.viewRow.emit(row);
   }
 
   protected onUpdate(row: TableRowData): void {

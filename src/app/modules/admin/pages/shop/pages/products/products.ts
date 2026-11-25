@@ -258,18 +258,12 @@ export class Products {
     }
   }
 
+  protected onViewProduct(row: TableRowData): void {
+    this.navigateToProduct(row);
+  }
+
   protected onUpdateProduct(row: TableRowData): void {
-    const shopId = this.shopId();
-    const productId = resolveTableRowId(row);
-    if (shopId && productId) {
-      this.router.navigate([
-        APP_ROUTES.ADMIN_SHOP,
-        shopId,
-        PRODUCTS_SECTION_PATH,
-        productId,
-        PRODUCTS_UPDATE_PATH,
-      ]);
-    }
+    this.navigateToProduct(row, PRODUCTS_UPDATE_PATH);
   }
 
   protected onDeleteProduct(row: TableRowData): void {
@@ -306,6 +300,21 @@ export class Products {
   protected onPageChange(page: number): void {
     if (isPageChangeAllowed(page, this.currentPage(), this.totalPages())) {
       this.currentPage.set(page);
+    }
+  }
+
+  /** Product detail page, or one of its sub-pages (e.g. `update`). */
+  private navigateToProduct(row: TableRowData, ...subPath: string[]): void {
+    const shopId = this.shopId();
+    const productId = resolveTableRowId(row);
+    if (shopId && productId) {
+      this.router.navigate([
+        APP_ROUTES.ADMIN_SHOP,
+        shopId,
+        PRODUCTS_SECTION_PATH,
+        productId,
+        ...subPath,
+      ]);
     }
   }
 }

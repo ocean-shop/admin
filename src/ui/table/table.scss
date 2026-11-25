@@ -72,9 +72,14 @@
   @apply inline-flex items-center justify-end gap-0.5;
 }
 
+.table-view-button,
 .table-update-button,
 .table-delete-button {
   @apply inline-flex size-control-sm items-center justify-center rounded-sm transition-ui;
+}
+
+.table-view-button {
+  @apply text-on-surface-variant hover:bg-primary/10 hover:text-primary;
 }
 
 .table-update-button {
