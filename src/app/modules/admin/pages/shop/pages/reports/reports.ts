@@ -10,8 +10,10 @@ import { Tabs } from '@ui/tabs/tabs';
 import { buildShopPageBreadcrumbs } from '../../helpers/shop-breadcrumbs/shop-breadcrumbs.helper';
 import { ORDERS_SECTION_PATH } from '../orders/constants/orders.constants';
 import { PRODUCTS_SECTION_PATH } from '../products/constants/products.constants';
+import { QUICK_ORDERS_SECTION_PATH } from '../quick-orders/constants/quick-orders.constants';
 import { CustomerReport } from './components/customer-report/customer-report';
 import { ProductReport } from './components/product-report/product-report';
+import { QuickOrderReport } from './components/quick-order-report/quick-order-report';
 import { ReportPeriodFilter } from './components/report-period-filter/report-period-filter';
 import { RevenueReport } from './components/revenue-report/revenue-report';
 import {
@@ -35,6 +37,7 @@ import { ReportPeriodSelection } from './models/report-period-selection.model';
     RevenueReport,
     ProductReport,
     CustomerReport,
+    QuickOrderReport,
   ],
   templateUrl: './reports.html',
   styleUrl: './reports.scss',
@@ -75,6 +78,10 @@ export class Reports {
 
   protected onOpenOrders(): void {
     this.navigateInShop([ORDERS_SECTION_PATH]);
+  }
+
+  protected onOpenQuickOrders(): void {
+    this.navigateInShop([QUICK_ORDERS_SECTION_PATH]);
   }
 
   protected onOpenProduct(productId: string): void {

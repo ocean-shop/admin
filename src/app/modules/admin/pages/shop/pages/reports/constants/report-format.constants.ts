@@ -58,6 +58,14 @@ export const REPORT_COUNT_WORDS = {
     many: 'клієнтів',
     other: 'клієнта',
   },
+  REQUESTS: {
+    zero: 'заявок',
+    one: 'заявка',
+    two: 'заявки',
+    few: 'заявки',
+    many: 'заявок',
+    other: 'заявки',
+  },
   DAYS: {
     zero: 'днів',
     one: 'день',

@@ -1,0 +1,81 @@
+@reference "../../../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.report-table-card {
+  @apply overflow-hidden rounded-lg border border-outline-variant bg-surface-container-lowest shadow-xs;
+}
+
+.report-table-head {
+  @apply flex flex-wrap items-center justify-between gap-3 px-6 pt-5 pb-3;
+}
+
+.report-table-title {
+  @apply m-0 flex items-center gap-3 text-title-md text-on-surface;
+
+  .material-symbols-outlined {
+    @apply text-primary;
+  }
+}
+
+.report-table-caption {
+  @apply text-caption text-on-surface-variant;
+}
+
+.report-table-scroll {
+  @apply overflow-x-auto;
+}
+
+.report-table {
+  @apply w-full border-collapse text-body-sm text-on-surface;
+
+  th {
+    @apply border-b border-outline-variant bg-surface-container-low px-4 py-3 text-left text-label-sm whitespace-nowrap text-on-surface-variant;
+  }
+
+  td {
+    @apply border-b border-outline-variant px-4 py-3 align-middle;
+  }
+
+  tbody tr:last-child td {
+    @apply border-b-0;
+  }
+}
+
+.report-table .report-table-number {
+  @apply text-right whitespace-nowrap tabular-nums;
+}
+
+.report-table-narrow {
+  @apply w-12;
+}
+
+.report-table-muted {
+  @apply text-on-surface-variant;
+}
+
+.report-table-strong {
+  @apply font-semibold;
+}
+
+.report-table-link {
+  @apply cursor-pointer border-0 bg-transparent p-0 text-left text-label text-on-surface hover:text-primary hover:underline focus-visible:focus-ring;
+}
+
+.report-table-empty {
+  @apply m-0 px-6 py-8 text-center text-body text-on-surface-variant;
+}
+
+.share {
+  @apply flex min-w-36 items-center gap-2;
+}
+
+.share-track {
+  @apply flex-1;
+}
+
+.share-label {
+  @apply w-10 text-right text-caption text-on-surface-variant tabular-nums;
+}

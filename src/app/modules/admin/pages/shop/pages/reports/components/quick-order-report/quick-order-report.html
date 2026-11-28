@@ -1,0 +1,39 @@
+<div class="report-toolbar">
+  <app-switch
+    [id]="fieldIds.QUICK_ORDER_COMPARE"
+    [label]="compareLabel()"
+    [checked]="compare()"
+    (checkedChange)="onCompareChange($event)"
+  />
+</div>
+
+@if (isLoading()) {
+<app-state-message [message]="reportsTextData.LOADING_MESSAGE" />
+} @else if (hasError()) {
+<app-state-message [message]="reportsTextData.LOAD_ERROR_MESSAGE" />
+} @else if (view(); as view) {
+<p class="report-note">
+  <span class="material-symbols-outlined" aria-hidden="true">{{ icons.NOTE }}</span>
+  {{ textData.ESTIMATE_NOTE }}
+</p>
+
+<app-report-kpi-grid [kpis]="view.kpis" [compare]="compare()" />
+
+<div class="report-grid-2">
+  @for (highlight of view.highlights; track highlight.id) {
+  <app-revenue-highlight-card
+    [highlight]="highlight"
+    [compare]="compare()"
+    (linkClick)="openQuickOrders.emit()"
+  />
+  }
+</div>
+
+<app-quick-order-status-split [split]="view.statusSplit" />
+
+<app-quick-order-products-table
+  [rows]="view.products"
+  [caption]="view.productsCaption"
+  (openProduct)="openProduct.emit($event)"
+/>
+}

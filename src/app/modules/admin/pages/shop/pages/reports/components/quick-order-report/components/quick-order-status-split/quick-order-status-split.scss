@@ -1,0 +1,25 @@
+@reference "../../../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.split-metrics {
+  @apply grid gap-4 sm:grid-cols-3;
+}
+
+.split-metric {
+  @apply flex flex-col gap-1 rounded-md bg-surface-container-low p-4;
+}
+
+.split-metric-label {
+  @apply text-label text-on-surface-variant;
+}
+
+.split-metric-value {
+  @apply text-title-lg text-on-surface tabular-nums;
+}
+
+.split-metric-caption {
+  @apply text-caption text-on-surface-variant;
+}

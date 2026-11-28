@@ -21,6 +21,13 @@
   <app-product-report [shopId]="shopId" [period]="period()" (openProduct)="onOpenProduct($event)" />
   } @case ('customers') {
   <app-customer-report [shopId]="shopId" [period]="period()" />
+  } @case ('quickOrders') {
+  <app-quick-order-report
+    [shopId]="shopId"
+    [period]="period()"
+    (openProduct)="onOpenProduct($event)"
+    (openQuickOrders)="onOpenQuickOrders()"
+  />
   } @default {
   <app-revenue-report [shopId]="shopId" [period]="period()" (openOrders)="onOpenOrders()" />
   } } } @else {

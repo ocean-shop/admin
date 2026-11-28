@@ -1,0 +1,51 @@
+<section class="report-table-card" aria-labelledby="quick-order-products-title">
+  <div class="report-table-head">
+    <h2 id="quick-order-products-title" class="report-table-title">
+      <span class="material-symbols-outlined" aria-hidden="true">{{ icon }}</span>
+      {{ textData.PRODUCTS_TITLE }}
+    </h2>
+    @if (rows().length) {
+    <span class="report-table-caption">{{ caption() }}</span>
+    }
+  </div>
+
+  @if (rows().length) {
+  <div class="report-table-scroll">
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th class="report-table-narrow">{{ textData.COLUMN_RANK }}</th>
+          <th>{{ textData.COLUMN_PRODUCT }}</th>
+          <th class="report-table-number">{{ textData.COLUMN_REQUESTS }}</th>
+          <th>{{ textData.COLUMN_SHARE }}</th>
+          <th class="report-table-number">{{ textData.COLUMN_PRICE }}</th>
+          <th class="report-table-number">{{ textData.COLUMN_VALUE }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.productId + row.rank) {
+        <tr>
+          <td class="report-table-narrow report-table-muted">{{ row.rank }}</td>
+          <td>
+            <button type="button" class="report-table-link" (click)="onOpenProduct(row.productId)">
+              {{ row.name }}
+            </button>
+          </td>
+          <td class="report-table-number report-table-strong">{{ row.requestsLabel }}</td>
+          <td>
+            <div class="share">
+              <app-share-bar class="share-track" [segments]="row.shareBar" />
+              <span class="share-label">{{ row.shareLabel }}</span>
+            </div>
+          </td>
+          <td class="report-table-number">{{ row.price }}</td>
+          <td class="report-table-number">{{ row.estimatedValue }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  } @else {
+  <p class="report-table-empty">{{ textData.PRODUCTS_EMPTY }}</p>
+  }
+</section>

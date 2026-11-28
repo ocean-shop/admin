@@ -9,7 +9,7 @@ export const REPORTS_TAB_QUERY_PARAM = 'tab';
 export const REPORTS_TEXTS = {
   PAGE_TITLE: 'Звіти',
   PAGE_DESCRIPTION:
-    'Виручка, товари й клієнти магазину з порівнянням із попереднім таким самим періодом.',
+    'Виручка, товари, клієнти та швидкі замовлення магазину з порівнянням із попереднім таким самим періодом.',
   TABS_LABEL: 'Звіти',
   SHOP_ID_REQUIRED_MESSAGE: 'Не вдалося визначити магазин. Відкрийте звіти зі сторінки магазину.',
   PERIOD_SECTION_LABEL: 'Параметри звіту',
@@ -31,6 +31,7 @@ export const REPORTS_FIELD_IDS = {
   PERIOD_FROM: 'report-period-from',
   PERIOD_TO: 'report-period-to',
   REVENUE_COMPARE: 'revenue-compare',
+  QUICK_ORDER_COMPARE: 'quick-order-compare',
 } as const;
 
 export const REPORTS_ICONS = {
@@ -38,13 +39,19 @@ export const REPORTS_ICONS = {
   TIME_ZONE: 'schedule',
 } as const;
 
-export const REPORT_TAB_VALUES: readonly ReportTab[] = ['revenue', 'products', 'customers'];
+export const REPORT_TAB_VALUES: readonly ReportTab[] = [
+  'revenue',
+  'products',
+  'customers',
+  'quickOrders',
+];
 export const REPORTS_DEFAULT_TAB: ReportTab = 'revenue';
 
 export const REPORTS_TABS: TabItem[] = [
   { value: 'revenue', label: 'Виручка', icon: 'payments' },
   { value: 'products', label: 'Товари', icon: 'inventory_2' },
   { value: 'customers', label: 'Клієнти', icon: 'group' },
+  { value: 'quickOrders', label: 'Швидкі замовлення', icon: 'bolt' },
 ];
 
 export const REPORTS_PERIOD_PRESET_OPTIONS: ReportOption<ReportPeriodPreset>[] = [

@@ -20,6 +20,7 @@ describe('Reports', () => {
     getRevenueReport: ReturnType<typeof vi.fn>;
     getProductReport: ReturnType<typeof vi.fn>;
     getCustomerReport: ReturnType<typeof vi.fn>;
+    getQuickOrderReport: ReturnType<typeof vi.fn>;
   };
 
   const setup = async (shopId: string | null = 'shop-1', tab: string | null = null) => {
@@ -64,6 +65,11 @@ describe('Reports', () => {
           of({ topProducts: [{ productId: 'p-1', name: 'Iphone', abcClass: 'A' }] }),
         ),
       getCustomerReport: vi.fn().mockReturnValue(of({ summary: {} })),
+      getQuickOrderReport: vi
+        .fn()
+        .mockReturnValue(
+          of({ summary: {}, topProducts: [{ productId: 'p-2', name: 'Чохол', requestsCount: 2 }] }),
+        ),
     };
   });
 
@@ -89,6 +95,7 @@ describe('Reports', () => {
   it.each([
     ['products', 'app-product-report'],
     ['customers', 'app-customer-report'],
+    ['quickOrders', 'app-quick-order-report'],
     ['unknown', 'app-revenue-report'],
   ])('renders the %s tab from the query param', async (tab, selector) => {
     await setup('shop-1', tab);
@@ -146,6 +153,30 @@ describe('Reports', () => {
       APP_ROUTES.ADMIN_SHOP,
       'shop-1',
       'orders',
+    ]);
+  });
+
+  it('navigates to the product and quick orders from the quick orders tab', async () => {
+    await setup('shop-1', 'quickOrders');
+
+    expect(mockService.getQuickOrderReport).toHaveBeenCalledWith({
+      shopId: 'shop-1',
+      ...buildPresetPeriod('thisMonth'),
+    });
+
+    (element.querySelector('.report-table-link') as HTMLButtonElement).click();
+    expect(mockRouter.navigate).toHaveBeenCalledWith([
+      APP_ROUTES.ADMIN_SHOP,
+      'shop-1',
+      'products',
+      'p-2',
+    ]);
+
+    (element.querySelector('.highlight-link') as HTMLButtonElement).click();
+    expect(mockRouter.navigate).toHaveBeenLastCalledWith([
+      APP_ROUTES.ADMIN_SHOP,
+      'shop-1',
+      'quick-orders',
     ]);
   });
 

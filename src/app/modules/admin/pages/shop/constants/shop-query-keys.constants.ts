@@ -82,6 +82,8 @@ export const SHOP_QUERY_KEYS = {
     ['shop', shopId, 'reports', 'products', period.from, period.to, limit, deadStockDays] as const,
   customerReport: (shopId: string, period: ReportPeriod) =>
     ['shop', shopId, 'reports', 'customers', period.from, period.to] as const,
+  quickOrderReport: (shopId: string, period: ReportPeriod) =>
+    ['shop', shopId, 'reports', 'quick-orders', period.from, period.to] as const,
   /** Key for a query that stays disabled until its id is known. */
   disabled: (scope: string) => ['shop', scope, SHOP_QUERY_MISSING_ID] as const,
 };

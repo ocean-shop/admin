@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { API_URL } from '@core/constants/api.constant';
 import { CustomerReportApi } from '../../models/customer-report-api.model';
 import { ProductReportApi } from '../../models/product-report-api.model';
+import { QuickOrderReportApi } from '../../models/quick-order-report-api.model';
 import {
   ProductReportQuery,
   ReportQuery,
@@ -41,6 +42,13 @@ export class FinanceReportsService {
 
   getCustomerReport(query: ReportQuery): Observable<CustomerReportApi> {
     return this.http.get<CustomerReportApi>(`${this.baseUrl}/customers`, {
+      withCredentials: true,
+      params: this.buildPeriodParams(query),
+    });
+  }
+
+  getQuickOrderReport(query: ReportQuery): Observable<QuickOrderReportApi> {
+    return this.http.get<QuickOrderReportApi>(`${this.baseUrl}/quick-orders`, {
       withCredentials: true,
       params: this.buildPeriodParams(query),
     });

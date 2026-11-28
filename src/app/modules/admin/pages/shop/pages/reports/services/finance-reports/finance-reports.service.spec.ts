@@ -70,4 +70,15 @@ describe('FinanceReportsService', () => {
     expect(req.request.params.keys()).toEqual(['shopId', 'from', 'to']);
     req.flush({});
   });
+
+  it('requests the quick order report with period params only', () => {
+    service.getQuickOrderReport(period).subscribe();
+
+    const req = httpMock.expectOne((request) => request.url === `${baseUrl}/quick-orders`);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.withCredentials).toBe(true);
+    expectPeriodParams(req.request.params);
+    expect(req.request.params.keys()).toEqual(['shopId', 'from', 'to']);
+    req.flush({});
+  });
 });
