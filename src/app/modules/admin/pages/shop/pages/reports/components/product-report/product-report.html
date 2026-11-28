@@ -1,0 +1,50 @@
+<div class="report-toolbar">
+  <app-radio-group
+    name="product-report-limit"
+    [label]="textData.LIMIT_LABEL"
+    [options]="limitOptions"
+    [selectedValue]="limit()"
+    (valueChange)="onLimitChange($event)"
+  />
+  <app-radio-group
+    name="product-report-dead-stock-days"
+    [label]="textData.DEAD_STOCK_DAYS_LABEL"
+    [options]="deadStockDaysOptions"
+    [selectedValue]="deadStockDays()"
+    (valueChange)="onDeadStockDaysChange($event)"
+  />
+</div>
+
+@if (isLoading()) {
+<app-state-message [message]="reportsTextData.LOADING_MESSAGE" />
+} @else if (hasError()) {
+<app-state-message [message]="reportsTextData.LOAD_ERROR_MESSAGE" />
+} @else if (view(); as view) { @if (view.insights.length) {
+<app-insight-list
+  [title]="reportsTextData.INSIGHTS_TITLE"
+  [description]="reportsTextData.INSIGHTS_DESCRIPTION"
+  [icon]="icons.INSIGHTS"
+  [items]="view.insights"
+/>
+}
+
+<app-abc-summary
+  [classes]="view.abcClasses"
+  [segments]="view.abcSegments"
+  [ariaLabel]="view.abcAriaLabel"
+/>
+
+<app-top-products-table
+  [rows]="view.topProducts"
+  [productsSold]="view.productsSold"
+  (openProduct)="openProduct.emit($event)"
+/>
+
+<div class="report-grid-2">
+  @for (trend of view.trends; track trend.kind) {
+  <app-product-trends [trend]="trend" (openProduct)="openProduct.emit($event)" />
+  }
+</div>
+
+<app-dead-stock-table [deadStock]="view.deadStock" (openProduct)="openProduct.emit($event)" />
+}

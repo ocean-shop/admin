@@ -20,6 +20,14 @@
   @apply mt-3 mb-0 text-metric-value text-on-surface tabular-nums;
 }
 
+.stat-card-change {
+  @apply mt-2 mb-0 flex flex-wrap items-center gap-2;
+}
+
+.stat-card-previous {
+  @apply text-caption text-on-surface-variant tabular-nums;
+}
+
 .stat-card-helper {
   @apply mt-1 mb-0 text-caption text-on-surface-variant;
 }

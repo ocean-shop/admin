@@ -1,0 +1,37 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.insight-list {
+  @apply m-0 grid list-none gap-3 p-0 md:grid-cols-2;
+}
+
+.insight-item {
+  @apply flex items-start gap-3 rounded-md bg-surface-container-low p-3;
+}
+
+.insight-icon {
+  @apply inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-primary-container;
+
+  .material-symbols-outlined {
+    @apply text-[18px];
+  }
+}
+
+.insight-icon-positive {
+  @apply bg-success-container text-on-primary-fixed-variant;
+}
+
+.insight-icon-warning {
+  @apply bg-warning-container text-on-warning-container;
+}
+
+.insight-icon-danger {
+  @apply bg-error-container text-error;
+}
+
+.insight-message {
+  @apply pt-1 text-body-sm text-on-surface;
+}

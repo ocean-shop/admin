@@ -1,0 +1,20 @@
+<app-section-card [title]="breakdown().title" [icon]="breakdown().icon">
+  @if (breakdown().rows.length) {
+  <ul class="breakdown-list">
+    @for (row of breakdown().rows; track row.key) {
+    <li class="breakdown-row">
+      <div class="breakdown-row-head">
+        <span class="breakdown-name">{{ row.name }}</span>
+        <span class="breakdown-values">
+          <strong class="breakdown-amount">{{ row.amount }}</strong>
+          <span class="breakdown-meta">{{ row.metaLabel }}</span>
+        </span>
+      </div>
+      <app-share-bar [segments]="row.bar" />
+    </li>
+    }
+  </ul>
+  } @else {
+  <p class="breakdown-empty">{{ textData.BREAKDOWN_EMPTY }}</p>
+  }
+</app-section-card>

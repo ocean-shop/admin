@@ -1,0 +1,29 @@
+<article class="highlight-card">
+  <span
+    class="highlight-icon"
+    [class.highlight-icon-warning]="highlight().tone === 'warning'"
+    [class.highlight-icon-danger]="highlight().tone === 'danger'"
+    aria-hidden="true"
+  >
+    <span class="material-symbols-outlined">{{ highlight().icon }}</span>
+  </span>
+  <div class="highlight-body">
+    <h3 class="highlight-title">{{ highlight().title }}</h3>
+    <p class="highlight-value">{{ highlight().value }}</p>
+    <p class="highlight-description">{{ highlight().description }}</p>
+    @if (compare() && highlight().change; as change) {
+    <p class="highlight-change">
+      <app-change-badge
+        [label]="change.label"
+        [direction]="change.direction"
+        [tone]="change.tone"
+      />
+      <span class="highlight-previous">{{ highlight().previous }}</span>
+    </p>
+    }
+    <button type="button" class="highlight-link" (click)="linkClick.emit()">
+      {{ highlight().linkLabel }}
+      <span class="material-symbols-outlined" aria-hidden="true">{{ linkIcon }}</span>
+    </button>
+  </div>
+</article>

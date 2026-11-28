@@ -1,0 +1,12 @@
+<app-section-card [title]="textData.SPLIT_TITLE" [icon]="icon" [description]="split().description">
+  <app-share-bar [segments]="split().segments" [ariaLabel]="split().ariaLabel" [large]="true" />
+  <div class="split-metrics">
+    @for (metric of split().metrics; track metric.id) {
+    <div class="split-metric">
+      <span class="split-metric-label">{{ metric.label }}</span>
+      <span class="split-metric-value">{{ metric.value }}</span>
+      <span class="split-metric-caption">{{ metric.caption }}</span>
+    </div>
+    }
+  </div>
+</app-section-card>

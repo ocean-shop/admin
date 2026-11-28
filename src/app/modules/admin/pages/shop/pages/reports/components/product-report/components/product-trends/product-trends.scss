@@ -1,0 +1,25 @@
+@reference "../../../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.trend-list {
+  @apply m-0 flex list-none flex-col p-0;
+}
+
+.trend-row {
+  @apply flex items-center gap-3 border-b border-outline-variant py-3 last:border-b-0;
+}
+
+.trend-name {
+  @apply min-w-0 flex-1 cursor-pointer truncate border-0 bg-transparent p-0 text-left text-label text-on-surface hover:text-primary hover:underline focus-visible:focus-ring;
+}
+
+.trend-revenue {
+  @apply text-body-sm whitespace-nowrap text-on-surface-variant tabular-nums;
+}
+
+.trend-empty {
+  @apply m-0 text-body-sm text-on-surface-variant;
+}

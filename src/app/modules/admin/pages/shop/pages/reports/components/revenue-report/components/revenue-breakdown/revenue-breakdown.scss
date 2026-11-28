@@ -1,0 +1,37 @@
+@reference "../../../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.breakdown-list {
+  @apply m-0 flex list-none flex-col gap-4 p-0;
+}
+
+.breakdown-row {
+  @apply flex flex-col gap-2;
+}
+
+.breakdown-row-head {
+  @apply flex flex-wrap items-baseline justify-between gap-2;
+}
+
+.breakdown-name {
+  @apply text-label text-on-surface;
+}
+
+.breakdown-values {
+  @apply text-body-sm whitespace-nowrap tabular-nums;
+}
+
+.breakdown-amount {
+  @apply font-semibold text-on-surface;
+}
+
+.breakdown-meta {
+  @apply text-on-surface-variant;
+}
+
+.breakdown-empty {
+  @apply m-0 text-body-sm text-on-surface-variant;
+}

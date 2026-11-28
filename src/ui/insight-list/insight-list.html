@@ -1,0 +1,18 @@
+<app-section-card [title]="title()" [icon]="icon()" [description]="description()">
+  <ul class="insight-list">
+    @for (item of items(); track item.id) {
+    <li class="insight-item">
+      <span
+        class="insight-icon"
+        [class.insight-icon-positive]="item.tone === 'positive'"
+        [class.insight-icon-warning]="item.tone === 'warning'"
+        [class.insight-icon-danger]="item.tone === 'danger'"
+        aria-hidden="true"
+      >
+        <span class="material-symbols-outlined icon-fill">{{ item.icon }}</span>
+      </span>
+      <span class="insight-message">{{ item.message }}</span>
+    </li>
+    }
+  </ul>
+</app-section-card>

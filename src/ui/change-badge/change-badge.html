@@ -1,0 +1,9 @@
+<span
+  class="change-badge"
+  [class.change-badge-success]="tone() === 'success'"
+  [class.change-badge-danger]="tone() === 'danger'"
+  [class.change-badge-warning]="tone() === 'warning'"
+>
+  <span class="material-symbols-outlined change-badge-icon" aria-hidden="true">{{ icon() }}</span>
+  {{ label() }}
+</span>

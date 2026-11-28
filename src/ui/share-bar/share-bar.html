@@ -1,0 +1,22 @@
+<div
+  class="share-bar"
+  [class.share-bar-large]="large()"
+  [attr.role]="ariaLabel() ? 'img' : null"
+  [attr.aria-label]="ariaLabel() || null"
+  [attr.aria-hidden]="ariaLabel() ? null : 'true'"
+>
+  @for (segment of views(); track $index) {
+  <span
+    class="share-bar-segment"
+    [class.share-bar-primary]="segment.tone === 'primary'"
+    [class.share-bar-secondary]="segment.tone === 'secondary'"
+    [class.share-bar-muted]="segment.tone === 'muted'"
+    [class.share-bar-warning]="segment.tone === 'warning'"
+    [style.width.%]="segment.width"
+  >
+    @if (large() && segment.label) {
+    <span class="share-bar-label">{{ segment.label }}</span>
+    }
+  </span>
+  }
+</div>

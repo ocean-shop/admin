@@ -1,0 +1,19 @@
+@if (isLoading()) {
+<app-state-message [message]="reportsTextData.LOADING_MESSAGE" />
+} @else if (hasError()) {
+<app-state-message [message]="reportsTextData.LOAD_ERROR_MESSAGE" />
+} @else if (view(); as view) { @if (view.insights.length) {
+<app-insight-list
+  [title]="reportsTextData.INSIGHTS_TITLE"
+  [description]="reportsTextData.INSIGHTS_DESCRIPTION"
+  [icon]="icons.INSIGHTS"
+  [items]="view.insights"
+/>
+}
+
+<app-report-kpi-grid [kpis]="view.kpis" />
+
+<app-new-returning-split [split]="view.split" />
+
+<app-customer-segments [segments]="view.segments" [description]="view.segmentsDescription" />
+}

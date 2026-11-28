@@ -1,0 +1,11 @@
+<div class="kpi-grid">
+  @for (kpi of kpis(); track kpi.id) {
+  <app-stat-card
+    [label]="kpi.label"
+    [value]="kpi.value"
+    [helper]="kpi.hint"
+    [change]="compare() ? kpi.change : null"
+    [previous]="compare() ? kpi.previous : ''"
+  />
+  }
+</div>

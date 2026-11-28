@@ -1,0 +1,13 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply flex flex-col gap-6;
+}
+
+.report-toolbar {
+  @apply flex flex-wrap items-end gap-x-8 gap-y-4 rounded-lg border border-outline-variant bg-surface-container-lowest p-5 shadow-xs;
+}
+
+.report-grid-2 {
+  @apply grid gap-4 lg:grid-cols-2;
+}

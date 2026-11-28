@@ -1,0 +1,68 @@
+<section class="report-table-card" aria-labelledby="top-products-title">
+  <div class="report-table-head">
+    <h2 id="top-products-title" class="report-table-title">
+      <span class="material-symbols-outlined" aria-hidden="true">{{ icon }}</span>
+      {{ textData.TOP_TITLE }}
+    </h2>
+    <span class="report-table-caption">{{ shownLabel() }}</span>
+  </div>
+
+  <app-tabs
+    class="report-table-tabs"
+    [items]="tabs()"
+    [selectedValue]="filter()"
+    [ariaLabel]="textData.TOP_FILTER_LABEL"
+    (valueChange)="onFilterChange($event)"
+  />
+
+  @if (visibleRows().length) {
+  <div class="report-table-scroll">
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th class="report-table-narrow">{{ textData.COLUMN_RANK }}</th>
+          <th>{{ textData.COLUMN_PRODUCT }}</th>
+          <th>{{ textData.COLUMN_CLASS }}</th>
+          <th class="report-table-number">{{ textData.COLUMN_REVENUE }}</th>
+          <th class="report-table-number">{{ textData.COLUMN_SHARE }}</th>
+          <th>{{ textData.COLUMN_CUMULATIVE }}</th>
+          <th class="report-table-number">{{ textData.COLUMN_UNITS }}</th>
+          <th class="report-table-number">{{ textData.COLUMN_ORDERS }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of visibleRows(); track row.productId + row.rank) {
+        <tr>
+          <td class="report-table-narrow report-table-muted">{{ row.rank }}</td>
+          <td>
+            <button type="button" class="report-table-link" (click)="onOpenProduct(row.productId)">
+              {{ row.name }}
+            </button>
+          </td>
+          <td>
+            <span
+              class="abc-key"
+              [class.abc-key-a]="row.abcClass === 'A'"
+              [class.abc-key-b]="row.abcClass === 'B'"
+              >{{ row.abcClass }}</span
+            >
+          </td>
+          <td class="report-table-number report-table-strong">{{ row.revenue }}</td>
+          <td class="report-table-number">{{ row.shareLabel }}</td>
+          <td>
+            <div class="cumulative">
+              <app-share-bar class="cumulative-bar" [segments]="row.cumulativeBar" />
+              <span class="cumulative-label">{{ row.cumulativeLabel }}</span>
+            </div>
+          </td>
+          <td class="report-table-number">{{ row.unitsLabel }}</td>
+          <td class="report-table-number">{{ row.ordersLabel }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  } @else {
+  <p class="report-table-empty">{{ textData.TOP_EMPTY }}</p>
+  }
+</section>

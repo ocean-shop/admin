@@ -42,6 +42,11 @@ export const routes: Routes = [
           import('./modules/admin/pages/shop/shop-detail').then((m) => m.ShopDetail),
       },
       {
+        path: 'shop/:shopId/reports',
+        loadComponent: () =>
+          import('./modules/admin/pages/shop/pages/reports/reports').then((m) => m.Reports),
+      },
+      {
         path: 'shop/:shopId/categories',
         loadComponent: () =>
           import('./modules/admin/pages/shop/pages/categories/categories').then(

@@ -1,0 +1,24 @@
+<app-section-card [title]="textData.SEGMENTS_TITLE" [icon]="icon" [description]="description()">
+  <ul class="segments">
+    @for (segment of segments(); track segment.segment) {
+    <li class="segment">
+      <div class="segment-head">
+        <span
+          class="segment-icon"
+          [class.segment-icon-primary]="segment.tone === 'primary'"
+          [class.segment-icon-secondary]="segment.tone === 'secondary'"
+          [class.segment-icon-warning]="segment.tone === 'warning'"
+          [class.segment-icon-muted]="segment.tone === 'muted'"
+          aria-hidden="true"
+        >
+          <span class="material-symbols-outlined">{{ segment.icon }}</span>
+        </span>
+        <h3 class="segment-title">{{ segment.title }}</h3>
+      </div>
+      <p class="segment-count">{{ segment.countLabel }}</p>
+      <p class="segment-details">{{ segment.detailsLabel }}</p>
+      <p class="segment-description">{{ segment.description }}</p>
+    </li>
+    }
+  </ul>
+</app-section-card>

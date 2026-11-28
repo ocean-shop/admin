@@ -1,0 +1,57 @@
+@reference "../../../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.segments {
+  @apply m-0 grid list-none gap-4 p-0 sm:grid-cols-2 xl:grid-cols-4;
+}
+
+.segment {
+  @apply flex flex-col gap-2 rounded-md border border-outline-variant p-4;
+}
+
+.segment-head {
+  @apply flex items-center gap-3;
+}
+
+.segment-icon {
+  @apply inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-surface-container-high text-primary-container;
+
+  .material-symbols-outlined {
+    @apply text-[20px];
+  }
+}
+
+.segment-icon-primary {
+  @apply bg-primary text-on-primary;
+}
+
+.segment-icon-secondary {
+  @apply bg-primary/15 text-primary;
+}
+
+.segment-icon-warning {
+  @apply bg-warning-container text-on-warning-container;
+}
+
+.segment-icon-muted {
+  @apply bg-surface-container text-secondary;
+}
+
+.segment-title {
+  @apply m-0 text-title-sm text-on-surface;
+}
+
+.segment-count {
+  @apply m-0 text-metric-value text-on-surface tabular-nums;
+}
+
+.segment-details {
+  @apply m-0 text-caption text-on-surface-variant;
+}
+
+.segment-description {
+  @apply m-0 text-body-sm text-on-surface-variant;
+}

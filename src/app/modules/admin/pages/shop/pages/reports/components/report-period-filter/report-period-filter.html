@@ -1,0 +1,33 @@
+<section class="period-filter" [attr.aria-label]="textData.PERIOD_SECTION_LABEL">
+  <div class="period-filter-dates">
+    <app-input
+      class="period-filter-date"
+      [id]="fieldIds.PERIOD_FROM"
+      type="date"
+      [label]="textData.PERIOD_FROM_LABEL"
+      [value]="period().from"
+      (valueChange)="onFromChange($event)"
+    />
+    <span class="period-filter-separator" aria-hidden="true">{{ textData.PERIOD_SEPARATOR }}</span>
+    <app-input
+      class="period-filter-date"
+      [id]="fieldIds.PERIOD_TO"
+      type="date"
+      [label]="textData.PERIOD_TO_LABEL"
+      [value]="period().to"
+      (valueChange)="onToChange($event)"
+    />
+  </div>
+
+  <app-radio-group
+    name="report-period-preset"
+    [label]="textData.PERIOD_PRESETS_LABEL"
+    [options]="presetOptions"
+    [selectedValue]="preset()"
+    (valueChange)="onPresetChange($event)"
+  />
+</section>
+
+@if (isInvalid()) {
+<app-state-message tone="warning" [message]="textData.PERIOD_INVALID_MESSAGE" />
+}

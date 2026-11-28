@@ -1,0 +1,53 @@
+@reference "../../../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.highlight-card {
+  @apply flex h-full gap-4 rounded-lg border border-outline-variant bg-surface-container-lowest p-6 shadow-xs;
+}
+
+.highlight-icon {
+  @apply inline-flex size-avatar shrink-0 items-center justify-center rounded-md bg-surface-container-high text-primary;
+}
+
+.highlight-icon-warning {
+  @apply bg-warning-container text-on-warning-container;
+}
+
+.highlight-icon-danger {
+  @apply bg-error-container text-error;
+}
+
+.highlight-body {
+  @apply flex min-w-0 flex-col gap-1;
+}
+
+.highlight-title {
+  @apply m-0 text-label text-on-surface-variant;
+}
+
+.highlight-value {
+  @apply m-0 text-metric-value text-on-surface tabular-nums;
+}
+
+.highlight-description {
+  @apply m-0 text-body-sm text-on-surface-variant;
+}
+
+.highlight-change {
+  @apply mt-1 mb-0 flex flex-wrap items-center gap-2;
+}
+
+.highlight-previous {
+  @apply text-caption text-on-surface-variant tabular-nums;
+}
+
+.highlight-link {
+  @apply mt-2 inline-flex cursor-pointer items-center gap-1 self-start border-0 bg-transparent p-0 text-label font-semibold text-primary hover:underline focus-visible:focus-ring;
+
+  .material-symbols-outlined {
+    @apply text-[18px];
+  }
+}

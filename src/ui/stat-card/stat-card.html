@@ -8,7 +8,15 @@
     }
   </div>
   <p class="stat-card-value">{{ value() }}</p>
-  @if (helper()) {
+  @if (change() || previous()) {
+  <p class="stat-card-change">
+    @if (change(); as change) {
+    <app-change-badge [label]="change.label" [direction]="change.direction" [tone]="change.tone" />
+    } @if (previous()) {
+    <span class="stat-card-previous">{{ previous() }}</span>
+    }
+  </p>
+  } @if (helper()) {
   <p class="stat-card-helper">{{ helper() }}</p>
   }
 </article>

@@ -1,0 +1,13 @@
+@reference "../../../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.revenue-chart {
+  @apply h-80 w-full;
+}
+
+.revenue-chart-empty {
+  @apply m-0 py-8 text-center text-body text-on-surface-variant;
+}

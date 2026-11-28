@@ -33,5 +33,24 @@ describe('StatCard', () => {
 
     expect(element.querySelector('.stat-card-icon')?.textContent).toContain('account_tree');
     expect(element.querySelector('.stat-card-helper')?.textContent).toContain('Усього');
+    expect(element.querySelector('.stat-card-change')).toBeNull();
+  });
+
+  it('renders change badge with previous value', async () => {
+    fixture.componentRef.setInput('change', { label: '+5,0%', direction: 'up', tone: 'success' });
+    fixture.componentRef.setInput('previous', 'було 10');
+    await fixture.whenStable();
+
+    expect(element.querySelector('app-change-badge')?.textContent).toContain('+5,0%');
+    expect(element.querySelector('.change-badge-success')).not.toBeNull();
+    expect(element.querySelector('.stat-card-previous')?.textContent).toContain('було 10');
+  });
+
+  it('renders previous value without a change badge', async () => {
+    fixture.componentRef.setInput('previous', 'було 10');
+    await fixture.whenStable();
+
+    expect(element.querySelector('app-change-badge')).toBeNull();
+    expect(element.querySelector('.stat-card-previous')?.textContent).toContain('було 10');
   });
 });

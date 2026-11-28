@@ -1,0 +1,37 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.share-bar {
+  @apply flex h-2 w-full overflow-hidden rounded-full bg-surface-container;
+}
+
+.share-bar-large {
+  @apply h-10 rounded-md;
+}
+
+.share-bar-segment {
+  @apply flex h-full min-w-0 items-center overflow-hidden;
+}
+
+.share-bar-label {
+  @apply truncate px-3 text-label-sm;
+}
+
+.share-bar-primary {
+  @apply bg-primary text-on-primary;
+}
+
+.share-bar-secondary {
+  @apply bg-primary-fixed-dim text-on-primary-fixed;
+}
+
+.share-bar-muted {
+  @apply bg-outline-variant text-on-surface;
+}
+
+.share-bar-warning {
+  @apply bg-warning text-on-warning-container;
+}

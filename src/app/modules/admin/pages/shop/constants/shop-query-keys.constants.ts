@@ -3,6 +3,8 @@ import { UserSortValue } from '../pages/users/models/user-sort-value.type';
 import { OrderSortValue } from '../pages/orders/models/order-sort-value.type';
 import { QuickOrderTab } from '../pages/quick-orders/models/quick-order-tab.type';
 import { ReviewFilters } from '../pages/reviews/models/review-filters.model';
+import { ReportGroupBy } from '../pages/reports/models/report-group-by.type';
+import { ReportPeriod } from '../pages/reports/models/report-period.model';
 
 /** Placeholder key segment for disabled queries that are waiting for a route param. */
 export const SHOP_QUERY_MISSING_ID = 'missing-id';
@@ -73,6 +75,13 @@ export const SHOP_QUERY_KEYS = {
   userById: (userId: string) => ['shop', 'users', userId] as const,
   statistic: (shopId: string) => ['shop', shopId, 'statistic'] as const,
   settings: (shopId: string) => ['shop', shopId, 'settings'] as const,
+  reportsScope: (shopId: string) => ['shop', shopId, 'reports'] as const,
+  revenueReport: (shopId: string, period: ReportPeriod, groupBy: ReportGroupBy) =>
+    ['shop', shopId, 'reports', 'revenue', period.from, period.to, groupBy] as const,
+  productReport: (shopId: string, period: ReportPeriod, limit: number, deadStockDays: number) =>
+    ['shop', shopId, 'reports', 'products', period.from, period.to, limit, deadStockDays] as const,
+  customerReport: (shopId: string, period: ReportPeriod) =>
+    ['shop', shopId, 'reports', 'customers', period.from, period.to] as const,
   /** Key for a query that stays disabled until its id is known. */
   disabled: (scope: string) => ['shop', scope, SHOP_QUERY_MISSING_ID] as const,
 };

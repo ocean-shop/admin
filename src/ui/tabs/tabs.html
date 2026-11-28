@@ -1,0 +1,20 @@
+<div class="tabs" role="tablist" [attr.aria-label]="ariaLabel() || null">
+  @for (item of items(); track item.value) {
+  <button
+    type="button"
+    role="tab"
+    class="tab"
+    [class.tab-active]="selectedValue() === item.value"
+    [attr.aria-selected]="selectedValue() === item.value"
+    (click)="onSelect(item.value)"
+  >
+    @if (item.icon) {
+    <span class="material-symbols-outlined tab-icon" aria-hidden="true">{{ item.icon }}</span>
+    }
+    <span>{{ item.label }}</span>
+    @if (item.countLabel) {
+    <app-badge [plain]="true" [label]="item.countLabel" />
+    }
+  </button>
+  }
+</div>

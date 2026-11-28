@@ -1,0 +1,21 @@
+<app-section-card [title]="trend().title" [icon]="trend().icon">
+  @if (trend().rows.length) {
+  <ul class="trend-list">
+    @for (row of trend().rows; track row.productId + $index) {
+    <li class="trend-row">
+      <button type="button" class="trend-name" (click)="onOpenProduct(row.productId)">
+        {{ row.name }}
+      </button>
+      <span class="trend-revenue">{{ row.revenue }}</span>
+      <app-change-badge
+        [label]="row.change.label"
+        [direction]="row.change.direction"
+        [tone]="row.change.tone"
+      />
+    </li>
+    }
+  </ul>
+  } @else {
+  <p class="trend-empty">{{ trend().emptyText }}</p>
+  }
+</app-section-card>

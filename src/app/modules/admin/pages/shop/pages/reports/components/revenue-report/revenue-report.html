@@ -1,0 +1,59 @@
+<div class="report-toolbar">
+  <app-radio-group
+    name="revenue-group-by"
+    [label]="textData.GROUP_BY_LABEL"
+    [options]="groupByOptions"
+    [selectedValue]="groupBy()"
+    (valueChange)="onGroupByChange($event)"
+  />
+  <app-switch
+    [id]="fieldIds.REVENUE_COMPARE"
+    [label]="compareLabel()"
+    [checked]="compare()"
+    (checkedChange)="onCompareChange($event)"
+  />
+</div>
+
+@if (isLoading()) {
+<app-state-message [message]="reportsTextData.LOADING_MESSAGE" />
+} @else if (hasError()) {
+<app-state-message [message]="reportsTextData.LOAD_ERROR_MESSAGE" />
+} @else if (view(); as view) {
+<p class="report-note">
+  <span class="material-symbols-outlined" aria-hidden="true">{{ icons.TIME_ZONE }}</span>
+  {{ reportsTextData.TIME_ZONE_NOTE }}
+</p>
+
+@if (view.insights.length) {
+<app-insight-list
+  [title]="reportsTextData.INSIGHTS_TITLE"
+  [description]="reportsTextData.INSIGHTS_DESCRIPTION"
+  [icon]="icons.INSIGHTS"
+  [items]="view.insights"
+/>
+}
+
+<app-report-kpi-grid [kpis]="view.kpis" [compare]="compare()" />
+
+<div class="report-grid-2">
+  @for (highlight of view.highlights; track highlight.id) {
+  <app-revenue-highlight-card
+    [highlight]="highlight"
+    [compare]="compare()"
+    (linkClick)="openOrders.emit()"
+  />
+  }
+</div>
+
+<app-revenue-timeline-chart
+  [title]="chartTitle()"
+  [description]="view.totalLabel"
+  [data]="view.chart"
+/>
+
+<div class="report-grid-2">
+  @for (breakdown of view.breakdowns; track breakdown.id) {
+  <app-revenue-breakdown [breakdown]="breakdown" />
+  }
+</div>
+}

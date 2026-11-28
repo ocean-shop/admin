@@ -1,0 +1,24 @@
+<app-section-card
+  [title]="textData.ABC_TITLE"
+  [icon]="icon"
+  [description]="textData.ABC_DESCRIPTION"
+>
+  <div class="abc-classes">
+    @for (item of classes(); track item.abcClass) {
+    <div class="abc-class">
+      <div class="abc-class-head">
+        <span
+          class="abc-class-key"
+          [class.abc-class-key-primary]="item.tone === 'primary'"
+          [class.abc-class-key-secondary]="item.tone === 'secondary'"
+          >{{ item.abcClass }}</span
+        >
+        <span class="abc-class-title">{{ item.title }}</span>
+      </div>
+      <p class="abc-class-revenue">{{ item.revenue }}</p>
+      <p class="abc-class-meta">{{ item.metaLabel }}</p>
+    </div>
+    }
+  </div>
+  <app-share-bar [segments]="segments()" [ariaLabel]="ariaLabel()" [large]="true" />
+</app-section-card>

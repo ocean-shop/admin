@@ -1,0 +1,41 @@
+@reference "../../../../../../../../../../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.abc-classes {
+  @apply grid gap-4 md:grid-cols-3;
+}
+
+.abc-class {
+  @apply flex flex-col gap-1 rounded-md bg-surface-container-low p-4;
+}
+
+.abc-class-head {
+  @apply flex items-center gap-2;
+}
+
+.abc-class-key {
+  @apply inline-flex size-7 items-center justify-center rounded-sm bg-outline-variant text-label-sm text-on-surface;
+}
+
+.abc-class-key-primary {
+  @apply bg-primary text-on-primary;
+}
+
+.abc-class-key-secondary {
+  @apply bg-primary-fixed-dim text-on-primary-fixed;
+}
+
+.abc-class-title {
+  @apply text-label text-on-surface-variant;
+}
+
+.abc-class-revenue {
+  @apply m-0 text-title-lg text-on-surface tabular-nums;
+}
+
+.abc-class-meta {
+  @apply m-0 text-caption text-on-surface-variant;
+}

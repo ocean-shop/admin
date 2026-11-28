@@ -21,6 +21,7 @@ export const MENU_URL_HASH_SEPARATOR = '#';
 
 export const ADMIN_MENU_ITEMS: MenuItem[] = [
   { icon: 'storefront', label: 'Огляд магазину', route: '/admin/shop/:shopId' },
+  { icon: 'monitoring', label: 'Звіти', route: '/admin/shop/:shopId/reports' },
   { icon: 'account_tree', label: 'Категорії', route: '/admin/shop/:shopId/categories' },
   { icon: 'tune', label: 'Атрибути', route: '/admin/shop/:shopId/attributes' },
   { icon: 'sell', label: 'Теги', route: '/admin/shop/:shopId/tags' },

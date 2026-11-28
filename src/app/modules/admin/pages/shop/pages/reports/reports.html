@@ -1,0 +1,29 @@
+<app-page-layout>
+  <app-breadcrumbs [items]="breadcrumbItems()" />
+
+  <app-page-header [title]="textData.PAGE_TITLE" [description]="textData.PAGE_DESCRIPTION" />
+
+  @if (shopId(); as shopId) {
+  <app-tabs
+    [items]="tabs"
+    [selectedValue]="activeTab()"
+    [ariaLabel]="textData.TABS_LABEL"
+    (valueChange)="onTabChange($event)"
+  />
+
+  <app-report-period-filter
+    [period]="period()"
+    [preset]="selection().preset"
+    (selectionChange)="onSelectionChange($event)"
+  />
+
+  @switch (activeTab()) { @case ('products') {
+  <app-product-report [shopId]="shopId" [period]="period()" (openProduct)="onOpenProduct($event)" />
+  } @case ('customers') {
+  <app-customer-report [shopId]="shopId" [period]="period()" />
+  } @default {
+  <app-revenue-report [shopId]="shopId" [period]="period()" (openOrders)="onOpenOrders()" />
+  } } } @else {
+  <app-state-message tone="warning" [message]="textData.SHOP_ID_REQUIRED_MESSAGE" />
+  }
+</app-page-layout>

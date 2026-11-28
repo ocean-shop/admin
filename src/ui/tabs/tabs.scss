@@ -1,0 +1,21 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply block;
+}
+
+.tabs {
+  @apply flex gap-1 overflow-x-auto border-b border-outline-variant;
+}
+
+.tab {
+  @apply -mb-px inline-flex h-12 shrink-0 cursor-pointer items-center gap-2 border-0 border-b-2 border-solid border-transparent bg-transparent px-3 text-label whitespace-nowrap text-on-surface-variant transition-ui hover:text-on-surface focus-visible:focus-ring;
+}
+
+.tab-icon {
+  @apply text-[20px];
+}
+
+.tab-active {
+  @apply border-primary text-primary hover:text-primary;
+}

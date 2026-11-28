@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, ParamMap } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { injectRouteParam } from './route-param.helper';
+import { injectQueryParam, injectRouteParam } from './route-param.helper';
 
 describe('injectRouteParam', () => {
   let paramMap$: BehaviorSubject<ParamMap>;
@@ -51,5 +51,46 @@ describe('injectRouteParam', () => {
     const shopId = TestBed.runInInjectionContext(() => injectRouteParam('shopId'));
 
     expect(shopId()).toBeNull();
+  });
+});
+
+describe('injectQueryParam', () => {
+  let queryParamMap$: BehaviorSubject<ParamMap>;
+
+  const setup = (snapshotParams: Record<string, string> | null): void => {
+    queryParamMap$ = new BehaviorSubject(convertToParamMap(snapshotParams ?? {}));
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: snapshotParams ? { queryParamMap: convertToParamMap(snapshotParams) } : null,
+            queryParamMap: queryParamMap$.asObservable(),
+          },
+        },
+      ],
+    });
+  };
+
+  it('starts from the snapshot value and follows changes', () => {
+    setup({ tab: 'products' });
+    const tab = TestBed.runInInjectionContext(() => injectQueryParam('tab'));
+
+    expect(tab()).toBe('products');
+
+    queryParamMap$.next(convertToParamMap({ tab: ' customers ' }));
+    expect(tab()).toBe('customers');
+
+    queryParamMap$.next(convertToParamMap({}));
+    expect(tab()).toBeNull();
+  });
+
+  it('returns null when the snapshot is missing', () => {
+    setup(null);
+
+    const tab = TestBed.runInInjectionContext(() => injectQueryParam('tab'));
+
+    expect(tab()).toBeNull();
   });
 });

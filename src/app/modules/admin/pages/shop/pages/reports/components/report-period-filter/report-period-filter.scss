@@ -1,0 +1,21 @@
+@reference "../../../../../../../../../styles.scss";
+
+:host {
+  @apply flex flex-col gap-3;
+}
+
+.period-filter {
+  @apply flex flex-wrap items-end gap-x-6 gap-y-4 rounded-lg border border-outline-variant bg-surface-container-lowest p-5 shadow-xs;
+}
+
+.period-filter-dates {
+  @apply flex flex-wrap items-end gap-3;
+}
+
+.period-filter-date {
+  @apply w-44;
+}
+
+.period-filter-separator {
+  @apply pb-3 text-body text-on-surface-variant;
+}

@@ -1,0 +1,25 @@
+@reference "../../styles.scss";
+
+:host {
+  @apply inline-flex;
+}
+
+.change-badge {
+  @apply inline-flex h-6 items-center gap-0.5 rounded-full bg-surface-container px-2 text-label-sm whitespace-nowrap text-on-surface tabular-nums;
+}
+
+.change-badge-icon {
+  @apply text-[16px];
+}
+
+.change-badge-success {
+  @apply bg-success-container text-on-primary-fixed-variant;
+}
+
+.change-badge-danger {
+  @apply bg-error-container text-on-error-container;
+}
+
+.change-badge-warning {
+  @apply bg-warning-container text-on-warning-container;
+}

@@ -1,0 +1,7 @@
+<app-section-card [title]="title()" [icon]="icon" [description]="description()">
+  @if (hasData()) {
+  <div #chartContainer class="revenue-chart"></div>
+  } @else {
+  <p class="revenue-chart-empty">{{ textData.CHART_EMPTY }}</p>
+  }
+</app-section-card>
